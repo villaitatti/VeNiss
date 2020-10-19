@@ -6,13 +6,12 @@
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX osm: <http://www.metaphacts.com/ontologies/osm#>
-    PREFIX mpsqlsail: <http://www.metaphacts.com/ontologies/sql#>
+    PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
     SELECT ?wkt WHERE {
-      SERVICE <http://www.metaphacts.com/ontologies/platform/repository/federation#geo> {
-        ?root mpsqlsail:hasQueryId "q1" .
-        ?root mpsqlsail:hasId "SS_BLDG_001" .
-        ?root mpsqlsail:hasGeo ?wkt .
+      SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+        ?root rssqlsail:hasQueryId "q1" .
+        ?root rssqlsail:hasId "SS_BLDG_001" .
+        ?root rssqlsail:hasGeo ?wkt .
       }
     } LIMIT 1
     '></semantic-map>

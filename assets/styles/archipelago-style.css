@@ -1,0 +1,21 @@
+.rs-header {
+    background-image: url("/assets/images/headerbanner.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+.rs-header-logo {
+    color: #1d0a6e !important;
+}
+
+.rs-application .navbar-default .navbar-nav > li > a, .rs-application .navbar-default .rs-icon {
+    color: #1d0a6e !Important;
+}
+
+.navbar {
+    height:80px !important;
+}
+
+.rs-header-logo img {
+    width: 90px;
+}

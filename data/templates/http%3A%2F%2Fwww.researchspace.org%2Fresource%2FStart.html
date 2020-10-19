@@ -1,15 +1,1 @@
-<semantic-context repository='geo'>
-  <semantic-map
-          query='
-    PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
-    SELECT ?wkt WHERE {
-      SERVICE <http://www.metaphacts.com/ontologies/platform/repository/federation#geo> {
-        ?root rssqlsail:hasQueryId "q1" .
-        ?root rssqlsail:hasGeo ?wkt .
-      }
-    } LIMIT 1
-    '></semantic-map>
-</semantic-context>
+[[[> "http://archipelago.itatti.harvard.edu/resource/Main" ]]

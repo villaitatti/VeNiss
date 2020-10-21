@@ -1,7 +1,9 @@
 .rs-header {
-    background-image: url("/assets/images/headerbanner.jpg");
+    /*background-image: url("/assets/images/headerbanner.jpg");*/
+    background-color: #0c3146 !Important;
     background-size: cover;
     background-position: center;
+    border-bottom: 1px solid #0c3146;
 }
 
 .rs-header-logo {
@@ -9,13 +11,18 @@
 }
 
 .rs-application .navbar-default .navbar-nav > li > a, .rs-application .navbar-default .rs-icon {
-    color: #1d0a6e !Important;
+    /* color: #1d0a6e !Important; */
 }
 
 .navbar {
-    height:80px !important;
+    /* height:80px !important; */
 }
 
 .rs-header-logo img {
-    width: 90px;
+    width: 100px;
+}
+
+.no-padding[class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
 }

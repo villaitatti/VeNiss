@@ -8,20 +8,29 @@
         <div class="col-xs-9 no-padding">
             <semantic-context repository='geo'>
                 <semantic-map
-                        fix-zoom-level='18'
-                        query='
-    PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
-    SELECT ?wkt WHERE {
-      SERVICE <http://www.metaphacts.com/ontologies/platform/repository/federation#geo> {
-        ?root rssqlsail:hasQueryId "q1" .
-        ?root rssqlsail:hasGeo ?wkt .
-      }
-    } LIMIT 1
-    '></semantic-map>
-            </semantic-context>
+                  query='
+                    PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+                    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
+                    SELECT ?id ?wkt WHERE {
+                      SERVICE <http://www.metaphacts.com/ontologies/platform/repository/federation#geo> {
+                        ?root rssqlsail:hasQueryId "q1".
+                        ?root rssqlsail:hasMinX ?MinX.
+                        ?root rssqlsail:hasMinY ?MinY.
+                        ?root rssqlsail:hasMaxX ?MaxX.
+                        ?root rssqlsail:hasMaxY ?MaxY.
+                        ?root rssqlsail:hasGeo ?wkt.
+                        ?root rssqlsail:hasId ?id.
+                      }
+                    } LIMIT 1
+                  '
+                  fixZoomLevel="18"
+                  extent="[1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]"
+                  tuple-template='<b>{{id.value}}</b>'
+                  ></semantic-map>
+              
+              </semantic-context> 
         </div>
         <div class="col-xs-3">
             <h2>Historical Map</h2>

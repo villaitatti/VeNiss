@@ -26,25 +26,25 @@
                             ?root rssqlsail:hasMaxY "5693523.1243780805".
                             ?root rssqlsail:hasGeo ?wkt .
                             ?root rssqlsail:hasId ?id.
-                            }
+                        }
                         
-                            bind(?id as ?bw_id).
-                            ?bw crm:P1_is_identified_by ?id_node.
-                            ?id_node rdfs:label ?bw_id.
-                        
-                            ?bw rdfs:label ?name.
-                        
+                        bind(?id as ?bw_id).
+                        ?bw crm:P1_is_identified_by ?id_node.
+                        ?id_node rdfs:label ?bw_id.
+                    
+                        ?bw rdfs:label ?name.
+                    
                         ?bw crm:P108i_was_produced_by ?prod.
-                            ?prod a crm:E12_Production.
+                        ?prod a crm:E12_Production.
                         ?prod crm:P4_has_time-span ?prod_date.
                         ?prod_date crm:P82a_begin_of_the_begin ?start_date.
-                        
-                            optional{
+                    
+                        optional{
                             ?bw crm:P13i_was_destroyed_by ?desc.
                             ?desc a crm:E6_Destruction.
                             ?desc crm:P4_has_time-span ?dest_date.
                             ?dest_date crm:P82b_end_of_the_end ?end_date
-                            }
+                        }
                     }
                   '
                   fixZoomLevel="18"

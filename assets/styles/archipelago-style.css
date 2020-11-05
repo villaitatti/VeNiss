@@ -1,6 +1,6 @@
 .rs-header {
     /*background-image: url("/assets/images/headerbanner.jpg");*/
-    background-color: #0c3146 !Important;
+    /* background-color: #0c3146 !Important; */
     background-size: cover;
     background-position: center;
     border-bottom: 1px solid #0c3146;
@@ -20,9 +20,97 @@
 
 .rs-header-logo img {
     width: 100px;
+    padding: 3%;
 }
 
 .no-padding[class*="col-"] {
     padding-right: 0;
     padding-left: 0;
+}
+
+.rs-application .navbar-default .navbar-nav > li > a {
+    color: #ffffff;
+    font-weight: 300;
+}
+
+.rs-application .navbar-default a#main-header-dropdown, .rs-application .navbar-default a#rs-account-dropdown {
+    font-family: "Roboto", sans-serif, sans-serif;
+    font-size: 13.5px;
+    background-color: transparent;
+    font-weight: 300;
+}
+
+.ol-control button {
+    background-color: rgba(217, 93, 0, 0.5) !important;
+}
+
+.ol-control {
+    background-color: rgba(255,255,255,0.4) !important;
+    border-radius: 0px !important;
+}
+
+.ol-zoom .ol-zoom-in, .ol-zoom .ol-zoom-out {
+    border-radius: 0 !important;
+}
+
+.maptoolbar {
+    background-color: bisque;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+}
+
+/* NARRATIVES */
+
+#narrativesSidebar {
+    background-image: url("../../assets/images/cartanautica.jpg");
+    height: 1200px;
+    background-position-x: left;
+    background-position-y: center;
+    background-size: cover;
+}
+
+#narrativesContent {
+    padding-left: 100px;
+    padding-top: 30px;
+}
+
+.archipelagoTitle {
+    font-size: 58pt;
+}
+
+.narrativeParagraph {
+    font-size: 14pt;
+    text-align: justify;
+}
+
+.narrativeRow {
+    padding: 20px;
+    padding-left: 10px;
+    transition: 0.5s;
+}
+
+.narrativeRow:hover {
+    background-color: rgba(255, 205, 161, 0.71);
+    cursor: pointer;
+}
+
+.narrativeTitle, h4 {
+    font-size: 20pt;
+}
+
+.narrativeDescription {
+    font-size: 12pt;
+    text-align: justify;
+}
+
+.narrativeImage {
+    width: 100%;
+}
+
+.maptoolbar .fa {
+    font-size: 15pt;
+    padding: 5px;
 }

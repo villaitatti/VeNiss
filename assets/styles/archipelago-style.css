@@ -83,6 +83,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .narrativeParagraph {
     font-size: 14pt;
+    text-align: justify;
 }
 
 .narrativeRow {
@@ -102,6 +103,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .narrativeDescription {
     font-size: 12pt;
+    text-align: justify;
 }
 
 .narrativeImage {

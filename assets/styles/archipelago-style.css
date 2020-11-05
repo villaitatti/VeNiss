@@ -73,7 +73,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #narrativesContent {
-    padding-left: 60px;
+    padding-left: 100px;
     padding-top: 30px;
 }
 
@@ -108,4 +108,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .narrativeImage {
     width: 100%;
+}
+
+.maptoolbar .fa {
+    font-size: 15pt;
+    padding: 5px;
 }

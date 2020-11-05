@@ -6,9 +6,16 @@
     </div>
     <div class="row" style="height:100%;">
         <div class="col-xs-9 no-padding">
+            <mp-event-proxy 
+                id='on-load-archipelago-data' 
+                on-event-source='archipelago-data'
+                on-event-type='Component.Loaded'
+                proxy-event-type='Component.TemplateUpdate'
+                proxy-targets='["sidebar"]'></mp-event-proxy>
             <semantic-context repository='ephedra'>
                 <semantic-map
-                  query='
+                    id="archipelago-data"
+                    query='
                     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -46,16 +53,26 @@
                             ?dest_date crm:P82b_end_of_the_end ?end_date
                         }
                     }
-                  '
-                  fixZoomLevel="18"
-                  extent="[1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]"
-                  tuple-template='<b>{{bw_id.value}}</b>'
-                  ></semantic-map>
-              
-              </semantic-context> 
+                    '
+                    fixZoomLevel="18"
+                    extent="[1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]"
+                    tuple-template='<b>{{bw_id.value}}, {{name.value}}</b>'></semantic-map>
+            </semantic-context>
         </div>
+
         <div class="col-xs-3">
-            <h2>Historical Map</h2>
+            <h2>Historical Maps</h2>
+            [[> arc:Navigator ]]
         </div>
-    </div>
+  </div>
 </div>
+
+
+<!--
+
+            <mp-field-visualization subject='[[this]]'
+                fields='[[fieldDefinitionsFromQuery (setQueryBindings "SELECT DISTINCT ?field WHERE {?resource ?field ?o . ?field a <http://www.researchspace.org/resource/system/fields/Field> } ORDER BY DESC(?field)" resource=this.iri) ]]'
+                template='{{> template}}'>
+            <template id="template">{{> rsp:ResourceFieldBasedVisualization subject="[[this]]"}}</template>
+            </mp-field-visualization>
+-->

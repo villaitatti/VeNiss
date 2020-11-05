@@ -1,11 +1,19 @@
 <div class="container-fluid">
     <div class="row maptoolbar">
-        <div class="col-xs-12">
-            <h6>Map</h6>
+        <div class="col-xs-9">
+            <h6 style="display:inline-block">Map</h6>
+            <div class="pull-right">
+                <i id="basemapsBtn" class="fa fa-globe toolbarIcon"></i>
+                <i id="historicalmapsBtn" class="fa fa-map toolbarIcon"></i>
+                <i id="optionsBtn" class="fa fa-cogs toolbarIcon"></i>
+            </div>
+        </div>
+        <div class="col-xs-3">
+
         </div>
     </div>
-    <div class="row" style="height:100%;">
-        <div class="col-xs-9 no-padding">
+    <div class="row" style="height:auto;">
+        <div class="col-xs-9 no-padding" style="height:900px;">
             <semantic-context repository='ephedra'>
                 <semantic-map
                   query='

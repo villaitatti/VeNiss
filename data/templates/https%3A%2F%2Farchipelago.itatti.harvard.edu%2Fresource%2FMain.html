@@ -16,10 +16,90 @@
         <div class="col-xs-9 no-padding" style="height:900px;">
             <mp-event-proxy 
                 id='on-load-archipelago-data' 
-                on-event-source='archipelago-data'
+                on-event-source='archipelago-map'
                 on-event-type='Component.Loaded'
                 proxy-event-type='Component.TemplateUpdate'
-                proxy-targets='["sidebar"]'></mp-event-proxy>
+                proxy-targets='["sidebar"]'>
+            </mp-event-proxy>
+
+            <!-- Structured search with geospatial -->
+
+            <semantic-context repository='ephedra'>
+
+                <semantic-search>
+
+                    <!-- Constant search -->
+                    <semantic-search-query-constant
+                        query='
+                            PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
+                            SELECT ?id ?wkt WHERE {
+                                SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                    ?root rssqlsail:hasQueryId "q1" .
+                                    ?root rssqlsail:hasMinX "1368358.959761288".
+                                    ?root rssqlsail:hasMinY "5692238.026840036".
+                                    ?root rssqlsail:hasMaxX "1371414.0522355612".
+                                    ?root rssqlsail:hasMaxY "5693523.1243780805".
+                                    ?root rssqlsail:hasGeo ?wkt .
+                                    ?root rssqlsail:hasId ?id.
+                                }
+                            }'
+                    ></semantic-search-query-constant>
+            
+                    <semantic-search-result-holder>
+                        <semantic-search-result>
+
+                            <semantic-map
+                                id="archipelago-map"
+                                query='
+                                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                                    SELECT ?bw ?wkt ?bw_id ?name ?start_date ?end_date WHERE {
+                                        
+                                        bind(?id as ?bw_id).
+                                        ?bw crm:P1_is_identified_by ?id_node.
+                                        ?id_node rdfs:label ?bw_id.
+                                    
+                                        ?bw rdfs:label ?name.
+                                    
+                                        ?bw crm:P108i_was_produced_by ?prod.
+                                        ?prod a crm:E12_Production.
+                                        ?prod crm:P4_has_time-span ?prod_date.
+                                        ?prod_date crm:P82a_begin_of_the_begin ?start_date.
+                                    
+                                        optional{
+                                            ?bw crm:P13i_was_destroyed_by ?desc.
+                                            ?desc a crm:E6_Destruction.
+                                            ?desc crm:P4_has_time-span ?dest_date.
+                                            ?dest_date crm:P82b_end_of_the_end ?end_date
+                                        }
+                                    } 
+                                '
+                                fixZoomLevel="10"
+                                extent="[1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]"
+                                date="2019-01-01"
+                                tuple-template='<b>{{bw.value}}</b>'
+                                provider='mapbox'
+                                provider-options='{"style": "light-v10", "crs": "EPSG:3857"}'>
+                            </semantic-map>
+                            
+                        </semantic-search-result>
+                    </semantic-search-result-holder>
+                </semantic-search>
+            </semantic-context>
+
+        </div>
+
+        <div class="col-xs-3">
+            [[> arc:Navigator ]]
+        </div>
+  </div>
+</div>
+
+
+
+
+<!--
+
             <semantic-context repository='ephedra'>
                 <semantic-map
                     id="archipelago-data"
@@ -32,7 +112,7 @@
                     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
                     PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
                     
-                    SELECT ?wkt ?bw_id ?name ?start_date ?end_date WHERE {
+                    SELECT ?bw ?wkt ?bw_id ?name ?start_date ?end_date WHERE {
                         SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                             ?root rssqlsail:hasQueryId "q1" .
                             ?root rssqlsail:hasMinX "1368358.959761288".
@@ -60,31 +140,16 @@
                             ?desc crm:P4_has_time-span ?dest_date.
                             ?dest_date crm:P82b_end_of_the_end ?end_date
                         }
-                    }
+                    } 
                     '
                     fixZoomLevel="10"
                     extent="[1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]"
-                    tuple-template='<b>{{bw_id.value}}, {{name.value}}</b>'
+                    date="1572-01-01"
+                    tuple-template='<b>{{bw.value}}</b>'
                     provider='mapbox'
-                    provider-options='{"style": "satellite-v9", "crs": "EPSG:3857"}'
+                    provider-options='{"style": "light-v10", "crs": "EPSG:3857"}'
                     ></semantic-map>
                     
             </semantic-context>
-        </div>
 
-        <div class="col-xs-3">
-            <h2>Historical Maps</h2>
-            [[> arc:Navigator ]]
-        </div>
-  </div>
-</div>
-
-
-<!--
-
-<mp-field-visualization subject='[[this]]'
-fields='[[fieldDefinitionsFromQuery (setQueryBindings "SELECT DISTINCT ?field WHERE {?resource ?field ?o . ?field a <http://www.researchspace.org/resource/system/fields/Field> } ORDER BY DESC(?field)" resource=this.iri) ]]'
-template='{{> template}}'>
-<template id="template">{{> rsp:ResourceFieldBasedVisualization subject="[[this]]"}}</template>
-</mp-field-visualization>
 -->

@@ -1,55 +1,58 @@
+<h2>Navigator</h2>
 <mp-event-target-template-render id='sidebar' template='{{> sidebar_tmpl}}'>
-  <template id='sidebar_tmpl'>
-      {{#if results}}
-          {{#each results}}
-          
-              <semantic-query
-                  query='
-                      PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-                      SELECT ?bw ?bw_id ?name ?start_date ?end_date WHERE {
-
-                          bind("{{bw_id.value}}" as ?bw_id).
-                          ?bw crm:P1_is_identified_by ?id_node.
-                          ?id_node rdfs:label ?bw_id.
-                          
-                          ?bw rdfs:label ?name.
-                          
-                          ?bw crm:P108i_was_produced_by ?prod.
-                          ?prod a crm:E12_Production.
-                          ?prod crm:P4_has_time-span ?prod_date.
-                          ?prod_date crm:P82a_begin_of_the_begin ?start_date.
-                          
-                          optional{
-                              ?bw crm:P13i_was_destroyed_by ?desc.
-                              ?desc a crm:E6_Destruction.
-                              ?desc crm:P4_has_time-span ?dest_date.
-                              ?dest_date crm:P82b_end_of_the_end ?end_date
-                          }
-                      }'
-                  template='{{> sidebar-data_tmpl}}'>
-                  
-                  <template id="sidebar-data_tmpl">
-                      {{#each bindings}}
-                          <div>
-                              <strong>ID:</strong> {{bw_id.value}} <br>
-                              <strong>Name:</strong> {{name.value}} <br>
-                              <strong>Created:</strong> {{start_date.value}} <br>
-                              {{#if end_date.value}}
-                                  <strong>destruction</strong> {{end_date.value}}
-                              {{/if}}
-                              <hr>
-                          </div>
-
-
-
-                      {{/each}}
-                  </template>
-
-              </semantic-query>
-          {{/each}}
-      {{/if}}
-  </template>
+    <template id='sidebar_tmpl'>
+        <div>
+            {{#each results}} 
+                <div>
+                    <strong>{{bw.value}}</strong>
+                </div>
+            {{/each}}
+        </div>
+    </template>
 </mp-event-target-template-render>
+
+
+<!--
+
+    <semantic-query
+    query='
+        PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+        SELECT ?bw ?name ?start_date ?end_date WHERE {
+
+            bind({{bw.value}} as ?bw).
+            
+            ?bw rdfs:label ?name.
+            
+            ?bw crm:P108i_was_produced_by ?prod.
+            ?prod a crm:E12_Production.
+            ?prod crm:P4_has_time-span ?prod_date.
+            ?prod_date crm:P82a_begin_of_the_begin ?start_date.
+            
+            optional{
+                ?bw crm:P13i_was_destroyed_by ?desc.
+                ?desc a crm:E6_Destruction.
+                ?desc crm:P4_has_time-span ?dest_date.
+                ?dest_date crm:P82b_end_of_the_end ?end_date
+            }
+        }'
+    template='{{> sidebar-data_tmpl}}'>
+    
+        <template id="sidebar-data_tmpl">
+            {{log this}}
+            {{#each bindings}}
+                <div>
+                    <strong>Name:</strong> {{name.value}} <br>
+                    <strong>Created:</strong> {{start_date.value}} <br>
+                    {{#if end_date.value}}
+                        <strong>destruction</strong> {{end_date.value}}
+                    {{/if}}
+                    <hr>
+                </div>
+            {{/each}}
+        </template>
+
+</semantic-query>
+-->

@@ -114,3 +114,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 15pt;
     padding: 5px;
 }
+
+.narrativeDescription, .narrativeParagraph {
+    font-weight: 200;
+}

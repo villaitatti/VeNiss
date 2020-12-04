@@ -89,10 +89,11 @@
                                     filter(?date <= ?end)
                                 } ORDER BY DESC(?subject) '
                                 map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
-                                provider='mapbox'
-                                provider-options='{"style":"dark-v10"}'
-                                tuple-template='<b>{{bw.value}}</b>'>
-                            </semantic-map>
+                                tuple-template='<b>{{bw.value}}</b>'
+                                >
+                                    <tiles-layer provider='OSM' provider-options='{}'></tiles-layer>
+                                    <tiles-layer provider='mapbox' provider-options='{"style": "light-v10", "crs": "EPSG:3857"}'></tiles-layer>
+                                </semantic-map>
                         </semantic-search-result>
                     </semantic-search-result-holder>
                     

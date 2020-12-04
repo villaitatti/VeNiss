@@ -14,76 +14,88 @@
     </div>
     <div class="row" style="height:auto;">
         <div class="col-xs-9 no-padding" style="height:900px;">
+
             <mp-event-proxy 
-                id='on-load-archipelago-data' 
-                on-event-source='archipelago-map'
+                id='on-load-search-map' 
+                on-event-source='search-map'
                 on-event-type='Component.Loaded'
                 proxy-event-type='Component.TemplateUpdate'
                 proxy-targets='["sidebar"]'>
             </mp-event-proxy>
 
+            <!-- Event to handle bounding box search-->
+            <mp-event-proxy
+                id='on-moveend-search-map' 
+                on-event-source='search-map' 
+                on-event-type='SemanticMap.BoundingBoxChanged' 
+                proxy-event-type='SemanticSearch.QueryConstant.SetParameters' 
+                proxy-targets='["search-map-query"]'>
+            </mp-event-proxy>
+
             <!-- Structured search with geospatial -->
-
             <semantic-context repository='ephedra'>
-
                 <semantic-search>
-
-                    <!-- Constant search -->
-                    <semantic-search-query-constant
+                    <semantic-search-query-constant 
+                        id='search-map-query'
+                        parameters='{
+                            "southWestLat": {
+                                "value": "1368358.959761288"
+                            },
+                            "southWestLon": {
+                                "value": "5692238.026840036"
+                            },
+                            "northEstLat": {
+                                "value": "1371414.0522355612"
+                            },
+                            "northEstLon": {
+                                "value": "5693523.1243780805"
+                            }
+                        }'
                         query='
                             PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
-                            SELECT ?id ?wkt WHERE {
+                            SELECT ?subject ?wkt WHERE {
                                 SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                    ?root rssqlsail:hasQueryId "q1" .
-                                    ?root rssqlsail:hasMinX "1368358.959761288".
-                                    ?root rssqlsail:hasMinY "5692238.026840036".
-                                    ?root rssqlsail:hasMaxX "1371414.0522355612".
-                                    ?root rssqlsail:hasMaxY "5693523.1243780805".
-                                    ?root rssqlsail:hasGeo ?wkt .
-                                    ?root rssqlsail:hasId ?id.
+                                    ?root rssqlsail:hasQueryId "q1".
+                                    ?root rssqlsail:hasGeo ?wkt.
+                                    ?root rssqlsail:hasId ?subject.
+
+                                    ?root rssqlsail:hasMinX ?southWestLat.
+                                    ?root rssqlsail:hasMinY ?southWestLon.
+                                    ?root rssqlsail:hasMaxX ?northEstLat.
+                                    ?root rssqlsail:hasMaxY ?northEstLon
                                 }
                             }'
                     ></semantic-search-query-constant>
-            
+
                     <semantic-search-result-holder>
                         <semantic-search-result>
+                            <semantic-map 
+                                id='search-map' 
+                                query='SELECT ?subject ?wkt ?bw WHERE {
+                                    bind("1856-01-01"^^xsd:dateTime as ?date). 
 
-                            <semantic-map
-                                id="archipelago-map"
-                                query='
-                                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                                    SELECT ?bw ?wkt ?bw_id ?name ?start_date ?end_date WHERE {
-                                        
-                                        bind(?id as ?bw_id).
-                                        ?bw crm:P1_is_identified_by ?id_node.
-                                        ?id_node rdfs:label ?bw_id.
+                                    ?bw_id rdfs:label ?subject.
+                                    ?bw crm:P1_is_identified_by ?bw_id.
                                     
-                                        ?bw rdfs:label ?name.
+                                    ?bw crm:P108i_was_produced_by ?prod.
+                                    ?prod crm:P4_has_time-span ?prod_ts.
+                                    ?prod_ts crm:P82a_begin_of_the_begin ?start.
                                     
-                                        ?bw crm:P108i_was_produced_by ?prod.
-                                        ?prod a crm:E12_Production.
-                                        ?prod crm:P4_has_time-span ?prod_date.
-                                        ?prod_date crm:P82a_begin_of_the_begin ?start_date.
+                                    ?bw crm:P13i_was_destroyed_by ?desc.
+                                    ?desc crm:P4_has_time-span ?desc_ts.
+                                    ?desc_ts crm:P82b_end_of_the_end ?end.
                                     
-                                        optional{
-                                            ?bw crm:P13i_was_destroyed_by ?desc.
-                                            ?desc a crm:E6_Destruction.
-                                            ?desc crm:P4_has_time-span ?dest_date.
-                                            ?dest_date crm:P82b_end_of_the_end ?end_date
-                                        }
-                                    } 
-                                '
-                                fixZoomLevel="10"
-                                extent="[1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]"
-                                date="2019-01-01"
-                                tuple-template='<b>{{bw.value}}</b>'
+                                    filter(?date > ?start)
+                                    filter(?date <= ?end)
+                                } ORDER BY DESC(?subject) '
+                                map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
                                 provider='mapbox'
-                                provider-options='{"style": "light-v10", "crs": "EPSG:3857"}'>
+                                provider-options='{"style":"dark-v10"}'
+                                tuple-template='<b>{{bw.value}}</b>'>
                             </semantic-map>
-                            
                         </semantic-search-result>
                     </semantic-search-result-holder>
+                    
                 </semantic-search>
             </semantic-context>
 
@@ -94,62 +106,3 @@
         </div>
   </div>
 </div>
-
-
-
-
-<!--
-
-            <semantic-context repository='ephedra'>
-                <semantic-map
-                    id="archipelago-data"
-                    query='
-                    PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-                    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                    PREFIX ephedra: <http://www.researchspace.org/resource/system/ephedra#>
-                    PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
-                    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                    
-                    SELECT ?bw ?wkt ?bw_id ?name ?start_date ?end_date WHERE {
-                        SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                            ?root rssqlsail:hasQueryId "q1" .
-                            ?root rssqlsail:hasMinX "1368358.959761288".
-                            ?root rssqlsail:hasMinY "5692238.026840036".
-                            ?root rssqlsail:hasMaxX "1371414.0522355612".
-                            ?root rssqlsail:hasMaxY "5693523.1243780805".
-                            ?root rssqlsail:hasGeo ?wkt .
-                            ?root rssqlsail:hasId ?id.
-                        }
-                        
-                        bind(?id as ?bw_id).
-                        ?bw crm:P1_is_identified_by ?id_node.
-                        ?id_node rdfs:label ?bw_id.
-                    
-                        ?bw rdfs:label ?name.
-                    
-                        ?bw crm:P108i_was_produced_by ?prod.
-                        ?prod a crm:E12_Production.
-                        ?prod crm:P4_has_time-span ?prod_date.
-                        ?prod_date crm:P82a_begin_of_the_begin ?start_date.
-                    
-                        optional{
-                            ?bw crm:P13i_was_destroyed_by ?desc.
-                            ?desc a crm:E6_Destruction.
-                            ?desc crm:P4_has_time-span ?dest_date.
-                            ?dest_date crm:P82b_end_of_the_end ?end_date
-                        }
-                    } 
-                    '
-                    fixZoomLevel="10"
-                    extent="[1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]"
-                    date="1572-01-01"
-                    tuple-template='<b>{{bw.value}}</b>'
-                    provider='mapbox'
-                    provider-options='{"style": "light-v10", "crs": "EPSG:3857"}'
-                    ></semantic-map>
-                    
-            </semantic-context>
-
--->

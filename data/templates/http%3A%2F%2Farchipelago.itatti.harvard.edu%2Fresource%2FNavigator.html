@@ -3,56 +3,41 @@
     <template id='sidebar_tmpl'>
         <div>
             {{#each results}} 
-                <div>
-                    <strong>{{bw.value}}</strong>
-                </div>
+                <semantic-query
+                    query='
+                        SELECT ?bw ?aat_role ?patron WHERE {
+
+                            bind("{{subject.value}}" as ?bw_id_lbl)
+  
+                            ?bw_id rdfs:label ?bw_id_lbl.
+                            ?bw crm:P1_is_identified_by ?bw_id.
+                            ?bw crm:P108i_was_produced_by ?construction.
+                            ?construction crmpc:P01_has_domain ?patron_role.
+                            ?patron_role crmpc:P14.1_in_the_role_of ?aat_role.
+                            ?patron_role crmpc:P02_has_range ?patron
+                        
+                        }
+                    '
+                    template='{{> displayer}}'>
+                        <template id='displayer'>
+                            <div>
+                                {{#each bindings}}
+                                    <semantic-link uri="{{patron.value}}">
+                                        <em class="fa fa-user" style="margin-right: 5px"></em> 
+                                        {{patron.value}}
+                                        <br>
+                                        {{aat_role.value}}
+                                    </semantic-link>
+                                {{/each}}
+                            </div>
+                            <hr>
+                        </template>
+                </semantic-query>
             {{/each}}
         </div>
     </template>
 </mp-event-target-template-render>
 
 
-<!--
-
-    <semantic-query
-    query='
-        PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-        SELECT ?bw ?name ?start_date ?end_date WHERE {
-
-            bind({{bw.value}} as ?bw).
-            
-            ?bw rdfs:label ?name.
-            
-            ?bw crm:P108i_was_produced_by ?prod.
-            ?prod a crm:E12_Production.
-            ?prod crm:P4_has_time-span ?prod_date.
-            ?prod_date crm:P82a_begin_of_the_begin ?start_date.
-            
-            optional{
-                ?bw crm:P13i_was_destroyed_by ?desc.
-                ?desc a crm:E6_Destruction.
-                ?desc crm:P4_has_time-span ?dest_date.
-                ?dest_date crm:P82b_end_of_the_end ?end_date
-            }
-        }'
-    template='{{> sidebar-data_tmpl}}'>
-    
-        <template id="sidebar-data_tmpl">
-            {{log this}}
-            {{#each bindings}}
-                <div>
-                    <strong>Name:</strong> {{name.value}} <br>
-                    <strong>Created:</strong> {{start_date.value}} <br>
-                    {{#if end_date.value}}
-                        <strong>destruction</strong> {{end_date.value}}
-                    {{/if}}
-                    <hr>
-                </div>
-            {{/each}}
-        </template>
 
 </semantic-query>
--->

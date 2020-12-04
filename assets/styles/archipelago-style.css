@@ -78,7 +78,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .archipelagoTitle {
-    font-size: 58pt;
+    font-size: 57pt;
 }
 
 .narrativeParagraph {
@@ -98,11 +98,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .narrativeTitle, h4 {
-    font-size: 20pt;
+    font-size: 16pt;
+    margin-top: 0;
 }
 
 .narrativeDescription {
-    font-size: 12pt;
+    font-size: 11pt;
     text-align: justify;
 }
 

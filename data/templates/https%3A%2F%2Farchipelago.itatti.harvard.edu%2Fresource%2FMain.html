@@ -1,6 +1,6 @@
-<div class="container-fluid">
-    <div class="row maptoolbar">
-        <div class="col-xs-9">
+<div id="mainContainer">
+    <div class="maptoolbar flexrows">
+        <div id="maptoolbarFirst" class="">
             <h6 style="display:inline-block">Map</h6>
             <div class="pull-right">
                 <i id="basemapsBtn" class="fa fa-globe toolbarIcon"></i>
@@ -8,61 +8,48 @@
                 <i id="optionsBtn" class="fa fa-cogs toolbarIcon"></i>
             </div>
         </div>
-        <div class="col-xs-3">
+        <div id="maptoolbarSecond" class="">
 
         </div>
     </div>
-    <div class="row" style="height:auto;">
-        <div class="col-xs-9 no-padding" style="height:900px;">
+    <div id="mapNavigatorContainer" class="flexrows">
+        <div id="mapNavigatorRow">
+            <div id="mapContainer" class="">
 
-            <mp-event-proxy 
-                id='on-load-search-map' 
-                on-event-source='search-map'
-                on-event-type='Component.Loaded'
-                proxy-event-type='Component.TemplateUpdate'
-                proxy-targets='["sidebar"]'>
-            </mp-event-proxy>
+                <mp-event-proxy
+                    id='on-load-search-map'
+                    on-event-source='search-map'
+                    on-event-type='Component.Loaded'
+                    proxy-event-type='Component.TemplateUpdate'
+                    proxy-targets='["sidebar"]'>
+                </mp-event-proxy>
 
-            <!-- Event to handle bounding box search-->
-            <mp-event-proxy
-                id='on-moveend-search-map' 
-                on-event-source='search-map' 
-                on-event-type='SemanticMap.BoundingBoxChanged' 
-                proxy-event-type='SemanticSearch.QueryConstant.SetParameters' 
-                proxy-targets='["search-map-query"]'>
-            </mp-event-proxy>
+                <!-- Event to handle bounding box search-->
+                <mp-event-proxy
+                    id='on-moveend-search-map'
+                    on-event-source='search-map'
+                    on-event-type='SemanticMap.BoundingBoxChanged'
+                    proxy-event-type='SemanticSearch.QueryConstant.SetParameters'
+                    proxy-targets='["search-map-query"]'>
+                </mp-event-proxy>
 
-            <!-- Structured search with geospatial -->
-            <semantic-context repository='ephedra'>
-                <semantic-search>
-                    <semantic-search-query-constant 
-                        id='search-map-query'
-                        parameters='{
-                            "southWestLat": {
-                                "value": "1368358.959761288"
-                            },
-                            "southWestLon": {
-                                "value": "5692238.026840036"
-                            },
-                            "northEstLat": {
-                                "value": "1371414.0522355612"
-                            },
-                            "northEstLon": {
-                                "value": "5693523.1243780805"
-                            }
-                        }'
-                        query='
-                            PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
-                            SELECT ?subject ?wkt WHERE {
-                                SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                    ?root rssqlsail:hasQueryId "q1".
-                                    ?root rssqlsail:hasGeo ?wkt.
-                                    ?root rssqlsail:hasId ?subject.
-
-                                    ?root rssqlsail:hasMinX ?southWestLat.
-                                    ?root rssqlsail:hasMinY ?southWestLon.
-                                    ?root rssqlsail:hasMaxX ?northEstLat.
-                                    ?root rssqlsail:hasMaxY ?northEstLon
+                <!-- Structured search with geospatial -->
+                <semantic-context repository='ephedra'>
+                    <semantic-search>
+                        <semantic-search-query-constant
+                            id='search-map-query'
+                            parameters='{
+                                "southWestLat": {
+                                    "value": "1368358.959761288"
+                                },
+                                "southWestLon": {
+                                    "value": "5692238.026840036"
+                                },
+                                "northEstLat": {
+                                    "value": "1371414.0522355612"
+                                },
+                                "northEstLon": {
+                                    "value": "5693523.1243780805"
                                 }
                             }'
                     ></semantic-search-query-constant>
@@ -100,10 +87,120 @@
                 </semantic-search>
             </semantic-context>
 
-        </div>
+                                        ?root rssqlsail:hasMinX ?southWestLat.
+                                        ?root rssqlsail:hasMinY ?southWestLon.
+                                        ?root rssqlsail:hasMaxX ?northEstLat.
+                                        ?root rssqlsail:hasMaxY ?northEstLon
+                                    }
+                                }'
+                        ></semantic-search-query-constant>
 
-        <div class="col-xs-3">
-            [[> arc:Navigator ]]
+                        <semantic-search-result-holder>
+                            <semantic-search-result>
+                                <semantic-map
+                                    id='search-map'
+                                    query='SELECT ?subject ?wkt ?bw WHERE {
+                                        bind("1856-01-01"^^xsd:dateTime as ?date).
+
+                                        ?bw_id rdfs:label ?subject.
+                                        ?bw crm:P1_is_identified_by ?bw_id.
+
+                                        ?bw crm:P108i_was_produced_by ?prod.
+                                        ?prod crm:P4_has_time-span ?prod_ts.
+                                        ?prod_ts crm:P82a_begin_of_the_begin ?start.
+
+                                        ?bw crm:P13i_was_destroyed_by ?desc.
+                                        ?desc crm:P4_has_time-span ?desc_ts.
+                                        ?desc_ts crm:P82b_end_of_the_end ?end.
+
+                                        filter(?date > ?start)
+                                        filter(?date <= ?end)
+                                    } ORDER BY DESC(?subject) '
+                                    map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
+                                    tuple-template='<b>{{bw.value}}</b>'
+                                    >
+                                        <tiles-layer provider='OSM' provider-options='{}'></tiles-layer>
+                                        <tiles-layer provider='mapbox' provider-options='{"style": "light-v10"}'></tiles-layer>
+                                    </semantic-map>
+                            </semantic-search-result>
+                        </semantic-search-result-holder>
+
+                    </semantic-search>
+                </semantic-context>
+
+            </div>
+            <div id="navigatorContainer" class="">
+                [[> arc:Navigator ]]
+            </div>
         </div>
   </div>
 </div>
+
+
+<style>
+    html,
+    body {
+        height: 100%;
+        margin: 0
+    }
+    #mainContainer {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        width: 100%;
+    }
+
+    .maptoolbar {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #maptoolbarFirst {
+        flex: 1;
+    }
+
+
+
+    #mapContainer {
+        height: calc(100vh - 88px);
+    }
+
+    #mapContainer > div:nth-of-type(1)
+    {
+        height: 100%;
+    }
+
+    #mapNavigatorContainer {
+        flex: 1;
+        background: #ff0029;
+        position: relative
+    }
+
+    #mapNavigatorRow {
+        display: flex;
+        position:absolute;
+        height: 100%;
+        width: 100%
+    }
+
+    #mapContainer {
+        flex: 1;
+        background: rgba(0, 141, 237, 0)
+    }
+
+    #navigatorContainer {
+        padding: 10px;
+        text-wrap: normal;
+        overflow-wrap: break-word;
+        height: calc(100vh - 88px);
+    }
+
+    #maptoolbarSecond, #navigatorContainer {
+        width: 300px;
+    }
+
+    .system-spinner:nth-of-type(n+2) {
+        display:none !important;
+    }
+
+</style>

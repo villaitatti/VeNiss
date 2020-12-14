@@ -36,6 +36,7 @@
                 <!-- Structured search with geospatial -->
                 <semantic-context repository='ephedra'>
                     <semantic-search>
+                        
                         <semantic-search-query-constant
                             id='search-map-query'
                             parameters='{
@@ -52,86 +53,59 @@
                                     "value": "5693523.1243780805"
                                 }
                             }'
-                    ></semantic-search-query-constant>
-
-                    <semantic-search-result-holder>
-                        <semantic-search-result>
-                            <semantic-map 
-                                id='search-map' 
-                                query='SELECT ?subject ?wkt ?bw WHERE {
-                                    bind("1789-01-01"^^xsd:dateTime as ?date). 
-
-                                    ?bw_id rdfs:label ?subject.
-                                    ?bw crm:P1_is_identified_by ?bw_id.
-                                    
-                                    ?bw crm:P108i_was_produced_by ?prod.
-                                    ?prod crm:P4_has_time-span ?prod_ts.
-                                    ?prod_ts crm:P82a_begin_of_the_begin ?start.
-                                    
-                                    ?bw crm:P13i_was_destroyed_by ?desc.
-                                    ?desc crm:P4_has_time-span ?desc_ts.
-                                    ?desc_ts crm:P82b_end_of_the_end ?end.
-                                    
-                                    filter(?date > ?start)
-                                    filter(?date <= ?end)
-                                } ORDER BY DESC(?subject) '
-                                map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
-                                tuple-template='<b>{{bw.value}}</b>'
-                                >
-                                    <tiles-layer provider='OSM' provider-options='{}'></tiles-layer>
-                                    <tiles-layer provider='mapbox' provider-options='{"style": "light-v10", "crs": "EPSG:3857"}'></tiles-layer>
-                                </semantic-map>
-                        </semantic-search-result>
-                    </semantic-search-result-holder>
-                    
-                </semantic-search>
-            </semantic-context>
-
-                                        ?root rssqlsail:hasMinX ?southWestLat.
-                                        ?root rssqlsail:hasMinY ?southWestLon.
-                                        ?root rssqlsail:hasMaxX ?northEstLat.
-                                        ?root rssqlsail:hasMaxY ?northEstLon
-                                    }
-                                }'
+                            query='
+                            PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
+                            SELECT ?subject ?wkt WHERE {
+                                SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                    ?root rssqlsail:hasQueryId "q1".
+                                    ?root rssqlsail:hasGeo ?wkt.
+                                    ?root rssqlsail:hasId ?subject.
+                                    ?root rssqlsail:hasMinX ?southWestLat.
+                                    ?root rssqlsail:hasMinY ?southWestLon.
+                                    ?root rssqlsail:hasMaxX ?northEstLat.
+                                    ?root rssqlsail:hasMaxY ?northEstLon
+                                }
+                            }'
                         ></semantic-search-query-constant>
 
                         <semantic-search-result-holder>
                             <semantic-search-result>
-                                <semantic-map
-                                    id='search-map'
+                                <semantic-map 
+                                    id='search-map' 
                                     query='SELECT ?subject ?wkt ?bw WHERE {
-                                        bind("1856-01-01"^^xsd:dateTime as ?date).
+                                        bind("1789-01-01"^^xsd:dateTime as ?date). 
 
                                         ?bw_id rdfs:label ?subject.
                                         ?bw crm:P1_is_identified_by ?bw_id.
-
+                                        
                                         ?bw crm:P108i_was_produced_by ?prod.
                                         ?prod crm:P4_has_time-span ?prod_ts.
                                         ?prod_ts crm:P82a_begin_of_the_begin ?start.
-
+                                        
                                         ?bw crm:P13i_was_destroyed_by ?desc.
                                         ?desc crm:P4_has_time-span ?desc_ts.
                                         ?desc_ts crm:P82b_end_of_the_end ?end.
-
+                                        
                                         filter(?date > ?start)
                                         filter(?date <= ?end)
-                                    } ORDER BY DESC(?subject) '
+                                    } ORDER BY DESC(?subject)'
                                     map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
-                                    tuple-template='<b>{{bw.value}}</b>'
+                                    tuple-template='<strong>{{bw.value}}</strong>'
                                     >
                                         <tiles-layer provider='OSM' provider-options='{}'></tiles-layer>
-                                        <tiles-layer provider='mapbox' provider-options='{"style": "light-v10"}'></tiles-layer>
+                                        <tiles-layer provider='mapbox' provider-options='{"style": "light-v10", "crs": "EPSG:3857"}'></tiles-layer>
                                     </semantic-map>
                             </semantic-search-result>
                         </semantic-search-result-holder>
 
                     </semantic-search>
                 </semantic-context>
-
             </div>
+
             <div id="navigatorContainer" class="">
                 [[> arc:Navigator ]]
             </div>
+
         </div>
   </div>
 </div>

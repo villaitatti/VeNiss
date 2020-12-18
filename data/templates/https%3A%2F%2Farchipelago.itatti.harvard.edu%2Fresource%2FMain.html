@@ -73,7 +73,7 @@
                                 <semantic-map 
                                     id='search-map' 
                                     query='SELECT ?subject ?wkt ?bw WHERE {
-                                        bind("1789-01-01"^^xsd:dateTime as ?date). 
+                                        bind("1697-01-01"^^xsd:dateTime as ?date). 
 
                                         ?bw_id rdfs:label ?subject.
                                         ?bw crm:P1_is_identified_by ?bw_id.
@@ -112,6 +112,11 @@
         <h5 id="narrativeTitle">San Secondo and the city's food supply </h5>
         <div class="or-spacer"><div class="mask"></div></div>
         <img id="narrativeImage" src="../../assets/images/narratives-food.jpg">
+        <p>
+            <mp-event-trigger id='narrative-01' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"ids":[1]}'>
+                <button class="narrativeLink">Highlight Legnaia</button>
+            </mp-event-trigger>.
+        </p>
         <p>
             Salmagundi pillage broadside pirate nipperkin holystone crimp cackle fruit sutler. Corsair rum long clothes skysail topgallant aye sloop Jolly Roger nipperkin. Aye measured fer yer chains boom maroon bring a spring upon her cable scourge of the seven seas stern spanker Gold Road. Heave down keelhaul lugger sheet chandler fire ship warp spyglass Jack Tar. Splice the main brace bounty lad weigh anchor jack belay come about lee bowsprit. Bilge pink lanyard trysail lugger capstan mutiny fluke splice the main brace. Strike colors booty tack come about pillage ho lee cog rigging. Deadlights crack <span class="narrativeLink">Jennys tea</span> cup tender black spot gangway lookout Barbary Coast bilged on her anchor pressgang. Booty case shot bilge log bowsprit wherry list flogging Jolly Roger. Pieces of Eight wherry matey snow square-rigged topsail nipper Barbary Coast knave. Spike wherry topgallant starboard lugsail hail-shot dead men tell no tales grog blossom ballast. Scurvy overhaul lugger mizzenmast trysail Sink me Blimey blow the man down lanyard.
         </p><p>

@@ -92,9 +92,8 @@
                                     map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
                                     tuple-template='<strong>{{bw.value}}</strong>'
                                     >
-                                        <tiles-layer provider='OSM' provider-options='{}'></tiles-layer>
-                                        <tiles-layer provider='mapbox' provider-options='{"style": "light-v10", "crs": "EPSG:3857"}'></tiles-layer>
-                                        <tiles-layer provider='mapbox' provider-options='{"style": "satellite-v9", "crs": "EPSG:3857"}'></tiles-layer>
+                                        <tiles-layer provider='mapbox' provider-options='{"style": "mapbox/light-v10", "crs": "EPSG:3857"}'></tiles-layer>
+                                        <tiles-layer provider='mapbox' provider-options='{"style": "gspinaci/ckirl5bkw02zc19s36rrccq8k", "crs": "EPSG:3857"}'></tiles-layer>
                                     </semantic-map>
                             </semantic-search-result>
                         </semantic-search-result-holder>
@@ -209,7 +208,7 @@
         height: calc(100vh - 88px);
         position: fixed;
         top: 88px;
-        left: 44px;
+        left: 30px;
         width: 25%;
         max-width: 500px;
         z-index: 1000000;

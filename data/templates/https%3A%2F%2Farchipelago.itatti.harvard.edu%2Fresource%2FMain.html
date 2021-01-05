@@ -87,7 +87,7 @@
                                         ?desc_ts crm:P82b_end_of_the_end ?end.
                                         
                                         filter(?date > ?start)
-                                        filter(?date <= ?end)
+                                        filter(?date < ?end)
                                     } ORDER BY DESC(?subject)'
                                     map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
                                     tuple-template='<strong>{{bw.value}}</strong>'
@@ -113,8 +113,8 @@
         <div class="or-spacer"><div class="mask"></div></div>
         <img id="narrativeImage" src="../../assets/images/narratives-food.jpg">
         <p>
-            <mp-event-trigger id='narrative-01' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"id":"1", "color":"rgba(143, 29, 33, .4)"},{"id":"2", "color":"rgba(143, 29, 33, .4)"}]}'>
-                <button class="narrativeLink">Highlight Legnaia</button>
+            <mp-event-trigger id='narrative-01' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_052", "color":"rgba(143, 29, 33, .4)"}]}'>
+                <button class="narrativeLink">Highlight Cucina</button>
             </mp-event-trigger>.
         </p>
         <p>

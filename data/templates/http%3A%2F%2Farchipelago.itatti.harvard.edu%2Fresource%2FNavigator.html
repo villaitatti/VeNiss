@@ -1,37 +1,29 @@
 <mp-event-target-template-render id='sidebar' template='{{> sidebar_tmpl}}'>
     <template id='sidebar_tmpl'>
         <div>
-            {{#each results}} 
-                <semantic-query
-                    query='
-                    SELECT * WHERE {
+            <semantic-query
+                query='
+                SELECT * WHERE {
 
-                        bind("{{subject.value}}" as ?bw_id_lbl)
-
-                        ?bw_id rdfs:label ?bw_id_lbl.
-                        ?bw crm:P1_is_identified_by ?bw_id.
-                        ?bw rdfs:label ?bw_name.
-
-                        ?sou <https://archipelago.itatti.harvard.edu/resource/BW> ?bw.
-                        ?sou a <https://archipelago.itatti.harvard.edu/resource/Source> .
-                        ?sou <https://archipelago.itatti.harvard.edu/resource/Image> ?img .
-                        ?sou rdfs:label ?lbl
-                      }
-                    '
-                    template='{{> displayer}}'>
-                        <template id='displayer'>
-                            {{log this}}
-                            <div>
-                                {{#each bindings}}
-                                    <strong>{{lbl.value}}</strong>
-                                    <br>
-                                    <img class="navigator-img" src="../../assets/images/{{img.value}}" alt="{{lbl.value}}">
-                                {{/each}}
-                            </div>
-                            <hr>
-                        </template>
-                </semantic-query>
-            {{/each}}
+                    ?sou <https://archipelago.itatti.harvard.edu/resource/BW> ?bw.
+                    ?sou a <https://archipelago.itatti.harvard.edu/resource/Source> .
+                    ?sou <https://archipelago.itatti.harvard.edu/resource/Image> ?img .
+                    ?sou rdfs:label ?lbl
+                    }
+                '
+                template='{{> displayer}}'>
+                    <template id='displayer'>
+                        {{log this}}
+                        <div>
+                            {{#each bindings}}
+                                <strong>{{lbl.value}}</strong>
+                                <br>
+                                <img class="navigator-img" src="../../assets/images/{{img.value}}" alt="{{lbl.value}}">
+                                <hr>
+                            {{/each}}
+                        </div>
+                    </template>
+            </semantic-query>
         </div>
     </template>
 </mp-event-target-template-render>

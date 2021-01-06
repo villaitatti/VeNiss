@@ -105,7 +105,7 @@ SELECT ?subject ?wkt ?bw WHERE {
                                         filter(?date < ?end)
                                     } ORDER BY DESC(?subject)'
                                     map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
-                                    tuple-template='<strong>{{bw.value}}</strong>'
+                                    tuple-template='<h3>Church of San Secondo</h3><p><b>Architect:</b> Unknown</p><p><b>Construction:</b> 1608</p><p><b>Demolition:</b> 1821</p>'
                                     >
                                         <tiles-layer provider='mapbox' provider-options='{"style": "mapbox/light-v10", "crs": "EPSG:3857"}'></tiles-layer>
                                         <tiles-layer provider='mapbox' provider-options='{"style": "gspinaci/ckirl5bkw02zc19s36rrccq8k", "crs": "EPSG:3857"}'></tiles-layer>
@@ -323,6 +323,11 @@ SELECT ?subject ?wkt ?bw WHERE {
         <p>
             But the island was not used only by travellers. Lists of mansionarie (commemorative masses) regularly held in the church of San Secondo also included some “vacation ceremonies.” This evidence would confirm what the cosmographer Father Vincenzo Maria Coronelli [PEO_46] recalled about the guest house serving as an agreeable shelter for noble and wealthy citizens looking for somewhere cool during the hottest days. In addition, archival sources reveal that over the centuries the island became the chief destination of noble Venetians even for long stays. Within San Secondo’s walls may have found refuge — but the question is still debated — Daria Querini [PEO_201], the widow of Alvise Contarini, who likely retired to the monastery after her husband’s death. She is portrayed in a precious miniature [SOU_30] by Jacometto Veneziano [PEO_36], today preserved at the Metropolitan Museum of Art of New York, in whose background the small island of San Secondo stands out prominently.
         </p>
+
+
+        <mp-event-trigger id='narrative-01-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_017", "color":"rgba(143, 29, 33, .4)"}]}'>
+            <a id="narrative-01" class="narrativeLink">kitchen</a>
+    </mp-event-trigger>
 
     </div>
 </div>

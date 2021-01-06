@@ -4,37 +4,28 @@
             {{#each results}} 
                 <semantic-query
                     query='
-                    SELECT ?bw_id_lbl ?bw_name ?construction_date_lbl ?destruction_date_lbl WHERE {
+                    SELECT * WHERE {
 
                         bind("{{subject.value}}" as ?bw_id_lbl)
-                        
+
                         ?bw_id rdfs:label ?bw_id_lbl.
                         ?bw crm:P1_is_identified_by ?bw_id.
                         ?bw rdfs:label ?bw_name.
-                        
-                        ?bw crm:P108i_was_produced_by ?construction.
-                        ?construction crm:P4_has_time-span ?construction_date.
-                        ?construction_date crm:P82a_begin_of_the_begin ?construction_date_lbl.
-                        
-                        ?bw crm:P12i_was_present_at ?function.
-                        ?function a crm:E5_Event.
-                        ?function rdfs:label ?function_lbl
-                        
-                        optional{
-                             ?bw crm:P13i_was_destroyed_by ?destruction.
-                          ?destruction crm:P4_has_time-span ?destruction_date.
-                          ?destruction_date crm:P82b_end_of_the_end ?destruction_date_lbl
-                        }
+
+                        ?sou <https://archipelago.itatti.harvard.edu/resource/BW> ?bw.
+                        ?sou a <https://archipelago.itatti.harvard.edu/resource/Source> .
+                        ?sou <https://archipelago.itatti.harvard.edu/resource/Image> ?img .
+                        ?sou rdfs:label ?lbl
                       }
                     '
                     template='{{> displayer}}'>
                         <template id='displayer'>
+                            {{log this}}
                             <div>
                                 {{#each bindings}}
-                                    <h3>{{bw_name.value}} ({{bw_id_lbl.value}})</h3>
-                                    <p><strong>Constructed:</strong> {{construction_date_lbl.value}}</p>
-                                    <p><strong>Demolished:</strong> {{destruction_date_lbl.value}}</p>
-                                    <p><strong>Function:</strong> {{function_lbl.value}}</p>
+                                    <strong>{{lbl.value}}</strong>
+                                    <br>
+                                    <img class="navigator-img" src="../../assets/images/{{img.value}}" alt="{{lbl.value}}">
                                 {{/each}}
                             </div>
                             <hr>
@@ -48,3 +39,9 @@
 
 
 </semantic-query>
+
+<style>
+    .navigator-img{
+        width: 250px;
+    }
+</style>

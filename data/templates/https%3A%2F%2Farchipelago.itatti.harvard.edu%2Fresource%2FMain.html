@@ -1,3 +1,4 @@
+<!-- try (TupleQueryResult tqr = con.prepareTupleQuery("SELECT * WHERE { ?a ?b ?c optional { ?root <http://www.researchspace.org/resource/system/sql#hasQueryId> 'q2'} } LIMIT 1").evaluate()) { -->
 <div id="mainContainer">
     <div class="maptoolbar flexrows">
         <div id="maptoolbarFirst" class="">
@@ -15,14 +16,6 @@
     <div id="mapNavigatorContainer" class="flexrows">
         <div id="mapNavigatorRow">
             <div id="mapContainer" class="">
-
-                <mp-event-proxy
-                    id='on-load-search-map'
-                    on-event-source='search-map'
-                    on-event-type='Component.Loaded'
-                    proxy-event-type='Component.TemplateUpdate'
-                    proxy-targets='["sidebar"]'>
-                </mp-event-proxy>
 
                 <!-- Event to handle bounding box search-->
                 <mp-event-proxy
@@ -57,7 +50,7 @@
                             PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
                             SELECT ?subject ?wkt WHERE {
                                 SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                    ?root rssqlsail:hasQueryId "q1".
+                                    ?root rssqlsail:hasQueryId "q2".
                                     ?root rssqlsail:hasGeo ?wkt.
                                     ?root rssqlsail:hasId ?subject.
                                     ?root rssqlsail:hasMinX ?southWestLat.
@@ -67,6 +60,28 @@
                                 }
                             }'
                         ></semantic-search-query-constant>
+
+<!--
+
+SELECT ?subject ?wkt ?bw WHERE {
+    bind("1697-01-01"^^xsd:dateTime as ?date). 
+
+    ?bw_id rdfs:label ?subject.
+    ?bw crm:P1_is_identified_by ?bw_id.
+    
+    ?bw crm:P108i_was_produced_by ?prod.
+    ?prod crm:P4_has_time-span ?prod_ts.
+    ?prod_ts crm:P82a_begin_of_the_begin ?start.
+    
+    ?bw crm:P13i_was_destroyed_by ?desc.
+    ?desc crm:P4_has_time-span ?desc_ts.
+    ?desc_ts crm:P82b_end_of_the_end ?end.
+    
+    filter(?date > ?start)
+    filter(?date < ?end)
+} ORDER BY DESC(?subject)
+
+-->
 
                         <semantic-search-result-holder>
                             <semantic-search-result>
@@ -113,31 +128,118 @@
         <div class="or-spacer"><div class="mask"></div></div>
         <img id="narrativeImage" src="../../assets/images/narratives-food.jpg">
         <p>
-            <mp-event-trigger id='narrative-01' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_052", "color":"rgba(143, 29, 33, .4)"}]}'>
-                <button class="narrativeLink">Highlight Cucina</button>
-            </mp-event-trigger>.
+
         </p>
         <p>
-            Salmagundi pillage broadside pirate nipperkin holystone crimp cackle fruit sutler. Corsair rum long clothes skysail topgallant aye sloop Jolly Roger nipperkin. Aye measured fer yer chains boom maroon bring a spring upon her cable scourge of the seven seas stern spanker Gold Road. Heave down keelhaul lugger sheet chandler fire ship warp spyglass Jack Tar. Splice the main brace bounty lad weigh anchor jack belay come about lee bowsprit. Bilge pink lanyard trysail lugger capstan mutiny fluke splice the main brace. Strike colors booty tack come about pillage ho lee cog rigging. Deadlights crack <span class="narrativeLink">Jennys tea</span> cup tender black spot gangway lookout Barbary Coast bilged on her anchor pressgang. Booty case shot bilge log bowsprit wherry list flogging Jolly Roger. Pieces of Eight wherry matey snow square-rigged topsail nipper Barbary Coast knave. Spike wherry topgallant starboard lugsail hail-shot dead men tell no tales grog blossom ballast. Scurvy overhaul lugger mizzenmast trysail Sink me Blimey blow the man down lanyard.
-        </p><p>
-            Scallywag cackle fruit reef sails weigh anchor fire ship keelhaul rigging yard poop deck. Me coxswain clipper bilged on her anchor case shot keelhaul log swab sutler. Spirits Jack Tar boom aye square-rigged strike colors chase Sea Legs dance the hempen jig. Shiver me timbers barkadeer yard cog topgallant rum pressgang chase guns Admiral of the Black. Wench hardtack keelhaul gun parrel black jack scuttle reef sails strike colors. Dead men tell no tales scuttle starboard scuppers tackle cutlass boom spike matey. Draft jack nipperkin galleon lanyard bilge rat pillage reef sails Sail ho. Boatswain port tender boom wench lateen sail case shot lee Davy Jones' Locker. Bilged on her anchor bilge water jib interloper to go on account rutters league Plate Fleet lanyard. Brig topmast aye handsomely man-of-war rum cog deadlights bring a spring upon her cable. Chain Shot aft coffer jack transom lass mutiny log sheet. Bilged on her anchor loot gangway avast transom dead men tell no tales landlubber or just lubber me pinnace.
-        </p><p>
-            Hearties bilged on her anchor lugger booty gabion matey piracy hardtack gangplank. Lanyard tender Arr bucko reef clap of thunder starboard dead men tell no tales jury mast. Ahoy holystone killick Plate Fleet bucko Blimey transom jib piracy. Overhaul Nelsons folly quarter topgallant case shot ho barque broadside man-of-war. Sea Legs rigging shrouds furl Barbary Coast lateen sail mizzenmast clap of thunder tack. Parrel piracy loaded to the gunwalls fire ship handsomely jury mast bucko scourge of the seven seas poop deck. Scallywag lee long clothes dance the hempen jig brig marooned gun bucko Privateer. Dance the hempen jig skysail parley bounty hang the jib bring a spring upon her cable heave to coffer Gold Road. Holystone cackle fruit belaying pin red ensign Sail ho yo-ho-ho black spot Jack Ketch line. Line barque heave down fore brig gally rigging Pirate Round scurvy. Chase lee doubloon smartly Spanish Main rigging weigh anchor schooner fire in the hole. Swab killick pillage black spot interloper strike colors brig scuppers warp.
-        </p><p>
-            Ho booty galleon maroon bring a spring upon her cable scourge of the seven seas code of conduct chase cackle fruit. Ahoy hands walk the plank ho list spyglass gun mizzenmast boom. Yard spanker cog trysail bowsprit furl crimp Arr barkadeer. Scuttle boom brig league mizzenmast black spot haul wind boatswain interloper. Avast piracy measured fer yer chains brig reef sails swab grapple lookout lanyard. Scuppers pillage hornswaggle code of conduct marooned take a caulk lee bilge water hail-shot. Ye grog list Davy Jones' Locker bounty quarter gunwalls scuttle jack. Hornswaggle run a shot across the bow ye bilge water lugger lass chase bilge belay. Cat o'nine tails dance the hempen jig case shot Jolly Roger skysail weigh anchor gaff poop deck Pieces of Eight. Swing the lead loaded to the gunwalls scuppers jack league brigantine gunwalls piracy knave. Lateen sail keel topmast run a shot across the bow Sink me bilge aye Plate Fleet black jack. Cog run a shot across the bow topmast hearties booty sheet long clothes tender grog blossom.
+            As several other lagoon settlements of the Venetian archipelago, the island of San Secondo was more than a spiritual space solely devoted to a contemplative life. 
+            It embodied a key site of a complex network committed to support the Dominican community itself 
+            
+            <!--[SOU_42]-->, 
+            
+            but not less involved in preserving Venice’s urban framework. 
+            Its position along one of the vital approach routes to the capital city from the mainland enabled it to take on crucial functions closely linked to the daily food and water supply of the lagoon. 
+            This provision role was reflected in the presence of a series of buildings for food production. 
+            Within the boundaries of the tiny island were situated spaces for storing and working sustainable resources, as well as infrastructure that served the monastic populace. Facilities, arranged mainly in the eastern part of the complex, included a 
+            <mp-event-trigger id='narrative-01-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_052", "color":"rgba(143, 29, 33, .4)"}]}'>
+                    <a id="narrative-01" class="narrativeLink">kitchen</a>
+            </mp-event-trigger>, 
 
-            Dance the hempen jig yo-ho-ho hempen halter Cat o'nine tails boatswain long boat square-rigged lanyard ho. Rope's end maroon landlubber or just lubber league careen chantey Corsair haul wind rutters. Bilge water pink Pirate Round tackle interloper aye quarter ahoy scallywag. Mizzenmast fore bring a spring upon her cable cutlass gibbet flogging careen reef case shot. Hardtack ballast holystone aye shrouds mizzen broadside quarterdeck Pirate Round. Quarter pillage provost aye parrel shrouds chantey chase overhaul. Crimp aft maroon gunwalls long clothes me Chain Shot scourge of the seven seas bowsprit. Reef fathom walk the plank hearties lanyard coffer man-of-war lateen sail yardarm. Warp chase guns jolly boat Chain Shot flogging reef topsail me gun. Wherry hardtack Pirate Round keel bilge water barkadeer bilge overhaul no prey, no pay. Hulk gangplank crow's nest jolly boat come about spanker prow run a rig jib. Schooner fathom hail-shot scuppers Buccaneer quarterdeck grog blossom warp strike colors.
-        </p><p>
-            Salmagundi pillage broadside pirate nipperkin holystone crimp cackle fruit sutler. Corsair rum long clothes skysail topgallant aye sloop Jolly Roger nipperkin. Aye measured fer yer chains boom maroon bring a spring upon her cable scourge of the seven seas stern spanker Gold Road. Heave down keelhaul lugger sheet chandler fire ship warp spyglass Jack Tar. Splice the main brace bounty lad weigh anchor jack belay come about lee bowsprit. Bilge pink lanyard trysail lugger capstan mutiny fluke splice the main brace. Strike colors booty tack come about pillage ho lee cog rigging. Deadlights crack Jennys tea cup tender black spot gangway lookout Barbary Coast bilged on her anchor pressgang. Booty case shot bilge log bowsprit wherry list flogging Jolly Roger. Pieces of Eight wherry matey snow square-rigged topsail nipper Barbary Coast knave. Spike wherry topgallant starboard lugsail hail-shot dead men tell no tales grog blossom ballast. Scurvy overhaul lugger mizzenmast trysail Sink me Blimey blow the man down lanyard.
-        </p><p>
-            Scallywag cackle fruit reef sails weigh anchor fire ship keelhaul rigging yard poop deck. Me coxswain clipper bilged on her anchor case shot keelhaul log swab sutler. Spirits Jack Tar boom aye square-rigged strike colors chase Sea Legs dance the hempen jig. Shiver me timbers barkadeer yard cog topgallant rum pressgang chase guns Admiral of the Black. Wench hardtack keelhaul gun parrel black jack scuttle reef sails strike colors. Dead men tell no tales scuttle starboard scuppers tackle cutlass boom spike matey. Draft jack nipperkin galleon lanyard bilge rat pillage reef sails Sail ho. Boatswain port tender boom wench lateen sail case shot lee Davy Jones' Locker. Bilged on her anchor bilge water jib interloper to go on account rutters league Plate Fleet lanyard. Brig topmast aye handsomely man-of-war rum cog deadlights bring a spring upon her cable. Chain Shot aft coffer jack transom lass mutiny log sheet. Bilged on her anchor loot gangway avast transom dead men tell no tales landlubber or just lubber me pinnace.
-        </p><p>
-            Hearties bilged on her anchor lugger booty gabion matey piracy hardtack gangplank. Lanyard tender Arr bucko reef clap of thunder starboard dead men tell no tales jury mast. Ahoy holystone killick Plate Fleet bucko Blimey transom jib piracy. Overhaul Nelsons folly quarter topgallant case shot ho barque broadside man-of-war. Sea Legs rigging shrouds furl Barbary Coast lateen sail mizzenmast clap of thunder tack. Parrel piracy loaded to the gunwalls fire ship handsomely jury mast bucko scourge of the seven seas poop deck. Scallywag lee long clothes dance the hempen jig brig marooned gun bucko Privateer. Dance the hempen jig skysail parley bounty hang the jib bring a spring upon her cable heave to coffer Gold Road. Holystone cackle fruit belaying pin red ensign Sail ho yo-ho-ho black spot Jack Ketch line. Line barque heave down fore brig gally rigging Pirate Round scurvy. Chase lee doubloon smartly Spanish Main rigging weigh anchor schooner fire in the hole. Swab killick pillage black spot interloper strike colors brig scuppers warp.
-        </p><p>
-            Ho booty galleon maroon bring a spring upon her cable scourge of the seven seas code of conduct chase cackle fruit. Ahoy hands walk the plank ho list spyglass gun mizzenmast boom. Yard spanker cog trysail bowsprit furl crimp Arr barkadeer. Scuttle boom brig league mizzenmast black spot haul wind boatswain interloper. Avast piracy measured fer yer chains brig reef sails swab grapple lookout lanyard. Scuppers pillage hornswaggle code of conduct marooned take a caulk lee bilge water hail-shot. Ye grog list Davy Jones' Locker bounty quarter gunwalls scuttle jack. Hornswaggle run a shot across the bow ye bilge water lugger lass chase bilge belay. Cat o'nine tails dance the hempen jig case shot Jolly Roger skysail weigh anchor gaff poop deck Pieces of Eight. Swing the lead loaded to the gunwalls scuppers jack league brigantine gunwalls piracy knave. Lateen sail keel topmast run a shot across the bow Sink me bilge aye Plate Fleet black jack. Cog run a shot across the bow topmast hearties booty sheet long clothes tender grog blossom.
-        </p><p>
-            Dance the hempen jig yo-ho-ho hempen halter Cat o'nine tails boatswain long boat square-rigged lanyard ho. Rope's end maroon landlubber or just lubber league careen chantey Corsair haul wind rutters. Bilge water pink Pirate Round tackle interloper aye quarter ahoy scallywag. Mizzenmast fore bring a spring upon her cable cutlass gibbet flogging careen reef case shot. Hardtack ballast holystone aye shrouds mizzen broadside quarterdeck Pirate Round. Quarter pillage provost aye parrel shrouds chantey chase overhaul. Crimp aft maroon gunwalls long clothes me Chain Shot scourge of the seven seas bowsprit. Reef fathom walk the plank hearties lanyard coffer man-of-war lateen sail yardarm. Warp chase guns jolly boat Chain Shot flogging reef topsail me gun. Wherry hardtack Pirate Round keel bilge water barkadeer bilge overhaul no prey, no pay. Hulk gangplank crow's nest jolly boat come about spanker prow run a rig jib. Schooner fathom hail-shot scuppers Buccaneer quarterdeck grog blossom warp strike colors.
+            a 
+
+            <mp-event-trigger id='narrative-02-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_051", "color":"rgba(143, 29, 33, .4)"}]}'>
+                <a class="narrativeLink">cellar (càneva)</a>
+            </mp-event-trigger>
+            
+             for storing wine, a
+             
+             <mp-event-trigger id='narrative-03-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_026", "color":"rgba(143, 29, 33, .4)"}]}'>
+                <a class="narrativeLink">wash house</a>
+            </mp-event-trigger>
+            
+            for laundry and washing dishes, with sinks and cooking ranges, and a 
+            
+            <mp-event-trigger id='narrative-04-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_034", "color":"rgba(143, 29, 33, .4)"}]}'>
+                <a class="narrativeLink">woodshed</a>
+            </mp-event-trigger>
+            
+            with a large stockpile of fireplace and cooking stove wood. 
+            
+            A 
+            
+            <mp-event-trigger id='narrative-05-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_008", "color":"rgba(143, 29, 33, .4)"}]}'>
+                <a class="narrativeLink">wellhead</a>
+            </mp-event-trigger>
+            
+             located in the courtyard behind the monastery provided fresh water. Next to the kitchen, a large squared room served as a 
+            
+             <mp-event-trigger id='narrative-06-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_053", "color":"rgba(143, 29, 33, .4)"}]}'>
+                <a class="narrativeLink">refectory</a>
+            </mp-event-trigger>
+            
+             for the friars to convene together and eat their meals.
         </p>
+
+        <p>
+            A detailed list of the monastery food expenses 
+            
+            <!--TODO             [SOU_167] -->
+            <a class="narrativeLink">food expenses </a>
+            
+            
+
+            
+            , 
+            compiled from 1 May 1642 to 21 February 1645, 
+            gives us a rare glimpse into the everyday life of the lagoon community. 
+            Father Giacomo from Brescia [PEO_205] was asked by the prior Stefano Bellaveri [PEO_204] to annotate, 
+            day by day, the meals served every morning and night, 
+            their cost, as well as the number of “mouths” to feed. Soups, vegetables and cheeses, 
+            but above all fish, were regularly provided to ecclesiastics but also to their numerous guests.
+        </p>
+
+        <p>
+            Venetian nunneries and monasteries were, in fact, an integral part of Venetian social and cultural life, 
+            as well as the urban and economic essence of the everyday city. 
+            San Secondo held a special place in notions of both monastic hospitality and economy. 
+            At the far north-eastern tip of the island a public cavàna (roofed boat slip) [SS_BLDG_014] 
+            offered shelter to passengers in transit during storms. This shed was much 
+            frequented by Venetians and foreigners alike, so much so that the Dominican friars in the mid-seventeenth 
+            century decided to build a second boathouse to their private vessels, 
+            which was designed by the architect Tommaso Temanza [PEO_038]. 
+        </p>
+
+        <p>
+            The public cavàna was surmounted by a lavish guest house [SS_BLDG_025] 
+            used to lodge any passengers traveling within the lagoon. 
+            A large number of guests were lodged and fed every day by the friars who, 
+            on 23 December 1732, were exempted by the office of the Milizia da Mar [PEO_87] 
+            from the payment of the “greengrocers’ tax” [EVE_54] because of the inconveniences 
+            they experience daily. The guest house afforded food and shelter not only to sailors, fishermen, and 
+            merchants, but also, and perhaps more notably, to papal nuncios, foreign ambassadors, and even royalty in 
+            transit. Foremost among the eminent guests was the new French monarch Henry III [PEO_206] who was hosted 
+            in the island on 18 July 1574, on his way back from Poland to France.
+        </p>
+
+        <p>
+        But the island was not used only by travellers. Lists of mansionarie (commemorative masses) regularly held in the church of San Secondo also included some “vacation ceremonies.” This evidence would confirm what the cosmographer Father Vincenzo Maria Coronelli [PEO_46] recalled about the guest house serving as an agreeable shelter for noble and wealthy citizens looking for somewhere cool during the hottest days. In addition, archival sources reveal that over the centuries the island became the chief destination of noble Venetians even for long stays. Within San Secondo’s walls may have found refuge — but the question is still debated — Daria Querini [PEO_201], the widow of Alvise Contarini, who likely retired to the monastery after her husband’s death. She is portrayed in a precious miniature [SOU_30] by Jacometto Veneziano [PEO_36], today preserved at the Metropolitan Museum of Art of New York, in whose background the small island of San Secondo stands out prominently.
+        </p>        
+        <!--UNTIL HERE-->
+        <p>
+        In addition to public facilities and commodities, vast green areas marked the adjacent open spaces of the sacred complex. The island was covered by orderly vegetable gardens, charming orchards, and delicate gardens including a small laurel woods that “seems to be dedicated to the Muses», as prior Domenico Codagli [PEO_41] described in his Historia dell’isola e monasterio di San Secondo di Venetia (1609) [SOU_168]. The pages dedicated to the depiction of the monastic greenery are a celebration of colour and aromas. The friar minutely listed all plant species embellishing the island’s open spaces. Both the garden facing the lagoon [SS_BLDG_007] and the one extending behind the monastery [SS_BLDG_010] were covered with high-growing plants — such as willows, elderberries, and cypresses — and fruit trees of all sorts and varieties: pears, apples, quinces, peaches, plums, figs, almond trees, pomegranates, but also jujubes, olive trees, stones and, of course, vineyards. In the vegetable garden that occupied most of the remaining space [SS_BLDG_011], among the vegetables pumpkins, eggplants, watermelons, and melons standed out. Moreover, there were medicinal and aromatic herbs including mint, rosemary, and mandrake. Finally, tulips, hyacinths, roses, jasmine, and carnations were joy for the eyes.
+        </p>
+
+        <p>
+        Codagli’s text is a passionate description, sometimes of praise. His engrossment in detail conveys the prior’s intimate bond to the site, in addition to his clear understanding of the significance of the island’s green areas in the everyday life activities of the city. Nevertheless, the abundance and luxuriance of these spaces are confirmed by a 1626 list of all friars’ plants and herbs, which is preserved in the private archive of the religious community [SOU_170].  
+        </p>
+
+        <p>
+        Fruits, vegetables, and horticultural plants were instrumental in securing San Secondo’s food independence of its community, while also contributing to the city’s general supply. Sixteenth-century tenant farmers’ contracts confirm the extensive use of the island’s vegetable garden for cultivations destined to be sold outside its precincts, thereby rejecting the idea of religious life as a spiritual and secluded world.
+        </p>
+
+        <p>
+            But the island was not used only by travellers. Lists of mansionarie (commemorative masses) regularly held in the church of San Secondo also included some “vacation ceremonies.” This evidence would confirm what the cosmographer Father Vincenzo Maria Coronelli [PEO_46] recalled about the guest house serving as an agreeable shelter for noble and wealthy citizens looking for somewhere cool during the hottest days. In addition, archival sources reveal that over the centuries the island became the chief destination of noble Venetians even for long stays. Within San Secondo’s walls may have found refuge — but the question is still debated — Daria Querini [PEO_201], the widow of Alvise Contarini, who likely retired to the monastery after her husband’s death. She is portrayed in a precious miniature [SOU_30] by Jacometto Veneziano [PEO_36], today preserved at the Metropolitan Museum of Art of New York, in whose background the small island of San Secondo stands out prominently.
+        </p>
+
     </div>
 </div>
 

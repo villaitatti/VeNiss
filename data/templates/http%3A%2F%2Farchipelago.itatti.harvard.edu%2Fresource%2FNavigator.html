@@ -2,25 +2,23 @@
     <template id='sidebar_tmpl'>
         <div>
             <semantic-query
-                query='
+                    query='
                 SELECT * WHERE {
                     ?sou a <https://archipelago.itatti.harvard.edu/resource/Source> .
                     ?sou <https://archipelago.itatti.harvard.edu/resource/Image> ?img .
                     ?sou rdfs:label ?lbl
                     }
                 '
-                template='{{> displayer}}'>
-                    <template id='displayer'>
-                        {{log this}}
-                        <div>
-                            {{#each bindings}}
-                                <strong>{{lbl.value}}</strong>
-                                <br>
-                                <img class="navigator-img" src="../../assets/images/{{img.value}}" alt="{{lbl.value}}">
-                                <hr>
-                            {{/each}}
-                        </div>
-                    </template>
+                    template='{{> displayer}}'>
+                <template id='displayer'>
+                    {{log this}}
+                    <div class="navigatorEntity">
+                        {{#each bindings}}
+                        <div class="navigatorTitles">{{lbl.value}}</div>
+                        <img class="navigator-img" src="../../assets/images/{{img.value}}" alt="{{lbl.value}}">
+                        {{/each}}
+                    </div>
+                </template>
             </semantic-query>
         </div>
     </template>

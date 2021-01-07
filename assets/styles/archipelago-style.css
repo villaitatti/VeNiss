@@ -116,6 +116,36 @@ h1, h2, h3, h4, h5, h6 {
     padding: 5px;
 }
 
+#maptoolbarTitle {
+    margin-left: 10px;
+    display: inline-block;
+}
+
 .narrativeDescription, .narrativeParagraph {
     font-weight: 200;
+}
+
+.navigatorTitles{
+    font-family: 'Source Sans Pro', serif;
+    margin: 5px 0 5px 0;
+    font-weight:300px;
+}
+
+.navigatorEntity hr{
+    margin-top: 8px;
+    margin-bottom: 8px;
+    color: var(--color-light);
+    width: 250px;
+    margin-left: 0;
+    border-left: 1px;
+    border-color: var(--color-dark);
+}
+
+#navigatorContainer {
+    background-color: #f6f1e1;
+}
+
+.navigator-img {
+    border: 1px solid var(--color-dark);
+    margin-bottom: 30px;
 }

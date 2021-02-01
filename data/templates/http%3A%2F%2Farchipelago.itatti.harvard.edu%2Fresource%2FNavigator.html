@@ -1,5 +1,24 @@
 <mp-event-target-template-render id='sidebar' template='{{> sidebar_tmpl}}'>
     <template id='sidebar_tmpl'>
+        {{#if showbasemaps}}
+            <h2>Basemaps</h2>
+            <mp-event-trigger id='toggle-basemap-01' type='SemanticMap.ShowBasemap' targets='["search-map"]' data='{"selectedProvider": 2}'>
+                <p id="narrative-01" class="narrativeLink">Light</p>
+            </mp-event-trigger>
+            <mp-event-trigger id='toggle-basemap-02' type='SemanticMap.ShowBasemap' targets='["search-map"]' data='{"selectedProvider": 0}'>
+                <p id="narrative-01" class="narrativeLink">Satellite</p>
+            </mp-event-trigger>
+            <mp-event-trigger id='toggle-basemap-03' type='SemanticMap.ShowBasemap' targets='["search-map"]' data='{"selectedProvider": 1}'>
+                <p id="narrative-01" class="narrativeLink">Custom</p>
+            </mp-event-trigger>
+            <mp-event-trigger id='toggle-basemap-04' type='SemanticMap.ShowBasemap' targets='["search-map"]' data='{"selectedProvider": 3}'>
+                <p id="narrative-01" class="narrativeLink">Comune Di Venezia (Ortofoto)</p>
+            </mp-event-trigger>
+        {{else if showhistoricalmaps}}
+            <h2>Historical Maps</h2>
+        {{else if showoptions}}
+            <h2>Options</h2>
+        {{else}}
         <div>
             <semantic-query
                     query='
@@ -21,6 +40,7 @@
                 </template>
             </semantic-query>
         </div>
+        {{/if}}
     </template>
 </mp-event-target-template-render>
 

@@ -4,9 +4,18 @@
         <div id="maptoolbarFirst" class="">
             <h6 id="maptoolbarTitle">Interactive Narrative</h6>
             <div class="pull-right">
-                <i id="basemapsBtn" class="fa fa-globe toolbarIcon"></i>
-                <i id="historicalmapsBtn" class="fa fa-map toolbarIcon"></i>
-                <i id="optionsBtn" class="fa fa-cogs toolbarIcon"></i>
+                <mp-event-trigger id='event-trigger2' type='Component.TemplateUpdate' data='{"showbasemaps": true}' targets='["sidebar"]'>
+                    <i id="basemapsBtn" class="fa fa-globe toolbarIcon"></i>
+                </mp-event-trigger>
+                <mp-event-trigger id='event-trigger3' type='Component.TemplateUpdate' data='{"showhistoricalmaps": true}' targets='["sidebar"]'>
+                    <i id="historicalmapsBtn" class="fa fa-map toolbarIcon"></i>
+                </mp-event-trigger>
+                <mp-event-trigger id='event-trigger4' type='Component.TemplateUpdate' data='{"showoptions": true}' targets='["sidebar"]'>
+                    <i id="optionsBtn" class="fa fa-cogs toolbarIcon"></i>
+                </mp-event-trigger>
+                <mp-event-trigger id='event-trigger5' type='Component.TemplateUpdate' data='{"showentities": true}' targets='["sidebar"]'>
+                    <i id="entitiesBtn" class="fa fa-id-card toolbarIcon"></i>
+                </mp-event-trigger>
             </div>
         </div>
         <div id="maptoolbarSecond" class="">
@@ -107,13 +116,12 @@
                                         map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
                                         tuple-template='<h3>Church of San Secondo</h3><p><b>Architect:</b> Unknown</p><p><b>Construction:</b> 1608</p><p><b>Demolition:</b> 1821</p>'
                                 >
-                                    <tiles-layer provider='mapbox' provider-options='{"style": "gspinaci/ckirl5bkw02zc19s36rrccq8k", "crs": "EPSG:3857"}'></tiles-layer>
-                                    <tiles-layer provider='mapbox' provider-options='{"style": "mapbox/light-v10", "crs": "EPSG:3857"}'></tiles-layer>
-                                    <tiles-layer provider='mapbox' provider-options='{"style": "mapbox/satellite-v9", "crs": "EPSG:3857"}'></tiles-layer>
-                                </semantic-map>
+                                <tiles-layer provider='mapbox' provider-options='{"style": "mapbox/satellite-v9", "crs": "EPSG:3857"}'></tiles-layer>
+                                <tiles-layer provider='mapbox' provider-options='{"style": "gspinaci/ckirl5bkw02zc19s36rrccq8k", "crs": "EPSG:3857"}'></tiles-layer>
+                                <tiles-layer provider='mapbox' provider-options='{"style": "mapbox/light-v10", "crs": "EPSG:3857"}'></tiles-layer>
+                                <tiles-layer provider='ComuneDiVenezia''></tiles-layer>
                             </semantic-search-result>
                         </semantic-search-result-holder>
-
                     </semantic-search>
                 </semantic-context>
             </div>
@@ -471,6 +479,10 @@
         height: 25px;
         border-radius: 125px / 12px;
         box-shadow: 0 0 8px black;
+    }
+
+    .toolbarIcon {
+        cursor: pointer;
     }
 
 

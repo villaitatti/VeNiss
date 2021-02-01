@@ -3,16 +3,28 @@
         {{#if showbasemaps}}
             <h2>Basemaps</h2>
             <mp-event-trigger id='toggle-basemap-01' type='SemanticMap.ShowBasemap' targets='["search-map"]' data='{"selectedProvider": 2}'>
-                <p id="narrative-01" class="narrativeLink">Light</p>
+                <div id="narrative-01">
+                    <img class="basemapsThumbnails" src="../../assets/images/basemaps_thumbnails_light.jpg">
+                    <p class="narrativeLink">Light</p>
+                </div>
             </mp-event-trigger>
             <mp-event-trigger id='toggle-basemap-02' type='SemanticMap.ShowBasemap' targets='["search-map"]' data='{"selectedProvider": 0}'>
-                <p id="narrative-01" class="narrativeLink">Satellite</p>
+                <div id="narrative-02">
+                    <img class="basemapsThumbnails" src="../../assets/images/basemaps_thumbnails_satellite.jpg">
+                    <p class="narrativeLink">Satellite</p>
+                </div>
             </mp-event-trigger>
             <mp-event-trigger id='toggle-basemap-03' type='SemanticMap.ShowBasemap' targets='["search-map"]' data='{"selectedProvider": 1}'>
-                <p id="narrative-01" class="narrativeLink">Custom</p>
+                <div id="narrative-03">
+                <img class="basemapsThumbnails" src="../../assets/images/basemaps_thumbnails_custom.jpg">
+                <p class="narrativeLink">Custom</p>
+                </div>
             </mp-event-trigger>
             <mp-event-trigger id='toggle-basemap-04' type='SemanticMap.ShowBasemap' targets='["search-map"]' data='{"selectedProvider": 3}'>
-                <p id="narrative-01" class="narrativeLink">Comune Di Venezia (Ortofoto)</p>
+                <div id="narrative-04">
+                <img class="basemapsThumbnails" src="../../assets/images/basemaps_thumbnails_ortofoto.jpg">
+                <p class="narrativeLink">Comune Di Venezia (Ortofoto)</p>
+                </div>
             </mp-event-trigger>
         {{else if showhistoricalmaps}}
             <h2>Historical Maps</h2>

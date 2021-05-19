@@ -1,0 +1,115 @@
+
+PREFIX sp: <http://spinrdf.org/sp#>
+PREFIX spin: <http://spinrdf.org/spin#>
+PREFIX spl: <http://spinrdf.org/spl#>
+PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
+PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
+PREFIX ephedra: <http://www.researchspace.org/resource/system/ephedra#>
+PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
+
+:geosql a ephedra:Service ;
+	<http://www.openrdf.org/config/sail#sailType> "researchspace:SQL" ;
+	rdfs:label "A wrapper for the SQL test service." ;
+	ephedra:hasSPARQLPattern (
+		[
+			sp:subject :_results ;
+			sp:predicate rssqlsail:hasQueryId ;
+			sp:object :_queryId
+		]
+		[
+			sp:subject :_results ;
+			sp:predicate archipelago:wkt ;
+			sp:object :_wkt
+		]
+		[
+			sp:subject :_results ;
+			sp:predicate archipelago:minX ;
+			sp:object :_MinX
+		]
+		[
+			sp:subject :_results ;
+			sp:predicate archipelago:minY ;
+			sp:object :_MinY
+		]
+		[
+			sp:subject :_results ;
+			sp:predicate archipelago:maxX ;
+			sp:object :_MaxX
+		]
+		[
+			sp:subject :_results ;
+			sp:predicate archipelago:maxY ;
+			sp:object :_MaxY
+		]
+		[
+			sp:subject :_results ;
+			sp:predicate archipelago:subject ;
+			sp:object :_subject
+		]
+	) ;
+	spin:constraint
+	[
+		a spl:Argument ;
+		rdfs:comment "query ID" ;
+		spl:predicate :_queryId ;
+		spl:valueType xsd:string
+    ] ;
+  	spin:constraint
+	[
+		a spl:Argument ;
+		rdfs:comment "Minimum X" ;
+		spl:predicate :_MinX ;
+		spl:valueType xsd:float
+    ] ;
+  	spin:constraint
+	[
+		a spl:Argument ;
+		rdfs:comment "Minimum Y" ;
+		spl:predicate :_MinY ;
+		spl:valueType xsd:float
+    ] ;
+  	spin:constraint
+	[
+		a spl:Argument ;
+		rdfs:comment "Maximum X" ;
+		spl:predicate :_MaxX ;
+		spl:valueType xsd:float
+    ] ;
+  	spin:constraint
+	[
+		a spl:Argument ;
+		rdfs:comment "Maximum Y" ;
+		spl:predicate :_MaxY ;
+		spl:valueType xsd:float
+    ] ;
+	spin:column
+	[
+		a spin:Column ;
+		rdfs:comment "Row index: will be assigned a random blank node" ;
+		spl:predicate :_results ;
+		spl:valueType rdfs:Resource
+	] ;
+	spin:column
+	[
+		a spin:Column ;
+		rdfs:comment "Geom" ;
+		spl:predicate :_wkt ;
+		spl:valueType xsd:string
+	] ;
+	spin:column
+	[
+		a spin:Column ;
+		rdfs:comment "Builtwork ID" ;
+		spl:predicate :_subject ;
+		spl:valueType xsd:string
+	] ;
+	rssqlsail:includesSQLQuery
+	[
+		rssqlsail:hasQueryId "base" ;
+		rssqlsail:text "select distinct \"BW_ID\" as subject, ST_AsText(geo) as wkt from archipelago_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
+	] ;
+	rssqlsail:includesSQLQuery
+	[
+		rssqlsail:hasQueryId "test" ;
+		rssqlsail:text "select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_buildings_1697 union select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_island_1697 union select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_openspaces_1697"
+	] .

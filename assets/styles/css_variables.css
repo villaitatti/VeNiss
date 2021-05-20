@@ -71,4 +71,6 @@
     --color-entity-icon-actor: #45626F;
     --color-entity-icon-type: #857C70;
     --color-entity-icon-resource: #506B9B;
+
+    --breadcrumb-height: 30px;
 }

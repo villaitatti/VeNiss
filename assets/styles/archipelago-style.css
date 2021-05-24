@@ -154,3 +154,16 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     cursor: pointer;
 }
+
+#navigatorContainer h2 {
+    font-size: 20pt;
+}
+
+#navigatorContainer label {
+    font-family: 'Source Sans Pro' !important;
+    font-weight: lighter !important;
+}
+
+#navigatorContainer input {
+    margin-top: 5px;
+}

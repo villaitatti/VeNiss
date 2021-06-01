@@ -90,16 +90,17 @@
 
                                             filter(?date > ?start)
                                             filter(?date < ?end)
-                                        } ORDER BY DESC(?subject)'
-                                        map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
+                                        } ORDER BY DESC(?subject)'1366541.191682 5700030.969421    1387592.482988 5674257.463916
+                                        map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
                                         tuple-template='<h3>Church of San Secondo</h3><p><b>Architect:</b> Unknown</p><p><b>Construction:</b> 1608</p><p><b>Demolition:</b> 1821</p>'
-                                        fixZoomLevel='18'
+                                        fix-zoom-level='17'
+                                        fix-center='[1370000.000000000, 5692800.000000000]'
                                         >
-                                    <tiles-layer identifier='comune_venezia' name='Comune di Venezia (Ortofoto)' level='basemap' provider='ComuneDiVenezia'></tiles-layer>
                                     <tiles-layer identifier='light' name='Light' level='basemap' provider='mapbox' provider-options='{"style": "mapbox/light-v10"}'></tiles-layer>
                                     <tiles-layer identifier='satellite' name='Satellite' level='basemap' provider='mapbox' provider-options='{"style": "mapbox/satellite-v9"}'></tiles-layer>
                                     <tiles-layer identifier='custom' name='Custom' level='basemap' provider='mapbox' provider-options='{"style": "gspinaci/ckirl5bkw02zc19s36rrccq8k"}'></tiles-layer>
-                                    
+                                    <tiles-layer identifier='comune_venezia' name='Comune di Venezia (Ortofoto)' level='basemap' provider='ComuneDiVenezia'></tiles-layer>
+
                                     <tiles-layer identifier='SS_IGM_1945' name='SS_IGM_1945' level='overlay' provider='mapboxRasterTiles' provider-options='{"tileset_id":"gspinaci.1fedppsy"}'></tiles-layer>
                                     <tiles-layer identifier='SS_Orthophoto_1982' name='SS_Orthophoto_1982' level='overlay' provider='mapboxRasterTiles' provider-options='{"tileset_id":"gspinaci.4g3g986z"}'></tiles-layer>
                                     <tiles-layer identifier='SS_Survey_1801' name='SS_Survey_1801' level='overlay' provider='mapboxRasterTiles' provider-options='{"tileset_id":"gspinaci.2jpz15av"}'></tiles-layer>

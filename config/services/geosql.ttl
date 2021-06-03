@@ -111,5 +111,5 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 	rssqlsail:includesSQLQuery
 	[
 		rssqlsail:hasQueryId "test" ;
-		rssqlsail:text "select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_buildings_1697 union select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_island_1697 union select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_openspaces_1697"
+		rssqlsail:text "select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_buildings_1697"
 	] .

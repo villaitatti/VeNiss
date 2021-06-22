@@ -141,9 +141,11 @@ h1, h2, h3, h4, h5, h6 {
     border-color: var(--color-dark);
 }
 
+/*
 #navigatorContainer {
     background-color: #f6f1e1;
 }
+*/
 
 .navigator-img {
     border: 1px solid var(--color-dark);
@@ -157,11 +159,16 @@ h1, h2, h3, h4, h5, h6 {
 
 #navigatorContainer h2 {
     font-size: 20pt;
+    margin-top: 0px;
+    font-family: 'Source Sans Pro';
+}
+
+#navigatorContainer > h2, h3 {
+    font-family: 'Source Sans Pro'
 }
 
 #navigatorContainer label {
     font-family: 'Source Sans Pro' !important;
-    font-weight: lighter !important;
     margin-bottom: 5px !important;
     display: inline-block;
 }
@@ -169,3 +176,96 @@ h1, h2, h3, h4, h5, h6 {
 #navigatorContainer input {
     margin-top: 5px;
 }
+
+#mapControlsTitle {
+    margin-bottom: 10px;
+    font-weight: 200;
+    font-size: 20pt;
+}
+
+.draggableLayer {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 3px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    -webkit-box-shadow: 1px 1px 3px 0px rgb(137 137 137 / 30%);
+    box-shadow: 1px 1px 3px 0px rgb(137 137 137 / 30%);
+    backdrop-filter: blur(3px);
+    height: 80px;
+    width: 98%;
+    margin-left: 1%;
+    background-color:rgba(255, 255, 255, 0.7)
+}
+
+.mapLayersTitle {
+    margin-left: 10px;
+    font-weight: 100;
+}
+
+#tilesLayerSeparator {
+    margin: 5px !important;
+}
+
+.layerName {
+    font-weight: 500;
+}
+
+.layersContainer {
+    background-color: white;
+    padding: 5px;
+    border-radius: 3px;
+    box-shadow: 2px 3px 9px 0px #2929294d;
+}
+
+.layerThumbnail {
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    height: 60px;
+    width: 60px;
+    object-fit: cover;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+
+.opacitySlider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(255,250,250, 0.00), rgb(197, 89, 0));
+    outline: none;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  
+  .opacitySlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #ddd;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    background-image: linear-gradient(white, white), linear-gradient(to right, rgba(255,250,250, 0.00), rgb(0,60,51));
+    background-attachment: fixed, fixed;
+    background-clip: padding-box, border-box;
+  }
+  
+  .opacitySlider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background: #ddd;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    background-image: linear-gradient(white, white), linear-gradient(to right, rgba(255,250,250, 0.00), rgb(0,60,51));
+    background-attachment: fixed, fixed;
+    background-clip: padding-box, border-box;
+  }
+
+  .layerLevelLabel {
+      font-size: 10pt;
+      font-weight: lighter;
+  }

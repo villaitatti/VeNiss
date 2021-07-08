@@ -15,8 +15,8 @@
     reposail:sailImpl [
       sail:sailType "researchspace:SQLSail" ;
       ephedra:serviceURL "jdbc:postgresql://vitgeo.cjaiad67yr5p.eu-central-1.rds.amazonaws.com:5432/" ;
-      rsrepo:username "${ARCHIPELAGO_USERNAME}" ;
-      rsrepo:password "${ARCHIPELAGO_PASSWORD}" ;
+      rsrepo:username "postgres" ;
+      rsrepo:password "xBxH7QUar7r3" ;
       ephedra:implementsService :geosql ;
     ] ;
   ] .

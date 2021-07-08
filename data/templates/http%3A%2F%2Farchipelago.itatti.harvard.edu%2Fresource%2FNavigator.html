@@ -2,57 +2,9 @@
     <template id='sidebar_tmpl'>
         {{#if showbasemaps}}
             <h2>Basemaps</h2>
-            <mp-event-trigger id='toggle-basemap-01' type='SemanticMap.ReplaceBasemap' targets='["search-map"]' data='{"selectedBasemap": "light"}'>
-                <div id="narrative-01">
-                    <img class="basemapsThumbnails" src="../../assets/images/basemaps_thumbnails_light.jpg">
-                    <p class="narrativeLink">Light</p>
-                </div>
-            </mp-event-trigger>
-            <mp-event-trigger id='toggle-basemap-02' type='SemanticMap.ReplaceBasemap' targets='["search-map"]' data='{"selectedBasemap": "satellite"}'>
-                <div id="narrative-02">
-                    <img class="basemapsThumbnails" src="../../assets/images/basemaps_thumbnails_satellite.jpg">
-                    <p class="narrativeLink">Satellite</p>
-                </div>
-            </mp-event-trigger>
-            <mp-event-trigger id='toggle-basemap-03' type='SemanticMap.ReplaceBasemap' targets='["search-map"]' data='{"selectedBasemap": "custom"}'>
-                <div id="narrative-03">
-                <img class="basemapsThumbnails" src="../../assets/images/basemaps_thumbnails_custom.jpg">
-                <p class="narrativeLink">Custom</p>
-                </div>
-            </mp-event-trigger>
-            <mp-event-trigger id='toggle-basemap-04' type='SemanticMap.ReplaceBasemap' targets='["search-map"]' data='{"selectedBasemap": "comune_venezia"}'>
-                <div id="narrative-04">
-                <img class="basemapsThumbnails" src="../../assets/images/basemaps_thumbnails_ortofoto.jpg">
-                <p class="narrativeLink">Comune Di Venezia (Ortofoto)</p>
-                </div>
-            </mp-event-trigger>
+            
         {{else if showhistoricalmaps}}
             <h2>Historical Maps</h2>
-
-            <mp-event-trigger id='toggle-historicalmap-01' type='SemanticMap.ReplaceOverlay' targets='["search-map"]' data='{"selectedOverlay": "SS_IGM_1945"}'>
-                <div id="narrative-01">
-                    <img class="basemapsThumbnails" src="../../assets/images/SS_IGM_1945.jpg">
-                    <p class="narrativeLink">SS_IGM_1945</p>
-                </div>
-            </mp-event-trigger>
-            <mp-event-trigger id='toggle-historicalmap-02' type='SemanticMap.ReplaceOverlay' targets='["search-map"]' data='{"selectedOverlay": "SS_Orthophoto_1982"}'>
-                <div id="narrative-02">
-                    <img class="basemapsThumbnails" src="../../assets/images/SS_Orthophoto_1982.jpg">
-                    <p class="narrativeLink">SS_Orthophoto_1982</p>
-                </div>
-            </mp-event-trigger>
-            <mp-event-trigger id='toggle-historicalmap-03' type='SemanticMap.ReplaceOverlay' targets='["search-map"]' data='{"selectedOverlay": "SS_Survey_1801"}'>
-                <div id="narrative-03">
-                <img class="basemapsThumbnails" src="../../assets/images/SS_Survey_1801.jpg">
-                <p class="narrativeLink">SS_Survey_1801</p>
-                </div>
-            </mp-event-trigger>
-            <mp-event-trigger id='toggle-historicalmap-04' type='SemanticMap.ReplaceOverlay' targets='["search-map"]' data='{"selectedOverlay": "1763_Polynomial2_NN"}'>
-                <div id="narrative-04">
-                <img class="basemapsThumbnails" src="../../assets/images/1763_Polynomial2_NN.jpg">
-                <p class="narrativeLink">1763_Polynomial2_NN</p>
-                </div>
-            </mp-event-trigger>
 
 
         {{else if showoptions}}

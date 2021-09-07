@@ -36,7 +36,7 @@
                     </mp-event-proxy>
     
                     <!-- Structured search with geospatial -->
-                    <semantic-context repository='geo'>
+                    <semantic-context repository='ephedra'>
                         <semantic-search>
     
                             <semantic-search-query-constant
@@ -59,13 +59,15 @@
                                     PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
                                     PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
                                     SELECT ?subject ?wkt WHERE {
-                                        ?root rssqlsail:hasQueryId "test";	
+                                        service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                          ?root rssqlsail:hasQueryId "test";	
                                             archipelago:wkt ?wkt;
                                             archipelago:subject ?subject;
                                             archipelago:minX ?southWestLat;
                                             archipelago:minY ?southWestLon;
                                             archipelago:maxX ?northEstLat;
                                             archipelago:maxY ?northEstLon
+                                        }                                        
                                     }'
                             ></semantic-search-query-constant>
     
@@ -91,7 +93,7 @@
 
                                             filter(?date > ?start)
                                             filter(?date < ?end)
-                                        } ORDER BY DESC(?subject)'1366541.191682 5700030.969421    1387592.482988 5674257.463916
+                                        } ORDER BY DESC(?subject)'
                                         map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
                                         tuple-template='<h3>Church of San Secondo</h3><p><b>Architect:</b> Unknown</p><p><b>Construction:</b> 1608</p><p><b>Demolition:</b> 1821</p>'
                                         fix-zoom-level='17'

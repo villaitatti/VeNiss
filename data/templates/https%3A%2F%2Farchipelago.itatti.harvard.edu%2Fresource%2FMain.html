@@ -76,23 +76,39 @@
                                     <semantic-map
                                         id='search-map'
                                         target-controls='["search-map-control"]'
-                                        query='SELECT ?subject ?wkt ?bw WHERE {
+                                        query='SELECT ?subject ?wkt ?bw ?name ?function ?use ?typology WHERE {
                                             bind("1697-01-01"^^xsd:dateTime as ?date).
 
                                             ?bw_id rdfs:label ?subject.
                                             ?bw crm:P1_is_identified_by ?bw_id.
                                             ?bw crm:P108i_was_produced_by ?prod.
 
-                                            ?prod crm:P4_has_time-span ?prod_ts.
-                                            ?prod_ts crm:P82a_begin_of_the_begin ?start.
-
-                                            ?bw crm:P13i_was_destroyed_by ?desc.
-
-                                            ?desc crm:P4_has_time-span ?desc_ts.
-                                            ?desc_ts crm:P82b_end_of_the_end ?end.
-
-                                            filter(?date > ?start)
-                                            filter(?date < ?end)
+                                            ?bw rdfs:label ?name.
+                                            
+                                            OPTIONAL {
+                                                ?bw crm:P12i_was_present_at ?functionNode.
+                                                ?functionNode rdfs:label ?function.
+                                            }
+                                            
+                                            OPTIONAL {
+                                                ?bw crm:P12i_was_present_at ?useNode.
+                                                ?useNode crm:P2_has_type ?useTypeNode.
+                                                ?useTypeNode rdfs:label "Use"@en.
+                                                ?useNode crm:P2_has_type ?useUseNode.
+                                                ?useUseNode rdfs:label ?use.
+                                                FILTER (lang(?use) = "en").
+                                                FILTER (STR(?use) != "Use").
+                                            }
+                                            
+                                            OPTIONAL {
+                                                ?bw crm:P12i_was_present_at ?typologyNode.
+                                                ?typologyNode crm:P2_has_type ?typologyTypeNode.
+                                                ?typologyTypeNode rdfs:label "Typology"@en.
+                                                ?typologyNode crm:P2_has_type ?typologyTypologyNode.
+                                                ?typologyTypologyNode rdfs:label ?typology.
+                                                FILTER (lang(?typology) = "en").
+                                                FILTER (STR(?typology) != "Typology").
+                                            }
                                         } ORDER BY DESC(?subject)'
                                         map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
                                         tuple-template='<h3>Church of San Secondo</h3><p><b>Architect:</b> Unknown</p><p><b>Construction:</b> 1608</p><p><b>Demolition:</b> 1821</p>'

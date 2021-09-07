@@ -1,0 +1,47 @@
+<semantic-form [[> rsp:FormDefaults]] 
+  persistence='{"type": "sparql", "targetGraphIri": "{{scheme}}"}'
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/type/{{{{raw}}}}{{label}}{{{{/raw}}}}'
+  fields='[[
+   fieldDefinitions
+     inScheme="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+     classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+     label="http://www.researchspace.org/pattern/general/rdfs:label"
+     p2_has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+     p1_identified_by="http://www.researchspace.org/pattern/vocabulary_manager/crm:P1_is_identified_by"
+     broaderTerm="http://www.researchspace.org/pattern/vocabulary_manager/skos:broader"
+  ]]'
+  >
+
+  <div class="form-scroll-area">
+    <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E55_Type'></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="inScheme" default-value="{{scheme}}"> </semantic-form-hidden-input>
+
+    <!-- ROLE -->
+    <semantic-form-text-input for="label" label="Type name"></semantic-form-text-input>
+
+    <!-- IDENTIFIER -->
+    <semantic-form-composite-input 
+    for="p1_identified_by" 
+    label="AAT identifier"
+    new-subject-template="http://vocab.getty.edu/aat/{{{{raw}}}}{{label}}{{{{/raw}}}}"  
+    fields='[[
+      fieldDefinitions
+        classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        label="http://www.researchspace.org/pattern/general/rdfs:label"
+      ]]'>
+
+    <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'> </semantic-form-hidden-input>
+    <semantic-form-text-input for="label" label="Insert the AAT id"> </semantic-form-text-input>
+
+  </semantic-form-composite-input>
+
+
+  {{#if broader}}
+    <semantic-form-tree-picker-input for="broaderTerm" placeholder="drag from tree" default-values='["{{broaderTerm}}"]'></semantic-form-tree-picker-input>
+  {{else}}
+    <semantic-form-tree-picker-input for="broaderTerm" placeholder="drag from tree"></semantic-form-tree-picker-input>
+  {{/if}}
+  </div>
+
+[[> rsp:FormDefaultActions]] 
+</semantic-form>

@@ -1,0 +1,197 @@
+<semantic-form [[> rsp:FormDefaults]] 
+  persistence='{"type": "sparql", "targetGraphIri": "{{scheme}}"}'
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/built_work/{{{{raw}}}}{{builtworkIdentifier}}{{{{/raw}}}}'
+  fields='[[
+    fieldDefinitions
+      inScheme="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+      classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+      p2="http://www.researchspace.org/resource/system/authority_manager/for_P2_has_type"
+      builtworkLabel="http://localhost:10214/container/fieldDefinitionContainer/builtwork_label"
+      builtworkUse="http://localhost:10214/container/fieldDefinitionContainer/builtwork_use"
+      builtworkAcquisition="http://localhost:10214/container/fieldDefinitionContainer/builtwork_acquisition"
+      builtworkIdentifier="http://localhost:10214/container/fieldDefinitionContainer/builtwork_identifier"
+      builtworkConstruction="http://localhost:10214/container/fieldDefinitionContainer/builtwork_construction"
+      label="http://www.researchspace.org/pattern/general/rdfs:label"
+  ]]'
+  >
+
+  <div class="form-scroll-area">
+    <semantic-form-hidden-input for="classtype" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object"]'></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="p2" default-value='https://archipelago.itatti.harvard.edu/resource/type/Builtwork'></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="inScheme" default-value="{{scheme}}"> </semantic-form-hidden-input> 
+
+    <!-- BW LABEL -->
+    <semantic-form-text-input for="builtworkLabel" label="Builtwork label"> </semantic-form-text-input>
+    <semantic-form-text-input for="builtworkIdentifier" label="Builtwork identifier"> </semantic-form-text-input>
+
+    <!-- CONSTRUCTION -->
+    <semantic-form-composite-input
+      for="builtworkConstruction" 
+      label="Construction"
+      new-subject-template="/construction"  
+      fields='[[
+        fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          p2_has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+          hasTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span"
+          label="http://www.researchspace.org/pattern/general/rdfs:label"
+          builtworkConstructionRole="http://localhost:10214/container/fieldDefinitionContainer/builtwork_construction_role"
+        ]]'
+    >
+
+      <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E12_Production'> </semantic-form-hidden-input>
+
+      <!-- ACTOR -->
+      <semantic-form-composite-input
+        for="builtworkConstructionRole"
+        label="Actor"
+        new-subject-template="/role_actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"  
+        fields='[[
+          fieldDefinitions
+            classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            label="http://www.researchspace.org/pattern/general/rdfs:label"
+            builtworkRoleAAT="http://localhost:10214/container/fieldDefinitionContainer/builtwork_role_aat"
+            builtworkRoleActor="http://localhost:10214/container/fieldDefinitionContainer/builtwork_role_actor"
+          ]]'
+      >
+        <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/crmpc/PC14_carried_out_by'> </semantic-form-hidden-input>
+
+        <semantic-form-autocomplete-input label="Select Actor" for="builtworkRoleActor">
+        </semantic-form-autocomplete-input>
+
+        <semantic-form-autocomplete-input label="Select Role" for="builtworkRoleAAT">
+        </semantic-form-autocomplete-input>
+
+      </semantic-form-composite-input>
+
+      <!-- CONSTRUCTION DATE -->
+      <semantic-form-composite-input 
+        for="hasTimeSpan" 
+        label="Time Span"
+        new-subject-template="/date"
+        fields='[[
+          fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          beginOfTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P82a_begin_of_the_begin"
+          endOfTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P82b_end_of_the_end"
+        ]]'
+      >
+        <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span'> </semantic-form-hidden-input>
+        <semantic-form-datetime-input for="beginOfTimeSpan"> </semantic-form-datetime-input>
+        <semantic-form-datetime-input for="endOfTimeSpan"> </semantic-form-datetime-input>
+      </semantic-form-composite-input>
+
+    </semantic-form-composite-input>
+
+    <!-- FUNCTIONS -->
+    <semantic-form-composite-input 
+      for="builtworkUse" 
+      label="Functions"
+      new-subject-template="/function/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"  
+      fields='[[
+        fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          p2_has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+          hasTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span"
+          label="http://www.researchspace.org/pattern/general/rdfs:label"
+          bw_id="http://localhost:10214/container/fieldDefinitionContainer/bw_use_id"
+          builtwork_use_aat="http://localhost:10214/container/fieldDefinitionContainer/builtwork_use_aat"
+        ]]'>
+
+      <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E5_Event'> </semantic-form-hidden-input>
+      <semantic-form-hidden-input for="p2_has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/use'> </semantic-form-hidden-input>
+      
+      <semantic-form-autocomplete-input for="builtwork_use_aat" label="Use"> </semantic-form-autocomplete-input>
+
+      <semantic-form-composite-input 
+        for="hasTimeSpan" 
+        label="Time Span"
+        new-subject-template="/date"
+        fields='[[
+          fieldDefinitions
+            classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          beginOfTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P82a_begin_of_the_begin"
+          endOfTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P82b_end_of_the_end"
+        ]]'>
+        <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span'> </semantic-form-hidden-input>
+        <semantic-form-datetime-input for="beginOfTimeSpan"> </semantic-form-datetime-input>
+        <semantic-form-datetime-input for="endOfTimeSpan"> </semantic-form-datetime-input>
+      </semantic-form-composite-input>
+    </semantic-form-composite-input>
+    
+    <!-- USES -->
+    <semantic-form-composite-input 
+      for="builtworkUse" 
+      label="Uses"
+      new-subject-template="/use/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"  
+      fields='[[
+        fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          p2_has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+          hasTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span"
+          label="http://www.researchspace.org/pattern/general/rdfs:label"
+          bw_id="http://localhost:10214/container/fieldDefinitionContainer/bw_use_id"
+          builtwork_use_aat="http://localhost:10214/container/fieldDefinitionContainer/builtwork_use_aat"
+        ]]'>
+
+      <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E5_Event'> </semantic-form-hidden-input>
+      <semantic-form-hidden-input for="p2_has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/use'> </semantic-form-hidden-input>
+      
+      <semantic-form-autocomplete-input for="builtwork_use_aat" label="Use"> </semantic-form-autocomplete-input>
+
+      <semantic-form-composite-input 
+        for="hasTimeSpan" 
+        label="Time Span"
+        new-subject-template="/date"
+        fields='[[
+          fieldDefinitions
+            classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          beginOfTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P82a_begin_of_the_begin"
+          endOfTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P82b_end_of_the_end"
+        ]]'>
+        <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span'> </semantic-form-hidden-input>
+        <semantic-form-datetime-input for="beginOfTimeSpan"> </semantic-form-datetime-input>
+        <semantic-form-datetime-input for="endOfTimeSpan"> </semantic-form-datetime-input>
+      </semantic-form-composite-input>
+    </semantic-form-composite-input>
+
+    <!-- ACQUISITION -->
+    <semantic-form-composite-input 
+      for="builtworkAcquisition" 
+      label="Owners"
+      new-subject-template="/acquisition/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"  
+      fields='[[
+        fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          p2_has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+          hasTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span"
+          label="http://www.researchspace.org/pattern/general/rdfs:label"
+          bw_id="http://localhost:10214/container/fieldDefinitionContainer/bw_use_id"
+          builtwork_transferred_custody="http://localhost:10214/container/fieldDefinitionContainer/builtwork_transferred_custody"
+        ]]'>
+
+      <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E8_Acquisition'> </semantic-form-hidden-input>
+      
+      <semantic-form-autocomplete-input label="Select owner" for="builtwork_transferred_custody">
+      </semantic-form-autocomplete-input>
+
+      <semantic-form-composite-input 
+        for="hasTimeSpan" 
+        label="Time Span"
+        new-subject-template="/date"
+        fields='[[
+          fieldDefinitions
+            classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            beginOfTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P82a_begin_of_the_begin"
+            endOfTimeSpan="http://www.cidoc-crm.org/cidoc-crm/P82b_end_of_the_end"
+        ]]'>
+        <semantic-form-hidden-input for="classtype" default-value='http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span'> </semantic-form-hidden-input>
+        <semantic-form-datetime-input for="beginOfTimeSpan"> </semantic-form-datetime-input>
+        <semantic-form-datetime-input for="endOfTimeSpan"> </semantic-form-datetime-input>
+      </semantic-form-composite-input>
+    </semantic-form-composite-input>
+
+  </div>
+
+[[> rsp:FormDefaultActions]] 
+</semantic-form>

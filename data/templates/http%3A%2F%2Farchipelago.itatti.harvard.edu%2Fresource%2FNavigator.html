@@ -91,6 +91,7 @@
                               rdfs:label ?title_lbl
                       filter(lang(?title_lbl) = "en")
                     }
+                    
 
                   }
 
@@ -117,7 +118,7 @@
                   options='{"showFilter": false}'
                 >
                   <template id='resultTemplate'>
-
+                    
                     {{#ifCond img.value "===" "E39_Actor"}} 
                     
                       <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
@@ -127,12 +128,15 @@
                               <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
                             </div>
                             <div class="col-sm-9 text-left">
-                              <h3>{{name.value}}{{#if birth_date_lbl }} ({{dateTimeFormat birth_date_lbl.value "YYYY"}} - {{/if}}{{#if death_date_lbl}}{{dateTimeFormat death_date_lbl.value "YYYY"}}){{/if}}</h3>
+
+                              <semantic-link iri="{{subject.value}}" target="_blank">
+                                <h3>{{name.value}}{{#if birth_date_lbl }} ({{dateTimeFormat birth_date_lbl.value "YYYY"}} - {{/if}}{{#if death_date_lbl}}{{dateTimeFormat death_date_lbl.value "YYYY"}}){{/if}}</h3>
+                              </semantic-link>
                               
                               {{#if title_lbl}}
                                 <p><strong>Title:</strong> {{title_lbl.value}}</p>
                               {{/if}}
-                              
+
                             </div>
                           </div>
                         </div>
@@ -142,43 +146,46 @@
 
                     {{#ifCond img.value "===" "E22_Man-Made_Object"}} 
                     
-                    <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
-                      <div class="panel-body ">
-                        <div class="row">
-                          <div class="col-sm-3">
-                            <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
-                          </div>
-                          <div class="col-sm-9 text-left">
-                            <h3>{{name.value}}</h3>
-                            <p><strong>Construction:</strong> {{dateTimeFormat start_date.value "YYYY"}}</p>
-                            <p><strong>Destruction:</strong> {{dateTimeFormat end_date.value "YYYY"}}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                  {{/ifCond}}
-
-                  {{#ifCond img.value "===" "E5_Event"}} 
-                    
-                    <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
-                      <div class="panel-body ">
-                        <div class="row">
-                          <div class="col-sm-3">
-                            <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
-                          </div>
-                          <div class="col-sm-9 text-left">
-                            <h3>{{name.value}}</h3>
-                            <p>{{description.value}}</p>
+                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                        <div class="panel-body ">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                            </div>
+                            <div class="col-sm-9 text-left">
+                              <semantic-link iri="{{subject.value}}" target="_blank">
+                                <h3>{{name.value}}</h3>
+                              </semantic-link>
+                              <p><strong>Construction:</strong> {{dateTimeFormat start_date.value "YYYY"}}</p>
+                              <p><strong>Destruction:</strong> {{dateTimeFormat end_date.value "YYYY"}}</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    
-                  {{/ifCond}}
-                  </template>
+                      
+                    {{/ifCond}}
 
-                  
+                    {{#ifCond img.value "===" "E5_Event"}} 
+                      
+                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                        <div class="panel-body ">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                            </div>
+                            <div class="col-sm-9 text-left">
+                              <semantic-link iri="{{subject.value}}" target="_blank">
+                                <h3>{{name.value}}</h3>
+                              </semantic-link>
+                              <p>{{description.value}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    {{/ifCond}}
+
+                </template>
                 </semantic-table>
               </semantic-search-result>
             </semantic-search-result-holder>

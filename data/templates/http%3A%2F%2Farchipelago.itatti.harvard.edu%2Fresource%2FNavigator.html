@@ -12,25 +12,109 @@
             <semantic-map-controls id="search-map-control" target-map-id="search-map"></semantic-map-controls>
         {{else}}
         <div>
-            <semantic-query
-                    query='
-                SELECT * WHERE {
-                    ?sou a <https://archipelago.itatti.harvard.edu/resource/Source> .
-                    ?sou <https://archipelago.itatti.harvard.edu/resource/Image> ?img .
-                    ?sou rdfs:label ?lbl
-                    }
-                '
-                    template='{{> displayer}}'>
-                <template id='displayer'>
-                    {{log this}}
-                    <div class="navigatorEntity">
-                        {{#each bindings}}
-                        <div class="navigatorTitles">{{lbl.value}}</div>
-                        <img class="navigator-img" src="../../assets/images/{{img.value}}" alt="{{lbl.value}}">
-                        {{/each}}
+          <h2>Entities</h2>
+
+          <semantic-search>
+            <semantic-search-query-constant
+              query='
+                PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?subject ?type ?start_date ?end_date ?name
+                
+                WHERE {
+
+                  {
+                    ?bw_id rdfs:label ?id.
+                    ?subject crm:P1_is_identified_by ?bw_id;
+                      rdfs:label ?name;
+                      rdf:type ?type;
+                      crm:P108i_was_produced_by ?prod.
+                    ?prod crm:P4_has_time-span ?prod_time.
+                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
+                    ?subject crm:P13i_was_destroyed_by ?desc.
+                    ?desc crm:P4_has_time-span ?desc_time.
+                    ?desc_time crm:P82b_end_of_the_end ?end_date.
+                  }
+                  UNION
+                  {
+                    ?subject crm:P15_was_influenced_by ?bw;
+                             crm:P1_is_identified_by ?identifier;
+                      rdf:type ?type.
+                    ?bw crm:P108i_was_produced_by ?prod.
+                    ?prod crm:P4_has_time-span ?prod_time.
+                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
+                    ?bw crm:P13i_was_destroyed_by ?desc.
+                    ?desc crm:P4_has_time-span ?desc_time.
+                    ?desc_time crm:P82b_end_of_the_end ?end_date.
+                    ?identifier a crm:E41_Appellation;
+                                rdfs:label ?name
+                  }
+                  UNION
+                  {
+                    ?event rdf:type crm:E5_Event;
+                    crmpc:P01_has_domain ?domain;
+                    crm:P15_was_influenced_by ?bw.
+                  ?bw crm:P108i_was_produced_by ?prod.
+                  ?prod crm:P4_has_time-span ?prod_time.
+                  ?prod_time crm:P82a_begin_of_the_begin ?start_date.
+                  ?bw crm:P13i_was_destroyed_by ?desc.
+                  ?desc crm:P4_has_time-span ?desc_time.
+                  ?desc_time crm:P82b_end_of_the_end ?end_date.
+                  ?domain crmpc:P02_has_range ?subject.
+                  ?subject rdf:type ?type;
+                           crm:P1_is_identified_by ?appellation.
+                  ?appellation crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
+                               rdfs:label ?name
+
+                  }
+
+                }
+              '
+            ></semantic-search-query-constant>
+
+            <semantic-search-result-holder>
+              <semantic-search-result>
+                <semantic-table
+                  id='table'
+                  query='
+                    PREFIX person: <http://example.com/person/>
+                    SELECT distinct ?subject ?type ?img ?name where {
+                      bind("1697-01-01"^^xsd:dateTime as ?date).
+                      bind(replace(?subject, "http://www.cidoc-crm.org/cidoc-crm/", "") as ?subject)
+
+                      BIND(REPLACE(str(?type), "http://www.cidoc-crm.org/cidoc-crm/", "") AS ?img)
+                      filter(?start_date <= ?date)
+                      filter(?end_date >= ?date)
+                    } ORDER BY RAND()
+                  '
+                  tuple-template='{{>resultTemplate}}'
+                  options='{"showFilter": false}'
+                >
+                  <template id='resultTemplate'>
+                    <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                      <div class="panel-body ">
+                        <div class="row">
+                          <div class="col-sm-3">
+                            <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                          </div>
+                          <div class="col-sm-9 text-left">
+                            <h3>{{name.value}}</h3>
+                            <!--
+                            <p>Start date: {{dateTimeFormat start_date.value "YYYY"}}</p>
+                            <p>End date: {{dateTimeFormat end_date.value "YYYY"}}</p>
+                            -->
+                            
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                </template>
-            </semantic-query>
+                  </template>
+                </semantic-table>
+              </semantic-search-result>
+            </semantic-search-result-holder>
+          </semantic-search>
+
         </div>
         {{/if}}
     </template>
@@ -41,7 +125,55 @@
 </semantic-query>
 
 <style>
-    .navigator-img{
-        width: 250px;
-    }
+  #navigatorContainer{
+    width: 400px!important;
+  }
+
+  
+  #navigatorContainer h2{
+    text-align: center;
+  }
+
+  div.E5_Event{
+    border-left: 5px solid #F58F84!important;
+  }
+
+  div.E22_Man-Made_Object{
+    border-left: 5px solid #26A65B!important;
+  }
+
+  div.E39_Actor{
+    border-left: 5px solid #FFA400!important;
+  }
+
+  .navigator-icon{
+    height: 50px;
+  }
+
+  .w-100{
+    width: 100%!important;
+  }
 </style>
+
+
+<!--
+            <semantic-query        
+              query='
+                SELECT * WHERE {
+                    ?sou a <https://archipelago.itatti.harvard.edu/resource/Source> .
+                    ?sou <https://archipelago.itatti.harvard.edu/resource/Image> ?img .
+                    ?sou rdfs:label ?lbl
+                    }
+                '
+                template='{{> displayer}}'>
+                <template id='displayer'>
+                    {{log this}}
+                    <div class="navigatorEntity">
+                        {{#each bindings}}
+                        <div class="navigatorTitles">{{lbl.value}}</div>
+                        <img class="navigator-img" src="../../assets/images/{{img.value}}" alt="{{lbl.value}}">
+                        {{/each}}
+                    </div>
+                </template>
+            </semantic-query>
+            -->

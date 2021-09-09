@@ -39,7 +39,8 @@
                   UNION
                   {
                     ?subject crm:P15_was_influenced_by ?bw;
-                             crm:P1_is_identified_by ?identifier;
+                      crm:P1_is_identified_by ?identifier;
+                      crm:P129i_is_subject_of ?synopsys;
                       rdf:type ?type.
                     ?bw crm:P108i_was_produced_by ?prod.
                     ?prod crm:P4_has_time-span ?prod_time.
@@ -48,24 +49,48 @@
                     ?desc crm:P4_has_time-span ?desc_time.
                     ?desc_time crm:P82b_end_of_the_end ?end_date.
                     ?identifier a crm:E41_Appellation;
-                                rdfs:label ?name
+                                rdfs:label ?name.
+
+                    ?synopsys rdfs:label ?description
                   }
                   UNION
                   {
                     ?event rdf:type crm:E5_Event;
                     crmpc:P01_has_domain ?domain;
                     crm:P15_was_influenced_by ?bw.
-                  ?bw crm:P108i_was_produced_by ?prod.
-                  ?prod crm:P4_has_time-span ?prod_time.
-                  ?prod_time crm:P82a_begin_of_the_begin ?start_date.
-                  ?bw crm:P13i_was_destroyed_by ?desc.
-                  ?desc crm:P4_has_time-span ?desc_time.
-                  ?desc_time crm:P82b_end_of_the_end ?end_date.
-                  ?domain crmpc:P02_has_range ?subject.
-                  ?subject rdf:type ?type;
-                           crm:P1_is_identified_by ?appellation.
-                  ?appellation crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
-                               rdfs:label ?name
+                    ?bw crm:P108i_was_produced_by ?prod.
+                    ?prod crm:P4_has_time-span ?prod_time.
+                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
+                    ?bw crm:P13i_was_destroyed_by ?desc.
+                    ?desc crm:P4_has_time-span ?desc_time.
+                    ?desc_time crm:P82b_end_of_the_end ?end_date.
+                    ?domain crmpc:P02_has_range ?subject.
+                    ?subject rdf:type ?type;
+                            crm:P1_is_identified_by ?appellation.
+                    ?appellation crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
+                                rdfs:label ?name.
+          
+                    optional {
+                      ?subject crm:P92i_was_brought_into_existence_by ?birth.
+                        ?birth a crm:E67_Birth;
+                              crm:P4_has_time-span ?birth_date.
+                        ?birth_date  crm:P82a_begin_of_the_begin ?birth_date_lbl.
+                    }
+                    
+                    optional {
+                        ?subject crm:P93i_was_taken_out_of_existence_by ?death.
+                        ?death a crm:E69_Death;
+                          crm:P4_has_time-span ?death_date.
+                      ?death_date  crm:P82a_begin_of_the_begin ?death_date_lbl
+                    }
+
+                    optional {
+                      ?subject crm:P1_is_identified_by ?title.
+                        ?title a crm:E41_Appellation;
+                              crm:P2_has_type  <https://archipelago.itatti.harvard.edu/resource/type/title>;
+                              rdfs:label ?title_lbl
+                      filter(lang(?title_lbl) = "en")
+                    }
 
                   }
 
@@ -79,7 +104,7 @@
                   id='table'
                   query='
                     PREFIX person: <http://example.com/person/>
-                    SELECT distinct ?subject ?type ?img ?name where {
+                    SELECT distinct ?subject ?type ?img ?name ?start_date ?end_date ?birth_date_lbl ?death_date_lbl ?description ?title_lbl where {
                       bind("1697-01-01"^^xsd:dateTime as ?date).
                       bind(replace(?subject, "http://www.cidoc-crm.org/cidoc-crm/", "") as ?subject)
 
@@ -92,6 +117,31 @@
                   options='{"showFilter": false}'
                 >
                   <template id='resultTemplate'>
+
+                    {{#ifCond img.value "===" "E39_Actor"}} 
+                    
+                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                        <div class="panel-body ">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                            </div>
+                            <div class="col-sm-9 text-left">
+                              <h3>{{name.value}}{{#if birth_date_lbl }} ({{dateTimeFormat birth_date_lbl.value "YYYY"}} - {{/if}}{{#if death_date_lbl}}{{dateTimeFormat death_date_lbl.value "YYYY"}}){{/if}}</h3>
+                              
+                              {{#if title_lbl}}
+                                <p><strong>Title:</strong> {{title_lbl.value}}</p>
+                              {{/if}}
+                              
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    {{/ifCond}}
+
+                    {{#ifCond img.value "===" "E22_Man-Made_Object"}} 
+                    
                     <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
                       <div class="panel-body ">
                         <div class="row">
@@ -100,16 +150,35 @@
                           </div>
                           <div class="col-sm-9 text-left">
                             <h3>{{name.value}}</h3>
-                            <!--
-                            <p>Start date: {{dateTimeFormat start_date.value "YYYY"}}</p>
-                            <p>End date: {{dateTimeFormat end_date.value "YYYY"}}</p>
-                            -->
-                            
+                            <p><strong>Construction:</strong> {{dateTimeFormat start_date.value "YYYY"}}</p>
+                            <p><strong>Destruction:</strong> {{dateTimeFormat end_date.value "YYYY"}}</p>
                           </div>
                         </div>
                       </div>
                     </div>
+                    
+                  {{/ifCond}}
+
+                  {{#ifCond img.value "===" "E5_Event"}} 
+                    
+                    <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                      <div class="panel-body ">
+                        <div class="row">
+                          <div class="col-sm-3">
+                            <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                          </div>
+                          <div class="col-sm-9 text-left">
+                            <h3>{{name.value}}</h3>
+                            <p>{{description.value}}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  {{/ifCond}}
                   </template>
+
+                  
                 </semantic-table>
               </semantic-search-result>
             </semantic-search-result-holder>

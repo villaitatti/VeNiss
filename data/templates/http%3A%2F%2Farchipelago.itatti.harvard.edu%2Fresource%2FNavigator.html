@@ -224,73 +224,123 @@
                 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                SELECT ?subject ?type ?start_date ?end_date ?name ?order_date
-                
-                WHERE {
+                SELECT ?subject ?type ?type_lbl ?name ?bw_start_date ?bw_end_date ?order_start_date ?order_end_date ?use_lbl ?typology_lbl WHERE {
 
                   {
-                    ?bw_id rdfs:label ?id.
+                    BIND("1697-01-01"^^xsd:dateTime AS ?date)
                     ?subject crm:P1_is_identified_by ?bw_id;
                       rdfs:label ?name;
                       rdf:type ?type;
-                      crm:P108i_was_produced_by ?prod.
+                      crm:P108i_was_produced_by ?prod;
+                      crm:P13i_was_destroyed_by ?desc.
+
                     ?prod crm:P4_has_time-span ?prod_time.
-                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
-                    ?subject crm:P13i_was_destroyed_by ?desc.
+                    ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
+
                     ?desc crm:P4_has_time-span ?desc_time.
-                    ?desc_time crm:P82b_end_of_the_end ?end_date.
-                    
-                    bind(?start_date as ?order_date)
+                    ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
+
+                    ?subject crm:P12i_was_present_at ?use.
+                    ?use a crm:E5_Event;
+                      crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/use>;
+                      crm:P2_has_type ?use_type.
+
+                    ?use_type a crm:E55_Type;
+                      rdfs:label ?use_lbl.
+
+                    ?use crm:P4_has_time-span ?use_date.
+                    ?use_date crm:P82a_begin_of_the_begin ?use_date_start;
+                    FILTER (?use_date_start <= ?date)
+
+                    ?use crm:P4_has_time-span ?use_date.
+                    ?use_date crm:P82b_end_of_the_end ?use_date_end.
+                    FILTER (?use_date_end >= ?date)
+
+                    FILTER (STR(?use_lbl) != "Use")
+                    FILTER (lang(?use_lbl) = "en")
+
+                    ?subject crm:P12i_was_present_at ?typology.
+                    ?typology a crm:E5_Event;
+                      crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/typology>;
+                      crm:P2_has_type ?typology_type.
+
+                    ?typology_type a crm:E55_Type;
+                      rdfs:label ?typology_lbl.
+
+                    ?typology crm:P4_has_time-span ?typology_date.
+
+                    ?typology_date crm:P82a_begin_of_the_begin ?typology_date_start.
+                    FILTER (?typology_date_start <= ?date)
+
+                    ?typology_date crm:P82b_end_of_the_end ?typology_date_end.
+                    FILTER (?typology_date_end >= ?date)
+
+                    FILTER (STR(?typology_lbl) != "Typology")
+                    FILTER (lang(?typology_lbl) = "en")
+
+                    BIND(?bw_start_date AS ?order_start_date)
+                    BIND(?bw_end_date AS ?order_end_date) 
+
                   }
                   UNION
                   {
-                   ?subject crm:P15_was_influenced_by ?bw;
+                    ?subject crm:P15_was_influenced_by ?bw;
                       crm:P1_is_identified_by ?identifier;
                       crm:P4_has_time-span ?order_date;
                       rdf:type ?type.
-                  
-                    ?bw crm:P108i_was_produced_by ?prod.
+                    ?bw crm:P108i_was_produced_by ?prod;
+                        crm:P13i_was_destroyed_by ?desc.
+                    
                     ?prod crm:P4_has_time-span ?prod_time.
-                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
-                  
-                    ?bw crm:P13i_was_destroyed_by ?desc.
+                    ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
+                    
                     ?desc crm:P4_has_time-span ?desc_time.
-                    ?desc_time crm:P82b_end_of_the_end ?end_date.
-                  
+                    ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
+                    
                     ?identifier rdf:type crm:E41_Appellation;
                       rdfs:label ?name.
-                  
+                
+                    ?order_date a crm:E52_Time-Span;	
+                                crm:P82a_begin_of_the_begin ?order_start_date.
+                    
+                    BIND(?order_start_date as ?order_end_date)
                   }
                   UNION
                   {
                     ?event rdf:type crm:E5_Event;
-                      crmpc:P01_has_domain ?domain;
-                      crm:P15_was_influenced_by ?bw.
-                    ?bw crm:P108i_was_produced_by ?prod.
+                        crmpc:P01_has_domain ?domain;
+                        crm:P15_was_influenced_by ?bw.
+                
+                    ?bw crm:P108i_was_produced_by ?prod;
+                        crm:P13i_was_destroyed_by ?desc.
+              
                     ?prod crm:P4_has_time-span ?prod_time.
-                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
-                    ?bw crm:P13i_was_destroyed_by ?desc.
+                    ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
+              
                     ?desc crm:P4_has_time-span ?desc_time.
-                    ?desc_time crm:P82b_end_of_the_end ?end_date.
+                    ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
+              
                     ?domain crmpc:P02_has_range ?subject.
                     ?subject rdf:type ?type;
-                      crm:P1_is_identified_by ?appellation.
+                              crm:P1_is_identified_by ?appellation.
+              
                     ?appellation crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
-                      rdfs:label ?name.
+                              rdfs:label ?name.
+                
                     OPTIONAL {
                       ?subject crm:P92i_was_brought_into_existence_by ?birth.
                       ?birth rdf:type crm:E67_Birth;
-                        crm:P4_has_time-span ?birth_date.
-                      ?birth_date crm:P82a_begin_of_the_begin ?birth_date_lbl.
-                      bind(?birth_date_lbl as ?order_date)
+                              crm:P4_has_time-span ?birth_date.
+                      ?birth_date crm:P82a_begin_of_the_begin ?order_start_date.
                     }
+                  
                     OPTIONAL {
                       ?subject crm:P93i_was_taken_out_of_existence_by ?death.
                       ?death rdf:type crm:E69_Death;
-                        crm:P4_has_time-span ?death_date.
-                      ?death_date crm:P82a_begin_of_the_begin ?death_date_lbl.
+                              crm:P4_has_time-span ?death_date.
+                      ?death_date crm:P82a_begin_of_the_begin ?order_end_date.
                     }
-                    
+                  
                   }
                 }
               '
@@ -302,41 +352,40 @@
                   id='table'
                   query='
                     PREFIX person: <http://example.com/person/>
-                    SELECT distinct ?subject ?type ?img ?name ?start_date ?end_date ?birth_date_lbl ?death_date_lbl ?description ?title_lbl ?order_date where {
+                    SELECT distinct ?subject ?type ?type_lbl ?name ?order_start_date ?order_end_date ?use_lbl ?typology_lbl where {
                       bind("1697-01-01"^^xsd:dateTime as ?date).
-                      bind(replace(?subject, "http://www.cidoc-crm.org/cidoc-crm/", "") as ?subject)
 
-                      BIND(REPLACE(str(?type), "http://www.cidoc-crm.org/cidoc-crm/", "") AS ?img)
-                      filter(?start_date <= ?date)
-                      filter(?end_date >= ?date)
-                    } ORDER BY ASC(?order_date)
+                      bind(replace(?subject, "http://www.cidoc-crm.org/cidoc-crm/", "") as ?subject)
+                      bind(replace(str(?type), "http://www.cidoc-crm.org/cidoc-crm/", "") AS ?type_lbl)
+
+                      filter(?bw_start_date <= ?date)
+                      filter(?bw_end_date >= ?date)
+                    } ORDER BY ASC(?order_start_date)
                   '
                   tuple-template='{{>resultTemplate}}'
                   options='{"showFilter": false}'
                 >
                   <template id='resultTemplate'>
                     
-                    {{#ifCond img.value "===" "E39_Actor"}} 
+                    {{#ifCond type_lbl.value "===" "E39_Actor"}} 
                     
-                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                      <div class="panel panel-default text-center w-100 {{type_lbl.value}}" title="{{subject.value}}">
                         <div class="panel-body ">
                           <div class="row">
                             <div class="col-sm-3">
-                              <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                              <img class="navigator-icon" src="../../assets/icons/{{type_lbl.value}}.svg" alt="">
                             </div>
                             <div class="col-sm-9 text-left">
 
-                              <mp-event-trigger id='event-open-details' type='Component.TemplateUpdate' data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{img.value}}"}' targets='["sidebar"]'>
+                              <mp-event-trigger id='event-open-details' type='Component.TemplateUpdate' data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{type_lbl.value}}"}' targets='["sidebar"]'>
                                 <a><strong>{{name.value}}</strong></a>
                               </mp-event-trigger>
 
-                              <p>{{#if birth_date_lbl }} ({{dateTimeFormat birth_date_lbl.value "YYYY"}} - {{/if}}{{#if death_date_lbl}}{{dateTimeFormat death_date_lbl.value "YYYY"}}){{/if}}</p>
-                              
-                              <!--
-                              {{#if title_lbl}}
-                                <p><strong>Title:</strong> {{title_lbl.value}}</p>
+                              {{#if order_start_date }}
+                                <p>
+                                  {{dateTimeFormat order_start_date.value "YYYY"}} {{#if order_end_date}} - {{dateTimeFormat order_end_date.value "YYYY"}} {{/if}}
+                                </p>
                               {{/if}}
-                              -->
 
                             </div>
                           </div>
@@ -345,28 +394,28 @@
 
                     {{/ifCond}}
 
-                    {{#ifCond img.value "===" "E22_Man-Made_Object"}} 
+                    {{#ifCond type_lbl.value "===" "E22_Man-Made_Object"}} 
                     
-                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                      <div class="panel panel-default text-center w-100 {{type_lbl.value}}" title="{{subject.value}}">
                         <div class="panel-body ">
                           <div class="row">
                             <div class="col-sm-3">
-                              <p><img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt=""></p>
+                              <p><img class="navigator-icon" src="../../assets/icons/{{type_lbl.value}}.svg" alt=""></p>
                             </div>
                             <div class="col-sm-9 text-left">
                               
-                              <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{img.value}}"}' targets='["sidebar"]'>
-                                <a><strong>{{name.value}}</strong></h3></a>
+                              <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{type_lbl.value}}"}' targets='["sidebar"]'>
+                                <a><strong>{{typology_lbl.value}}</strong></h3></a>
                               </mp-event-trigger>
 
                               <br>
-                              Construction: {{dateTimeFormat start_date.value "YYYY"}}
+                              Construction: {{dateTimeFormat order_start_date.value "YYYY"}}
                               <br>
-                              Demolition: {{dateTimeFormat end_date.value "YYYY"}}
+                              Demolition: {{dateTimeFormat order_end_date.value "YYYY"}}
                               <br>
-                              Function:
+                              Function: Private
                               <br>
-                              Use:
+                              Use: {{use_lbl.value}}
                             </div>
                           </div>
                         </div>
@@ -374,22 +423,22 @@
                       
                     {{/ifCond}}
 
-                    {{#ifCond img.value "===" "E5_Event"}} 
+                    {{#ifCond type_lbl.value "===" "E5_Event"}} 
                       
-                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                      <div class="panel panel-default text-center w-100 {{type_lbl.value}}" title="{{subject.value}}">
                         <div class="panel-body ">
                           <div class="row">
                             <div class="col-sm-3">
-                              <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                              <img class="navigator-icon" src="../../assets/icons/{{type_lbl.value}}.svg" alt="">
                             </div>
                             <div class="col-sm-9 text-left">
-                              <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{img.value}}"}' targets='["sidebar"]'>
+                              <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{type_lbl.value}}"}' targets='["sidebar"]'>
                                 <a><strong>{{name.value}}</strong></a>
                               </mp-event-trigger>
 
                               <br>
-                              {{#if order_date}}
-                                {{order_date.value}}
+                              {{#if order_start_date}}
+                              {{dateTimeFormat order_start_date.value "YYYY"}}
                               {{/if}}
                             </div>
                           </div>

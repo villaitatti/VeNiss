@@ -169,7 +169,6 @@ h1, h2, h3, h4, h5, h6 {
 
 #navigatorContainer label {
     font-family: 'Source Sans Pro' !important;
-    margin-bottom: 5px !important;
     display: inline-block;
     font-weight: 300;
 }
@@ -278,7 +277,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 100;
 }
 
-#tilesLayerSeparator {
+.mapControlsSeparator {
     margin: 5px !important;
 }
 
@@ -291,6 +290,18 @@ h1, h2, h3, h4, h5, h6 {
     padding: 5px;
     border-radius: 3px;
     box-shadow: 2px 3px 9px 0px #2929294d;
+}
+
+.featuresOptionsContainer {
+    background-color: white;
+    padding: 5px;
+    border-radius: 3px;
+    box-shadow: 2px 3px 9px 0px #2929294d;
+}
+
+.featuresOptionsTitle, .mapOptionsSectionTitle {
+    margin-left: 10px;
+    font-weight: 100;
 }
 
 .layerThumbnail {

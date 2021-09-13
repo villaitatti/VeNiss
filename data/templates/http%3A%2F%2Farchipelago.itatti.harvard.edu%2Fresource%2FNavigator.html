@@ -6,42 +6,436 @@
         {{else if showhistoricalmaps}}
             <h2>Historical Maps</h2>
 
+        {{else if showdetails}}
+
+            <div>
+              <mp-event-trigger id='event-trigger5' type='Component.TemplateUpdate' data='{"showentities": true}' targets='["sidebar"]'>
+                <a href="#">Go back</a>
+              </mp-event-trigger>
+            </div>
+
+
+            {{#ifCond type "===" "E39_Actor"}}
+
+              <div>
+                <semantic-query query='
+                  PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                  PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                  PREFIX crmpc: <http://www.cidoc-crm.org/crmpc/>
+                  PREFIX arc: <http://archipelago.itatti.harvard.edu/resource/>
+                  PREFIX frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/>
+                  
+                  SELECT DISTINCT * WHERE {
+                    bind(<{{subject}}> as ?subject)
+    
+                    ?subject crm:P1_is_identified_by ?name.
+                    ?name a crm:E41_Appellation;
+                          crm:P2_has_type  <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
+                          rdfs:label ?name_lbl.
+                    
+                    optional {
+                      ?subject crm:P92i_was_brought_into_existence_by ?birth.
+                      ?birth a crm:E67_Birth;
+                            crm:P4_has_time-span ?birth_date.
+                      ?birth_date a crm:E52_Time-Span;
+                            crm:P82a_begin_of_the_begin ?birth_date_label
+                    }
+                    
+                    optional {
+                      ?subject crm:P1_is_identified_by ?title.
+                      ?title a crm:E41_Appellation;
+                            crm:P2_has_type  <https://archipelago.itatti.harvard.edu/resource/type/title>;
+                            rdfs:label ?title_label.
+                        filter(lang(?title_label) = "en")
+                    }
+                    
+                    optional {
+                      ?subject crm:P93i_was_taken_out_of_existence_by ?death.
+                      ?death a crm:E69_Death;
+                            crm:P4_has_time-span ?death_date.
+                      ?death_date a crm:E52_Time-Span;
+                            crm:P82a_begin_of_the_begin ?death_date_label
+                    }
+
+                    optional {
+                      ?subject crm:P14i_performed ?activity.
+                      ?activity a frbroo:F51_Pursuit;
+                        rdfs:label ?activity_label.
+                      filter(lang(?activity_label) = "en")
+                    }
+                  }
+                ' template="{{> template}}">
+                <template id="template">
+
+                  <h1>{{bindings.0.name_lbl.value}}</h1>
+
+                  {{#if bindings.0.image}}
+                    <img class="navigator-icon" src="{{bindings.0.image.value}}" alt=""> 
+                  {{else}}
+                    <img class="navigator-icon" src="../../assets/icons/E39_Actor.svg" alt="">
+                  {{/if}}
+
+                  {{#if bindings.0.title_label}}
+                    <p><strong>Title:</strong> {{bindings.0.title_label.value}}</p>  
+                  {{/if}}
+
+                  {{#if bindings.0.birth_date_label}}
+                    <p><strong>Birth date:</strong> {{dateTimeFormat bindings.0.birth_date_label.value "YYYY-MM-DD"}}</p>
+                  {{/if}}
+
+                  {{#if bindings.0.death_date_label}}
+                    <p><strong>Death date:</strong> {{dateTimeFormat bindings.0.death_date_label.value "YYYY-MM-DD"}}</p>
+                  {{/if}}
+
+                  {{#if bindings.0.activity_label}}
+                    <strong>Activities:</strong>
+                    <ol>
+                      {{#each bindings}}
+                        <li>{{activity_label}}</li>
+                      {{/each}}
+                    </ol>
+                  {{/if}}
+                  
+                </template>
+                </semantic-query>
+
+              </div>
+
+            {{/ifCond}}
+
+            {{#ifCond type "===" "E5_Event"}}
+
+              <div>
+                <semantic-query
+                  query='
+                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    select distinct ?subject ?name_label ?synopsys_label ?century_label ?century_quarter_label where {
+                      bind(<{{subject}}> as ?subject)
+                      ?subject a crm:E5_Event;
+                              crm:P1_is_identified_by ?name;
+                              crm:P129i_is_subject_of ?synopsys.
+                      
+                      ?name a crm:E41_Appellation;
+                            rdfs:label ?name_label.
+                      
+                      ?synopsys a crm:E73_Information_Object;
+                                rdfs:label ?synopsys_label
+                      
+                      optional {
+                        ?subject crm:P4_has_time-span ?time_span_1.
+                        ?time_span_1 a crm:E52_Time-Span;
+                                    crm:P82_at_some_time_within ?century_label
+                      }
+                      
+                      optional {
+                        ?subject crm:P4_has_time-span ?time_span_2.
+                        ?time_span_2 a crm:E52_Time-Span;
+                                    crm:P1_is_identified_by ?appellation.
+                        
+                        ?appellation a crm:E49_Time_Appellation;
+                                    rdfs:label ?century_quarter_label
+                      }
+                    }'
+                  template="{{> template}}" 
+                >
+                <template id="template">
+
+                  {{#each bindings}}
+                    <h3>{{name_label.value}}</h3>
+
+                    <p>{{synopsys_label.value}}</p>
+
+                    <p>{{century_label.value}}, {{century_quarter_label.value}}</p>
+
+                  {{/each}}
+                </template>
+
+
+
+                </semantic-query>
+              </div>
+
+            {{/ifCond}}
+
+            {{#ifCond type "===" "E22_Man-Made_Object"}}
+
+            <div>
+              <semantic-query
+                query='
+                  PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                  select distinct ?subject ?name_label ?construction_date_label ?destruction_date_label where {
+                    bind(<{{subject}}> as ?subject)
+                    ?subject a crm:E22_Man-Made_Object;
+                            rdfs:label ?name_label.
+                    
+                    optional {
+                      ?subject crm:P108i_was_produced_by ?prod.
+                      ?prod a crm:E12_Production;
+                            crm:P4_has_time-span ?prod_date.
+
+                      ?prod_date a crm:E52_Time-Span;
+                                crm:P82a_begin_of_the_begin ?construction_date_label
+                    }
+                    
+                    optional {
+                    ?subject crm:P13i_was_destroyed_by ?dest.
+                      ?dest a crm:E6_Destruction;
+                            crm:P4_has_time-span ?dest_date.
+                      ?dest_date a crm:E52_Time-Span;
+                                crm:P82b_end_of_the_end ?destruction_date_label
+                    }  
+                  }
+                '
+                template="{{> template}}" 
+              >
+              <template id="template">
+
+                {{#each bindings}}
+                  <h3>{{name_label.value}}</h3>
+
+                  <p>{{construction_date_label.value}}</p>
+
+                  <p>{{destruction_date_label.value}}</p>
+
+                {{/each}}
+              </template>
+
+
+
+              </semantic-query>
+            </div>
+
+            {{/ifCond}}
 
         {{else if showoptions}}
             <h2 id="mapControlsTitle">Map Controls</h2>
             <semantic-map-controls id="search-map-control" target-map-id="search-map" features-taxonomies="use,function,name" features-color-taxonomies="use,function"></semantic-map-controls>
         {{else}}
         <div>
-            <semantic-query
-                    query='
-                SELECT * WHERE {
-                    ?sou a <https://archipelago.itatti.harvard.edu/resource/Source> .
-                    ?sou <https://archipelago.itatti.harvard.edu/resource/Image> ?img .
-                    ?sou rdfs:label ?lbl
+          <h2>Entities</h2>
+
+          <semantic-search>
+            <semantic-search-query-constant
+              query='
+                PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?subject ?type ?start_date ?end_date ?name ?order_date
+                
+                WHERE {
+
+                  {
+                    ?bw_id rdfs:label ?id.
+                    ?subject crm:P1_is_identified_by ?bw_id;
+                      rdfs:label ?name;
+                      rdf:type ?type;
+                      crm:P108i_was_produced_by ?prod.
+                    ?prod crm:P4_has_time-span ?prod_time.
+                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
+                    ?subject crm:P13i_was_destroyed_by ?desc.
+                    ?desc crm:P4_has_time-span ?desc_time.
+                    ?desc_time crm:P82b_end_of_the_end ?end_date.
+                    
+                    bind(?start_date as ?order_date)
+                  }
+                  UNION
+                  {
+                   ?subject crm:P15_was_influenced_by ?bw;
+                      crm:P1_is_identified_by ?identifier;
+                      crm:P4_has_time-span ?order_date;
+                      rdf:type ?type.
+                  
+                    ?bw crm:P108i_was_produced_by ?prod.
+                    ?prod crm:P4_has_time-span ?prod_time.
+                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
+                  
+                    ?bw crm:P13i_was_destroyed_by ?desc.
+                    ?desc crm:P4_has_time-span ?desc_time.
+                    ?desc_time crm:P82b_end_of_the_end ?end_date.
+                  
+                    ?identifier rdf:type crm:E41_Appellation;
+                      rdfs:label ?name.
+                  
+                  }
+                  UNION
+                  {
+                    ?event rdf:type crm:E5_Event;
+                      crmpc:P01_has_domain ?domain;
+                      crm:P15_was_influenced_by ?bw.
+                    ?bw crm:P108i_was_produced_by ?prod.
+                    ?prod crm:P4_has_time-span ?prod_time.
+                    ?prod_time crm:P82a_begin_of_the_begin ?start_date.
+                    ?bw crm:P13i_was_destroyed_by ?desc.
+                    ?desc crm:P4_has_time-span ?desc_time.
+                    ?desc_time crm:P82b_end_of_the_end ?end_date.
+                    ?domain crmpc:P02_has_range ?subject.
+                    ?subject rdf:type ?type;
+                      crm:P1_is_identified_by ?appellation.
+                    ?appellation crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
+                      rdfs:label ?name.
+                    OPTIONAL {
+                      ?subject crm:P92i_was_brought_into_existence_by ?birth.
+                      ?birth rdf:type crm:E67_Birth;
+                        crm:P4_has_time-span ?birth_date.
+                      ?birth_date crm:P82a_begin_of_the_begin ?birth_date_lbl.
+                      bind(?birth_date_lbl as ?order_date)
                     }
-                '
-                    template='{{> displayer}}'>
-                <template id='displayer'>
-                    {{log this}}
-                    <div class="navigatorEntity">
-                        {{#each bindings}}
-                        <div class="navigatorTitles">{{lbl.value}}</div>
-                        <img class="navigator-img" src="../../assets/images/{{img.value}}" alt="{{lbl.value}}">
-                        {{/each}}
-                    </div>
+                    OPTIONAL {
+                      ?subject crm:P93i_was_taken_out_of_existence_by ?death.
+                      ?death rdf:type crm:E69_Death;
+                        crm:P4_has_time-span ?death_date.
+                      ?death_date crm:P82a_begin_of_the_begin ?death_date_lbl.
+                    }
+                    
+                  }
+                }
+              '
+            ></semantic-search-query-constant>
+
+            <semantic-search-result-holder>
+              <semantic-search-result>
+                <semantic-table
+                  id='table'
+                  query='
+                    PREFIX person: <http://example.com/person/>
+                    SELECT distinct ?subject ?type ?img ?name ?start_date ?end_date ?birth_date_lbl ?death_date_lbl ?description ?title_lbl ?order_date where {
+                      bind("1697-01-01"^^xsd:dateTime as ?date).
+                      bind(replace(?subject, "http://www.cidoc-crm.org/cidoc-crm/", "") as ?subject)
+
+                      BIND(REPLACE(str(?type), "http://www.cidoc-crm.org/cidoc-crm/", "") AS ?img)
+                      filter(?start_date <= ?date)
+                      filter(?end_date >= ?date)
+                    } ORDER BY ASC(?order_date)
+                  '
+                  tuple-template='{{>resultTemplate}}'
+                  options='{"showFilter": false}'
+                >
+                  <template id='resultTemplate'>
+                    
+                    {{#ifCond img.value "===" "E39_Actor"}} 
+                    
+                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                        <div class="panel-body ">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                            </div>
+                            <div class="col-sm-9 text-left">
+
+                              <mp-event-trigger id='event-open-details' type='Component.TemplateUpdate' data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{img.value}}"}' targets='["sidebar"]'>
+                                <a><strong>{{name.value}}</strong></a>
+                              </mp-event-trigger>
+
+                              <p>{{#if birth_date_lbl }} ({{dateTimeFormat birth_date_lbl.value "YYYY"}} - {{/if}}{{#if death_date_lbl}}{{dateTimeFormat death_date_lbl.value "YYYY"}}){{/if}}</p>
+                              
+                              <!--
+                              {{#if title_lbl}}
+                                <p><strong>Title:</strong> {{title_lbl.value}}</p>
+                              {{/if}}
+                              -->
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    {{/ifCond}}
+
+                    {{#ifCond img.value "===" "E22_Man-Made_Object"}} 
+                    
+                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                        <div class="panel-body ">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <p><img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt=""></p>
+                            </div>
+                            <div class="col-sm-9 text-left">
+                              
+                              <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{img.value}}"}' targets='["sidebar"]'>
+                                <a><strong>{{name.value}}</strong></h3></a>
+                              </mp-event-trigger>
+
+                              <br>
+                              Construction: {{dateTimeFormat start_date.value "YYYY"}}
+                              <br>
+                              Demolition: {{dateTimeFormat end_date.value "YYYY"}}
+                              <br>
+                              Function:
+                              <br>
+                              Use:
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    {{/ifCond}}
+
+                    {{#ifCond img.value "===" "E5_Event"}} 
+                      
+                      <div class="panel panel-default text-center w-100 {{img.value}}" title="{{subject.value}}">
+                        <div class="panel-body ">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <img class="navigator-icon" src="../../assets/icons/{{img.value}}.svg" alt="">
+                            </div>
+                            <div class="col-sm-9 text-left">
+                              <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{subject.value}}", "type": "{{img.value}}"}' targets='["sidebar"]'>
+                                <a><strong>{{name.value}}</strong></a>
+                              </mp-event-trigger>
+
+                              <br>
+                              {{#if order_date}}
+                                {{order_date.value}}
+                              {{/if}}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    {{/ifCond}}
+
                 </template>
-            </semantic-query>
+                </semantic-table>
+              </semantic-search-result>
+            </semantic-search-result-holder>
+
+          </semantic-search>
+
         </div>
         {{/if}}
     </template>
 </mp-event-target-template-render>
-
-
-
-</semantic-query>
-
 <style>
-    .navigator-img{
-        width: 250px;
-    }
+  #navigatorContainer{
+    width: 400px!important;
+  }
+
+  
+  #navigatorContainer h2{
+    text-align: center;
+  }
+
+  div.E5_Event{
+    border-left: 5px solid #F58F84!important;
+  }
+
+  div.E22_Man-Made_Object{
+    border-left: 5px solid #26A65B!important;
+  }
+
+  div.E39_Actor{
+    border-left: 5px solid #FFA400!important;
+  }
+
+  .navigator-icon{
+    height: 30px;
+  }
+
+  .w-100{
+    width: 100%!important;
+  }
 </style>

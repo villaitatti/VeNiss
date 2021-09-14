@@ -59,45 +59,104 @@
                       ?death_date a crm:E52_Time-Span;
                             crm:P82a_begin_of_the_begin ?death_date_label
                     }
-
-                    optional {
-                      ?subject crm:P14i_performed ?activity.
-                      ?activity a frbroo:F51_Pursuit;
-                        rdfs:label ?activity_label.
-                      filter(lang(?activity_label) = "en")
-                    }
                   }
                 ' template="{{> template}}">
                 <template id="template">
 
-                  <h1>{{bindings.0.name_lbl.value}}</h1>
+                  {{#each bindings}}
+                    <h1>{{name_lbl.value}}</h1>
 
-                  {{#if bindings.0.image}}
-                    <img class="navigator-icon" src="{{bindings.0.image.value}}" alt=""> 
-                  {{else}}
-                    <img class="navigator-icon" src="../../assets/icons/E39_Actor.svg" alt="">
-                  {{/if}}
 
-                  {{#if bindings.0.title_label}}
-                    <p><strong>Title:</strong> {{bindings.0.title_label.value}}</p>  
-                  {{/if}}
+                    {{#if image}}
+                      <img src="{{image.value}}" alt="">
+                    {{else}}
+                      <img src="../../assets/icons/E39_Actor.svg" alt="">
+                    {{/if}}
 
-                  {{#if bindings.0.birth_date_label}}
-                    <p><strong>Birth date:</strong> {{dateTimeFormat bindings.0.birth_date_label.value "YYYY-MM-DD"}}</p>
-                  {{/if}}
+                    {{#if title_label}}
+                      <p><strong>Title:</strong> {{title_label.value}}</p>
+                    {{/if}}
 
-                  {{#if bindings.0.death_date_label}}
-                    <p><strong>Death date:</strong> {{dateTimeFormat bindings.0.death_date_label.value "YYYY-MM-DD"}}</p>
-                  {{/if}}
+                    {{#if birth_date_label}}
+                      <p><strong>Birth date:</strong> {{dateTimeFormat birth_date_label.value "YYYY-MM-DD"}}</p>
+                    {{/if}}
 
-                  {{#if bindings.0.activity_label}}
-                    <strong>Activities:</strong>
-                    <ol>
-                      {{#each bindings}}
-                        <li>{{activity_label}}</li>
-                      {{/each}}
-                    </ol>
-                  {{/if}}
+                    {{#if death_date_label}}
+                      <p><strong>Death date:</strong> {{dateTimeFormat death_date_label.value "YYYY-MM-DD"}}</p>
+                    {{/if}}
+
+                    <semantic-if query='ASK { <{{subject.value}}> crm:P14i_performed ?activity  }'>
+                      <template id='then'>
+                        <semantic-query
+                          query='
+                            select ?activity ?activity_label where{ 
+                              <{{subject.value}}> crm:P14i_performed ?activity.
+                              ?activity a frbroo:F51_Pursuit;
+                                        rdfs:label ?activity_label
+                              filter(lang(?activity_label) = "en")
+                            }
+                          '
+                          template='{{>activities}}'
+                        >
+                            <template id="activities">
+                              <strong>Occupations:</strong>
+                              <ol>
+                                {{#each bindings}}
+                                  <li>{{activity_label.value}}</li>
+                                {{/each}}
+                              </ol>
+                            </template>
+
+                        </semantic-query>
+
+                      </template>
+                    </semantic-if>
+
+
+                    <semantic-if query='ASK{ ?event crmpc:P01_has_domain ?actor_event. ?actor_event crmpc:P02_has_range <{{subject.value}}> }'>
+                      <template id='then'>
+                        <semantic-query
+                          query='
+                          select ?event ?event_label ?role_label where {
+                            ?event crm:P1_is_identified_by ?event_id;
+                            crmpc:P01_has_domain ?actor_event.
+                              
+                            ?actor_event crmpc:P02_has_range <{{subject.value}}>;
+                                        crmpc:P14.1_in_the_role_of ?role.
+                            
+                            ?event_id a crm:E41_Appellation;
+                                      rdfs:label ?event_label.
+                            
+                            ?role rdfs:label ?role_label
+                            
+                            filter(lang(?role_label) = "en")
+                          }
+                          '
+                          template='{{>activities}}'
+                        >
+                          <template id="activities">
+                            <strong>Events:</strong>
+                            <ol>
+                              {{#each bindings}}
+
+                                <li>
+                                  <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{event.value}}", "type": "E5_Event"}' targets='["sidebar"]'>
+                                    <a>{{event_label.value}} (Role: {{?role_label.value}})</a>
+                                  </mp-event-trigger>
+                                </li>
+                              {{/each}}
+                            </ol>
+                          </template>
+
+                      </semantic-query> 
+
+                      </template>
+                    </semantic-if>
+
+
+
+                  {{/each}}
+
                   
                 </template>
                 </semantic-query>

@@ -10,7 +10,7 @@
 
             <div>
               <mp-event-trigger id='event-trigger5' type='Component.TemplateUpdate' data='{"showentities": true}' targets='["sidebar"]'>
-                <a href="#">Go back</a>
+                <a class="btn btn-primary" href="#">Go back to entities</a>
               </mp-event-trigger>
             </div>
 
@@ -44,13 +44,7 @@
                             crm:P82a_begin_of_the_begin ?birth_date_label
                     }
                     
-                    optional {
-                      ?subject crm:P1_is_identified_by ?title.
-                      ?title a crm:E41_Appellation;
-                            crm:P2_has_type  <https://archipelago.itatti.harvard.edu/resource/type/title>;
-                            rdfs:label ?title_label.
-                        filter(lang(?title_label) = "en")
-                    }
+
                     
                     optional {
                       ?subject crm:P93i_was_taken_out_of_existence_by ?death.
@@ -64,18 +58,15 @@
                 <template id="template">
 
                   {{#each bindings}}
-                    <h1>{{name_lbl.value}}</h1>
+                    <h2 id="mapControlsTitle">{{name_lbl.value}}</h2>
 
-
+                    <!--
                     {{#if image}}
                       <img src="{{image.value}}" alt="">
                     {{else}}
                       <img src="../../assets/icons/E39_Actor.svg" alt="">
-                    {{/if}}
+                    {{/if}}-->
 
-                    {{#if title_label}}
-                      <p><strong>Title:</strong> {{title_label.value}}</p>
-                    {{/if}}
 
                     {{#if birth_date_label}}
                       <p><strong>Birth date:</strong> {{dateTimeFormat birth_date_label.value "YYYY-MM-DD"}}</p>
@@ -84,6 +75,30 @@
                     {{#if death_date_label}}
                       <p><strong>Death date:</strong> {{dateTimeFormat death_date_label.value "YYYY-MM-DD"}}</p>
                     {{/if}}
+
+                    <semantic-query
+                      query='
+                        select * where{ 
+                          <{{subject.value}}> crm:P1_is_identified_by ?title.
+                          ?title a crm:E41_Appellation;
+                                crm:P2_has_type  <https://archipelago.itatti.harvard.edu/resource/type/title>;
+                                rdfs:label ?title_label.
+                            filter(lang(?title_label) = "en")
+                        }
+                      '
+                      template='{{>activities}}'
+                    >
+                        <template id="activities">
+                          <strong>Titles:</strong>
+                          <ul>
+                            {{#each bindings}}
+                              <li>{{title_label.value}}</li>
+                            {{/each}}
+                          </ul>
+                        </template>
+
+                    </semantic-query>
+
 
                     <semantic-if query='ASK { <{{subject.value}}> crm:P14i_performed ?activity  }'>
                       <template id='then'>
@@ -98,14 +113,14 @@
                           '
                           template='{{>activities}}'
                         >
-                            <template id="activities">
-                              <strong>Occupations:</strong>
-                              <ol>
-                                {{#each bindings}}
-                                  <li>{{activity_label.value}}</li>
-                                {{/each}}
-                              </ol>
-                            </template>
+                          <template id="activities">
+                            <strong>Occupations:</strong>
+                            <ul>
+                              {{#each bindings}}
+                                <li>{{activity_label.value}}</li>
+                              {{/each}}
+                            </ul>
+                          </template>
 
                         </semantic-query>
 
@@ -136,20 +151,17 @@
                         >
                           <template id="activities">
                             <strong>Events:</strong>
-                            <ol>
+                            <ul>
                               {{#each bindings}}
-
                                 <li>
                                   <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{event.value}}", "type": "E5_Event"}' targets='["sidebar"]'>
-                                    <a>{{event_label.value}} (Role: {{?role_label.value}})</a>
+                                    <a>{{event_label.value}} (Role: {{role_label.value}})</a>
                                   </mp-event-trigger>
                                 </li>
                               {{/each}}
-                            </ol>
+                              </ul>
                           </template>
-
                       </semantic-query> 
-
                       </template>
                     </semantic-if>
 
@@ -172,43 +184,68 @@
                   query='
                     PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                    select distinct ?subject ?name_label ?synopsys_label ?century_label ?century_quarter_label where {
+                    select distinct ?subject ?name_label ?synopsys_label ?date_start where {
                       bind(<{{subject}}> as ?subject)
                       ?subject a crm:E5_Event;
-                              crm:P1_is_identified_by ?name;
-                              crm:P129i_is_subject_of ?synopsys.
+                        crm:P4_has_time-span ?date;
+                        crm:P1_is_identified_by ?name;
+                        crm:P129i_is_subject_of ?synopsys.
                       
                       ?name a crm:E41_Appellation;
-                            rdfs:label ?name_label.
+                        rdfs:label ?name_label.
                       
                       ?synopsys a crm:E73_Information_Object;
-                                rdfs:label ?synopsys_label
-                      
-                      optional {
-                        ?subject crm:P4_has_time-span ?time_span_1.
-                        ?time_span_1 a crm:E52_Time-Span;
-                                    crm:P82_at_some_time_within ?century_label
-                      }
-                      
-                      optional {
-                        ?subject crm:P4_has_time-span ?time_span_2.
-                        ?time_span_2 a crm:E52_Time-Span;
-                                    crm:P1_is_identified_by ?appellation.
-                        
-                        ?appellation a crm:E49_Time_Appellation;
-                                    rdfs:label ?century_quarter_label
-                      }
+                        rdfs:label ?synopsys_label.
+
+                      ?date a crm:E52_Time-Span;
+                        crm:P82a_begin_of_the_begin ?date_start.
+                     
                     }'
                   template="{{> template}}" 
                 >
                 <template id="template">
 
                   {{#each bindings}}
-                    <h3>{{name_label.value}}</h3>
+                    <h2 id='mapControlsTitle'>{{name_label.value}}</h2>
+
+                    <p>Date: {{dateTimeFormat date_start.value "YYYY"}}</p>
 
                     <p>{{synopsys_label.value}}</p>
 
-                    <p>{{century_label.value}}, {{century_quarter_label.value}}</p>
+                    <semantic-query
+                      query='
+                        SELECT DISTINCT ?actor ?name_label ?role_label WHERE {
+                          BIND(<{{subject.value}}> AS ?subject)
+                          ?subject a crm:E5_Event;
+                                  crmpc:P01_has_domain ?actor_event.
+                          
+                          ?actor_event a crmpc:PC14_carried_out_by;
+                                      crmpc:P02_has_range ?actor;
+                                      crmpc:P14.1_in_the_role_of ?role.
+                          
+                          ?actor crm:P1_is_identified_by ?name.
+                          ?name crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
+                                rdfs:label ?name_label.
+                          
+                          ?role rdfs:label ?role_label
+                        }
+                      '
+                      template='{{>actors}}'
+                    >
+                        <template id="actors">
+                          Actors:
+                          <ol>
+                            {{#each bindings}}
+                            <li>
+                              <mp-event-trigger id="event-open-details" type="Component.TemplateUpdate" data='{"showdetails": true, "subject": "{{actor.value}}", "type": "E39_Actor"}' targets='["sidebar"]'>
+                                <a>{{name_label.value}} (Role: {{role_label.value}})</a>
+                              </mp-event-trigger>
+                            </li>
+                            {{/each}}
+                          </ol>
+                        </template>
+
+                    </semantic-query>
 
                   {{/each}}
                 </template>
@@ -276,7 +313,7 @@
             <semantic-map-controls id="search-map-control" target-map-id="search-map" features-taxonomies="use,function,name" features-color-taxonomies="use,function"></semantic-map-controls>
         {{else}}
         <div>
-          <h2>Entities</h2>
+          <h2 id="mapControlsTitle">Entities</h2>
 
           <semantic-search>
             <semantic-search-query-constant
@@ -548,6 +585,9 @@
     width: 400px!important;
   }
 
+ #navigatorContainer a{
+    color: #3498db!important;
+  }
   
   #navigatorContainer h2{
     text-align: center;

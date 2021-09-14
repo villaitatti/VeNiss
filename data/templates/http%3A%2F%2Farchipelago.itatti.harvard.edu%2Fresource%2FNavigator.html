@@ -18,7 +18,8 @@
             {{#ifCond type "===" "E39_Actor"}}
 
               <div>
-                <semantic-query query='
+                <semantic-query 
+                  query='
                   PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
                   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                   PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
@@ -382,10 +383,35 @@
                               </mp-event-trigger>
 
                               {{#if order_start_date }}
-                                <p>
-                                  {{dateTimeFormat order_start_date.value "YYYY"}} {{#if order_end_date}} - {{dateTimeFormat order_end_date.value "YYYY"}} {{/if}}
-                                </p>
+                                <br>
+                                {{dateTimeFormat order_start_date.value "YYYY"}} {{#if order_end_date}} - {{dateTimeFormat order_end_date.value "YYYY"}} {{/if}}
                               {{/if}}
+
+                                <semantic-query
+                                  query='
+                                    SELECT DISTINCT ?subject ?activity_lbl WHERE {
+                                      bind(<{{subject.value}}> as ?subject)
+                                      
+                                      ?subject crm:P14i_performed ?activity.
+                                      ?activity a frbroo:F51_Pursuit;
+                                        rdfs:label ?activity_lbl
+                                      
+                                      filter(lang(?activity_lbl) = "en")
+                                    }
+                                  '
+                                  template='{{>roles}}'
+                                >
+
+                                  <template id="roles">
+                                    {{#each bindings}}
+                                      <br>{{activity_lbl.value}}
+                                    {{/each}}
+                                    
+                                  </template>
+
+                                </semantic-query>
+
+                              {{log subject.value}}
 
                             </div>
                           </div>

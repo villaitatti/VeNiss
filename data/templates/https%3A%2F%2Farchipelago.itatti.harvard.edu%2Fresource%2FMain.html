@@ -83,46 +83,6 @@
                                           ?bw crm:P1_is_identified_by ?bw_id;
                                             rdfs:label ?name.
 
-                                          ?bw crm:P12i_was_present_at ?function_node.
-                                          ?function_node a crm:E5_Event;
-                                            rdfs:label ?function;
-                                            crm:P4_has_time-span ?function_date.
-                                          
-                                          ?function_date crm:P82a_begin_of_the_begin ?function_date_start.
-                                          filter(?function_date_start <= ?date)
-                                          
-                                          optional {
-                                            ?function_date crm:P82b_end_of_the_end ?function_date_end.
-                                            filter(?function_date_end >= ?date) 
-                                          }
-                                          
-                                          ?bw crm:P12i_was_present_at ?use_node.
-                                          ?use_node crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/use>, ?use_type.
-                                          ?use_type rdf:type crm:E55_Type;
-                                            rdfs:label ?use.
-                                          ?use_node crm:P4_has_time-span ?use_date.
-                                          ?use_date crm:P82a_begin_of_the_begin ?use_date_start;
-                                            crm:P82b_end_of_the_end ?use_date_end.
-                                          
-                                          FILTER(?use_date_start <= ?date)
-                                          FILTER(?use_date_end >= ?date)
-                                          FILTER((STR(?use)) != "Use")
-                                          FILTER((LANG(?use)) = "en")
-                                          
-                                          optional {
-                                            ?bw crm:P12i_was_present_at ?typology_node.
-                                            ?typology_node crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/typology>, ?typology_type.
-                                            ?typology_type rdf:type crm:E55_Type;
-                                              rdfs:label ?typology.
-                                            ?typology_node crm:P4_has_time-span ?typology_date.
-                                            ?typology_date crm:P82a_begin_of_the_begin ?typology_date_start;
-                                              crm:P82b_end_of_the_end ?typology_date_end.
-                                        
-                                            FILTER(?typology_date_start <= ?date)
-                                            FILTER(?typology_date_end >= ?date)
-                                            FILTER((STR(?typology)) != "Typology")
-                                            FILTER((LANG(?typology)) = "en")
-                                          }
                                         } ORDER BY DESC(?subject)'
                                         map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
                                         tuple-template='{{>tuple_template}}'
@@ -141,7 +101,7 @@
                                               
                                               <semantic-query
                                                 query='
-                                                  SELECT DISTINCT ?role_label ?actor_label WHERE {
+                                                  SELECT DISTINCT ?actor_label WHERE {
                                                     bind(<{{bw.value}}> as ?subject)
                                                     
                                                     ?subject crm:P108i_was_produced_by ?prod.
@@ -152,18 +112,21 @@
                                                       crmpc:P14.1_in_the_role_of ?role.
                                                     
                                                     ?role a crm:E55_Type;
-                                                      rdfs:label ?role_label.
+                                                      rdfs:label "Architect"@en.
 
                                                     ?actor crm:P1_is_identified_by ?appellation.
                                                     ?appellation a crm:E41_Appellation;
-                                                      rdfs:label ?actor_label
+                                                                crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
+                                                                rdfs:label ?actor_label
+
+
                                                   }
                                                 '
                                                 template='{{>actor_role}}'
                                               >
                                                 <template id="actor_role">
                                                   {{#each bindings}}
-                                                    {{role_label.value}}: {{actor_label.value}}<br>
+                                                    Architect: {{actor_label.value}}<br>
                                                   {{/each}}
                                                 </template>
 
@@ -574,3 +537,45 @@
     
     
     </style>
+
+    <!--
+      ?bw crm:P12i_was_present_at ?function_node.
+      ?function_node a crm:E5_Event;
+        rdfs:label ?function;
+        crm:P4_has_time-span ?function_date.
+      
+      ?function_date crm:P82a_begin_of_the_begin ?function_date_start.
+      filter(?function_date_start <= ?date)
+      
+      optional {
+        ?function_date crm:P82b_end_of_the_end ?function_date_end.
+        filter(?function_date_end >= ?date) 
+      }
+      
+      ?bw crm:P12i_was_present_at ?use_node.
+      ?use_node crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/use>, ?use_type.
+      ?use_type rdf:type crm:E55_Type;
+        rdfs:label ?use.
+      ?use_node crm:P4_has_time-span ?use_date.
+      ?use_date crm:P82a_begin_of_the_begin ?use_date_start;
+        crm:P82b_end_of_the_end ?use_date_end.
+      
+      FILTER(?use_date_start <= ?date)
+      FILTER(?use_date_end >= ?date)
+      FILTER((STR(?use)) != "Use")
+      FILTER((LANG(?use)) = "en")
+      
+      optional {
+        ?bw crm:P12i_was_present_at ?typology_node.
+        ?typology_node crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/typology>, ?typology_type.
+        ?typology_type rdf:type crm:E55_Type;
+          rdfs:label ?typology.
+        ?typology_node crm:P4_has_time-span ?typology_date.
+        ?typology_date crm:P82a_begin_of_the_begin ?typology_date_start;
+          crm:P82b_end_of_the_end ?typology_date_end.
+    
+        FILTER(?typology_date_start <= ?date)
+        FILTER(?typology_date_end >= ?date)
+        FILTER((STR(?typology)) != "Typology")
+        FILTER((LANG(?typology)) = "en")
+      }-->

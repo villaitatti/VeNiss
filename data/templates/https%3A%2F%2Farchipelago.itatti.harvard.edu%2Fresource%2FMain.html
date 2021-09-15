@@ -123,12 +123,84 @@
                                             FILTER((STR(?typology)) != "Typology")
                                             FILTER((LANG(?typology)) = "en")
                                           }
-                                        }'
+                                        } ORDER BY DESC(?subject)'
                                         map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
-                                        tuple-template='<h3>Church of San Secondo</h3><p><b>Architect:</b> Unknown</p><p><b>Construction:</b> 1608</p><p><b>Demolition:</b> 1821</p>'
+                                        tuple-template='{{>tuple_template}}'
                                         fix-zoom-level='17'
                                         fix-center='[1370000.000000000, 5692800.000000000]'
                                         >
+
+                                          <template id="tuple_template">
+                                            {{#if typology}}
+                                              <h3>{{typology.value}}</h3>
+                                            {{else}}
+                                              <h3>{{name.value}}</h3>
+                                            {{/if}}
+                                            
+                                            <p>
+                                              
+                                              <semantic-query
+                                                query='
+                                                  SELECT DISTINCT ?role_label ?actor_label WHERE {
+                                                    bind(<{{bw.value}}> as ?subject)
+                                                    
+                                                    ?subject crm:P108i_was_produced_by ?prod.
+                                                    
+                                                    ?prod crmpc:P01_has_domain ?prod_actor.
+                                                    ?prod_actor a crmpc:PC14_carried_out_by;
+                                                      crmpc:P02_has_range ?actor;
+                                                      crmpc:P14.1_in_the_role_of ?role.
+                                                    
+                                                    ?role a crm:E55_Type;
+                                                      rdfs:label ?role_label.
+
+                                                    ?actor crm:P1_is_identified_by ?appellation.
+                                                    ?appellation a crm:E41_Appellation;
+                                                      rdfs:label ?actor_label
+                                                  }
+                                                '
+                                                template='{{>actor_role}}'
+                                              >
+                                                <template id="actor_role">
+                                                  {{#each bindings}}
+                                                    {{role_label.value}}: {{actor_label.value}}<br>
+                                                  {{/each}}
+                                                </template>
+
+                                              </semantic-query>
+
+                                              <semantic-query
+                                                query='
+                                                  SELECT DISTINCT ?subject ?bw_start_date ?bw_end_date WHERE {
+                                                    bind(<{{bw.value}}> as ?subject)
+                                                    
+                                                    ?subject 
+                                                            crm:P108i_was_produced_by ?prod;
+                                                            crm:P13i_was_destroyed_by ?desc.
+                                                  
+                                                    ?prod crm:P4_has_time-span ?prod_time.
+                                                    ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
+                                                  
+                                                    ?desc crm:P4_has_time-span ?desc_time.
+                                                    ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
+                                                  }
+                                                '
+                                                template='{{>metadata}}'
+                                              >
+
+                                                <template id="metadata">
+                                                  {{#each bindings}}
+                                                    <br>
+                                                    Construction: {{dateTimeFormat bw_start_date.value "YYYY"}}
+                                                    <br>
+                                                    Demolition: {{dateTimeFormat bw_end_date.value "YYYY"}}
+                                                  {{/each}}
+                                                </template>
+                                              </semantic-query>
+
+                                            </p>
+                                          </template>
+
                                     <tiles-layer thumbnail='/assets/images/SS_IGM_1945.jpg' url='/proxy/mapbox/v4/gspinaci.1fedppsy/{z}/{x}/{y}@2x.png' identifier='SS_IGM_1945' name='SS_1945' level='overlay'></tiles-layer>
                                     <tiles-layer thumbnail='/assets/images/SS_Orthophoto_1982.jpg' url='/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png' identifier='SS_Orthophoto_1982' name='SS_1982' level='overlay'></tiles-layer>
                                     <tiles-layer thumbnail='/assets/images/SS_Survey_1801.jpg' url='/proxy/mapbox/v4/gspinaci.2jpz15av/{z}/{x}/{y}@2x.png' identifier='SS_Survey_1801' name='SS_1801' level='overlay'></tiles-layer>

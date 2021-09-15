@@ -43,8 +43,8 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:subject ;
-			sp:object :_subject
+			sp:predicate archipelago:bw_id ;
+			sp:object :_bw_id
 		]
 	) ;
 	spin:constraint
@@ -100,16 +100,16 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 	[
 		a spin:Column ;
 		rdfs:comment "Builtwork ID" ;
-		spl:predicate :_subject ;
+		spl:predicate :_bw_id ;
 		spl:valueType xsd:string
 	] ;
 	rssqlsail:includesSQLQuery
 	[
 		rssqlsail:hasQueryId "base" ;
-		rssqlsail:text "select distinct \"BW_ID\" as subject, ST_AsText(geo) as wkt from archipelago_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
+		rssqlsail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geo) as wkt from archipelago_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
 	] ;
 	rssqlsail:includesSQLQuery
 	[
 		rssqlsail:hasQueryId "test" ;
-		rssqlsail:text "select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_island_1697 UNION select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_buildings_1697"
+		rssqlsail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_island_1697 UNION select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_buildings_1697"
 	] .

@@ -23,371 +23,69 @@
             </div>
         </div>
         <div id="mapNavigatorContainer" class="flexrows">
-            <div id="mapNavigatorRow">
-                <div id="mapContainer" class="">
+
     
-                    <!-- Event to handle bounding box search-->
-                    <mp-event-proxy
-                            id='on-moveend-search-map'
-                            on-event-source='search-map'
-                            on-event-type='SemanticMap.BoundingBoxChanged'
-                            proxy-event-type='SemanticSearch.QueryConstant.SetParameters'
-                            proxy-targets='["search-map-query"]'>
-                    </mp-event-proxy>
-    
-                    <!-- Structured search with geospatial -->
-                    <semantic-context repository='ephedra'>
-                        <semantic-search>
-    
-                            <semantic-search-query-constant
-                                id='search-map-query'
-                                parameters='{
-                                    "southWestLat": {
-                                        "value": "1368358.959761288"
-                                    },
-                                    "southWestLon": {
-                                        "value": "5692238.026840036"
-                                    },
-                                    "northEstLat": {
-                                        "value": "1371414.0522355612"
-                                    },
-                                    "northEstLon": {
-                                        "value": "5693523.1243780805"
-                                    }
-                                }'
-                                query='
-                                    PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
-                                    PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
-                                    SELECT ?subject ?wkt WHERE {
-                                        service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                          ?root rssqlsail:hasQueryId "test";	
-                                            archipelago:wkt ?wkt;
-                                            archipelago:subject ?subject;
-                                            archipelago:minX ?southWestLat;
-                                            archipelago:minY ?southWestLon;
-                                            archipelago:maxX ?northEstLat;
-                                            archipelago:maxY ?northEstLon
-                                        }                                        
-                                    }'
-                            ></semantic-search-query-constant>
-    
-                            <semantic-search-result-holder>
-                                <semantic-search-result>
-                                    <semantic-map
-                                        id='search-map'
-                                        target-controls='["search-map-control"]'
-                                        query='SELECT distinct ?subject ?wkt ?bw ?name ?function ?use ?typology WHERE {
-                                          BIND("1697-01-01"^^xsd:dateTime AS ?date)
-  
-                                          ?bw_id rdfs:label ?subject.
-                                          ?bw crm:P1_is_identified_by ?bw_id;
-                                            rdfs:label ?name.
+        <!-- Event to handle bounding box search-->
+        <mp-event-proxy
+                id='on-moveend-search-map'
+                on-event-source='search-map'
+                on-event-type='SemanticMap.BoundingBoxChanged'
+                proxy-event-type='SemanticSearch.QueryConstant.SetParameters'
+                proxy-targets='["search-map-query"]'>
+        </mp-event-proxy>
 
-                                        } ORDER BY DESC(?subject)'
-                                        map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
-                                        tuple-template='{{>tuple_template}}'
-                                        fix-zoom-level='17'
-                                        fix-center='[1370000.000000000, 5692800.000000000]'
-                                        >
+        <!-- Structured search with geospatial -->
+        <semantic-context repository='ephedra'>
+            <semantic-search>
 
-                                          <template id="tuple_template">
-                                            {{#if typology}}
-                                              <h3>{{typology.value}}</h3>
-                                            {{else}}
-                                              <h3>{{name.value}}</h3>
-                                            {{/if}}
-                                            
-                                            <p>
-                                              
-                                              <semantic-query
-                                                query='
-                                                  SELECT DISTINCT ?actor_label WHERE {
-                                                    bind(<{{bw.value}}> as ?subject)
-                                                    
-                                                    ?subject crm:P108i_was_produced_by ?prod.
-                                                    
-                                                    ?prod crmpc:P01_has_domain ?prod_actor.
-                                                    ?prod_actor a crmpc:PC14_carried_out_by;
-                                                      crmpc:P02_has_range ?actor;
-                                                      crmpc:P14.1_in_the_role_of ?role.
-                                                    
-                                                    ?role a crm:E55_Type;
-                                                      rdfs:label "Architect"@en.
+                <semantic-search-query-constant
+                    id='search-map-query'
+                    parameters='{
+                        "southWestLat": {
+                            "value": "1368358.959761288"
+                        },
+                        "southWestLon": {
+                            "value": "5692238.026840036"
+                        },
+                        "northEstLat": {
+                            "value": "1371414.0522355612"
+                        },
+                        "northEstLon": {
+                            "value": "5693523.1243780805"
+                        }
+                    }'
+                    query='
+                        PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
+                        PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
+                        SELECT ?subject ?bw_id ?wkt WHERE {
+                            service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                              ?root rssqlsail:hasQueryId "test";	
+                                archipelago:wkt ?wkt;
+                                archipelago:bw_id ?bw_id;
+                                archipelago:minX ?southWestLat;
+                                archipelago:minY ?southWestLon;
+                                archipelago:maxX ?northEstLat;
+                                archipelago:maxY ?northEstLon
+                            }                                        
+                            BIND(IRI(CONCAT("https://archipelago.itatti.harvard.edu/resource/built_work/", ?bw_id)) as ?subject)
+                        }'
+                ></semantic-search-query-constant>
 
-                                                    ?actor crm:P1_is_identified_by ?appellation.
-                                                    ?appellation a crm:E41_Appellation;
-                                                                crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
-                                                                rdfs:label ?actor_label
+                <div id="mapNavigatorRow">
+                  <div id="mapContainer">
+                    [[> arc:Map ]]
+                  </div>
 
-
-                                                  }
-                                                '
-                                                template='{{>actor_role}}'
-                                              >
-                                                <template id="actor_role">
-                                                  {{#each bindings}}
-                                                    Architect: {{actor_label.value}}<br>
-                                                  {{/each}}
-                                                </template>
-
-                                              </semantic-query>
-
-                                              <semantic-query
-                                                query='
-                                                  SELECT DISTINCT ?subject ?bw_start_date ?bw_end_date WHERE {
-                                                    bind(<{{bw.value}}> as ?subject)
-                                                    
-                                                    ?subject 
-                                                            crm:P108i_was_produced_by ?prod;
-                                                            crm:P13i_was_destroyed_by ?desc.
-                                                  
-                                                    ?prod crm:P4_has_time-span ?prod_time.
-                                                    ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
-                                                  
-                                                    ?desc crm:P4_has_time-span ?desc_time.
-                                                    ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
-                                                  }
-                                                '
-                                                template='{{>metadata}}'
-                                              >
-
-                                                <template id="metadata">
-                                                  {{#each bindings}}
-                                                    <br>
-                                                    Construction: {{dateTimeFormat bw_start_date.value "YYYY"}}
-                                                    <br>
-                                                    Demolition: {{dateTimeFormat bw_end_date.value "YYYY"}}
-                                                  {{/each}}
-                                                </template>
-                                              </semantic-query>
-
-                                            </p>
-                                          </template>
-
-                                    <tiles-layer thumbnail='/assets/images/SS_IGM_1945.jpg' url='/proxy/mapbox/v4/gspinaci.1fedppsy/{z}/{x}/{y}@2x.png' identifier='SS_IGM_1945' name='SS_1945' level='overlay'></tiles-layer>
-                                    <tiles-layer thumbnail='/assets/images/SS_Orthophoto_1982.jpg' url='/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png' identifier='SS_Orthophoto_1982' name='SS_1982' level='overlay'></tiles-layer>
-                                    <tiles-layer thumbnail='/assets/images/SS_Survey_1801.jpg' url='/proxy/mapbox/v4/gspinaci.2jpz15av/{z}/{x}/{y}@2x.png' identifier='SS_Survey_1801' name='SS_1801' level='overlay'></tiles-layer>
-                                    <tiles-layer thumbnail='/assets/images/1763_Polynomial2_NN.jpg' url='/proxy/mapbox/v4/gspinaci.cxuajku9/{z}/{x}/{y}@2x.png' identifier='1763_Polynomial2_NN' name='SS_1763' level='overlay'></tiles-layer>
-                                    <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_light.jpg' url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}' identifier='light' name='Light' level='basemap'></tiles-layer>
-                                    <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_satellite.jpg' url='/proxy/mapbox/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}' identifier='satellite' name='Satellite' level='basemap'></tiles-layer>
-                                    <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_custom.jpg' url='/proxy/mapbox/styles/v1/gspinaci/ckirl5bkw02zc19s36rrccq8k/tiles/256/{z}/{x}/{y}' identifier='custom' name='Custom' level='basemap'></tiles-layer>
-                                    <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_ortofoto.jpg' url='http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}' identifier='comune_venezia' name='Comune di Venezia' level='basemap'></tiles-layer>
-                                </semantic-map>
-                                </semantic-search-result>
-                            </semantic-search-result-holder>
-                        </semantic-search>
-                    </semantic-context>
-                </div>
-    
-                <div id="navigatorContainer">
+                  <div id="navigatorContainer">
                     [[> arc:Navigator ]]
+                  </div>
                 </div>
-    
-            </div>
+
+            </semantic-search>
+        </semantic-context>
+
         </div>
-        <div id="narrativeHolder" style="display: none;">
-            <h5 id="narrativeTitle">San Secondo and the city's food supply </h5>
-            <div class="or-spacer"><div class="mask"></div></div>
-            <img id="narrativeImage" src="../../assets/images/narratives-food.jpg">
-            <p>
-    
-            </p>
-            <p>
-                As several other lagoon settlements of the Venetian archipelago, the island of San Secondo was more than a spiritual space solely devoted to a contemplative life.
-                It embodied a key site of a complex network committed to support the Dominican community itself
-    
-                <!--[SOU_42]-->,
-    
-                but not less involved in preserving Venice’s urban framework.
-                Its position along one of the vital approach routes to the capital city from the mainland enabled it to take on crucial functions closely linked to the daily food and water supply of the lagoon.
-                This provision role was reflected in the presence of a series of buildings for food production.
-                Within the boundaries of the tiny island were situated spaces for storing and working sustainable resources, as well as infrastructure that served the monastic populace. Facilities, arranged mainly in the eastern part of the complex, included a
-                <mp-event-trigger id='narrative-01-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_052", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a id="narrative-01" class="narrativeLink">kitchen</a>
-                </mp-event-trigger>,
-    
-                a
-    
-                <mp-event-trigger id='narrative-02-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_051", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">cellar (càneva)</a>
-                </mp-event-trigger>
-    
-                for storing wine, a
-    
-                <mp-event-trigger id='narrative-03-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_026", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">wash house</a>
-                </mp-event-trigger>
-    
-                for laundry and washing dishes, with sinks and cooking ranges, and a
-    
-                <mp-event-trigger id='narrative-04-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_034", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">woodshed</a>
-                </mp-event-trigger>
-    
-                with a large stockpile of fireplace and cooking stove wood.
-    
-                A
-    
-                <mp-event-trigger id='narrative-05-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_008", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">wellhead</a>
-                </mp-event-trigger>
-    
-                located in the courtyard behind the monastery provided fresh water. Next to the kitchen, a large squared room served as a
-    
-                <mp-event-trigger id='narrative-06-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_053", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">refectory</a>
-                </mp-event-trigger>
-    
-                for the friars to convene together and eat their meals.
-            </p>
-    
-            <p>
-                A detailed list of the monastery food expenses
-    
-                <!--TODO             [SOU_167] -->
-                <a class="narrativeLink">food expenses</a>,
-    
-                compiled from 1 May 1642 to 21 February 1645,
-                gives us a rare glimpse into the everyday life of the lagoon community.
-    
-    
-                <mp-event-trigger id='narrative-01-ev-nav' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"PEO_205 ", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">Giacomo from Brescia</a>
-                </mp-event-trigger>
-    
-    
-    
-                was asked by the
-    
-                <mp-event-trigger id='narrative-02-ev-nav' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"PEO_204 ", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">Stefano Bellaveri</a>
-                </mp-event-trigger>
-    
-                to annotate,
-                day by day, the meals served every morning and night,
-                their cost, as well as the number of “mouths” to feed. Soups, vegetables and cheeses,
-                but above all fish, were regularly provided to ecclesiastics but also to their numerous guests.
-            </p>
-    
-            <p>
-                Venetian nunneries and monasteries were, in fact, an integral part of Venetian social and cultural life,
-                as well as the urban and economic essence of the everyday city.
-                San Secondo held a special place in notions of both monastic hospitality and economy.
-                At the far north-eastern tip of the island a public
-    
-                <mp-event-trigger id='narrative-07-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_014", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">cavàna</a>
-                </mp-event-trigger> 
-                 (roofed boat slip)
-                offered shelter to passengers in transit during storms. This shed was much 
-                frequented by Venetians and foreigners alike, so much so that the Dominican friars in the mid-seventeenth 
-                century decided to build a second boathouse to their private vessels, 
-                which was designed by the architect
-                
-                <mp-event-trigger id='narrative-02-ev-nav' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"PEO_038 ", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">Tommaso Temanza</a>
-                </mp-event-trigger>. 
-            </p>
-    
-            <p>
-                The public cavàna was surmounted by a lavish
-    
-                <mp-event-trigger id='narrative-08-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_025", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">guest house</a>
-                </mp-event-trigger>
-                used to lodge any passengers traveling within the lagoon.
-                A large number of guests were lodged and fed every day by the friars who,
-                on 23 December 1732, were exempted by the office of the
-    
-                <mp-event-trigger id='narrative-08-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"PEO_87", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">Milizia da Mar</a>
-                </mp-event-trigger>
-    
-                from the payment of the
-    
-                <mp-event-trigger id='narrative-08-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"EVE_54", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">“greengrocers’ tax”</a>
-                </mp-event-trigger>  
-                
-                because of the inconveniences 
-                they experience daily. The guest house afforded food and shelter not only to sailors, fishermen, and 
-                merchants, but also, and perhaps more notably, to papal nuncios, foreign ambassadors, and even royalty in 
-                transit. Foremost among the eminent guests was the new French
-                
-                <mp-event-trigger id='narrative-08-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"PEO_206", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">monarch Henry III</a>
-                </mp-event-trigger> 
-                
-                who was hosted 
-                in the island on 18 July 1574, on his way back from Poland to France.
-            </p>
-    
-            <p>
-            But the island was not used only by travellers. Lists of mansionarie (commemorative masses) regularly held in the church of San Secondo also included some “vacation ceremonies.” This evidence would confirm what the cosmographer Father
-            
-    
-            <mp-event-trigger id='narrative-08-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"PEO_46", "color":"rgba(143, 29, 33, .4)"}]}'>
-                <a class="narrativeLink">Vincenzo Maria Coronelli</a>
-            </mp-event-trigger> 
-            
-            recalled about the guest house serving as an agreeable shelter for noble and wealthy citizens looking for somewhere cool during the hottest days. In addition, archival sources reveal that over the centuries the island became the chief destination of noble Venetians even for long stays. Within San Secondo’s walls may have found refuge — but the question is still debated — 
-           
-            <mp-event-trigger id='narrative-08-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"PEO_201", "color":"rgba(143, 29, 33, .4)"}]}'>
-                <a class="narrativeLink">Daria Querini</a>
-            </mp-event-trigger>,
-            
-            the widow of Alvise Contarini, who likely retired to the monastery after her husband’s death. She is portrayed in a precious miniature [SOU_30] by 
-    
-            <mp-event-trigger id='narrative-08-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"PEO_36", "color":"rgba(143, 29, 33, .4)"}]}'>
-                <a class="narrativeLink">Jacometto Veneziano</a>
-            </mp-event-trigger>, 
-            
-            today preserved at the Metropolitan Museum of Art of New York, in whose background the small island of San Secondo stands out prominently.
-            </p>        
-            <!--UNTIL HERE
-            <p>
-                In addition to public facilities and commodities, vast green areas marked the adjacent open spaces of the sacred complex. The island was covered by orderly vegetable gardens, charming orchards, and delicate gardens including a small laurel woods that “seems to be dedicated to the Muses», as prior Domenico Codagli [PEO_41] described in his Historia dell’isola e monasterio di San Secondo di Venetia (1609) [SOU_168]. The pages dedicated to the depiction of the monastic greenery are a celebration of colour and aromas. The friar minutely listed all plant species embellishing the island’s open spaces.
-    
-                Both the garden facing the lagoon
-      
-                and the one extending behind the
-    
-                <mp-event-trigger id='narrative-09-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_010", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">monastery</a>
-                </mp-event-trigger>
-    
-                were covered with high-growing plants — such as willows, elderberries, and cypresses — and fruit trees of all sorts and varieties: pears, apples, quinces, peaches, plums, figs, almond trees, pomegranates, but also jujubes, olive trees, stones and, of course, vineyards.
-    
-    
-    
-    
-                In the
-                <mp-event-trigger id='narrative-09-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_011", "color":"rgba(143, 29, 33, .4)"}]}'>
-                    <a class="narrativeLink">vegetable garden</a>
-                </mp-event-trigger>
-                that occupied most of the remaining space,
-    
-                among the vegetables pumpkins, eggplants, watermelons, and melons standed out. Moreover, there were medicinal and aromatic herbs including mint, rosemary, and mandrake. Finally, tulips, hyacinths, roses, jasmine, and carnations were joy for the eyes.
-            </p>
-    
-            <p>
-                Codagli’s text is a passionate description, sometimes of praise. His engrossment in detail conveys the prior’s intimate bond to the site, in addition to his clear understanding of the significance of the island’s green areas in the everyday life activities of the city. Nevertheless, the abundance and luxuriance of these spaces are confirmed by a 1626 list of all friars’ plants and herbs, which is preserved in the private archive of the religious community [SOU_170].
-            </p>
-    
-            <p>
-                Fruits, vegetables, and horticultural plants were instrumental in securing San Secondo’s food independence of its community, while also contributing to the city’s general supply. Sixteenth-century tenant farmers’ contracts confirm the extensive use of the island’s vegetable garden for cultivations destined to be sold outside its precincts, thereby rejecting the idea of religious life as a spiritual and secluded world.
-            </p>
-    
-            <p>
-                But the island was not used only by travellers. Lists of mansionarie (commemorative masses) regularly held in the church of San Secondo also included some “vacation ceremonies.” This evidence would confirm what the cosmographer Father Vincenzo Maria Coronelli [PEO_46] recalled about the guest house serving as an agreeable shelter for noble and wealthy citizens looking for somewhere cool during the hottest days. In addition, archival sources reveal that over the centuries the island became the chief destination of noble Venetians even for long stays. Within San Secondo’s walls may have found refuge — but the question is still debated — Daria Querini [PEO_201], the widow of Alvise Contarini, who likely retired to the monastery after her husband’s death. She is portrayed in a precious miniature [SOU_30] by Jacometto Veneziano [PEO_36], today preserved at the Metropolitan Museum of Art of New York, in whose background the small island of San Secondo stands out prominently.
-            </p>
-    
-    
-            <mp-event-trigger id='narrative-01-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_017", "color":"rgba(143, 29, 33, .4)"}]}'>
-                <a id="narrative-01" class="narrativeLink">kitchen</a>
-            </mp-event-trigger>-->
-    
-        </div>
+
     </div>
     
     

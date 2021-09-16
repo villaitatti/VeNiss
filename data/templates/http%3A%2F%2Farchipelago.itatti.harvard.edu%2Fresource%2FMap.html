@@ -1,21 +1,69 @@
-<semantic-search-result-holder id="mapContainer">
+<div id="mapContainer">
   <semantic-search-result>
-      <semantic-map
-          id='search-map'
-          target-controls='["search-map-control"]'
-          query='SELECT DISTINCT ?subject ?wkt ?name WHERE { ?subject rdfs:label ?name } ORDER BY DESC(?subject)'
-          map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
-          fix-zoom-level='17'
-          fix-center='[1370000.000000000, 5692800.000000000]'
-          >
-      <tiles-layer thumbnail='/assets/images/SS_IGM_1945.jpg' url='/proxy/mapbox/v4/gspinaci.1fedppsy/{z}/{x}/{y}@2x.png' identifier='SS_IGM_1945' name='SS_1945' level='overlay'></tiles-layer>
-      <tiles-layer thumbnail='/assets/images/SS_Orthophoto_1982.jpg' url='/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png' identifier='SS_Orthophoto_1982' name='SS_1982' level='overlay'></tiles-layer>
-      <tiles-layer thumbnail='/assets/images/SS_Survey_1801.jpg' url='/proxy/mapbox/v4/gspinaci.2jpz15av/{z}/{x}/{y}@2x.png' identifier='SS_Survey_1801' name='SS_1801' level='overlay'></tiles-layer>
-      <tiles-layer thumbnail='/assets/images/1763_Polynomial2_NN.jpg' url='/proxy/mapbox/v4/gspinaci.cxuajku9/{z}/{x}/{y}@2x.png' identifier='1763_Polynomial2_NN' name='SS_1763' level='overlay'></tiles-layer>
-      <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_light.jpg' url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}' identifier='light' name='Light' level='basemap'></tiles-layer>
-      <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_satellite.jpg' url='/proxy/mapbox/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}' identifier='satellite' name='Satellite' level='basemap'></tiles-layer>
-      <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_custom.jpg' url='/proxy/mapbox/styles/v1/gspinaci/ckirl5bkw02zc19s36rrccq8k/tiles/256/{z}/{x}/{y}' identifier='custom' name='Custom' level='basemap'></tiles-layer>
-      <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_ortofoto.jpg' url='http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}' identifier='comune_venezia' name='Comune di Venezia' level='basemap'></tiles-layer>
-  </semantic-map>
+    <semantic-map
+      id="search-map"
+      target-controls='["search-map-control"]'
+      query="SELECT DISTINCT ?subject ?wkt ?name WHERE { ?subject rdfs:label ?name } ORDER BY DESC(?subject)"
+      map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
+      fix-zoom-level="17"
+      fix-center="[1370000.000000000, 5692800.000000000]"
+    >
+      <tiles-layer
+        thumbnail="/assets/images/SS_IGM_1945.jpg"
+        url="/proxy/mapbox/v4/gspinaci.1fedppsy/{z}/{x}/{y}@2x.png"
+        identifier="SS_IGM_1945"
+        name="SS_1945"
+        level="overlay"
+      ></tiles-layer>
+      <tiles-layer
+        thumbnail="/assets/images/SS_Orthophoto_1982.jpg"
+        url="/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png"
+        identifier="SS_Orthophoto_1982"
+        name="SS_1982"
+        level="overlay"
+      ></tiles-layer>
+      <tiles-layer
+        thumbnail="/assets/images/SS_Survey_1801.jpg"
+        url="/proxy/mapbox/v4/gspinaci.2jpz15av/{z}/{x}/{y}@2x.png"
+        identifier="SS_Survey_1801"
+        name="SS_1801"
+        level="overlay"
+      ></tiles-layer>
+      <tiles-layer
+        thumbnail="/assets/images/1763_Polynomial2_NN.jpg"
+        url="/proxy/mapbox/v4/gspinaci.cxuajku9/{z}/{x}/{y}@2x.png"
+        identifier="1763_Polynomial2_NN"
+        name="SS_1763"
+        level="overlay"
+      ></tiles-layer>
+      <tiles-layer
+        thumbnail="/assets/images/basemaps_thumbnails_light.jpg"
+        url="/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}"
+        identifier="light"
+        name="Light"
+        level="basemap"
+      ></tiles-layer>
+      <tiles-layer
+        thumbnail="/assets/images/basemaps_thumbnails_satellite.jpg"
+        url="/proxy/mapbox/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}"
+        identifier="satellite"
+        name="Satellite"
+        level="basemap"
+      ></tiles-layer>
+      <tiles-layer
+        thumbnail="/assets/images/basemaps_thumbnails_custom.jpg"
+        url="/proxy/mapbox/styles/v1/gspinaci/ckirl5bkw02zc19s36rrccq8k/tiles/256/{z}/{x}/{y}"
+        identifier="custom"
+        name="Custom"
+        level="basemap"
+      ></tiles-layer>
+      <tiles-layer
+        thumbnail="/assets/images/basemaps_thumbnails_ortofoto.jpg"
+        url="http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}"
+        identifier="comune_venezia"
+        name="Comune di Venezia"
+        level="basemap"
+      ></tiles-layer>
+    </semantic-map>
   </semantic-search-result>
-</semantic-search-result-holder>
+</div>

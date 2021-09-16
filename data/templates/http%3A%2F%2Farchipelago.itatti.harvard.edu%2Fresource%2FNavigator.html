@@ -1,15 +1,26 @@
-<semantic-search-result-holder id="mapNavigatorContainer">
+<div id="mapNavigatorContainer">
   <semantic-search-result>
-    <semantic-table 
-      id='table' 
-      query='SELECT DISTINCT ?subject ?name WHERE { ?subject rdfs:label ?name } ORDER BY DESC(?subject)'
-      tuple-template='{{>entity}}'
-    >
-      <template id="entity">
-        {{log this}}
-        <p>{{bw.value}} {{name.value}}</p>
-      </template>
+    <semantic-table
+      id="table"
+      number-of-displayed-rows="1000"
+      query='SELECT DISTINCT ?iri ?name ?type WHERE 
+      { 
+        {
+          ?subject rdfs:label ?name;
+            a ?type.
+          BIND(?subject as ?iri)
+        }
+        UNION
+        {
+          ?iri crm:P15_was_influenced_by ?subject;
+            crm:P1_is_identified_by ?name_node;
+            a ?type.
 
+          ?name_node crm:P2_has_type "preferred_name";
+            rdfs:label ?name
+        }
+      }'
+    >
     </semantic-table>
   </semantic-search-result>
-</semantic-search-result-holder>
+</div>

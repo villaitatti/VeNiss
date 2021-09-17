@@ -309,11 +309,11 @@
             {{/ifCond}}
 
         {{else if showoptions}}
-            <h2 id="mapControlsTitle">Map Controls</h2>
-            <semantic-map-controls id="search-map-control" target-map-id="search-map" features-taxonomies="use,function,name" features-color-taxonomies="use,function"></semantic-map-controls>
+            <h2 id="mapControlsTitle">Map Control Panel</h2>
+            <semantic-map-controls id="search-map-control" target-map-id="search-map" features-taxonomies="use,function,name,typology" features-color-taxonomies="use,function"></semantic-map-controls>
         {{else}}
         <div>
-          <h2 id="mapControlsTitle">Entities</h2>
+          <h2 id="mapControlsTitle">Connections</h2>
 
           <semantic-search>
             <semantic-search-query-constant

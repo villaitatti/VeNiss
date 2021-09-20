@@ -108,6 +108,11 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 		rssqlsail:hasQueryId "base" ;
 		rssqlsail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geo) as wkt from archipelago_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
 	] ;
+  rssqlsail:includesSQLQuery
+	[
+		rssqlsail:hasQueryId "production" ;
+		rssqlsail:text "SELECT DISTINCT bw_id, ST_AsText(wkt) as wkt FROM sansecondo WHERE ST_WITHIN(wkt, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
+	] ;
 	rssqlsail:includesSQLQuery
 	[
 		rssqlsail:hasQueryId "test" ;

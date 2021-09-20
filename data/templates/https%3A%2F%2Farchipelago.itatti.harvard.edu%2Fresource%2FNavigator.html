@@ -3,22 +3,18 @@
     <semantic-table
       id="table"
       number-of-displayed-rows="1000"
-      query='SELECT DISTINCT ?iri ?name ?type WHERE 
+      query='SELECT DISTINCT ?iri ?type WHERE 
       { 
         {
-          ?subject rdfs:label ?name;
-            a ?type.
-          BIND(?subject as ?iri)
+          ?subject rdf:type ?type.
+          BIND(?subject AS ?iri)
         }
         UNION
         {
-          ?iri crm:P15_was_influenced_by ?subject;
-            crm:P1_is_identified_by ?name_node;
-            a ?type.
-
-          ?name_node crm:P2_has_type "preferred_name";
-            rdfs:label ?name
+          ?iri arc:related_to ?subject;
+            rdf:type ?type.
         }
+        FILTER(CONTAINS(STR(?type), "https://archipelago.itatti.harvard.edu/resource"))
       }'
     >
     </semantic-table>

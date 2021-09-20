@@ -378,63 +378,50 @@
                   }
                   UNION
                   {
-                    ?subject crm:P15_was_influenced_by ?bw;
+                    ?subject <https://archipelago.itatti.harvard.edu/resource/related_to> ?bw;
                       crm:P1_is_identified_by ?identifier;
                       crm:P4_has_time-span ?order_date;
                       rdf:type ?type.
                     ?bw crm:P108i_was_produced_by ?prod;
-                        crm:P13i_was_destroyed_by ?desc.
-                    
+                      crm:P13i_was_destroyed_by ?desc.
                     ?prod crm:P4_has_time-span ?prod_time.
                     ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
-                    
                     ?desc crm:P4_has_time-span ?desc_time.
                     ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
-                    
                     ?identifier rdf:type crm:E41_Appellation;
                       rdfs:label ?name.
-                
-                    ?order_date a crm:E52_Time-Span;	
-                                crm:P82a_begin_of_the_begin ?order_start_date.
-                    
-                    BIND(?order_start_date as ?order_end_date)
+                    ?order_date rdf:type crm:E52_Time-Span;
+                      crm:P82a_begin_of_the_begin ?order_start_date.
+                    BIND(?order_start_date AS ?order_end_date)
                   }
                   UNION
                   {
                     ?event rdf:type crm:E5_Event;
-                        crmpc:P01_has_domain ?domain;
-                        crm:P15_was_influenced_by ?bw.
-                
+                      crmpc:P01_has_domain ?domain;
+                      <https://archipelago.itatti.harvard.edu/resource/related_to> ?bw.
                     ?bw crm:P108i_was_produced_by ?prod;
-                        crm:P13i_was_destroyed_by ?desc.
-              
+                      crm:P13i_was_destroyed_by ?desc.
                     ?prod crm:P4_has_time-span ?prod_time.
                     ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
-              
                     ?desc crm:P4_has_time-span ?desc_time.
                     ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
-              
                     ?domain crmpc:P02_has_range ?subject.
                     ?subject rdf:type ?type;
-                              crm:P1_is_identified_by ?appellation.
-              
+                      crm:P1_is_identified_by ?appellation.
                     ?appellation crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
-                              rdfs:label ?name.
-                
+                      rdfs:label ?name.
                     OPTIONAL {
                       ?subject crm:P92i_was_brought_into_existence_by ?birth.
                       ?birth rdf:type crm:E67_Birth;
-                              crm:P4_has_time-span ?birth_date.
+                        crm:P4_has_time-span ?birth_date.
                       ?birth_date crm:P82a_begin_of_the_begin ?order_start_date.
                     }
-                  
                     OPTIONAL {
                       ?subject crm:P93i_was_taken_out_of_existence_by ?death.
                       ?death rdf:type crm:E69_Death;
-                              crm:P4_has_time-span ?death_date.
+                        crm:P4_has_time-span ?death_date.
                       ?death_date crm:P82a_begin_of_the_begin ?order_end_date.
                     }
-                  
                   }
                 }
               '
@@ -444,6 +431,7 @@
               <semantic-search-result>
                 <semantic-table
                   id='table'
+                  number-of-displayed-rows="20"
                   query='
                     PREFIX person: <http://example.com/person/>
                     SELECT distinct ?subject ?type ?type_lbl ?name ?order_start_date ?order_end_date ?use_lbl ?typology_lbl where {

@@ -123,96 +123,21 @@
                                             FILTER((STR(?typology)) != "Typology")
                                             FILTER((LANG(?typology)) = "en")
                                           }
-                                        } ORDER BY DESC(?subject)'
+                                        }'
                                         map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
-                                        tuple-template='{{>tuple_template}}'
+                                        tuple-template='<h3>Church of San Secondo</h3><p><b>Architect:</b> Unknown</p><p><b>Construction:</b> 1608</p><p><b>Demolition:</b> 1821</p>'
                                         fix-zoom-level='17'
                                         fix-center='[1370000.000000000, 5692800.000000000]'
                                         >
-
-                                          <template id="tuple_template">
-                                            {{#if typology}}
-                                              <h3>{{typology.value}}</h3>
-                                            {{else}}
-                                              <h3>{{name.value}}</h3>
-                                            {{/if}}
-                                            
-                                            <p>
-                                              
-                                              <semantic-query
-                                                query='
-                                                  SELECT DISTINCT ?role_label ?actor_label WHERE {
-                                                    bind(<{{bw.value}}> as ?subject)
-                                                    
-                                                    ?subject crm:P108i_was_produced_by ?prod.
-                                                    ?prod crmpc:P01_has_domain ?prod_actor.
-                                                    ?prod_actor rdf:type crmpc:PC14_carried_out_by;
-                                                      crmpc:P02_has_range ?actor;
-                                                      <http://www.cidoc-crm.org/crmpc/P14.1_in_the_role_of> ?role.
-                                                    
-                                                    ?role rdf:type crm:E55_Type;
-                                                          rdfs:label ?role_label.
-                                                    
-                                                    ?actor crm:P1_is_identified_by ?appellation.
-                                                    ?appellation rdf:type crm:E41_Appellation;
-                                                                 crm:P2_has_type  <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
-                                                      rdfs:label ?actor_label.
-                                                    
-                                                     filter(lang(?role_label) = "en")
-                                                    filter(str(?role_label) = "Architect")
-                                                  }
-                                                '
-                                                template='{{>actor_role}}'
-                                              >
-                                                <template id="actor_role">
-                                                  {{#each bindings}}
-                                                    {{role_label.value}}: {{actor_label.value}}<br>
-                                                  {{/each}}
-                                                </template>
-
-                                              </semantic-query>
-
-                                              <semantic-query
-                                                query='
-                                                  SELECT DISTINCT ?subject ?bw_start_date ?bw_end_date WHERE {
-                                                    bind(<{{bw.value}}> as ?subject)
-                                                    
-                                                    ?subject 
-                                                            crm:P108i_was_produced_by ?prod;
-                                                            crm:P13i_was_destroyed_by ?desc.
-                                                  
-                                                    ?prod crm:P4_has_time-span ?prod_time.
-                                                    ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
-                                                  
-                                                    ?desc crm:P4_has_time-span ?desc_time.
-                                                    ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
-                                                  }
-                                                '
-                                                template='{{>metadata}}'
-                                              >
-
-                                                <template id="metadata">
-                                                  {{#each bindings}}
-                                                    <br>
-                                                    Construction: {{dateTimeFormat bw_start_date.value "YYYY"}}
-                                                    <br>
-                                                    Demolition: {{dateTimeFormat bw_end_date.value "YYYY"}}
-                                                  {{/each}}
-                                                </template>
-                                              </semantic-query>
-
-                                            </p>
-                                          </template>
-
-                                          <tiles-layer thumbnail='/assets/images/SS_Orthophoto_1982.jpg' url='/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png' identifier='SS_Orthophoto_1982' name='Aerial view of the island of San Secondo' level='overlay' author="Unknown Author" location="Venice, Archivio Municipale di Venezia" year="1982"></tiles-layer>
-                                          <tiles-layer thumbnail='/assets/images/SS_IGM_1945.jpg' url='/proxy/mapbox/v4/gspinaci.1fedppsy/{z}/{x}/{y}@2x.png' identifier='SS_IGM_1945' name='Aerial view of the island of San Secondo' level='overlay' author="Royal Air Force" location="Florence, Istituto Geografico Militare, 1945.01.279" year="1945"></tiles-layer>
-                                          <tiles-layer thumbnail='/assets/images/SS_Survey_1801.jpg' url='/proxy/mapbox/v4/gspinaci.2jpz15av/{z}/{x}/{y}@2x.png' identifier='SS_Survey_1801' name='Plan of the island of San Secondo' level='overlay' author="K.K. Fortifications Local Direction zu Venedig" location="Rome, Istituto Storico di Cultura dell’Arma del Genio, Disegni, Forti e Castelli, Venezia, X A, 630 (10/A 630)" year="1801"></tiles-layer>
-                                          <tiles-layer thumbnail='/assets/images/1763_Polynomial2_NN.jpg' url='/proxy/mapbox/v4/gspinaci.cxuajku9/{z}/{x}/{y}@2x.png' identifier='1763_Polynomial2_NN' name='Map of the Venetian Lagoon' level='overlay' author="Angelo Emo" location="Venice, Archivio di Stato di Venezia, Savi ed esecutori alle acque, Disegni, Laguna, dis. 167" year="1763"></tiles-layer>
-                                          <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_light.jpg' url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}' identifier='light' name='Light' level='basemap' author="" location="" year=""></tiles-layer>
-                                          <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_custom.jpg' url='/proxy/mapbox/styles/v1/gspinaci/ckirl5bkw02zc19s36rrccq8k/tiles/256/{z}/{x}/{y}' identifier='custom' name='Water' level='basemap' author="" location="" year=""></tiles-layer>
-                                          <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_satellite.jpg' url='/proxy/mapbox/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}' identifier='satellite' name='Satellite View' level='basemap' author="" location="" year=""></tiles-layer>
-                                          <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_ortofoto.jpg' url='http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}' identifier='comune_venezia' name="Venice's Municipality" level='basemap' author="" location="" year=""></tiles-layer>
-                                        </semantic-map>
+                                    <tiles-layer thumbnail='/assets/images/SS_Orthophoto_1982.jpg' url='/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png' identifier='SS_Orthophoto_1982' name='Aerial view of the island of San Secondo' level='overlay' author="Unknown Author" location="Venice, Archivio Municipale di Venezia" year="1982"></tiles-layer>
+                                    <tiles-layer thumbnail='/assets/images/SS_IGM_1945.jpg' url='/proxy/mapbox/v4/gspinaci.1fedppsy/{z}/{x}/{y}@2x.png' identifier='SS_IGM_1945' name='Aerial view of the island of San Secondo' level='overlay' author="Royal Air Force" location="Florence, Istituto Geografico Militare, 1945.01.279" year="1945"></tiles-layer>
+                                    <tiles-layer thumbnail='/assets/images/SS_Survey_1801.jpg' url='/proxy/mapbox/v4/gspinaci.2jpz15av/{z}/{x}/{y}@2x.png' identifier='SS_Survey_1801' name='Plan of the island of San Secondo' level='overlay' author="K.K. Fortifications Local Direction zu Venedig" location="Rome, Istituto Storico di Cultura dell’Arma del Genio, Disegni, Forti e Castelli, Venezia, X A, 630 (10/A 630)" year="1801"></tiles-layer>
+                                    <tiles-layer thumbnail='/assets/images/1763_Polynomial2_NN.jpg' url='/proxy/mapbox/v4/gspinaci.cxuajku9/{z}/{x}/{y}@2x.png' identifier='1763_Polynomial2_NN' name='Map of the Venetian Lagoon' level='overlay' author="Angelo Emo" location="Venice, Archivio di Stato di Venezia, Savi ed esecutori alle acque, Disegni, Laguna, dis. 167" year="1763"></tiles-layer>
+                                    <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_light.jpg' url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}' identifier='light' name='Light' level='basemap' author="" location="" year=""></tiles-layer>
+                                    <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_custom.jpg' url='/proxy/mapbox/styles/v1/gspinaci/ckirl5bkw02zc19s36rrccq8k/tiles/256/{z}/{x}/{y}' identifier='custom' name='Water' level='basemap' author="" location="" year=""></tiles-layer>
+                                    <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_satellite.jpg' url='/proxy/mapbox/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}' identifier='satellite' name='Satellite View' level='basemap' author="" location="" year=""></tiles-layer>
+                                    <tiles-layer thumbnail='/assets/images/basemaps_thumbnails_ortofoto.jpg' url='http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}' identifier='comune_venezia' name="Venice's Municipality" level='basemap' author="" location="" year=""></tiles-layer>
+                                </semantic-map>
                                 </semantic-search-result>
                             </semantic-search-result-holder>
                         </semantic-search>
@@ -225,7 +150,7 @@
     
             </div>
         </div>
-        <div id="narrativeHolder" style="display: none;">
+        <div id="narrativeHolder" style="">
             <h5 id="narrativeTitle">San Secondo and the city's food supply </h5>
             <div class="or-spacer"><div class="mask"></div></div>
             <img id="narrativeImage" src="../../assets/images/narratives-food.jpg">
@@ -384,12 +309,16 @@
             
             today preserved at the Metropolitan Museum of Art of New York, in whose background the small island of San Secondo stands out prominently.
             </p>        
-            <!--UNTIL HERE
+            <!--UNTIL HERE-->
             <p>
                 In addition to public facilities and commodities, vast green areas marked the adjacent open spaces of the sacred complex. The island was covered by orderly vegetable gardens, charming orchards, and delicate gardens including a small laurel woods that “seems to be dedicated to the Muses», as prior Domenico Codagli [PEO_41] described in his Historia dell’isola e monasterio di San Secondo di Venetia (1609) [SOU_168]. The pages dedicated to the depiction of the monastic greenery are a celebration of colour and aromas. The friar minutely listed all plant species embellishing the island’s open spaces.
     
                 Both the garden facing the lagoon
-      
+    
+                <!--[SS_BLDG_007]-->
+    
+    
+    
                 and the one extending behind the
     
                 <mp-event-trigger id='narrative-09-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_010", "color":"rgba(143, 29, 33, .4)"}]}'>
@@ -425,7 +354,7 @@
     
             <mp-event-trigger id='narrative-01-ev' type='SemanticMap.UpdateFeatureColor' targets='["search-map"]' data='{"features":[{"subject":"SS_BLDG_017", "color":"rgba(143, 29, 33, .4)"}]}'>
                 <a id="narrative-01" class="narrativeLink">kitchen</a>
-            </mp-event-trigger>-->
+            </mp-event-trigger>
     
         </div>
     </div>

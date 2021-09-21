@@ -1,16 +1,37 @@
 <mp-event-target-template-render id='sidebar' template='{{> sidebar_tmpl}}'>
     <template id='sidebar_tmpl'>
         {{#if showbasemaps}}
-            <h2>Basemaps</h2>
+            <h2 id="mapControlsTitle">Basemaps</h2>
+
+            <semantic-map-controls
+            id="basemap-control"
+            target-map-id="search-map"
+            features-taxonomies="use,function,name,typology"
+            features-color-taxonomies="use,function"
+            features-options-enabled="false"
+            filters-initialization='{"basemap":true,"overlay":false,"feature":false}'
+            show-filters='false'
+            >
+            </semantic-map-controls>
             
         {{else if showhistoricalmaps}}
-            <h2>Historical Maps</h2>
+            <h2 id="mapControlsTitle">Historical Maps</h2>
+            <semantic-map-controls
+            id="historical-map-control"
+            target-map-id="search-map"
+            features-taxonomies="use,function,name,typology"
+            features-color-taxonomies="use,function"
+            features-options-enabled="false"
+            filters-initialization='{"basemap":false,"overlay":true,"feature":false}'
+            show-filters='false'
+            >
+            </semantic-map-controls>
 
         {{else if showdetails}}
 
             <div>
               <mp-event-trigger id='event-trigger5' type='Component.TemplateUpdate' data='{"showentities": true}' targets='["sidebar"]'>
-                <a class="btn btn-primary" href="#">Go back to entities</a>
+                <a class="btn btn-primary" href="">Go back to entities</a>
               </mp-event-trigger>
             </div>
 
@@ -310,7 +331,16 @@
 
         {{else if showoptions}}
             <h2 id="mapControlsTitle">Map Control Panel</h2>
-            <semantic-map-controls id="search-map-control" target-map-id="search-map" features-taxonomies="use,function,name,typology" features-color-taxonomies="use,function"></semantic-map-controls>
+            <semantic-map-controls
+              id="search-map-control"
+              target-map-id="search-map"
+              features-taxonomies="use,function,name,typology"
+              features-color-taxonomies="use,function"
+              features-options-enabled="true"
+              filters-initialization='{"basemap":true,"overlay":true,"feature":true}'
+              show-filters="true"
+              >
+            </semantic-map-controls>
         {{else}}
         <div>
           <h2 id="mapControlsTitle">Connections</h2>
@@ -506,8 +536,6 @@
                                   </template>
 
                                 </semantic-query>
-
-                              {{log subject.value}}
 
                             </div>
                           </div>

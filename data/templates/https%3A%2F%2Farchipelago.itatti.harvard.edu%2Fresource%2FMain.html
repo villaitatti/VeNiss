@@ -145,18 +145,21 @@
                                                     bind(<{{bw.value}}> as ?subject)
                                                     
                                                     ?subject crm:P108i_was_produced_by ?prod.
-                                                    
                                                     ?prod crmpc:P01_has_domain ?prod_actor.
-                                                    ?prod_actor a crmpc:PC14_carried_out_by;
+                                                    ?prod_actor rdf:type crmpc:PC14_carried_out_by;
                                                       crmpc:P02_has_range ?actor;
-                                                      crmpc:P14.1_in_the_role_of ?role.
+                                                      <http://www.cidoc-crm.org/crmpc/P14.1_in_the_role_of> ?role.
                                                     
-                                                    ?role a crm:E55_Type;
-                                                      rdfs:label ?role_label.
-
+                                                    ?role rdf:type crm:E55_Type;
+                                                          rdfs:label ?role_label.
+                                                    
                                                     ?actor crm:P1_is_identified_by ?appellation.
-                                                    ?appellation a crm:E41_Appellation;
-                                                      rdfs:label ?actor_label
+                                                    ?appellation rdf:type crm:E41_Appellation;
+                                                                 crm:P2_has_type  <https://archipelago.itatti.harvard.edu/resource/type/preferred_name>;
+                                                      rdfs:label ?actor_label.
+                                                    
+                                                     filter(lang(?role_label) = "en")
+                                                    filter(str(?role_label) = "Architect")
                                                   }
                                                 '
                                                 template='{{>actor_role}}'

@@ -1,22 +1,23 @@
 <div id="mapNavigatorContainer">
   <semantic-search-result>
     <semantic-table
-      id="table"
-      number-of-displayed-rows="1000"
-      query='SELECT DISTINCT ?iri ?type WHERE 
-      { 
-        {
-          ?subject rdf:type ?type.
-          BIND(?subject AS ?iri)
-        }
-        UNION
-        {
-          ?iri arc:related_to ?subject;
-            rdf:type ?type.
-        }
-        FILTER(CONTAINS(STR(?type), "https://archipelago.itatti.harvard.edu/resource"))
-      }'
-    >
-    </semantic-table>
+    id="table"
+    number-of-displayed-rows="1000"
+    query='SELECT DISTINCT ?iri ?type WHERE 
+    { 
+      {
+        bind(?subject as ?iri)
+        ?subject a ?type
+      }
+      UNION
+      {
+        ?iri arconto:related_to ?subject;
+          a ?type
+      }
+      filter(contains(str(?type), "https://archipelago.itatti.harvard.edu/arconto#"))
+    }'
+  >
+  </semantic-table>
+    
   </semantic-search-result>
 </div>

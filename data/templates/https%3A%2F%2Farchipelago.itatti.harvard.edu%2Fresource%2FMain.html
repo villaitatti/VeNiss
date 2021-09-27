@@ -1,6 +1,6 @@
-<!-- try (TupleQueryResult tqr = con.prepareTupleQuery("SELECT * WHERE { ?a ?b ?c optional { ?root <http://www.researchspace.org/resource/system/sql#hasQueryId> 'q2'} } LIMIT 1").evaluate()) { -->
 <link rel="stylesheet" href="../../assets/styles/archipelago-main.css" />
 <div id="mainContainer">
+
   <div class="maptoolbar flexrows">
     <div id="maptoolbarFirst" class="">
       <h6 id="maptoolbarTitle">Interactive Narrative</h6>
@@ -11,7 +11,7 @@
           data='{"showbasemaps": true}'
           targets='["sidebar"]'
         >
-          <i id="basemapsBtn" class="fa fa-globe toolbarIcon"></i>
+          <em id="basemapsBtn" class="fa fa-globe toolbarIcon"></em>
         </mp-event-trigger>
         <mp-event-trigger
           id="event-trigger3"
@@ -19,7 +19,7 @@
           data='{"showhistoricalmaps": true}'
           targets='["sidebar"]'
         >
-          <i id="historicalmapsBtn" class="fa fa-map toolbarIcon"></i>
+          <em id="historicalmapsBtn" class="fa fa-map toolbarIcon"></em>
         </mp-event-trigger>
         <mp-event-trigger
           id="event-trigger4"
@@ -27,7 +27,7 @@
           data='{"showoptions": true}'
           targets='["sidebar"]'
         >
-          <i id="optionsBtn" class="fa fa-cogs toolbarIcon"></i>
+          <em id="optionsBtn" class="fa fa-cogs toolbarIcon"></em>
         </mp-event-trigger>
         <mp-event-trigger
           id="event-trigger5"
@@ -35,7 +35,7 @@
           data='{"showentities": true}'
           targets='["sidebar"]'
         >
-          <i id="entitiesBtn" class="fa fa-id-card toolbarIcon"></i>
+          <em id="entitiesBtn" class="fa fa-id-card toolbarIcon"></em>
         </mp-event-trigger>
       </div>
     </div>
@@ -43,6 +43,7 @@
   </div>
 
   <div id="mapNavigatorContainer" class="flexrows">
+    
     <!-- Event to handle bounding box search-->
     <mp-event-proxy
       id="on-moveend-search-map"
@@ -55,22 +56,35 @@
 
     <!-- Structured search with geospatial -->
     <semantic-context repository="ephedra">
-      <semantic-search>
+      <semantic-search
+        search-profile='{
+          "categories": [{
+            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Event>",
+            "label": "Event",
+            "thumbnail": "../../assets/icons/Event.svg"
+          },
+          {
+            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
+            "label": "Builtwork",
+            "thumbnail": "../../assets/icons/Builtwork.svg"
+          }],
+          "relations": [{
+            "iri": "<https://archipelago.itatti.harvard.edu/arconto#related_to>",
+            "label": "Related to",
+            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Event>",
+            "hasRange": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>"
+          }]
+        }'
+      >
+
         <semantic-search-query-constant
+
           id="search-map-query"
           parameters='{
-            "southWestLat": {
-              "value": "1368358.959761288"
-            },
-            "southWestLon": {
-              "value": "5692238.026840036"
-            },
-            "northEstLat": {
-              "value": "1371414.0522355612"
-            },
-            "northEstLon": {
-              "value": "5693523.1243780805"
-            }
+            "southWestLat": {"value": "1368358.959761288"},
+            "southWestLon": {"value": "5692238.026840036"},
+            "northEstLat": {"value": "1371414.0522355612"},
+            "northEstLon": {"value": "5693523.1243780805"}
           }'
           query='
             PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
@@ -110,4 +124,5 @@
       </semantic-search>
     </semantic-context>
   </div>
+
 </div>

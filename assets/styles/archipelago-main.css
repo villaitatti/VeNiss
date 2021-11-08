@@ -1,0 +1,138 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+#mainContainer {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.maptoolbar {
+  display: flex;
+  flex-direction: row;
+}
+
+#maptoolbarFirst {
+  flex: 1;
+}
+
+#mapContainer {
+  height: calc(100vh - 88px);
+}
+
+#mapContainer > div:nth-of-type(1) {
+  height: 100%;
+}
+
+#mapNavigatorContainer {
+  flex: 1;
+  position: relative;
+}
+
+#mapNavigatorRow {
+  display: flex;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+#mapContainer {
+  flex: 1;
+  background: rgba(0, 141, 237, 0);
+}
+
+#navigatorContainer {
+  padding: 15px;
+  text-wrap: normal;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
+  height: calc(100vh - 88px);
+  background-color: white;
+}
+
+#maptoolbarSecond,
+#navigatorContainer {
+  width: 500px;
+}
+
+.system-spinner:nth-of-type(n + 2) {
+  display: none !important;
+}
+
+#narrativeHolder {
+  height: calc(100vh - 88px);
+  position: fixed;
+  top: 88px;
+  left: 30px;
+  width: 25%;
+  max-width: 500px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.91);
+  padding: 20px;
+  text-align: justify;
+  overflow-y: scroll;
+  /* font-family: 'Playfair Display', serif;
+            font-weight: lighter; */
+}
+
+#narrativeHolder > p {
+  font-size: 11pt;
+}
+
+#narrativeHolder::-webkit-scrollbar {
+  display: none;
+}
+
+#narrativeTitle {
+  margin-top: 0;
+  font-size: 20pt;
+  text-align: center;
+  color: var(--color-header-bg);
+}
+
+.narrativeLink {
+  color: var(--color-header-bg);
+  text-decoration: underline;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ol-zoom {
+  top: auto;
+  left: auto;
+  bottom: 20px;
+  right: 8px;
+}
+
+#narrativeImage {
+  width: 50%;
+  margin: 15px 25% 25px 25%;
+  border: 1px solid var(--color-header-bg);
+}
+
+.or-spacer {
+  width: 300px;
+  margin-left: 50%;
+  transform: translate(-50%);
+  position: relative;
+}
+.or-spacer .mask {
+  overflow: hidden;
+  height: 20px;
+}
+.or-spacer .mask:after {
+  content: "";
+  display: block;
+  margin: -25px auto 0;
+  width: 100%;
+  height: 25px;
+  border-radius: 125px / 12px;
+  box-shadow: 0 0 8px black;
+}
+
+.toolbarIcon {
+  cursor: pointer;
+}

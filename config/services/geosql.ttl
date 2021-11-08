@@ -43,8 +43,13 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:subject ;
-			sp:object :_subject
+			sp:predicate archipelago:bw_id ;
+			sp:object :_bw_id
+		]
+		[
+			sp:subject :_results ;
+			sp:predicate archipelago:date ;
+			sp:object :_date
 		]
 	) ;
 	spin:constraint
@@ -53,35 +58,42 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 		rdfs:comment "query ID" ;
 		spl:predicate :_queryId ;
 		spl:valueType xsd:string
-    ] ;
-  	spin:constraint
+  ] ;
+  spin:constraint
 	[
 		a spl:Argument ;
 		rdfs:comment "Minimum X" ;
 		spl:predicate :_MinX ;
 		spl:valueType xsd:float
-    ] ;
-  	spin:constraint
+  ] ;
+  spin:constraint
 	[
 		a spl:Argument ;
 		rdfs:comment "Minimum Y" ;
 		spl:predicate :_MinY ;
 		spl:valueType xsd:float
-    ] ;
-  	spin:constraint
+  ] ;
+  spin:constraint
 	[
 		a spl:Argument ;
 		rdfs:comment "Maximum X" ;
 		spl:predicate :_MaxX ;
 		spl:valueType xsd:float
-    ] ;
-  	spin:constraint
+  ] ;
+  spin:constraint
 	[
 		a spl:Argument ;
 		rdfs:comment "Maximum Y" ;
 		spl:predicate :_MaxY ;
 		spl:valueType xsd:float
-    ] ;
+  ] ;
+  spin:constraint
+	[
+		a spl:Argument ;
+		rdfs:comment "Date to filter" ;
+		spl:predicate :_date ;
+		spl:valueType xsd:string
+  ] ;
 	spin:column
 	[
 		a spin:Column ;
@@ -100,16 +112,21 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 	[
 		a spin:Column ;
 		rdfs:comment "Builtwork ID" ;
-		spl:predicate :_subject ;
+		spl:predicate :_bw_id ;
 		spl:valueType xsd:string
 	] ;
 	rssqlsail:includesSQLQuery
 	[
 		rssqlsail:hasQueryId "base" ;
-		rssqlsail:text "select distinct \"BW_ID\" as subject, ST_AsText(geo) as wkt from archipelago_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
+		rssqlsail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geo) as wkt from archipelago_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
+	] ;
+  rssqlsail:includesSQLQuery
+	[
+		rssqlsail:hasQueryId "production" ;
+		rssqlsail:text "SELECT DISTINCT bw_id, ST_AsText(geom) as wkt FROM sansecondo_buildings WHERE ST_WITHIN(geom, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857)) AND bob <= date(?date) AND (eoe > date(?date) OR eoe IS NULL)" ;
 	] ;
 	rssqlsail:includesSQLQuery
 	[
 		rssqlsail:hasQueryId "test" ;
-		rssqlsail:text "select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_island_1697 UNION select distinct \"BW_ID\" as subject, ST_AsText(geometry) as wkt from sansecondo_buildings_1697"
+		rssqlsail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_island_1697 UNION select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_buildings_1697"
 	] .

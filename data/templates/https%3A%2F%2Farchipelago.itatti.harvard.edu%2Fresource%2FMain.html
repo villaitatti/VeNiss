@@ -84,7 +84,8 @@
             "southWestLat": {"value": "1368358.959761288"},
             "southWestLon": {"value": "5692238.026840036"},
             "northEstLat": {"value": "1371414.0522355612"},
-            "northEstLon": {"value": "5693523.1243780805"}
+            "northEstLon": {"value": "5693523.1243780805"},
+            "date": {"value": "1550-01-01"}
           }'
           query='
             PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
@@ -97,21 +98,10 @@
                   archipelago:minX ?southWestLat;
                   archipelago:minY ?southWestLon;
                   archipelago:maxX ?northEstLat;
-                  archipelago:maxY ?northEstLon
+                  archipelago:maxY ?northEstLon;
+                  archipelago:date ?date
               }                                        
               BIND(IRI(CONCAT("https://archipelago.itatti.harvard.edu/resource/builtwork/", ?bw_id)) as ?subject)
-              BIND("1697-01-01"^^xsd:dateTime AS ?date)
-
-              ?subject crm:P108i_was_produced_by ?prod;
-                crm:P13i_was_destroyed_by ?desc.
-
-              ?prod crm:P4_has_time-span ?prod_time.
-              ?prod_time crm:P82a_begin_of_the_begin ?bw_start_date.
-              FILTER (?bw_start_date <= ?date)
-
-              ?desc crm:P4_has_time-span ?desc_time.
-              ?desc_time crm:P82b_end_of_the_end ?bw_end_date.
-              FILTER (?bw_end_date > ?date)
             }'
         ></semantic-search-query-constant>
 

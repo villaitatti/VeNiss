@@ -1,0 +1,48 @@
+<semantic-form 
+  [[>rsp:FormDefaults]] 
+  persistence='{"type": "sparql", "targetGraphIri":"https://archipelago.itatti.harvard.edu/resource/actor/{{{{raw}}}}{{actorIdentifier}}{{{{/raw}}}}/context"}'
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/actor/{{{{raw}}}}{{actorIdentifier}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+  classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+  p2="http://www.researchspace.org/resource/system/authority_manager/for_P2_has_type"
+  label="http://www.researchspace.org/pattern/general/rdfs:label"
+  appellation="http://www.researchspace.org/pattern/vocabulary_manager/crm:P1_is_identified_by"
+  production="http://localhost:10214/container/fieldDefinitionContainer/bw_production"
+  destruction="http://localhost:10214/container/fieldDefinitionContainer/bw_destruction"
+  ]]' >
+
+  <div class="form-scroll-area">
+    <semantic-form-hidden-input
+      for="classtype"
+      default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor", "https://archipelago.itatti.harvard.edu/arconto#Actor "]'
+    ></semantic-form-hidden-input>
+
+    <!-- E41 Appellation -->
+    <semantic-form-composite-input
+      for="appellation"
+      label="Identifier"
+      new-subject-template="/identifier"
+      fields='[[
+      fieldDefinitions
+        classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        rdfsLabel="http://www.researchspace.org/pattern/general/rdfs:label"
+      ]]'
+    >
+      <semantic-form-hidden-input
+        for="classtype"
+        default-value="http://www.cidoc-crm.org/cidoc-crm/E41_Appellation"
+      >
+      </semantic-form-hidden-input>
+
+      <semantic-form-text-input render-header="false" for="rdfsLabel">
+      </semantic-form-text-input>
+    </semantic-form-composite-input>
+
+    <!-- label -->
+    <semantic-form-text-input for="label" label="Label">
+    </semantic-form-text-input>
+    
+  </div>
+
+  [[> rsp:FormDefaultActions]]
+</semantic-form>

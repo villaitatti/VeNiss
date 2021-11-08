@@ -1,0 +1,6 @@
+SELECT DISTINCT 
+  bw_id, 
+  ST_AsText(geom) as wkt 
+FROM sansecondo_buildings 
+WHERE ST_WITHIN(geom, ST_MakeEnvelope('1368358.959761288', '5692238.026840036', '1371414.0522355612', '5693523.1243780805', 3857))
+AND (BoB <= '1500-01-01' AND (EoE > '1500-01-01' OR EoE IS NULL));

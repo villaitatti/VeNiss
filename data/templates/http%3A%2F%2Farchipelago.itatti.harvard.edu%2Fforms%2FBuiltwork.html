@@ -1,0 +1,141 @@
+<semantic-form 
+  [[>rsp:FormDefaults]] 
+  persistence='{"type": "sparql", "targetGraphIri":"https://archipelago.itatti.harvard.edu/resource/builtwork/{{{{raw}}}}{{builtworkIdentifier}}{{{{/raw}}}}/context"}'
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/builtwork/{{{{raw}}}}{{builtworkIdentifier}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+  classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+  p2="http://www.researchspace.org/resource/system/authority_manager/for_P2_has_type"
+  label="http://www.researchspace.org/pattern/general/rdfs:label"
+  appellation="http://www.researchspace.org/pattern/vocabulary_manager/crm:P1_is_identified_by"
+  production="http://localhost:10214/container/fieldDefinitionContainer/bw_production"
+  destruction="http://localhost:10214/container/fieldDefinitionContainer/bw_destruction"
+  ]]' >
+
+  <div class="form-scroll-area">
+    <semantic-form-hidden-input
+      for="classtype"
+      default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object", "https://archipelago.itatti.harvard.edu/arconto#Builtwork "]'
+    ></semantic-form-hidden-input>
+
+    <!-- E41 Appellation -->
+    <semantic-form-composite-input
+      for="appellation"
+      label="Identifier"
+      new-subject-template="/identifier"
+      fields='[[
+      fieldDefinitions
+        classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        rdfsLabel="http://www.researchspace.org/pattern/general/rdfs:label"
+      ]]'
+    >
+      <semantic-form-hidden-input
+        for="classtype"
+        default-value="http://www.cidoc-crm.org/cidoc-crm/E41_Appellation"
+      >
+      </semantic-form-hidden-input>
+
+      <semantic-form-text-input render-header="false" for="rdfsLabel">
+      </semantic-form-text-input>
+    </semantic-form-composite-input>
+
+    <!-- label -->
+    <semantic-form-text-input for="label" label="Label">
+    </semantic-form-text-input>
+
+    <!-- E12 Production -->
+    <semantic-form-composite-input
+      for="production"
+      label="Construction"
+      new-subject-template="/construction"
+      fields='[[
+        fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          hasTimeSpan="http://localhost:10214/container/fieldDefinitionContainer/bw_has_time-span"
+        ]]'
+    >
+      <semantic-form-hidden-input
+        for="classtype"
+        default-value="http://www.cidoc-crm.org/cidoc-crm/E12_Production"
+      >
+      </semantic-form-hidden-input>
+
+      <semantic-form-composite-input
+        for="hasTimeSpan"
+        label="Time Span"
+        render-header="false"
+        new-subject-template="/date"
+        fields='[[
+          fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          beginOfTimeSpan="http://localhost:10214/container/fieldDefinitionContainer/bw_being_of_the_begin"
+          endOfTimeSpan="http://localhost:10214/container/fieldDefinitionContainer/bw_end_of_the_end"
+        ]]'
+      >
+        <semantic-form-hidden-input
+          for="classtype"
+          default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"
+        >
+        </semantic-form-hidden-input>
+
+        <semantic-form-datetime-input label="Start date" for="beginOfTimeSpan">
+        </semantic-form-datetime-input>
+
+        <semantic-form-datetime-input label="End date" for="endOfTimeSpan">
+        </semantic-form-datetime-input>
+      </semantic-form-composite-input>
+
+      <semantic-form-text-input render-header="false" for="rdfsLabel">
+      </semantic-form-text-input>
+    </semantic-form-composite-input>
+
+    <!-- E6 Production -->
+    <semantic-form-composite-input
+      for="production"
+      label="Destruction"
+      new-subject-template="/destruction"
+      fields='[[
+        fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          hasTimeSpan="http://localhost:10214/container/fieldDefinitionContainer/bw_has_time-span"
+        ]]'
+    >
+      <semantic-form-hidden-input
+        for="classtype"
+        default-value="http://www.cidoc-crm.org/cidoc-crm/E6_Destruction"
+      >
+      </semantic-form-hidden-input>
+
+      <semantic-form-composite-input
+        for="hasTimeSpan"
+        label="Time Span"
+        render-header="false"
+        new-subject-template="/date"
+        fields='[[
+          fieldDefinitions
+          classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          beginOfTimeSpan="http://localhost:10214/container/fieldDefinitionContainer/bw_being_of_the_begin"
+          endOfTimeSpan="http://localhost:10214/container/fieldDefinitionContainer/bw_end_of_the_end"
+        ]]'
+      >
+        <semantic-form-hidden-input
+          for="classtype"
+          default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"
+        >
+        </semantic-form-hidden-input>
+
+        <semantic-form-datetime-input label="Start date" for="beginOfTimeSpan">
+        </semantic-form-datetime-input>
+
+        <semantic-form-datetime-input label="End date" for="endOfTimeSpan">
+        </semantic-form-datetime-input>
+      </semantic-form-composite-input>
+
+      <semantic-form-text-input render-header="false" for="rdfsLabel">
+      </semantic-form-text-input>
+    </semantic-form-composite-input>
+
+    <!--  -->
+  </div>
+
+  [[> rsp:FormDefaultActions]]
+</semantic-form>

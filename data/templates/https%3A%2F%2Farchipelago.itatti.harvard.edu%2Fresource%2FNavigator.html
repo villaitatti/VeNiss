@@ -3,21 +3,21 @@
     <semantic-table
     id="table"
     number-of-displayed-rows="1000"
-    query='SELECT DISTINCT ?iri ?type WHERE 
+    query='SELECT DISTINCT ?iri WHERE 
     { 
-      {
-        bind(?subject as ?iri)
-        ?subject a ?type
-      }
+      bind(?subject as ?iri)
+      ?subject a arconto:Builtwork
+   }'
+  >
+  </semantic-table>
+    
+  </semantic-search-result>
+</div>
+<!--
       UNION
       {
         ?iri arconto:related_to ?subject;
           a ?type
       }
       filter(contains(str(?type), "https://archipelago.itatti.harvard.edu/arconto#"))
-    }'
-  >
-  </semantic-table>
-    
-  </semantic-search-result>
-</div>
+      -->

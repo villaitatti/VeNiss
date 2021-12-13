@@ -3,23 +3,14 @@
     /* background-color: #0c3146 !Important; */
     background-size: cover;
     background-position: center;
-    border-bottom: 1px solid #0c3146;
 }
 
 .rs-header-logo {
     color: #1d0a6e !important;
 }
 
-.rs-application .navbar-default .navbar-nav > li > a, .rs-application .navbar-default .rs-icon {
-    /* color: #1d0a6e !Important; */
-}
-
-.navbar {
-    /* height:80px !important; */
-}
-
 .rs-header-logo img {
-    width: 100px;
+    width: 150px;
     padding: 3%;
 }
 
@@ -28,17 +19,7 @@
     padding-left: 0;
 }
 
-.rs-application .navbar-default .navbar-nav > li > a {
-    color: #ffffff;
-    font-weight: 300;
-}
 
-.rs-application .navbar-default a#main-header-dropdown, .rs-application .navbar-default a#rs-account-dropdown {
-    font-family: "Roboto", sans-serif, sans-serif;
-    font-size: 13.5px;
-    background-color: transparent;
-    font-weight: 300;
-}
 
 .ol-control button {
     background-color: rgba(217, 93, 0, 0.5) !important;
@@ -54,7 +35,53 @@
 }
 
 .maptoolbar {
-    background-color: bisque;
+    background-color: white;
+    height: auto;
+    border-bottom: 1px solid var(--archipelago-grey);
+    border-top: 1px solid var(--archipelago-grey);
+    padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#maptoolbarFirst {
+    display: flex;
+    justify-content: space-around;
+}
+
+.toolbarIcon {
+    padding: 10px;
+    margin: auto;
+    font-size: 16pt;
+    cursor: pointer;
+    color: var(--archipelago-orange);
+    border: 2px solid var(--archipelago-orange);
+    border-radius: 100px;
+    display:block;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 16pt;
+    margin-bottom: 4pt;
+}
+
+.toolbarIconContainer > label {
+    display:inline !important;
+    width: 50px;
+    font-weight: bolder;
+    line-break:auto;
+    text-align: center;
+    margin: 0 !important;
+}
+
+.toolbarIcon:hover {
+    background-color: rgb(255, 223, 176);
+}
+
+.toolbarIconContainer {
+    display:inline-block;
+    width: 100px;
+    text-align: center;
 }
 
 
@@ -109,11 +136,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .narrativeImage {
     width: 100%;
-}
-
-.maptoolbar .fa {
-    font-size: 15pt;
-    padding: 5px;
 }
 
 #maptoolbarTitle {
@@ -217,7 +239,7 @@ h1, h2, h3, h4, h5, h6 {
     height: auto;
     width: 98%;
     margin-left: 1%;
-    background-color:rgba(255, 255, 255, 0.7);
+    background-color:rgb(237,237,237);
     padding: 5px;
 }
 
@@ -232,7 +254,7 @@ h1, h2, h3, h4, h5, h6 {
     height: 70px;
     width: 98%;
     margin-left: 1%;
-    background-color:rgba(255, 255, 255, 0.7)
+    background-color:rgb(255, 255, 255)
 }
 
 #visualizationModeContainer, .layerMaskIcon.fa-eye {
@@ -258,7 +280,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Set disabled style non visible layers */
-
+/*
 .draggableLayer.nonvisible {
     color: rgb(185, 185, 185) !important;
 }
@@ -270,6 +292,7 @@ h1, h2, h3, h4, h5, h6 {
 .draggableLayer.nonvisible input {
     opacity: 0.6 !important;
 }
+*/
 
 
 .mapLayersTitle {
@@ -326,8 +349,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .togglesColumnLeft .fa-bars {
-    color: white;
-    text-shadow: 1px 1px 2px rgb(168, 168, 168);
+    color: #B1B1B1;
+    font-size: 12pt;
 }
 
 .togglesColumnLeft, .togglesColumnRight {
@@ -350,6 +373,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .layerCheck {
     top: 0;
+    font-size: 20pt;
+    color: var(--archipelago-orange);
+}
+
+.layerCheck.fa-toggle-off {
+    color: darkgrey !important;
 }
 
 .layerMaskIcon {
@@ -368,37 +397,44 @@ h1, h2, h3, h4, h5, h6 {
 .layerMaskIcon.fa-eye {
     border-radius: 2px 2px 0 0;
     padding: 5px;
+    bottom: 30px !important;
+}
+
+.toggle3dBtn {
+    padding: 10px;
+    width: 100px;
 }
 
 .opacitySlider {
     -webkit-appearance: none;
     width: 100%;
     height: 2px;
-    background-image: linear-gradient(to right, rgba(255,250,250, 0.00), rgb(197, 89, 0));
+    background-image: linear-gradient(to right, var(--color-dark), var(--color-dark));
     outline: none;
     -webkit-transition: .2s;
     transition: opacity .2s;
   }
-  
+
+
   .opacitySlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 10px;
-    height: 10px;
-    background: #ddd;
-    border: 1px solid transparent;
+    width: 15px;
+    height: 15px;
+    background: var(--color-dark);
+    border: 1px solid var(--color-dark);
     border-radius: 50%;
     cursor: pointer;
-    background-image: linear-gradient(white, white), linear-gradient(to right, rgba(255,250,250, 0.00), rgb(0,60,51));
+    background-image: linear-gradient(var(--color-dark), var(--color-dark)), linear-gradient(to right, rgba(255,250,250, 0.00), rgb(0,60,51));
     background-attachment: fixed, fixed;
     background-clip: padding-box, border-box;
   }
   
   .opacitySlider::-moz-range-thumb {
-    width: 10px;
-    height: 10px;
-    background: #ddd;
-    border: 1px solid transparent;
+    width: 15px;
+    height: 15px;
+    background: var(--color-dark);
+    border: 1px solid var(--color-dark);
     border-radius: 50%;
     cursor: pointer;
     background-image: linear-gradient(white, white), linear-gradient(to right, rgba(255,250,250, 0.00), rgb(0,60,51));
@@ -409,3 +445,4 @@ h1, h2, h3, h4, h5, h6 {
   .cesium-credit-logoContainer {
       display: none;
   }
+

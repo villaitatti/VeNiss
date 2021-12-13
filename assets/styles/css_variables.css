@@ -6,7 +6,7 @@
     --color-form-placeholder: rgba(0, 60, 51, 0.5);
 
     --color-header-bg: #003c33;
-    --color-navbar-bg: #003c33;
+    --color-navbar-bg: #ffff;
     --color-footer-bg: #003c33;
     --color-km-handle: #66b79e;
     --color-checkbox-select: #edbb8f;
@@ -72,5 +72,10 @@
     --color-entity-icon-type: #857C70;
     --color-entity-icon-resource: #506B9B;
 
+    --archipelago-orange: #FFB35F;
+    --archipelago-grey: #e6e6e6;
+
     --breadcrumb-height: 30px;
+    --nav-height: 100px;
+    --sidebar-width: 25%;
 }

@@ -20,7 +20,7 @@ body {
 }
 
 #mapContainer {
-  height: calc(100vh - 88px);
+  height: calc(100vh);
 }
 
 #mapContainer > div:nth-of-type(1) {
@@ -40,22 +40,16 @@ body {
 }
 
 #mapContainer {
-  flex: 1;
+  flex: 0.75;
   background: rgba(0, 141, 237, 0);
 }
 
 #navigatorContainer {
-  padding: 15px;
+  padding: 25px;
   text-wrap: normal;
   overflow-wrap: break-word;
   overflow-y: scroll;
-  height: calc(100vh - 88px);
   background-color: white;
-}
-
-#maptoolbarSecond,
-#navigatorContainer {
-  width: 500px;
 }
 
 .system-spinner:nth-of-type(n + 2) {
@@ -133,6 +127,45 @@ body {
   box-shadow: 0 0 8px black;
 }
 
-.toolbarIcon {
-  cursor: pointer;
+#sidebarContainer {
+  flex: 0.25;
+  height: calc(100vh - var(--nav-height));
+  overflow: scroll;
+  z-index: 100000;
+  -webkit-box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15); 
+  box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15);
+}
+
+#archipelagoNavbar {
+  width: var(--sidebar-width) !important;
+  min-height: var(--nav-height, 58px);
+    height: var(--nav-height, 58px);
+    border: none;
+    font-size: 14px;
+    margin-bottom: 0px;
+    background-color: var(--color-navbar-bg, #1d0a6e);
+   z-index: 1030;
+   right: 0;
+   color: white !important;
+   position: absolute;
+   -webkit-box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15); 
+   box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15);
+}
+
+.clonedNavbar:nth-child(2){
+  display: none !important;
+}
+#archipelagoNavbar > li > a {
+  font-weight: 300;
+}
+
+#archipelagoNavbar > #main-header-dropdown, .rs-application .navbar-default a#rs-account-dropdown {
+  font-family: "Roboto", sans-serif, sans-serif;
+  font-size: 13.5px;
+  background-color: transparent;
+  font-weight: 300;
+}
+
+#sidebarContainer {
+  margin-top: var(--nav-height, 58px);  
 }

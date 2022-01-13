@@ -1,7 +1,7 @@
 <mp-event-target-template-render id='sidebar' template='{{> sidebar_tmpl}}'>
     <template id='sidebar_tmpl'>
         {{#if showbasemaps}}
-            <h2 id="mapControlsTitle">Basemaps</h2>
+            <!-- <h2 id="mapControlsTitle">Basemaps</h2> -->
 
             <semantic-map-controls
             id="basemap-control"
@@ -15,7 +15,7 @@
             </semantic-map-controls>
             
         {{else if showhistoricalmaps}}
-            <h2 id="mapControlsTitle">Historical Maps</h2>
+            <!-- <h2 id="mapControlsTitle">Historical Maps</h2> -->
             <semantic-map-controls
             id="historical-map-control"
             target-map-id="search-map"
@@ -29,7 +29,7 @@
 
 
         {{else if showoptions}}
-            <h2 id="mapControlsTitle">Map Control Panel</h2>
+            <!-- <h2 id="mapControlsTitle">Map Control Panel</h2> -->
             <semantic-map-controls
               id="search-map-control"
               target-map-id="search-map"

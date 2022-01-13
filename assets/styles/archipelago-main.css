@@ -94,10 +94,8 @@ body {
 }
 
 .ol-zoom {
-  top: auto;
-  left: auto;
-  bottom: 20px;
-  right: 8px;
+  top: 20px;
+  left: 8px;
 }
 
 #narrativeImage {
@@ -173,4 +171,23 @@ body {
   width: 100% !important;
   padding-left: 20px;
   padding-right: 20px;
+}
+
+.toggle3dBtn {
+  position: fixed;
+  bottom: 20px;
+  right: calc(var(--sidebar-width) + 20px);
+  background-color: rgb(255,179,95);
+  color: white;
+}
+
+.toggle3dBtn:hover {
+  background-color: rgba(255, 140, 0, 1);
+}
+
+.editButton {
+  position: fixed;
+  top: 85px;
+  left: 10px;
+  outline: 3px solid white !important;
 }

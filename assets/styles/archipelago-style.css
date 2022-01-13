@@ -22,11 +22,19 @@
 
 
 .ol-control button {
-    background-color: rgba(217, 93, 0, 0.5) !important;
+    background-color: rgb(255,179,95, 1) !important;
+}
+
+.ol-control button :hover {
+    background-color: rgba(255, 140, 0, 1) !important;
+}
+
+.ol-zoom-in:hover, .ol-zoom-out:hover {
+    background-color: rgba(255, 140, 0, 1) !important;
 }
 
 .ol-control {
-    background-color: rgba(255,255,255,0.4) !important;
+    background-color: rgba(255, 255, 255, 1) !important;
     border-radius: 0px !important;
 }
 
@@ -326,7 +334,6 @@ h1, h2, h3, h4, h5, h6 {
     background-color: white;
     padding: 5px;
     border-radius: 3px;
-    box-shadow: 2px 3px 9px 0px #2929294d;
 }
 
 .featuresOptionsTitle, .mapOptionsSectionTitle {

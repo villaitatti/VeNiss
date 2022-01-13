@@ -68,7 +68,7 @@
 .toolbarIconContainer > label {
     display:inline !important;
     width: 50px;
-    font-weight: bolder;
+    font-weight: 600;
     line-break:auto;
     text-align: center;
     margin: 0 !important;
@@ -229,12 +229,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .draggableLayer {
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
     border-radius: 3px;
     margin-top: 5px;
     margin-bottom: 5px;
-    -webkit-box-shadow: 1px 1px 3px 0px rgb(137 137 137 / 30%);
-    box-shadow: 1px 1px 3px 0px rgb(137 137 137 / 30%);
+    /* -webkit-box-shadow: 1px 1px 3px 0px rgb(137 137 137 / 30%);
+    box-shadow: 1px 1px 3px 0px rgb(137 137 137 / 30%); */
     backdrop-filter: blur(3px);
     height: auto;
     width: 98%;
@@ -320,7 +319,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: white;
     padding: 5px;
     border-radius: 3px;
-    box-shadow: 2px 3px 9px 0px #2929294d;
+    /* box-shadow: 2px 3px 9px 0px #2929294d; */
 }
 
 .featuresOptionsContainer {
@@ -350,7 +349,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .togglesColumnLeft .fa-bars {
     color: #B1B1B1;
-    font-size: 12pt;
+    font-size: 15pt;
 }
 
 .togglesColumnLeft, .togglesColumnRight {
@@ -361,7 +360,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .togglesColumnLeft {
     vertical-align: middle;
-   width: 20px;
+   width: 35px;
 }
 
 .togglesColumnRight {
@@ -446,3 +445,8 @@ h1, h2, h3, h4, h5, h6 {
       display: none;
   }
 
+
+
+  #rs-navbar {
+      
+  }

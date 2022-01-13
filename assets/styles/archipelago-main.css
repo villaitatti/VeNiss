@@ -40,7 +40,7 @@ body {
 }
 
 #mapContainer {
-  flex: 0.75;
+  flex: 1;
   background: rgba(0, 141, 237, 0);
 }
 
@@ -48,7 +48,6 @@ body {
   padding: 25px;
   text-wrap: normal;
   overflow-wrap: break-word;
-  overflow-y: scroll;
   background-color: white;
 }
 
@@ -128,7 +127,7 @@ body {
 }
 
 #sidebarContainer {
-  flex: 0.25;
+  width: var(--sidebar-width);
   height: calc(100vh - var(--nav-height));
   overflow: scroll;
   z-index: 100000;
@@ -168,4 +167,10 @@ body {
 
 #sidebarContainer {
   margin-top: var(--nav-height, 58px);  
+}
+
+#rs-navbar {
+  width: 100% !important;
+  padding-left: 20px;
+  padding-right: 20px;
 }

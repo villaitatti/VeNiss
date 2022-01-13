@@ -1,39 +1,25 @@
 <nav id="archipelagoNavbar" class="clonedNavbar" role="navigation">
   <div class="rs-header">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#rs-navbar"
-        aria-expanded="false" aria-controls="rs-navbar" aria-label="Toggle navigation">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="rs-header-logo" href="/"><img src="/assets/images/logo_superminimal_green.png"></a>
-    </div>
-
     <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="rs-navbar">
+      <ul class="nav navbar-nav" id="rs-navbar">
 
-      <ul class="nav navbar-nav">
-      </ul>
+        <bs-nav-dropdown title="" id="main-header-dropdown" class="">
 
-      <ul class="nav navbar-nav">
-        <i class="fa fa-bars" aria-hidden="true"></i>
-        <bs-nav-dropdown title="Example Resources" id="main-header-dropdown" class="rs-nav-resources--margin">
+
+
           <li class="rs-dropdown-sectionTitle">Menu</li>
           <semantic-link-container uri="https://archipelago.itatti.harvard.edu/resource/Main">
-            <bs-menu-item>Main</bs-menu-item>
+            <bs-menu-item><i class="fa fa-home" aria-hidden="true"></i> Main</bs-menu-item>
           </semantic-link-container>
           <semantic-link-container uri="https://archipelago.itatti.harvard.edu/resource/Narratives">
-            <bs-menu-item>Narratives</bs-menu-item>
+            <bs-menu-item><i class="fa fa-book" aria-hidden="true"></i> Narratives</bs-menu-item>
           </semantic-link-container>
           <semantic-link-container uri="http://www.researchspace.org/resource/ProjectDashboard">
-            <bs-menu-item>Dashboard</bs-menu-item>
+            <bs-menu-item><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</bs-menu-item>
           </semantic-link-container>
           <bs-menu-item divider="true"></bs-menu-item>
           <semantic-link-container uri="http://www.researchspace.org/resource/ThinkingFrames" class="rs-body-m-M">
-            <bs-menu-item>Frames</bs-menu-item>
+            <bs-menu-item><i class="fa fa-columns" aria-hidden="true"></i> Thinking Frames</bs-menu-item>
             </semantic-link-container>
             <mp-anonymous-hidden>
               <li class="rs-xs-none">
@@ -51,12 +37,9 @@
         </li>
                 <mp-anonymous-hidden>
           <li>
-            <mp-link url="/sparql" class="rs-body-m-M">Sparql</mp-link>
+            <mp-link url="/sparql" class="rs-body-m-M"><span class="rs-icon rs-icon-sparql"></span> Sparql</mp-link>
           </li>
         </mp-anonymous-hidden>
-
-
-        </bs-nav-dropdown>
         <mp-anonymous-hidden alt='<li><a href="/login" title="login" class="rs-body-m-M">Logout</a></li>'>
           <bs-nav-dropdown title="Account" id="rs-account-dropdown" class="rs-account-dropdown">
 
@@ -75,19 +58,6 @@
               </semantic-query>
             </bs-menu-item>
 
-            {{!-- <semantic-link-container uri="http://www.researchspace.org/resource/MyImages">
-              <bs-menu-item title='my images'>My Images</bs-menu-item>
-            </semantic-link-container>
-
-            <semantic-link-container uri="http://www.researchspace.org/resource/MyPages">
-              <bs-menu-item title='my pages'>My Narratives</bs-menu-item>
-            </semantic-link-container>
-
-            <semantic-link-container uri="http://www.researchspace.org/resource/MyKnowledgeMaps">
-              <bs-menu-item title='my maps'>My Knowledge Maps</bs-menu-item>
-            </semantic-link-container>
-
-            <bs-menu-item divider="true"></bs-menu-item> --}}
             <bs-menu-item href="/login" title='logout'>
               <div class="user-dropdown_item">
                 <i class="rs-icon rs-icon-logout rs-xs-none"></i>
@@ -99,8 +69,17 @@
         </mp-anonymous-hidden>
 
 
-      </ul>
 
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+
+
+        </bs-nav-dropdown>
+
+
+
+
+      <a class="rs-header-logo pull-right" href="/"><img src="/assets/images/logo_superminimal_green.png"></a>
+
+
+      </ul>
+    </div>
 </nav>

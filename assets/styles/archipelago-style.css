@@ -83,7 +83,7 @@
 }
 
 .toolbarIcon:hover {
-    background-color: rgb(255, 223, 176);
+    background-color: rgb(255, 239, 215);
 }
 
 .toolbarIconContainer {
@@ -453,7 +453,10 @@ h1, h2, h3, h4, h5, h6 {
   }
 
 
+  .featuresOptionsDiv {
+      display: inline-block;
+  }
 
-  #rs-navbar {
-      
+  .featuresOptionsDiv:nth-child(2) {
+    margin-left: 20px;
   }

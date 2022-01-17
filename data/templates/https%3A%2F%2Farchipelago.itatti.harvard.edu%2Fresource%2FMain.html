@@ -124,3 +124,44 @@
     </semantic-context>
   </div>
 </div>
+
+
+<style>
+  #sideNavbar {
+    display: block !important;
+  }
+
+  #centralNavbar {
+    display: none !important;
+  }
+
+  #archipelagoNavbar {
+  width: var(--sidebar-width) !important;
+  min-height: var(--nav-height, 58px);
+    height: var(--nav-height, 58px);
+    border: none;
+    font-size: 14px;
+    margin-bottom: 0px;
+    background-color: var(--color-navbar-bg, #1d0a6e);
+   z-index: 1030;
+   right: 0;
+   color: white !important;
+   position: absolute;
+   -webkit-box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15); 
+   box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15);
+}
+
+.clonedNavbar:nth-child(2){
+  display: none !important;
+}
+#archipelagoNavbar > li > a {
+  font-weight: 300;
+}
+
+#archipelagoNavbar > #main-header-dropdown, .rs-application .navbar-default a#rs-account-dropdown {
+  font-family: "Roboto", sans-serif, sans-serif;
+  font-size: 13.5px;
+  background-color: transparent;
+  font-weight: 300;
+}
+</style>

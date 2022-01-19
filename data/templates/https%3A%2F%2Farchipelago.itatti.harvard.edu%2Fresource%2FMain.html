@@ -42,9 +42,10 @@
             "southWestLon": {"value": "5692238.026840036"},
             "northEstLat": {"value": "1371414.0522355612"},
             "northEstLon": {"value": "5693523.1243780805"},
-            "date": {"value": "1550-01-01"}
+            "date": {"value": "1697-01-01"}
           }'
           query='
+            PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
             PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
             PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
             SELECT DISTINCT ?subject ?bw_id ?wkt WHERE {
@@ -57,7 +58,8 @@
                   archipelago:maxX ?northEstLat;
                   archipelago:maxY ?northEstLon;
                   archipelago:date ?date
-              }                                        
+              }
+              
               BIND(IRI(CONCAT("https://archipelago.itatti.harvard.edu/resource/builtwork/", ?bw_id)) as ?subject)
             }'
         ></semantic-search-query-constant>

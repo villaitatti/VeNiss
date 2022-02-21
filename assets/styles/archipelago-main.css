@@ -161,3 +161,22 @@ body {
   left: 10px;
   outline: 3px solid white !important;
 }
+
+.colorsLegend {
+  position: fixed;
+  right: calc(var(--sidebar-width) + 20px);
+  top: 20px;
+  background-color: white;
+  border-radius: 5px;
+  z-index: 100000000;
+  padding: 10px;
+}
+
+.swatches-picker {
+  width: 320px;
+  height: 240px;
+  top: 100px;
+  z-index: 1000000000000000000;
+  position: fixed;
+  right: calc(var(--sidebar-width) + 20px);
+}

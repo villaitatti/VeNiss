@@ -10,29 +10,46 @@
     
     <semantic-search  
       categories='{
-        "<http://www.w3.org/2001/XMLSchema#date>": [{
-          "kind": "date-range",
-          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
-          "queryPattern": "{
-            $subject ?__relation__ ?prod.
-            ?prod crm:P4_has_time-span ?date_iri .
-            ?date_iri crm:P81a_end_of_the_begin ?date .
-            FILTER(?date <= ?__dateEndValue__) .
-            FILTER(?date >= ?__dateBeginValue__) .
-          }"
-        }]
+        "<http://www.w3.org/2001/XMLSchema#date>": [
+          {
+            "kind": "date-range",
+            "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+            "queryPattern": "{
+              $subject ?__relation__ ?prod.
+              ?prod crm:P4_has_time-span ?date_iri .
+              ?date_iri crm:P81a_end_of_the_begin ?date .
+              FILTER(?date <= ?__dateEndValue__) .
+              FILTER(?date >= ?__dateBeginValue__) .
+            }"
+          }
+        ],
+        "<http://www.w3.org/2001/XMLSchema#string>": [
+          {
+            "kind": "text",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "queryPattern": "{ ?subject rdfs:label|skos:prefLabel ?__value__. }"
+          }
+        ]
       }'
       search-profile='{ 
         "categories": [
           {
             "iri": "<http://www.w3.org/2001/XMLSchema#date>",
-            "label": "Time",
-            "thumbnail": "../images/help/thenounproject/noun_873049.svg"
+            "label": "Time"
+          },
+          {
+            "iri": "<http://www.w3.org/2001/XMLSchema#string>",
+            "label": "String"
           },
           {
             "iri": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
             "label": "Builtwork",
-            "thumbnail": "../images/help/thenounproject/noun_1113333.svg"
+            "thumbnail": "../icons/Builtwork.svg"
+          },
+          {
+            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Actor>",
+            "label": "Actor",
+            "thumbnail": "../icons/Actor.svg"
           }
         ],
         "relations": [
@@ -41,6 +58,18 @@
             "label": "Constructed in",
             "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
             "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
+          },
+          {
+            "iri": "<http://www.cidoc-crm.org/cidoc-crm/P13_destroyed>",
+            "label": "Destroyed in in",
+            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
+            "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
+          },
+          {
+            "iri": "<http://www.cidoc-crm.org/cidoc-crm/string>",
+            "label": "Label",
+            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Actor>",
+            "hasRange": "<http://www.w3.org/2001/XMLSchema#string>"
           }
         ]
       }'

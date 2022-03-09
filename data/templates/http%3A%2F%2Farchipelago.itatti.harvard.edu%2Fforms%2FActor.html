@@ -1,41 +1,123 @@
-<semantic-form 
-  new-subject-template='https://archipelago.itatti.harvard.edu/resource/actor/{{{{raw}}}}{{actorIdentifier}}{{{{/raw}}}}'
-  fields='[
-  {
-    "id": "type",
-    "label": "Type",
-    "insertPattern": "INSERT { $subject a $value } WHERE {}",
-    "selectPattern": "SELECT ?value WHERE { $subject a ?value }",
-    "deletePattern": "DELETE { ?subject a ?value } WHERE {}",
-    "xsdDatatype": "xsd:string"
-  },
-  {
-    "id": "label",
-    "label": "Label",
-    "insertPattern": "INSERT { $subject rdfs:label ?label } WHERE {}",
-    "selectPattern": "SELECT ?value WHERE { $subject rdfs:label ?value }",
-    "deletePattern": "DELETE { ?subject rdfs:label ?value } WHERE {}",
-    "minOccurs": "1",
-    "maxOccurs": "1"
-  }
-  ]'
-  [[>rsp:FormDefaults]]
-  >
-  <bs-row class="clearfix">
-    <bs-col sm="6">
-      <div class="form-scroll-area">
-        <semantic-form-hidden-input
-          for="type"
-          default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor", "https://archipelago.itatti.harvard.edu/arconto#Actor", "https://archipelago.itatti.harvard.edu/arconto#Removable"]'
-        ></semantic-form-hidden-input>
-    
-    
+<semantic-form
+  new-subject-template="https://archipelago.itatti.harvard.edu/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+  fields='[[ fieldDefinitions
+    label="http://www.researchspace.org/pattern/general/rdfs:label"
+    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_title"
+    occupation="http://www.researchspace.org/fieldDefinition/Occupation"
+    actor_birth="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_birth"
+    actor_death="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death"
+  ]]'
+  [[
+  >rsp:FormDefaults]] >
+  <div class="form-scroll-area">
+    <semantic-form-hidden-input
+      for="type"
+      default-values='[
+    "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+    "https://archipelago.itatti.harvard.edu/arconto#Actor"
+    ]'
+    ></semantic-form-hidden-input>
+    <bs-row class="clearfix">
+      <bs-col sm="6">
         <!-- label -->
-        <semantic-form-text-input for="label" label="Label">
-        </semantic-form-text-input>
-      </div>
-    </bs-col>
-</bs-row>
+        <semantic-form-text-input for="label" label="Label"> </semantic-form-text-input>
 
+        <!-- title -->
+        <semantic-form-autocomplete-input for="title" label="Title"> </semantic-form-autocomplete-input>
+
+        <!-- occupation -->
+        <semantic-form-autocomplete-input for="occupation" label="Occupation"> </semantic-form-autocomplete-input>
+
+        <!-- Birth -->
+        <semantic-form-composite-input
+          for="actor_birth"
+          label="Birth"
+          new-subject-template="/birth"
+          fields='[[ fieldDefinitions
+          actor_has_time_span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Has_Time_Span"
+          actor_birth_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Birth_Place"
+          ]]'
+        >
+          <!-- Birth Place -->
+          <semantic-form-composite-input
+            for="actor_birth_place"
+            new-subject-template="/place"
+            fields='[[ fieldDefinitions
+            actor_birth_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Birth_Place"
+          ]]'
+          >
+            <semantic-form-autocomplete-input for="actor_birth_place" label="Place"></semantic-form-autocomplete-input>
+          </semantic-form-composite-input>
+          <semantic-form-hidden-input for="type" default-value="crm:E67_Birth"></semantic-form-hidden-input>
+
+          <!-- Birth Date -->
+          <semantic-form-composite-input
+            for="actor_has_time_span"
+            new-subject-template="/date"
+            fields='[[ fieldDefinitions 
+            type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            actor_birth_date="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_birth_date"
+            actor_birth_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Birth_Place"
+            ]]'
+          >
+            <semantic-form-hidden-input
+              for="type"
+              default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"
+            ></semantic-form-hidden-input>
+            <semantic-form-datetime-input
+              for="actor_birth_date"
+              placeholder="YYYY-MM-DD"
+            ></semantic-form-datetime-input>
+          </semantic-form-composite-input>
+        </semantic-form-composite-input>
+
+        <!-- Death -->
+        <semantic-form-composite-input
+          for="actor_death"
+          label="Death"
+          new-subject-template="/death"
+          fields='[[ fieldDefinitions
+          actor_has_time_span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Has_Time_Span"
+          actor_death_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death_Place"
+        ]]'
+        >
+          <semantic-form-hidden-input for="type" default-value="crm:E69_Death"></semantic-form-hidden-input>
+
+          <!-- Death Place -->
+          <semantic-form-composite-input
+            for="actor_death_place"
+            new-subject-template="/place"
+            fields='[[ fieldDefinitions
+          actor_death_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death_Place"
+        ]]'
+          >
+            <semantic-form-autocomplete-input for="actor_death_place" label="Place"></semantic-form-autocomplete-input>
+          </semantic-form-composite-input>
+          <semantic-form-hidden-input for="type" default-value="crm:E69_Death"></semantic-form-hidden-input>
+
+          <!-- Death Date -->
+          <semantic-form-composite-input
+            for="actor_has_time_span"
+            new-subject-template="/date"
+            render-header="false"
+            fields='[[ fieldDefinitions 
+            type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            actor_death_date="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death_Date"
+          ]]'
+          >
+            <semantic-form-hidden-input
+              for="type"
+              default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"
+            ></semantic-form-hidden-input>
+            <semantic-form-datetime-input
+              for="actor_death_date"
+              placeholder="YYYY-MM-DD"
+            ></semantic-form-datetime-input>
+          </semantic-form-composite-input>
+        </semantic-form-composite-input>
+      </bs-col>
+    </bs-row>
+  </div>
   [[> rsp:FormDefaultActions]]
 </semantic-form>

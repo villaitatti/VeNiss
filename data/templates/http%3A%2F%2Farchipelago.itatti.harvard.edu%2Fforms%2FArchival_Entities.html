@@ -1,0 +1,20 @@
+<semantic-form
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{id}}'
+  fields='[[ fieldDefinitions
+    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    id="http://www.researchspace.org/pattern/general/rdfs:label" 
+    is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+    has_preferred_identifier="http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier"
+  ]]'
+  [[>rsp:FormDefaults]]
+>
+<div class="form-scroll-area">
+  <semantic-form-hidden-input for="type" default-value='http://www.w3.org/2004/02/skos/core#Concept'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archival_entities"></semantic-form-hidden-input>
+
+  <!-- Source name-->
+  <semantic-form-text-input for="id"></semantic-form-text-input>
+</div>
+
+[[> rsp:FormDefaultActions]]
+</semantic-form>

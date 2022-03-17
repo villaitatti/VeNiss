@@ -3,34 +3,46 @@
   fields='[[ fieldDefinitions
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label"
+
+    source_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+    source_original_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_original_title"
+
     has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
     is_subject_of="http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of"
     builtwork_construction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction"
     source_location="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_location"
     P138i_has_representation="http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation"
     source_was_measured_by="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_was_measured_by"
-    original_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_original_title"
+    
+    related_actors="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_actor"
+    related_events="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_events"
+    related_builtworks="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_builtworks"
+
+    source_synopsis="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_synopsis"
   ]]'
   [[>rsp:FormDefaults]]
 >
 <div class="form-scroll-area">
+  
 
   <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://archipelago.itatti.harvard.edu/arconto#Source"]'></semantic-form-hidden-input>
 
   <div class="container-fluid">
     <bs-row id="form-body">
+
+      <semantic-form-errors></semantic-form-errors>
       
       <!-- LEFT: Source data -->
       <bs-col sm="12" md="12" lg="6">
 
         <!-- Title -->
-        <div class="margin-top">
+        <div>
           <bs-row>
             <bs-col sm="2">
               <strong>Title</strong>
             </bs-col>
             <bs-col sm="10">
-              <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
+              <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="source_title"></semantic-form-text-input>
             </bs-col>
           </bs-row>
         </div>
@@ -43,21 +55,38 @@
             </bs-col>
             <bs-col sm="10">
               <semantic-form-composite-input
-                for="original_title"
+                for="source_original_title"
                 render-header="false"
                 label="Original Title"
                 new-subject-template="/original_title"
                 fields='[[ fieldDefinitions
                   type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
                   label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
+                  has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
                 ]]'
               >
                 <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
-                <semantic-form-text-input render-header="false" languages='["en", "it", "latin"]' label="Title" for="label"></semantic-form-text-input>
+                <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/original_title'></semantic-form-hidden-input> 
+
+                <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
               </semantic-form-composite-input>
             </bs-col>
           </bs-row>
         </div>
+
+        <!-- Synopsis -->
+        <div class="margin-top">
+          <bs-row>
+            <bs-col sm="2">
+              <strong>Synopsis</strong>
+            </bs-col>
+            <bs-col sm="10">
+              <semantic-form-text-input render-header="false" label="Synopsis" for="source_synopsis" multiline="true" placeholder="Insert synopsis"></semantic-form-text-input>
+            </bs-col>
+          </bs-row>
+        </div>
+
+        
 
         <!-- Visual Representation -->
         <div class="margin-top">
@@ -105,68 +134,25 @@
                 for="source_was_measured_by"
                 render-header="false"
                 label="Dimension"
-                new-subject-template="/measurement/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+                new-subject-template="/dimension"
                 fields='[[ fieldDefinitions
                   type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                  dimension_width="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/dimension_width"
-                  dimension_height="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/dimension_width"
+                  value="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/dimension_has_value"
+                  source_unit="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_unit"
                 ]]'
               >
-                <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E16_Measurement'></semantic-form-hidden-input>
+                <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E54_dimension'></semantic-form-hidden-input>
 
-                <div data-flex-layout="row center-stretch" style="text-align: center;">
-                  <div>
-                    <strong>Width</strong>
-                    <semantic-form-composite-input
-                      for="dimension_width"
-                      render-header="false"
-                      label="Width"
-                      new-subject-template="/width"
-                      fields='[[ fieldDefinitions
-                        value="http://www.researchspace.org/pattern/object/dimvale/P90_has_value"
-                        has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
-                        source_unit="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_unit"
-                      ]]'
-                    >
-                      <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E54_dimension'></semantic-form-hidden-input>
-
-                      <bs-row>
-                        <bs-col sm="6">
-                          <semantic-form-text-input render-header="false" label="Width" for="value"></semantic-form-text-input>
-                        </bs-col>
-                        <bs-col sm="6">
-                          <semantic-form-select-input render-header="false" for='source_unit'></semantic-form-select-input>
-                        </bs-col>
-                      </bs-row>
-
-                    </semantic-form-composite-input>
-                  </div>
-                  <div>
-                    <strong>Height</strong>
-                    <semantic-form-composite-input
-                      for="dimension_height"
-                      render-header="false"
-                      label="Height"
-                      new-subject-template="/height"
-                      fields='[[ fieldDefinitions
-                        value="http://www.researchspace.org/pattern/object/dimvale/P90_has_value"
-                        has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
-                        source_unit="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_unit"
-                      ]]'
-                    >
-                      <bs-row>
-                        <bs-col sm="6">
-                          <semantic-form-text-input render-header="false" label="Height" for="value"></semantic-form-text-input>
-                        </bs-col>
-                        <bs-col sm="6">
-                          <semantic-form-select-input render-header="false" for='source_unit'></semantic-form-select-input>
-                        </bs-col>
-                      </bs-row>
-
-                    </semantic-form-composite-input>
-                  </div>
-                </div>
-
+                <bs-row>
+                  <bs-col sm="10">
+                    <semantic-form-text-input placeholder="width x height" render-header="false" for="value"></semantic-form-text-input>
+                    <br>
+                    <p><strong>note:</strong> remember to write <strong>width</strong> x <strong>height</strong></p>
+                  </bs-col>
+                  <bs-col sm="2">
+                    <semantic-form-select-input render-header="false" for='source_unit'></semantic-form-select-input>
+                  </bs-col>
+                </bs-row>
 
               </semantic-form-composite-input>
               
@@ -174,18 +160,18 @@
           </bs-row>
         </div>
 
-        <!-- Construction -->
+        <!-- Creation -->
         <hr>
         <div>
           <bs-row>
             <bs-col sm="2">
-              <strong>Production of the item</strong>
+              <strong>Creation process</strong>
             </bs-col>
             <bs-col sm="10">
               <semantic-form-composite-input
                 for="builtwork_construction"
                 render-header="false"
-                label="Production"
+                label="Creation"
                 new-subject-template="/production"
                 fields='[[ fieldDefinitions
                   type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -207,7 +193,7 @@
                   ]]'
                 >
                   <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input> 
-                  <semantic-form-datetime-input for='builtwork_date_end_of_the_begin' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+                  <semantic-form-datetime-input label="Date" for='builtwork_date_end_of_the_begin' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
             
                 </semantic-form-composite-input>
             
@@ -215,7 +201,7 @@
                 <semantic-form-composite-input
                   for="builtwork_construction_actor_role"
                   new-subject-template="/actor_role/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
-                  label="Actor"
+                  label="Author"
                   fields='[[ fieldDefinitions
                     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
                     builtwork_construction_actor-role_actor="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
@@ -277,18 +263,39 @@
 
       <!-- RIGHT: related elements -->
       <bs-col sm="12" md="12" lg="6">
+
+        
+        <bs-alert bs-style="warning">
+          <p>    
+            <strong> If </strong> you can't find the entity, use the 
+            <mp-event-trigger type='Dashboard.AddFrame' data='{"viewId": "list-search","mode": "new"}' targets='["thinking-frames"]'>
+              <a class="text-underline">visual search</a> 
+            </mp-event-trigger> 
+            <strong> or </strong>
+            <mp-event-trigger type='Dashboard.AddFrame' data='{"viewId": "entity-editor","mode": "new"}' targets='["thinking-frames"]'>
+              <a class="text-underline">create it</a>
+            </mp-event-trigger>.
+          </p>
+        </bs-alert>
+          
         
         <bs-tabs id="tabs">
+
           <bs-tab event-key="1" title="Related People">
-
+            <semantic-form-autocomplete-input render-header="false" label="Actor" for='related_actors'></semantic-form-autocomplete-input>
           </bs-tab>
+
           <bs-tab event-key="2" title="Related Events">
-
+            <semantic-form-autocomplete-input render-header="false" label="Actor" for='related_events'></semantic-form-autocomplete-input>
           </bs-tab>
-          <bs-tab event-key="3" title="Related Places">
 
+          <bs-tab event-key="3" title="Related Builtworks">
+            <semantic-form-autocomplete-input render-header="false" label="Actor" for='related_builtworks'></semantic-form-autocomplete-input>
           </bs-tab>
         </bs-tabs>
+
+
+        
           
       </bs-col>
     </bs-row>

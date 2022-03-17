@@ -1,75 +1,21 @@
 <semantic-form
   new-subject-template='https://archipelago.itatti.harvard.edu/resource/builtwork/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-  fields='[
-  {
-    "id": "type",
-    "label": "Type",
-    "insertPattern": "INSERT { $subject a $value } WHERE {}",
-    "selectPattern": "SELECT ?value WHERE { $subject a ?value }",
-    "deletePattern": "DELETE { ?subject a ?value } WHERE {}",
-    "xsdDatatype": "xsd:string"
-  },
-  {
-    "id": "label",
-    "label": "Label",
-    "insertPattern": "INSERT { $subject rdfs:label ?label } WHERE {}",
-    "selectPattern": "SELECT ?value WHERE { $subject rdfs:label ?value }",
-    "deletePattern": "DELETE { ?subject rdfs:label ?value } WHERE {}",
-    "minOccurs": "1",
-    "maxOccurs": "1"
-  },
-  {
-    "id": "construction",
-    "label": "Construction",
-    "insertPattern": "INSERT { $subject crm:P108i_was_produced_by $value } WHERE {}",
-    "selectPattern": "SELECT $value WHERE { $subject crm:P108i_was_produced_by ?value }",
-    "deletePattern": "DELETE { $subject crm:P108i_was_produced_by $value } WHERE {} ",
-    "minOccurs": "0",
-    "maxOccurs": "1"
-  },
-  {
-    "id": "feature",
-    "label": "Feature",
-    "xsdDatatype": "xsd:anyURI",
-    "selectPattern": "
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT ?value ?label WHERE {
-        $subject <test:feature> ?value .
-        OPTIONAL { ?value rdfs:label ?label }
-      }
-    ",
-    "insertPattern": "INSERT { $subject <test:feature> ?value } WHERE {}",
-    "deletePattern": "DELETE { $subject <test:feature> ?value } WHERE {}",
-    "autosuggestionPattern": "
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT $value $label WHERE {
-        $value a <test:Feature> .
-        $value rdfs:label $label .
-        FILTER REGEX($label, \"?token\", \"i\")
-      }
-    "
-  },
-  {
-    "id": "switch-action-type",
-    "label": "Event",
-    "description": "These are the events that happened to the building. E.g. Construction, Destruction, etc.",
-    "xsdDatatype": "xsd:anyURI",
-    "selectPattern": "SELECT ?value WHERE { {$subject ?p ?value. ?value a crm:E6_Destruction} UNION {$subject ?p ?value. ?value a crm:E12_Production} }",
-    "insertPattern": "INSERT { $subject ?p $value } WHERE {}",
-    "deletePattern": "DELETE { $subject ?p $value } WHERE {}"
-  }]'
+  fields='[[ fieldDefinitions
+    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    label="http://www.researchspace.org/pattern/general/rdfs:label"
+    builtwork_has_material="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_material"
+    builtwork_construction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction"
+    builtwork_destruction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_destruction"
+    builtwork_has_transformation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_transformation"
+    entity_is_complete="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/entity_is_complete"
+  ]]'
   [[>rsp:FormDefaults]]
   >
 
   <div class="form-scroll-area">
-    <semantic-form-hidden-input
-      for="type"
-      default-values='[
-        "http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object", 
-        "https://archipelago.itatti.harvard.edu/arconto#Builtwork"]'>
-    </semantic-form-hidden-input>
+    <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://archipelago.itatti.harvard.edu/arconto#Builtwork"]'></semantic-form-hidden-input>
 
-    <bs-tab-container id="some-ide" class="bs-left-vertical-tabs" default-active-key="events">
+    <bs-tab-container id="some-ide" class="bs-left-vertical-tabs" default-active-key="info">
       <bs-row class="clearfix">
 
         <!-- Left navbar -->
@@ -78,14 +24,6 @@
           <bs-nav bs-style="tabs" stacked="true">
             <bs-nav-item event-key="info">
               General
-            </bs-nav-item>
-
-            <bs-nav-item event-key="events">
-              Events of the building
-            </bs-nav-item>
-
-            <bs-nav-item event-key="related_people">
-              Related people
             </bs-nav-item>
 
             <bs-nav-item event-key="related_events">
@@ -103,144 +41,79 @@
         <!-- Right content -->
         <bs-col sm="10">
           <bs-tab-content animation="true">
+            
 
-            <bs-alert bs-style="warning">
-              <strong>Holy guacamole!</strong> Best check yo self, you're not looking too good.
+            <bs-alert bs-style="error">
+              <semantic-form-errors></semantic-form-errors>
+              <semantic-form-recover-notification></semantic-form-recover-notification>
             </bs-alert>
 
             <!-- Information tab -->
             <bs-tab-pane event-key="info">
 
-              <semantic-form-text-input for="label" label="Name">
-              </semantic-form-text-input>
+              <!-- Label -->
+              <semantic-form-text-input for="label" label="Name"></semantic-form-text-input>
 
-            </bs-tab-pane>
+              <!-- Is Complete -->
+              <semantic-form-checkbox-input for='entity_is_complete'></semantic-form-checkbox-input>
+						
 
-            <!-- Event tab -->
-            <bs-tab-pane event-key="events">
+              <!-- Materials -->
+              <semantic-form-tree-picker-input for="builtwork_has_material"></semantic-form-tree-picker-input>
+
+              <hr>
 
               <!-- Construction -->
               <bs-panel header="Construction" collapsible="true">
                 <semantic-form-composite-input
-                  for="construction"
+                  for="builtwork_construction"
                   label="Construction"
                   new-subject-template="/production"
-                  fields='[
-                    {
-                      "id": "construction_role",
-                      "label": "Role Patron",
-                      "insertPattern": "INSERT { $subject crmpc:P01_has_domain $value } WHERE {} ",
-                      "selectPattern": "SELECT ?value WHERE { $subject crmpc:P01_has_domain $value }",
-                      "deletePattern": "DELETE { $subject crmpc:P01_has_domain $value } WHERE {} "
-                    },
-                    {
-                      "id": "date",
-                      "label": "Time Span",
-                      "minOccurs": "0",
-                      "maxOccurs": "1",
-                      "insertPattern": "INSERT { $subject crm:P4_has_time-span $value } WHERE {}",
-                      "selectPattern": "SELECT ?value WHERE { $subject crm:P4_has_time-span ?value }",
-                      "deletePattern": "DELETE { ?subject crm:P4_has_time-span ?value } WHERE {}"
-                    }
-                  ]'
+                  fields='[[ fieldDefinitions
+                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                    builtwork_construction_actor_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor_role"
+                    builtwork_has_time-span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_time-span"
+                  ]]'
                 >
 
-                  <semantic-form-hidden-input for="type" default-value="crm:E12_Production"></semantic-form-hidden-input>
+                  <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E12_Production"></semantic-form-hidden-input>
 
                   <!-- Date -->
-                  <strong>Date</strong>
                   <semantic-form-composite-input
-                    for="date"
+                    for="builtwork_has_time-span"
                     new-subject-template="/date"
                     render-header="false"
-                    fields='[
-                      {
-                        "id": "date_end_of_the_begin",
-                        "label": "Started in",
-                        "xsdDatatype": "xsd:date",
-                        "minOccurs": "0",
-                        "maxOccurs": "1",
-                        "insertPattern": "INSERT { $subject crm:P81a_end_of_the_begin ?label } WHERE {}",
-                        "selectPattern": "SELECT ?value WHERE { $subject crm:P81a_end_of_the_begin ?value }",
-                        "deletePattern": "DELETE { ?subject crm:P81a_end_of_the_begin ?value } WHERE {}"
-                      },
-                      {
-                        "id": "date_begin_of_the_end",
-                        "label": "Ended in",
-                        "xsdDatatype": "xsd:date",
-                        "minOccurs": "0",
-                        "maxOccurs": "1",
-                        "insertPattern": "INSERT { $subject crm:P81b_begin_of_the_end ?label } WHERE {}",
-                        "selectPattern": "SELECT ?value WHERE { $subject crm:P81b_begin_of_the_end ?value }",
-                        "deletePattern": "DELETE { ?subject crm:P81b_begin_of_the_end ?value } WHERE {}"
-                      }
-                    ]'
+                    fields='[[ fieldDefinitions 
+                      type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                      builtwork_date_end_of_the_begin="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_end_of_the_begin"
+                    ]]'
                   >
-                      
-                    <semantic-form-datetime-input for='date_end_of_the_begin' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
-                    <semantic-form-datetime-input for='date_begin_of_the_end' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input> 
+                    <semantic-form-datetime-input for='builtwork_date_end_of_the_begin' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
 
                   </semantic-form-composite-input>
-                  <hr>
 
                   <!-- Actors -->
-                  <strong>Actor</strong>
                   <semantic-form-composite-input
-                    for="construction_role"
+                    for="builtwork_construction_actor_role"
                     new-subject-template="/actor_role/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
-                    render-header="false"
                     label="Actor"
-                    fields='[
-                      {
-                        "id": "actor_range",
-                        "label": "Name",
-                        "description": "The name of the author",
-                        "minOccurs": "1",
-                        "maxOccurs": "1",
-                        "insertPattern": "INSERT { $subject crmpc:P02_has_range $value } WHERE {}",
-                        "selectPattern": "SELECT $value WHERE { $subject crmpc:P02_has_range $value }",
-                        "deletePattern": "DELETE { $subject crmpc:P02_has_range $value } WHERE {}",
-                        "autosuggestionPattern": "SELECT $value $label WHERE {$value a arconto:Actor. $value rdfs:label $label.FILTER REGEX(STR(?label), ?__token__, \"i\")}"
-                      },
-                      {
-                        "id": "role",
-                        "label": "Role",
-                        "description": "The role this Actor had in this event",
-                        "minOccurs": "1",
-                        "maxOccurs": "1",
-                        "insertPattern": "INSERT { $subject crmpc:P14.1_in_the_role_of $value } WHERE {}",
-                        "selectPattern": "SELECT $value WHERE { $subject crmpc:P14.1_in_the_role_of ?role. ?role rdfs:label ?value }",
-                        "deletePattern": "DELETE { $subject crmpc:P14.1_in_the_role_of $value } WHERE {} ",
-                        "autosuggestionPattern": "SELECT $value $label WHERE {$value a arconto:Occupation. $value rdfs:label $label.FILTER REGEX(STR(?label), ?__token__, \"i\")}"
-                      }
-                    ]'
+                    fields='[[ fieldDefinitions
+                      type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                      builtwork_construction_actor-role_actor="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
+                      builtwork_construction_actor-role_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_role"
+                    ]]'
                   >
                     <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/crmpc/PC14_carried_out_by"></semantic-form-hidden-input>
 
-
                     <!-- Add an existing or create a new one-->
-                    <semantic-form-autocomplete-input for='actor_range'>
+                    <semantic-form-autocomplete-input for='builtwork_construction_actor-role_actor'>
                       <semantic-form 
                         new-subject-template='https://archipelago.itatti.harvard.edu/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
-                        fields='[
-                          {
-                            "id": "label",
-                            "label": "Label",
-                            "xsdDatatype": "xsd:string",
-                            "minOccurs": "1",
-                            "maxOccurs": "1",
-                            "selectPattern": "SELECT ?value WHERE { $subject rdfs:label ?value } ",
-                            "insertPattern": "INSERT { $subject rdfs:label ?value } WHERE {} ",
-                            "deletePattern": "DELETE { $subject rdfs:label ?value } WHERE {} "
-                          },
-                          {
-                            "id": "type",
-                            "label": "Type",
-                            "insertPattern": "INSERT { $subject a $value } WHERE {}",
-                            "selectPattern": "SELECT ?value WHERE { $subject a ?value }",
-                            "deletePattern": "DELETE { ?subject a ?value } WHERE {}",
-                            "xsdDatatype": "xsd:string"
-                          }]'>
+                        fields='[[ fieldDefinitions
+                          type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                          label="http://www.researchspace.org/pattern/general/rdfs:label"
+                        ]]'>
                         <semantic-form-hidden-input for='type' default-value='crm:Actor'></semantic-form-hidden-input>
                         <semantic-form-hidden-input for='type' default-value='arconto:Actor'></semantic-form-hidden-input>
                         <semantic-form-text-input for='label'></semantic-form-text-input>
@@ -251,13 +124,155 @@
                     </semantic-form-autocomplete-input>
                     
                     <!-- Role -->
-                    <semantic-form-autocomplete-input for='role'></semantic-form-autocomplete-input>
+                    <semantic-form-autocomplete-input label="Actor Role" for='builtwork_construction_actor-role_role'></semantic-form-autocomplete-input>
 
                   </semantic-form-composite-input>
-                  <hr>
 
                 </semantic-form-composite-input>
               </bs-panel>
+
+              <!-- Destruction -->
+              <bs-panel header="Destruction" collapsible="true">
+                <semantic-form-composite-input
+                  for="builtwork_destruction"
+                  label="Destruction"
+                  new-subject-template="/destruction"
+                  fields='[[ fieldDefinitions
+                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                    builtwork_construction_actor_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor_role"
+                    builtwork_has_time-span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_time-span"
+                  ]]'
+                >
+
+                  <semantic-form-hidden-input for="type" default-value="crm:E6_Destruction"></semantic-form-hidden-input>
+
+                  <!-- Date -->
+                  <semantic-form-composite-input
+                    for="builtwork_has_time-span"
+                    new-subject-template="/date"
+                    render-header="false"
+                    fields='[[ fieldDefinitions 
+                      builtwork_date_end_of_the_begin="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_end_of_the_begin"
+                    ]]'
+                  >
+                      
+                    <semantic-form-datetime-input for='builtwork_date_end_of_the_begin' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+
+                  </semantic-form-composite-input>
+
+                  <!-- Actors -->
+                  <semantic-form-composite-input
+                    for="builtwork_construction_actor_role"
+                    new-subject-template="/actor_role/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+                    label="Actor"
+                    fields='[[ fieldDefinitions
+                      type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                      builtwork_construction_actor-role_actor="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
+                      builtwork_construction_actor-role_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_role"
+                    ]]'
+                  >
+                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/crmpc/PC14_carried_out_by"></semantic-form-hidden-input>
+
+                    <!-- Add an existing or create a new one-->
+                    <semantic-form-autocomplete-input for='builtwork_construction_actor-role_actor'>
+                      <semantic-form 
+                        new-subject-template='https://archipelago.itatti.harvard.edu/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
+                        fields='[[ fieldDefinitions
+                          type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                          label="http://www.researchspace.org/pattern/general/rdfs:label"
+                        ]]'>
+                        <semantic-form-hidden-input for='type' default-value='crm:Actor'></semantic-form-hidden-input>
+                        <semantic-form-hidden-input for='type' default-value='arconto:Actor'></semantic-form-hidden-input>
+                        <semantic-form-text-input for='label'></semantic-form-text-input>
+                        <semantic-form-errors></semantic-form-errors>
+                        <button name='submit' class='btn btn-default'>Create Actor</button>
+                        <button name='reset' class='btn btn-default'>Reset Actor</button>
+                      </semantic-form>
+                    </semantic-form-autocomplete-input>
+                    
+                    <!-- Role -->
+                    <semantic-form-autocomplete-input label="Actor Role" for='builtwork_construction_actor-role_role'></semantic-form-autocomplete-input>
+
+                  </semantic-form-composite-input>
+
+                </semantic-form-composite-input>
+              </bs-panel>
+
+              <hr>
+
+              <!-- Functions -->
+              <bs-panel header="Functions" collapsible="true">
+              </bs-panel>
+
+              <!-- Uses -->
+              <bs-panel header="Uses" collapsible="true">
+              </bs-panel>
+
+              <!-- Typology -->
+              <bs-panel header="Typologies" collapsible="true">
+                <semantic-form-composite-input
+                  for="builtwork_has_transformation"
+                  label="Typology"
+                  new-subject-template="/transformation_function/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+                  fields='[[ fieldDefinitions
+                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                    builtwork_has_typologies="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_typologies"
+                    builtwork_has_time-span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_time-span"
+                  ]]'
+                >
+                  <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E81_Transformation"></semantic-form-hidden-input>
+
+                  <!-- Name -->
+                  <semantic-form-tree-picker-input for='builtwork_has_typologies'>
+                  </semantic-form-tree-picker-input>
+
+                  <div data-flex-layout="row center-stretch">
+                    <div class="grid-demo" style="padding: 5px;">
+                      <semantic-form-composite-input
+                        for="builtwork_has_time-span"
+                        new-subject-template="/date"
+                        render-header="false"
+                        fields='[[ fieldDefinitions
+                          type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                          builtwork_date_end_of_the_begin="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_end_of_the_begin"
+                        ]]'
+                      >
+                        <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input>
+                        <semantic-form-datetime-input for='builtwork_date_end_of_the_begin' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+
+                      </semantic-form-composite-input>
+
+                    </div>
+
+                    <div class="grid-demo" style="padding: 5px;">
+                      <semantic-form-composite-input
+                        for="builtwork_has_time-span"
+                        new-subject-template="/date"
+                        label="Ended in"
+                        render-header="false"
+                        fields='[[ fieldDefinitions
+                          type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                          builtwork_date_end_of_the_begin="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_end_of_the_begin"
+                        ]]'
+                      >
+                        <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input>
+                        <semantic-form-datetime-input for='builtwork_date_end_of_the_begin' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+
+                      </semantic-form-composite-input>
+
+                    </div>
+
+                  </div> 
+
+
+
+                  <hr>
+                </semantic-form-composite-input>
+              </bs-panel>
+
+              <hr>
+
+
 
             </bs-tab-pane>
 

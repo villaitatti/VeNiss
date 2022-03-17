@@ -1,0 +1,31 @@
+<semantic-form
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    id="http://www.researchspace.org/pattern/general/rdfs:label" 
+    is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+    broader="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/vocabulary_broader_term"
+    equivalent_class="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/owl_equivalent_class"
+  ]]'
+  [[>rsp:FormDefaults]]
+>
+<div class="form-scroll-area">
+  <semantic-form-hidden-input for="type" default-value='http://www.w3.org/2004/02/skos/core#Concept'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archival_entities"></semantic-form-hidden-input>
+
+  <!-- Source name-->
+  <semantic-form-text-input for="id"></semantic-form-text-input>
+
+  <!-- Broader -->
+  <semantic-form-tree-picker-input for='broader'>
+  </semantic-form-tree-picker-input>
+
+  <!-- Equivalent Class -->
+  <semantic-form-text-input for="equivalent_class"></semantic-form-text-input>
+
+  
+
+</div>
+
+[[> rsp:FormDefaultActions]]
+</semantic-form>

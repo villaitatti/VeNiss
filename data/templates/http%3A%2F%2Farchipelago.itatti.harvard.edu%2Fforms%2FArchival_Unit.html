@@ -1,0 +1,30 @@
+<semantic-form
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    label="http://www.researchspace.org/pattern/general/rdfs:label" 
+    is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+    membership="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archival_unit_forms_part"
+    typology="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_typology"
+  ]]'
+  [[>rsp:FormDefaults]]
+>
+<div class="form-scroll-area">
+  <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E78_Collection'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archival_structures"></semantic-form-hidden-input>
+
+  <!-- Source name -->
+  <semantic-form-text-input label="Name" for="label"></semantic-form-text-input>
+
+  <!-- Source Typology -->
+  <semantic-form-tree-picker-input for='typology'>
+  </semantic-form-tree-picker-input>
+
+  <!-- Parent Collection -->
+  <semantic-form-tree-picker-input label="Parent" for='membership'>
+  </semantic-form-tree-picker-input>
+
+</div>
+
+[[> rsp:FormDefaultActions]]
+</semantic-form>

@@ -1,2 +1,2 @@
 .DS_Store
-./config/repositories/default.ttl
+config/repositories/default.ttl

@@ -4,8 +4,9 @@
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label"
 
-    source_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+    source_identifier="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
     source_original_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_original_title"
+    source_attributed_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_attributed_title"
 
     has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
     is_subject_of="http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of"
@@ -35,29 +36,45 @@
       <!-- LEFT: Source data -->
       <bs-col sm="12" md="12" lg="6">
 
-        <!-- Title -->
+        <!-- Subject -->
         <div>
           <bs-row>
             <bs-col sm="2">
-              <strong>Title</strong>
+              <strong>Subject:</strong>
             </bs-col>
             <bs-col sm="10">
-              <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="source_title"></semantic-form-text-input>
+              <semantic-form-text-input render-header="false" for="source_identifier"></semantic-form-text-input>
+            </bs-col>
+          </bs-row>
+
+            <!-- Visual Representation -->
+          <bs-row class="margin-top">
+            <bs-col sm="2">
+              <strong>Visual Representation:</strong>
+            </bs-col>
+            <bs-col sm="10">
+              <semantic-form-drag-and-drop-input 
+                label="Visual Representation"
+                render-header="false"
+                for="P138i_has_representation" 
+                nested-form-template='{{> forms:Image nested=true editable=true}}'>
+              </semantic-form-drag-and-drop-input>
             </bs-col>
           </bs-row>
         </div>
 
-        <!-- Original Title -->
-        <div class="margin-top">
-          <bs-row>
-            <bs-col sm="2">
-              <strong>Original Title</strong>
-            </bs-col>
-            <bs-col sm="10">
+        <hr>
+
+        <bs-row>
+            
+          <!-- Left -->
+          <bs-col sm="12" md="6">
+
+
+            <!-- Original title -->
+            <bs-row>
               <semantic-form-composite-input
                 for="source_original_title"
-                render-header="false"
-                label="Original Title"
                 new-subject-template="/original_title"
                 fields='[[ fieldDefinitions
                   type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -70,108 +87,44 @@
 
                 <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
               </semantic-form-composite-input>
-            </bs-col>
-          </bs-row>
-        </div>
-
-        <!-- Synopsis -->
-        <div class="margin-top">
-          <bs-row>
-            <bs-col sm="2">
-              <strong>Synopsis</strong>
-            </bs-col>
-            <bs-col sm="10">
-              <semantic-form-text-input render-header="false" label="Synopsis" for="source_synopsis" multiline="true" placeholder="Insert synopsis"></semantic-form-text-input>
-            </bs-col>
-          </bs-row>
-        </div>
-
-        
-
-        <!-- Visual Representation -->
-        <div class="margin-top">
-          <bs-row>
-            <bs-col sm="2">
-              <strong>Visual Representation</strong>
-            </bs-col>
-            <bs-col sm="10">
-              <semantic-form-drag-and-drop-input 
-                label="Visual Representation" 
-                render-header="false" 
-                for="P138i_has_representation" 
-                nested-form-template='{{> forms:Image nested=true editable=true}}'>
-              </semantic-form-drag-and-drop-input>
-            </bs-col>
-          </bs-row>
-        </div>
-
-        <!-- Typology -->
-        <div class="margin-top">
-          <bs-row>
-            <bs-col sm="2">
-              <strong>Typology</strong>
-            </bs-col>
-            <bs-col sm="10">
-              <semantic-form-tree-picker-input 
-              render-header="false" 
-              for='has_type'
-              nested-form-template='{{> forms:<form>   nested=true editable=true}}'
-                tree-patterns='{
-                  "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-                  "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/source_typologie>"}'></semantic-form-tree-picker-input>
-            </bs-col>
-          </bs-row>
-        </div>
-
-        <!-- Dimension -->
-        <div class="margin-top">
-          <bs-row>
-            <bs-col sm="2">
-              <strong>Dimension</strong>
-            </bs-col>
-            <bs-col sm="10">
+            </bs-row>
+            
+            <!-- Attributed title -->
+            <bs-row>
               <semantic-form-composite-input
-                for="source_was_measured_by"
-                render-header="false"
-                label="Dimension"
-                new-subject-template="/dimension"
+                for="source_attributed_title"
+                new-subject-template="/attributed_title"
                 fields='[[ fieldDefinitions
                   type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                  value="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/dimension_has_value"
-                  source_unit="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_unit"
+                  label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
+                  has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
                 ]]'
               >
-                <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E54_dimension'></semantic-form-hidden-input>
+                <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
+                <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/original_title'></semantic-form-hidden-input> 
 
-                <bs-row>
-                  <bs-col sm="10">
-                    <semantic-form-text-input placeholder="width x height" render-header="false" for="value"></semantic-form-text-input>
-                    <br>
-                    <p><strong>note:</strong> remember to write <strong>width</strong> x <strong>height</strong></p>
-                  </bs-col>
-                  <bs-col sm="2">
-                    <semantic-form-select-input render-header="false" for='source_unit'></semantic-form-select-input>
-                  </bs-col>
-                </bs-row>
-
+                <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
               </semantic-form-composite-input>
-              
-            </bs-col>
-          </bs-row>
-        </div>
+            </bs-row>
 
-        <!-- Creation -->
-        <hr>
-        <div>
-          <bs-row>
-            <bs-col sm="2">
-              <strong>Creation process</strong>
-            </bs-col>
-            <bs-col sm="10">
+            <!-- Typology -->
+            <bs-row>
+              <semantic-form-tree-picker-input 
+                for='has_type'
+                label="Typology"
+                nested-form-template='{{> forms:<form>   nested=true editable=true}}'
+                tree-patterns='{
+                  "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
+                  "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/source_typologie>"
+                }'>
+              </semantic-form-tree-picker-input>
+            </bs-row>
+
+            <!-- Creation -->
+            <bs-row>
               <semantic-form-composite-input
                 for="builtwork_construction"
-                render-header="false"
-                label="Creation"
+                label="Creation date and Authors"
                 new-subject-template="/production"
                 fields='[[ fieldDefinitions
                   type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -219,45 +172,73 @@
                 </semantic-form-composite-input>
             
               </semantic-form-composite-input>
-            </bs-col>
-          </bs-row>
-        </div>
+            </bs-row>
+          </bs-col>
 
-        <!-- Archival Location -->
-        <hr>
-        <div>
-          <bs-row>
-            <bs-col sm="2">
-              <strong>Archival location</strong>
-            </bs-col>
-            <bs-col sm="10">
+          <!-- Right -->
+          <bs-col sm="12" md="6">
+
+            <!-- Archival Location -->
+            <bs-row>
               <semantic-form-tree-picker-input 
                 label="Archival Location" 
-                render-header="false"
                 for='source_location'
                 nested-form-template='{{> forms:<form>   nested=true editable=true}}'
                 tree-patterns='{
                   "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-                  "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archival_structures>"}'>
-          
+                  "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archival_structures>"
+                }'>
               </semantic-form-tree-picker-input>
+            </bs-row>
 
-              <p>
-              <strong>or</strong> create                               
-                <mp-event-trigger 
-                  type='Dashboard.AddFrame' 
-                  data='{
-                    "viewId": "authority-content",
-                    "resourceIri": "http://www.researchspace.org/resource/vocab/archival_structures",
-                    "mode": "new"
-                  }' 
-                  targets='["thinking-frames"]'>
-                  <a class="text-underline"> a new one </a>
-                </mp-event-trigger>               
-              </p>
-            </bs-col>
-          </bs-row>
-        </div>
+            <bs-row>
+              <semantic-form-composite-input
+                for="source_was_measured_by"
+                label="Dimension"
+                new-subject-template="/dimension"
+                fields='[[ fieldDefinitions
+                  type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                  value="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/dimension_has_value"
+                  source_unit="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_unit"
+                ]]'
+              >
+                <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E54_dimension'></semantic-form-hidden-input>
+          
+                  <bs-row>
+                    <bs-col sm="10">
+                      <semantic-form-text-input placeholder="width x height" render-header="false" for="value"></semantic-form-text-input>
+                      <br>
+                      <p><strong>note:</strong> remember to write <strong>height</strong> x <strong>width</strong></p>
+                    </bs-col>
+                    <bs-col sm="2">
+                      <semantic-form-select-input render-header="false" for='source_unit'></semantic-form-select-input>
+                    </bs-col>
+                  </bs-row>
+          
+              </semantic-form-composite-input>
+            </bs-row>
+
+          </bs-col>
+
+        </bs-row>
+            
+        
+
+        <!-- Synopsis and Transcription -->
+
+        <bs-row>
+          <bs-tabs id="tabs">
+            <bs-tab event-key="1" title="Synopsis">
+              <semantic-form-text-input render-header="false" label="Synopsis" for="source_synopsis" multiline="true" placeholder="Insert synopsis"></semantic-form-text-input>
+            </bs-tab>
+            <bs-tab event-key="2" title="Transcription">
+              
+            </bs-tab>
+          </bs-tabs>
+        </bs-row>
+
+          
+        
 
       </bs-col>
 

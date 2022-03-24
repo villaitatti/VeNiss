@@ -2,7 +2,7 @@
   new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    id="http://www.researchspace.org/pattern/general/rdfs:label" 
+    id="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label"
     is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
     broader="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/vocabulary_broader_term"
     equivalent_class="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/owl_equivalent_class"
@@ -14,14 +14,16 @@
   <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archival_entities"></semantic-form-hidden-input>
 
   <!-- Source name-->
-  <semantic-form-text-input for="id"></semantic-form-text-input>
-
-  <!-- Broader -->
-  <semantic-form-tree-picker-input for='broader'>
-  </semantic-form-tree-picker-input>
+  <semantic-form-text-input languages='["it", "en"]' label="Label" for="id"></semantic-form-text-input>
 
   <!-- Equivalent Class -->
-  <semantic-form-text-input for="equivalent_class"></semantic-form-text-input>
+  <semantic-form-text-input label="Getty ID" for="equivalent_class"></semantic-form-text-input>
+
+  <!-- Broader -->
+  <semantic-form-tree-picker-input label="Parent element" for='broader'>
+  </semantic-form-tree-picker-input>
+
+
 
   
 

@@ -1,17 +1,22 @@
 <semantic-form
-  new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  persistence='{"type": "ldp"}'
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/vocabulary/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    id="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label"
+    archipelago_type="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_type"
+    id="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
     is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
     broader="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/vocabulary_broader_term"
     equivalent_class="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/owl_equivalent_class"
   ]]'
-  [[>rsp:FormDefaults]]
 >
+<semantic-form-errors></semantic-form-errors>
 <div class="form-scroll-area">
   <semantic-form-hidden-input for="type" default-value='http://www.w3.org/2004/02/skos/core#Concept'></semantic-form-hidden-input>
-  <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archival_entities"></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/temporary_entities"></semantic-form-hidden-input>
 
   <!-- Source name-->
   <semantic-form-text-input languages='["it", "en"]' label="Label" for="id"></semantic-form-text-input>
@@ -19,15 +24,7 @@
   <!-- Equivalent Class -->
   <semantic-form-text-input label="Getty ID" for="equivalent_class"></semantic-form-text-input>
 
-  <!-- Broader -->
-  <semantic-form-tree-picker-input label="Parent element" for='broader'>
-  </semantic-form-tree-picker-input>
-
-
-
-  
-
 </div>
 
-[[> rsp:FormDefaultActions]]
+[[> http://archipelago.itatti.harvard.edu/forms/Buttons]]
 </semantic-form>

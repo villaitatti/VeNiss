@@ -60,7 +60,11 @@
                   archipelago:date ?date
               }
               
-              BIND(IRI(CONCAT("https://archipelago.itatti.harvard.edu/resource/builtwork/", ?bw_id)) as ?subject)
+              ?do_id rdfs:label ?bw_id.
+              ?do crm:P1_is_identified_by ?do_id.
+              
+              ?st_vol crm:P67_is_referred_to_by ?do;
+                      crm:P129_is_about ?subject
             }'
         ></semantic-search-query-constant>
 

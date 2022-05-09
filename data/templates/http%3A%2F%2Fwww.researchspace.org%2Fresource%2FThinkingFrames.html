@@ -54,12 +54,23 @@
     },
 
     {
-      "id": "list-search",
-      "label": "Search Entity",
-      "description": "Search entities by type",
+      "id": "list-actor",
+      "label": "List Actors",
+      "description": "List and filter through all actors",
       "iconClass": "rs-icon rs-icon-semantic_search",
       "resourceNotRequired": true,
-      "template": "{{> listSearch}}"
+      "template": "{{> listActor}}",
+      "type": "view"
+    },
+
+    {
+      "id": "list-builtwork",
+      "label": "List Builtworks",
+      "description": "List and filter through all builtworks",
+      "iconClass": "rs-icon rs-icon-semantic_search",
+      "resourceNotRequired": true,
+      "template": "{{> listBuiltwork}}",
+      "type": "view"
     },
 
     {
@@ -311,8 +322,11 @@
     <template id='entityEditor'>
       [[> rsp:EntityEditor]]
     </template>
-    <template id='listSearch'>
-      [[> arc:List]]
+    <template id='listActor'>
+      [[> arc:List_actors]]
+    </template>
+    <template id='listBuiltwork'>
+      [[> arc:List_Builtworks]]
     </template>
     <template id='authorityEditor'>
       [[> rsp:AuthorityEditor]]

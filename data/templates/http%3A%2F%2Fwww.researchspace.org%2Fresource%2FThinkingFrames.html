@@ -57,7 +57,7 @@
       "id": "list-actor",
       "label": "List Actors",
       "description": "List and filter through all actors",
-      "iconClass": "rs-icon rs-icon-semantic_search",
+      "iconClass": "rs-icon rs-icon-actor_no-image",
       "resourceNotRequired": true,
       "template": "{{> listActor}}",
       "type": "view"
@@ -67,9 +67,19 @@
       "id": "list-builtwork",
       "label": "List Builtworks",
       "description": "List and filter through all builtworks",
-      "iconClass": "rs-icon rs-icon-semantic_search",
+      "iconClass": "rs-icon rs-icon-placeholder_painting",
       "resourceNotRequired": true,
       "template": "{{> listBuiltwork}}",
+      "type": "view"
+    },
+
+    {
+      "id": "list-archival_structures",
+      "label": "Browse Archives",
+      "description": "Browse through the archives and their collections",
+      "iconClass": "rs-icon rs-icon-influence",
+      "resourceNotRequired": true,
+      "template": "{{> listArchivalStructures}}",
       "type": "view"
     },
 
@@ -327,6 +337,9 @@
     </template>
     <template id='listBuiltwork'>
       [[> arc:List_Builtworks]]
+    </template>
+    <template id='listArchivalStructures'>
+      [[> arc:List_archival_structures]]
     </template>
     <template id='authorityEditor'>
       [[> rsp:AuthorityEditor]]

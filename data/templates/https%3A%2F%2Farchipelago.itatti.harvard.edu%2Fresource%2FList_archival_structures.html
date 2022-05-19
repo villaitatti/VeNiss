@@ -1,0 +1,52 @@
+<ol class="page-breadcrumb">
+  <li>
+    <mp-link title="Home" url="/">Home</mp-link>
+  </li>
+  <li class="active">Actors</li>
+</ol>
+
+<div class="page">
+  <div class='page__body'>
+
+    <semantic-search>
+      <!-- 1. form-based search as search definition -->
+      <semantic-search-form-query
+        query-template='{
+          "queryString": "
+            SELECT ?subject WHERE { 
+              ?subject crm:P2_has_type ?class.
+            }",
+          "arguments": {
+            "class": {"type": "xsd:anyURI"}
+          }
+        }'
+        fields='[
+          {
+            "id": "class",
+            "label": "Type",
+            "xsdDatatype": "xsd:anyURI",
+            "valueSetPattern": "SELECT ?node ?label WHERE { 
+              ?node crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archival_structures>;
+                    rdfs:label ?label
+            }"
+          }
+        ]'>
+          <semantic-form-select-input for="class"></semantic-form-select-input>
+          <button type='button' name='submit' className='btn btn-default'>Search</button>
+      </semantic-search-form-query>
+      
+      <!-- 2. faceting is optional -->
+      <!-- <semantic-search-facet></semantic-search-facet> -->
+      <semantic-search-result-holder>
+          <!-- 	3. result visualization
+                it is possible to use any semantic-* visualization component 
+                to visualize the search results, e.g semantic-graph 
+          -->
+        <semantic-search-result> 
+          <semantic-table id='table'></semantic-table> 
+        </semantic-search-result>
+      </semantic-search-result-holder>
+    </semantic-search>
+
+  </div>
+</div>

@@ -42,7 +42,7 @@
             "southWestLon": {"value": "5692238.026840036"},
             "northEstLat": {"value": "1371414.0522355612"},
             "northEstLon": {"value": "5693523.1243780805"},
-            "date": {"value": "1697-01-01"}
+            "date": {"value": "1801-01-01"}
           }'
           query='
             PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
@@ -51,7 +51,7 @@
             PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
             SELECT DISTINCT ?subject ?bw_id ?wkt WHERE {
               service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                ?root rssqlsail:hasQueryId "test";	
+                ?root rssqlsail:hasQueryId "production";	
                   archipelago:wkt ?wkt;
                   archipelago:bw_id ?bw_id;
                   archipelago:minX ?southWestLat;

@@ -49,16 +49,19 @@
             PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
             PREFIX arconto: <https://archipelago.itatti.harvard.edu/arconto#>
             PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
-            SELECT DISTINCT ?subject ?bw_id ?wkt WHERE {
+            SELECT DISTINCT ?subject ?bw_id ?wkt ?bob ?eob ?boe ?eoe WHERE {
               service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                ?root rssqlsail:hasQueryId "test";	
+                ?root rssqlsail:hasQueryId "production";	
                   archipelago:wkt ?wkt;
                   archipelago:bw_id ?bw_id;
                   archipelago:minX ?southWestLat;
                   archipelago:minY ?southWestLon;
                   archipelago:maxX ?northEstLat;
                   archipelago:maxY ?northEstLon;
-                  archipelago:date ?date
+                  archipelago:bob ?bob;
+                  archipelago:eob ?eob;
+                  archipelago:boe ?boe;
+                  archipelago:eoe ?eoe;
               }
               
               ?do_id rdfs:label ?bw_id.

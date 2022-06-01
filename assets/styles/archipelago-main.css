@@ -71,6 +71,7 @@ body {
             font-weight: lighter; */
 }
 
+
 #narrativeHolder > p {
   font-size: 11pt;
 }
@@ -179,4 +180,17 @@ body {
   z-index: 1000000000000000000;
   position: fixed;
   right: calc(var(--sidebar-width) + 20px);
+}
+
+.timeSliderContainer {
+  position: fixed;
+  left: 50px;
+  bottom: 30px;
+  width: 50%;
+}
+
+.timeSliderContainer div {
+  bottom: 65px;
+  font-size: 50pt !important;
+  font-family: 'Playfair Display', serif;
 }

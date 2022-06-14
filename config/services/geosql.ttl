@@ -68,8 +68,8 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 		]
     [
 			sp:subject :_results ;
-			sp:predicate archipelago:bob ;
-			sp:object :_bob
+			sp:predicate archipelago:eoe ;
+			sp:object :_eoe
 		]
     
 	) ;

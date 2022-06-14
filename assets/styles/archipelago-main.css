@@ -186,7 +186,7 @@ body {
   position: fixed;
   left: 50px;
   bottom: 30px;
-  width: 50%;
+  width: calc(100vw - var(--sidebar-width) - 200px);
 }
 
 .timeSliderContainer div {

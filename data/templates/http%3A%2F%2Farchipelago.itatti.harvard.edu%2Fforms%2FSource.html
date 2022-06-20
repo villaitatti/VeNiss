@@ -39,32 +39,87 @@
         <!-- Subject -->
         <div>
           <bs-row>
-            <bs-col sm="2">
-              <strong>Subject:</strong>
-            </bs-col>
-            <bs-col sm="10">
-              <semantic-form-text-input render-header="false" for="source_identifier"></semantic-form-text-input>
-            </bs-col>
+            <semantic-form-text-input label="Attributed Title" for="source_identifier"></semantic-form-text-input>
           </bs-row>
 
-            <!-- Visual Representation -->
-          <bs-row class="margin-top">
-            <bs-col sm="2">
-              <strong>Visual Representation:</strong>
-            </bs-col>
-            <bs-col sm="10">
-              <semantic-form-drag-and-drop-input 
-                label="Visual Representation"
-                render-header="false"
-                for="P138i_has_representation" 
-                nested-form-template='{{> forms:Image nested=true editable=true}}'>
-              </semantic-form-drag-and-drop-input>
-            </bs-col>
+          <!-- Original title -->
+          <bs-row>
+            <semantic-form-composite-input
+              for="source_original_title"
+              label="Original Title"
+              new-subject-template="/original_title"
+              fields='[[ fieldDefinitions
+                type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
+                has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+              ]]'
+            >
+              <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
+              <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/original_title'></semantic-form-hidden-input> 
+  
+              <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
+            </semantic-form-composite-input>
+          </bs-row>
+
+          <!-- Visual Representation -->
+          <bs-row>
+            <semantic-form-drag-and-drop-input 
+              label="Visual Representation"
+              for="P138i_has_representation" 
+              nested-form-template='{{> forms:Image nested=true editable=true}}'>
+            </semantic-form-drag-and-drop-input>
           </bs-row>
         </div>
 
+      </bs-col>
+
+      <bs-col sm="12" md="12" lg="6">
+
+
+        <div>
 
         
+          <!-- Attributed title 
+          <bs-row>
+
+            <semantic-form-composite-input
+              for="source_attributed_title"
+              label="Attributed Title"
+              new-subject-template="/attributed_title"
+              fields='[[ fieldDefinitions
+                type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
+                has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+              ]]'
+            >
+              <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
+              <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/original_title'></semantic-form-hidden-input> 
+
+              <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
+            </semantic-form-composite-input>
+            
+          </bs-row>
+          -->
+
+          <bs-row>
+
+            <semantic-form-tree-picker-input 
+              for='has_type'
+              label="Typology"
+              tree-patterns='{
+                "relationPattern": "?item skos:broader ?parent", 
+                "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/source_types>"
+              }'>
+            </semantic-form-tree-picker-input>
+
+          </bs-row>
+
+        </div>
+
+        <!-- Typology -->
+        <bs-row>
+
+        </bs-row>
 
       </bs-col>
 
@@ -74,53 +129,7 @@
 
       <bs-tab event-key="1" title="Source">
 
-        <!-- Original title -->
-        <bs-row>
-          <semantic-form-composite-input
-            for="source_original_title"
-            new-subject-template="/original_title"
-            fields='[[ fieldDefinitions
-              type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-              label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
-              has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
-            ]]'
-          >
-            <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
-            <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/original_title'></semantic-form-hidden-input> 
 
-            <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
-          </semantic-form-composite-input>
-        </bs-row>
-        
-        <!-- Attributed title -->
-        <bs-row>
-          <semantic-form-composite-input
-            for="source_attributed_title"
-            new-subject-template="/attributed_title"
-            fields='[[ fieldDefinitions
-              type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-              label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
-              has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
-            ]]'
-          >
-            <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
-            <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/original_title'></semantic-form-hidden-input> 
-
-            <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
-          </semantic-form-composite-input>
-        </bs-row>
-
-        <!-- Typology -->
-        <bs-row>
-          <semantic-form-tree-picker-input 
-            for='has_type'
-            label="Typology"
-            tree-patterns='{
-              "relationPattern": "?item skos:broader ?parent", 
-              "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/source_types>"
-            }'>
-          </semantic-form-tree-picker-input>
-        </bs-row>
 
         <!-- Creation -->
         <bs-row>

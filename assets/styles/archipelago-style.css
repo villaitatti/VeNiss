@@ -5,14 +5,7 @@
     background-position: center;
 }
 
-.rs-header-logo {
-    color: #1d0a6e !important;
-}
 
-.rs-header-logo img {
-    width: 150px;
-    padding: 3%;
-}
 
 .no-padding[class*="col-"] {
     padding-right: 0;
@@ -22,15 +15,15 @@
 
 
 .ol-control button {
-    background-color: rgb(255,179,95, 1) !important;
+    background-color: var(--archipelago-gold) !important;
 }
 
 .ol-control button :hover {
-    background-color: rgba(255, 140, 0, 1) !important;
+    background-color: var(--archipelago-gold) !important;
 }
 
 .ol-zoom-in:hover, .ol-zoom-out:hover {
-    background-color: rgba(255, 140, 0, 1) !important;
+    background-color: var(--archipelago-gold) !important;
 }
 
 .ol-control {
@@ -62,8 +55,8 @@
     margin: auto;
     font-size: 16pt;
     cursor: pointer;
-    color: var(--archipelago-orange);
-    border: 2px solid var(--archipelago-orange);
+    color: var(--archipelago-gold);
+    border: 2px solid var(--archipelago-gold);
     border-radius: 100px;
     display:block;
     width: 50px;
@@ -380,7 +373,7 @@ h1, h2, h3, h4, h5, h6 {
 .layerCheck {
     top: 0;
     font-size: 20pt;
-    color: var(--archipelago-orange);
+    color: var(--archipelago-gold);
 }
 
 .layerCheck.fa-toggle-off {
@@ -509,4 +502,22 @@ h1, h2, h3, h4, h5, h6 {
 
   .yearLabel {
     text-shadow: 0px 0px 5px #ffffff;
+    font-family: 'Lato' sans-serif;
   }
+
+  #logoTitleText {
+        font-family: "Lato", sans-serif, sans-serif;
+        color: var(--archipelago-gold);
+        font-size: 22pt;
+        font-weight: 100;
+        width: 150px;
+        padding: 3%;
+        line-height: calc(var(--nav-height, 58px) - 10px);
+        height: 100%;
+        margin-right: 20px;
+        text-align: right;
+    }
+
+    .rs-header-logo {
+        height: 100% !important;
+    }

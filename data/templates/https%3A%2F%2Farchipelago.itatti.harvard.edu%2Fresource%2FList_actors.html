@@ -96,10 +96,7 @@
                   <semantic-table 
                     id='table-result'
                     query='SELECT DISTINCT ?subject ?type WHERE { 
-                      ?subject a ?type
-                      filter not exists {
-                        filter(regex(str(iri(?type)), "actor", "i"))
-                      }
+                      ?subject crm:P2_has_type ?type
                     }'
                   >
                   </semantic-table>

@@ -194,3 +194,11 @@ body {
   font-size: 50pt !important;
   font-family: 'Lato', serif;
 }
+
+.ol-popup {
+  border-top: 20px solid var(--archipelago-gold);
+}
+
+.ol-popup-content a {
+  color: var(--archipelago-gold);
+}

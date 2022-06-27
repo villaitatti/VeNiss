@@ -3,80 +3,137 @@
   fields='[[ fieldDefinitions
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     label="http://www.researchspace.org/pattern/general/rdfs:label"
+    single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
     builtwork_has_material="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_material"
     builtwork_construction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction"
     builtwork_destruction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_destruction"
     builtwork_has_transformation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_transformation"
-    builtwork_has_st-volume="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_st-volume"
     entity_is_complete="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/entity_is_complete"
   ]]'
   [[>rsp:FormDefaults]]
   >
 
   <div class="form-scroll-area">
-    <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://archipelago.itatti.harvard.edu/arconto#Builtwork"]'></semantic-form-hidden-input>
 
-    <bs-tab-container id="some-ide" class="bs-left-vertical-tabs" default-active-key="info">
-      <bs-row class="clearfix">
+    <bs-row class="clearfix">
 
-        <semantic-form-drag-and-drop-input 
-          label="Visual Representation"
-          render-header="false"
-          for="builtwork_has_st-volume" 
-          nested-form-template='{{> st_volume nested=true editable=true}}'>
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://archipelago.itatti.harvard.edu/arconto#Builtwork"]'></semantic-form-hidden-input>
 
-            <template id="st_volume">
-              <semantic-form 
-                persistence='{"type": "sparql", "targetInsertGraphIri": "http://www.researchspace.org/ns/data-updates-graph"}'
-                new-subject-template='/EX_Digital_Image/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-                fields='[[
-                    fieldDefinitions
-                    label="http://www.w3.org/2000/01/rdf-schema#label"
-                    P3_has_note="http://www.cidoc-crm.org/cidoc-crm/P3_has_note"
-                    P1_is_identified_by="http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by"
-                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                ]]'
-                [[> rsp:FormDefaults]]
-              >
-                <div class="form-scroll-area">
-                  <semantic-form-hidden-input for='type' default-values='["http://www.researchspace.org/ontology/EX_Digital_Image"]'> </semantic-form-hidden-input>
-                  <semantic-form-file-input 
-                    label="Image"
-                    render-header="false"
-                    for='P1_is_identified_by' 
-                    storage='images'
-                    temp-storage='tmp'
-                    placeholder='Please drag&drop your image file here.'
-                    name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
-                    media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
-                    resource-query='
-                      PREFIX rso: <http://www.researchspace.org/ontology/>
-                      CONSTRUCT {
-                        ?__resourceIri__ a rso:EX_File.
-                        ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
-                        ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
-                      } WHERE {}
-                    '
-                    generate-iri-query='
-                      SELECT ?resourceIri {
-                        BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
-                      }
-                    '
-                  ></semantic-form-file-input>
-                  <semantic-form-text-input label="Caption" for='label'></semantic-form-text-input>
-                  <semantic-form-errors></semantic-form-errors>
-              </div>
-                
-              [[> rsp:FormDefaultActions assetForm=true assetStorage='images']] 
-              </semantic-form>
-            </template>
+      <bs-col sm="12" md="9">
+
+
+        <bs-row>
+
+          <!-- Label -->
+          <bs-col sm="9" md="9">
+            <semantic-form-text-input for="single_label" label="Name"></semantic-form-text-input>
+          </bs-col>
+
+          <!-- Is Complete -->
+          <bs-col sm="3" md="3">
+            <semantic-form-checkbox-input for='entity_is_complete' label="Editing mode?"></semantic-form-checkbox-input>
+          </bs-col>
+
+        </bs-row>
+
+        <!-- Construction -->
+        <semantic-form-composite-input
+          for="builtwork_construction"
+          label="Construction"
+          new-subject-template="/construction"
+          fields='[[ fieldDefinitions
+            type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            builtwork_construction_actor_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor_role"
+            builtwork_has_time-span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_time-span"
+          ]]'
+          >
+
+          <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E12_Production"></semantic-form-hidden-input>
+
+          <!-- Date -->
+          <semantic-form-composite-input
+            for="builtwork_has_time-span"
+            new-subject-template="/date"
+            render-header="false"
+            fields='[[ fieldDefinitions 
+              type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+              builtwork_date_bob="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_bob"
+              builtwork_date_eob="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_eob"
+              builtwork_date_boe="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_boe"
+              builtwork_date_eoe="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_eoe"
+            ]]'
+          >
+            <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input> 
           
+            <bs-row>
+              <bs-col md="3">
+                <semantic-form-datetime-input for='builtwork_date_bob' label="Begin of Begin" placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+              </bs-col>
+              <bs-col md="3">
+                <semantic-form-datetime-input for='builtwork_date_eob' label="End of Begin" placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+              </bs-col>
+              <bs-col md="3">
+                <semantic-form-datetime-input for='builtwork_date_boe' label="Begin of End" placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+              </bs-col>
+              <bs-col md="3">
+                <semantic-form-datetime-input for='builtwork_date_eoe' label="End of End" placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+              </bs-col>
+            </bs-row>
 
-        </semantic-form-drag-and-drop-input>
+          </semantic-form-composite-input>
 
+          <!-- Actors -->
+          <semantic-form-composite-input
+            for="builtwork_construction_actor_role"
+            new-subject-template="/actor_role/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+            label="Related actor"
+            fields='[[ fieldDefinitions
+              type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+              builtwork_construction_actor-role_actor="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
+              builtwork_construction_actor-role_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_role"
+            ]]'
+          >
+            <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/crmpc/PC14_carried_out_by"></semantic-form-hidden-input>
 
-      </bs-row>
-    </bs-tab-container>
+            <!-- Add an existing or create a new one-->
+            <semantic-form-drag-and-drop-input label="Actor" placeholder="Drop Actor here" for='builtwork_construction_actor-role_actor'>
+            </semantic-form-drag-and-drop-input>
+      
+            <!-- Role -->
+            <semantic-form-tree-picker-input 
+              label="With role" 
+              for='builtwork_construction_actor-role_role'
+              tree-patterns='{
+                "relationPattern": "?item skos:broader ?parent", 
+                "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>"
+              }'>
+            </semantic-form-tree-picker-input>
+
+          </semantic-form-composite-input>
+
+        </semantic-form-composite-input>
+
+      </bs-col>
+
+      <bs-col sm="12" md="3">
+
+        <h3>Related entities</h3>
+
+        <bs-tabs id="tabs">
+
+          <bs-tab event-key="1" title="Events">
+          </bs-tab>
+
+          <bs-tab event-key="2" title="Sources">
+          </bs-tab>
+
+          <bs-tab event-key="3" title="Builtworks">
+          </bs-tab>
+        </bs-tabs>
+
+      </bs-col>
+
+    </bs-row>
 
 
   </div>

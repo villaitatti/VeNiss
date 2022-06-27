@@ -1,6 +1,6 @@
 
 :root {
-    --color-dark: #00241f;
+    --color-dark: #033D68;
     --color-dark--op75: rgba(0, 46, 37, 0.75);
     --color-dark--op50: rgba(0, 60, 51, 0.5);
     --color-form-placeholder: rgba(0, 60, 51, 0.5);
@@ -16,7 +16,7 @@
 
     --color-icon-dark: #003c33;
     --color-icon-warning: #fe955d;
-    --color-icon-adminPanel: #003c2b;
+    --color-icon-adminPanel: #033D68;
     --color-icon-grey: #5F5F5F;
 
     --color-dashboard-km: rgba(60, 77, 162, 0.58);
@@ -72,7 +72,7 @@
     --color-entity-icon-type: #857C70;
     --color-entity-icon-resource: #506B9B;
 
-    --archipelago-orange: #FFB35F;
+    --archipelago-gold: #b48f49;
     --archipelago-grey: #e6e6e6;
 
     --breadcrumb-height: 30px;

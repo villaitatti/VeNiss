@@ -9,6 +9,8 @@
     builtwork_destruction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_destruction"
     builtwork_has_transformation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_transformation"
     entity_is_complete="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/entity_is_complete"
+
+    spacetime_volume_representation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/spacetime_volume_representation"
   ]]'
   [[>rsp:FormDefaults]]
   >
@@ -112,6 +114,41 @@
           </semantic-form-composite-input>
 
         </semantic-form-composite-input>
+
+
+        <!-- ST volume -->
+        <semantic-form-composite-input
+          new-subject-template="/spacetime_volume/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          for="spacetime_volume_representation"
+          fields='[[ fieldDefinitions
+              type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+              single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+              referred_to_by="http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by"
+          ]]'
+        >
+          <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume"></semantic-form-hidden-input>
+
+          <semantic-form-text-input for="single_label" label="Label"></semantic-form-text-input> 
+
+
+          <!-- Representation -->
+          <semantic-form-composite-input
+            new-subject-tempalate=""
+            for="referred_to_by"
+            fields='[[ fieldDefinitions
+              type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+              single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+            ]]'
+          >
+
+            <semantic-form-text-input for="single_label" label="Label"></semantic-form-text-input> 
+            
+          </semantic-form-composite-input>
+
+        </semantic-form-composite-input>
+
+
+
 
       </bs-col>
 

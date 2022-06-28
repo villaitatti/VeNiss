@@ -5,7 +5,7 @@
     type="http://localhost:10214/container/fieldDefinitionContainer/archipelago_type"
     actor_type="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_type"
     actor_title="http://localhost:10214/container/fieldDefinitionContainer/actor_titles"
-
+    
     actor_birth="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_birth"
     actor_death="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death"
     actor_name="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_name"
@@ -19,6 +19,9 @@
     actor_socialstatus="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_socialstatus"
 
     P138i_has_representation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_representation"
+    
+    related_events="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_events"
+    related_sources="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_related_sources"
   ]]'
   [[>rsp:FormDefaults]]
   >
@@ -173,12 +176,15 @@
                 type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
                 actor_has_time_span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Has_Time_Span"
                 actor_birth_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Birth_Place"
-                ]]'
+                single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+              ]]'
               >
 
               <semantic-form-hidden-input for="type" default-value="crm:E67_Birth"></semantic-form-hidden-input>
     
               <!-- Birth Place -->
+              <semantic-form-text-input for="single_label" label="Place"></semantic-form-text-input>
+
               
               <!-- Birth Date -->
               <semantic-form-composite-input
@@ -210,10 +216,14 @@
                 type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
                 actor_has_time_span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Has_Time_Span"
                 actor_death_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death_Place"
+                single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
               ]]'
               >
                 <semantic-form-hidden-input for="type" default-value="crm:E69_Death"></semantic-form-hidden-input>
               
+                <!-- Death Place -->
+                <semantic-form-text-input for="single_label" label="Place"></semantic-form-text-input>
+
                 <!-- Death Date -->
                 <semantic-form-composite-input
                 for="actor_has_time_span"
@@ -252,6 +262,10 @@
         <bs-tabs id="tabs">
 
           <bs-tab event-key="1" title="Events">
+            <semantic-form-drag-and-drop-input 
+              render-header="false"
+              for="related_sources">
+            </semantic-form-drag-and-drop-input> 
           </bs-tab>
 
           <bs-tab event-key="2" title="Sources">

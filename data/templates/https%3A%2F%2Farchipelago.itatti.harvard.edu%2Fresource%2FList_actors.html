@@ -1,137 +1,105 @@
-<ol class="page-breadcrumb">
-  <li>
-    <mp-link title="Home" url="/">Home</mp-link>
-  </li>
-  <li class="active">Actors</li>
-</ol>
-
 <div class="page">
   <div class='page__body'>
-    
 
-    <semantic-search
-      categories='{
-        "<http://www.w3.org/2001/XMLSchema#date>": [
-          {
-            "kind": "date-range",
-            "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
-            "queryPattern": "{
-              $subject ?__relation__ ?prod.
-              ?prod crm:P4_has_time-span ?date_iri .
-              ?date_iri crm:P81a_end_of_the_begin ?date .
-              FILTER(?date <= ?__dateEndValue__) .
-              FILTER(?date >= ?__dateBeginValue__) .
-            }"
-          }
-        ],
-        "<http://www.w3.org/2001/XMLSchema#string>": [
-          {
-            "kind": "text",
-            "datatype": "http://www.w3.org/2001/XMLSchema#string",
-            "queryPattern": "{ ?subject rdfs:label ?__value__. }"         
-          }
-        ]
-      }'
-      search-profile='{ 
-        "categories": [
-          {
-            "iri": "<http://www.w3.org/2001/XMLSchema#date>",
-            "label": "Time"
-          },
-          {
-            "iri": "<http://www.w3.org/2001/XMLSchema#string>",
-            "label": "String"
-          },
-          {
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
-            "label": "Builtwork",
-            "thumbnail": "../../assets/icons/Builtwork.svg"
-          },
-          {
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Actor>",
-            "label": "Actor",
-            "thumbnail": "../../assets/icons/Actor.svg"
-          }
-        ],
-        "relations": [
-          {
-            "iri": "<http://www.cidoc-crm.org/cidoc-crm/P108i_was_produced_by>",
-            "label": "Constructed in",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
-            "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
-          },
-          {
-            "iri": "<http://www.cidoc-crm.org/cidoc-crm/P13_destroyed>",
-            "label": "Destroyed in in",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
-            "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
-          },
-          {
-            "iri": "<http://www.cidoc-crm.org/cidoc-crm/string>",
-            "label": "Name",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Actor>",
-            "hasRange": "<http://www.w3.org/2001/XMLSchema#string>"
-          }
-        ]
-      }'
-    >
-      <semantic-search-query-constant
-        query='select ?subject where { ?subject a arconto:Actor }'
-      ></semantic-search-query-constant>
+  <div data-flex-layout="columns center-stretch">
+    <div class="Header">
+      <h1>List of actors</h1>
+      <hr>
+    </div>
 
-      <div data-flex-layout="row stretch-stretch">
-        <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
-          <semantic-search-facet></semantic-search-facet>
-        </div>
+    <div class="subheader">
 
-        <semantic-search-result-holder>
-          <div data-flex-self="md-full">
+      <bs-alert bs-style="warning">
+        <strong>An Actor is missing? </strong>
+        <mp-event-trigger id='list-actor__new-person-add-frame' 
+          type='Dashboard.AddFrame' 
+          data='{"viewId": "entity-editor"}' 
+          targets='["thinking-frames"]'>
+          <a>Create a new Entity</a>
+        </mp-event-trigger>.
+      </bs-alert>
 
+    </div>
 
-            <bs-tabs unmount-on-exit=true id='search-results' animation=false>
+    <div class="body">
+      <semantic-search>
+        <semantic-search-query-constant query='select ?subject where { ?subject a arconto:Actor }'>
+        </semantic-search-query-constant>
 
-              <!-- Table result -->
-              <bs-tab event-key="2" title="Table">
-                <semantic-search-result>
-                  <semantic-table 
-                    id='table-result'
-                    query='SELECT DISTINCT ?subject ?type WHERE { 
-                      ?subject crm:P2_has_type ?type
-                    }'
-                  >
-                  </semantic-table>
-                </semantic-search-result>
-              </bs-tab>
-
-            </bs-tabs>
-
-            <!-- Downloads -->
-            <bs-panel>
-
-              <semantic-search-result>
-                <mp-sparql-download id='csv-download'
-                                query="SELECT * WHERE { }"
-                                header="text/csv"
-                                filename="csv-result.csv">
-                <button class="btn btn-default">Download CSV</button>
-                </mp-sparql-download>
-              </semantic-search-result>
-
-              <semantic-search-result>
-                <mp-sparql-download id='json-download'
-                                query="SELECT * WHERE { }"
-                                header="application/sparql-results+json"
-                                filename="json-result.json"
-                                >
-                <button class="btn btn-default">Download JSON</button>
-                </mp-sparql-download>
-              </semantic-search-result>
-            </bs-panel>
+        <div data-flex-layout="row stretch-stretch">
+          <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
+            <semantic-search-facet></semantic-search-facet>
           </div>
 
+          <semantic-search-result-holder>
+            <div data-flex-self="md-full">
+
+              <semantic-search-result>
+                <semantic-table 
+                  id='table-result'
+                  query='SELECT DISTINCT ?subject ?type WHERE { 
+                    ?subject crm:P2_has_type ?type
+                  }'
+                  column-configuration='[
+                    {"variableName": "subject", "displayName": "Name"},
+                    {
+                      "displayName": "Edit",
+                      "cellTemplate": "{{> edit}}"
+                    }
+                  ]'
+                >
+                  <!-- Edit Template -->
+                  <template id="edit">
+                    <mp-event-trigger 
+                      id='{{subject.value}}-add-frame' 
+                      type='Dashboard.AddFrame' 
+                      data='{
+                        "resourceIri": "{{subject.value}}", 
+                        "viewId": "entity-editor"
+                      }' 
+                      targets='["thinking-frames"]'>
+                      <div style="display: flex; align-items: center;">
+                        <a class="btn btn-primary"><span class="fa fa-pencil"></span></a>
+                      </div>
+                    </mp-event-trigger>  
+                  </template>
+
+                </semantic-table>
+              </semantic-search-result>
+
+            </div>
         </semantic-search-result-holder>
       </div>
     </semantic-search>
+    </div>
+  </div>
+  
+  
+
+  
+
+
+    <!--
+
+      https://archipelago.itatti.harvard.edu/resource/actor/cb203d6e-cf78-11ec-88a8-3a5becfe4abd
+
+      http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Actor
+
+        <mp-event-trigger 
+          id='list-actor__-add-frame' 
+          type='Dashboard.AddFrame' 
+          data='{
+            "resourceIri": "http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Actor", 
+            "viewId": "entity-editor"
+          }' 
+          targets='["thinking-frames"]'>
+          <div style="display: flex; align-items: center;">
+            <span class="btn btn-success">Create new Actor</span>
+          </div>
+        </mp-event-trigger> 
+  -->
+    
+
     
 
   </div>

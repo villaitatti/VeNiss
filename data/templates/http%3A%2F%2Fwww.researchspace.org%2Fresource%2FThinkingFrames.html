@@ -57,10 +57,20 @@
       "id": "list-actor",
       "label": "Actors",
       "description": "Navigate through existing actors or add new one",
-      "iconClass": "rs-icon rs-icon-user_round veniss-highlight",
+      "iconClass": "rs-icon rs-icon-user_round veniss-actors",
       "resourceNotRequired": true,
       "template": "{{> listActor}}",
-      "type": "view"
+      "type": "authoring"
+    },
+
+        {
+      "id": "list-sources",
+      "label": "Sources",
+      "description": "Navigate through existing sources or add new one",
+      "iconClass": "rs-icon rs-icon-page veniss-sources",
+      "resourceNotRequired": true,
+      "template": "{{> listSources}}",
+      "type": "authoring"
     },
 
     [[!--
@@ -336,9 +346,6 @@
     </template>
     <template id='listActor'>
       [[> arc:List_actors]]
-    </template>
-    <template id='listBuiltwork'>
-      [[> arc:List_Builtworks]]
     </template>
     <template id='listSources'>
       [[> arc:List_Sources]]

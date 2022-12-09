@@ -8,11 +8,22 @@
     source_original_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_original_title"
     source_attributed_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_attributed_title"
 
+    source_author="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
+    entity_production_date="http://localhost:10214/container/fieldDefinitionContainer/entity_production_date"
+
     has_type="http://localhost:10214/container/fieldDefinitionContainer/source_typology"
     is_subject_of="http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of"
-    builtwork_construction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction"
+    source_production="http://localhost:10214/container/fieldDefinitionContainer/source_production"
+
     source_location="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_location"
-    P138i_has_representation="http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation"
+    source_location_medium="http://localhost:10214/container/fieldDefinitionContainer/source_location_medium"
+    source_location_final="http://localhost:10214/container/fieldDefinitionContainer/source_location_final"
+    source_technique="http://localhost:10214/container/fieldDefinitionContainer/source_technique_medium"
+
+    source_dimension="http://localhost:10214/container/fieldDefinitionContainer/source_dimension"
+    source_dimension_unit="http://localhost:10214/container/fieldDefinitionContainer/source_dimension_unit"
+
+    P138i_has_representation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/veniss_source_representation"
     source_was_measured_by="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_was_measured_by"
     
     related_actors="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_actor"
@@ -25,217 +36,182 @@
   [[>rsp:FormDefaults]]
 >
 <div class="form-scroll-area">
-  
 
   <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://archipelago.itatti.harvard.edu/arconto#Source"]'></semantic-form-hidden-input>
 
   <div class="container-fluid">
-    <bs-row id="form-body">
+    <div data-flex-layout="row stretch-stretch">
 
-      <semantic-form-errors></semantic-form-errors>
+      <!-- Left -->
+      <div data-flex-self="size-x2">
 
-      <bs-col sm="12" md="9">
+        <div data-flex-layout="column stretch-stretch">
 
-        <bs-row>
-          <!-- Visual Representation -->
-          <bs-col xs="6" sm="3" md="2">
-            <semantic-form-drag-and-drop-input 
-              label="Visual Representation"
-              for="P138i_has_representation" 
-              nested-form-template='{{> forms:Image nested=true editable=true}}'>
-            </semantic-form-drag-and-drop-input>
-          </bs-col>
+          <!-- Representation and titles -->
+          <div data-flex-layout="row top-stretch">
 
-          <bs-col xs="6" sm="9" md="10">
+            <div id="source_visual_representation" class="padding-5">
 
-            <bs-row>
+              <semantic-form-file-input 
+                label="Visual representation"
+                for="P138i_has_representation"
+                storage='images'
+                temp-storage='tmp'
+                placeholder='Add file here'
+                name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
+                media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
+                resource-query='
+                  PREFIX rso: <http://www.researchspace.org/ontology/>
+                  CONSTRUCT {
+                    ?__resourceIri__ a rso:EX_File.
+                    ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
+                    ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
+                    ?__resourceIri__ rdfs:label ?__filename__.
+                  } WHERE {}
+                '
+                generate-iri-query='
+                  SELECT ?resourceIri {
+                    BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
+                  }
+                '
+              ></semantic-form-file-input>
+            
+            </div>
 
-              <!-- Title -->
-              <bs-col sm="12" md="12" lg="6">
-                <semantic-form-text-input label="Attributed Title" for="source_identifier" languages='["en", "it"]'></semantic-form-text-input>
-              </bs-col>
+            <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
 
-              <!-- Original Title-->
-              <bs-col sm="12" md="12" lg="6">
-                <semantic-form-composite-input
-                  for="source_original_title"
-                  label="Original Title"
-                  new-subject-template="/original_title"
-                  fields='[[ fieldDefinitions
-                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                    label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
-                    has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
-                  ]]'
-                >
-                  <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
-                  <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/original_title'></semantic-form-hidden-input> 
-      
-                  <semantic-form-text-input render-header="false" languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
-                </semantic-form-composite-input>
-              </bs-col>
+              <div id="source_attributed_title" class="padding-5">
+                <semantic-form-text-input languages='["en", "it"]' label="Attributed title" for="source_attributed_title"></semantic-form-text-input>
+              </div>
 
-            </bs-row>
+              <div id="source_original_title" class="padding-5">
+                <semantic-form-text-input languages='["en", "it"]' label="Original title" for="source_original_title"></semantic-form-text-input>
+              </div>
 
-            <!-- Typology + Dimension-->
-            <bs-row>
-              <bs-col sm="12" md="12" lg="6">
+              <div id="source_typology" class="padding-5">
                 <semantic-form-tree-picker-input 
                   for='has_type'
                   label="Typology"
+                  placeholder="Click and start type"
                   tree-patterns='{
                     "relationPattern": "?item skos:broader ?parent", 
                     "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/source_types>"
                   }'>
                 </semantic-form-tree-picker-input>
-              </bs-col>
+              </div>
 
-              <bs-col sm="12" md="12" lg="6">
-                <semantic-form-composite-input
-                  for="source_was_measured_by"
-                  label="Dimension"
-                  new-subject-template="/dimension"
-                  fields='[[ fieldDefinitions
-                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                    value="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/dimension_has_value"
-                    source_unit="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_unit"
-                  ]]'
-                >
-                  <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E54_dimension'></semantic-form-hidden-input>
-            
-                    <bs-row>
-                      <bs-col sm="10">
-                        <semantic-form-text-input placeholder="width x height" render-header="false" for="value"></semantic-form-text-input>
-                        <br>
-                        <p><strong>note:</strong> remember to write <strong>height</strong> x <strong>width</strong></p>
-                      </bs-col>
-                      <bs-col sm="2">
-                        <semantic-form-select-input render-header="false" for='source_unit'></semantic-form-select-input>
-                      </bs-col>
-                    </bs-row>
-            
-                </semantic-form-composite-input>
-              </bs-col>
-            </bs-row>
+            </div>
 
-            <!-- Archival Location + Production -->
-            <bs-row>
-              <bs-col sm="12" md="12" lg="6">
+          </div>
+
+          <hr>
+
+          <!-- Author and Date -->
+          <div data-flex-layout="row top-stretch">
+
+            <div id="source_author" class="padding-5">
+              <semantic-form-select-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-select-input>
+            </div>
+            
+            <div id="source_production_date" class="padding-5">
+              <semantic-form-datetime-input label="Creation date" for='entity_production_date' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+            </div>
+
+          </div>
+
+          <hr>
+
+          <!-- Archival location  -->
+          <div data-flex-layout="row top-stretch">
+
+            <div id="source_location" class="padding-5" data-flex-layout="row top-stretch">
+              <div data-flex-self="size-x3">
                 <semantic-form-tree-picker-input 
+                  open-dropdown-on-focus="false"
                   label="Archival Location" 
                   for='source_location'
+                  placeholder="Search for things"
+                  custom-button='{
+                    "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                    "view": "authority-content",
+                    "resource": "http://www.researchspace.org/resource/vocab/archives"
+                  }'
+                  query-item-label="arconto:has_full_path"
                   tree-patterns='{
                     "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
                     "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
                   }'>
                 </semantic-form-tree-picker-input>
-              </bs-col>
+              </div>
+              
+            </div>
 
-              <bs-col sm="12" md="12" lg="6">
-                <semantic-form-composite-input
-                  for="builtwork_construction"
-                  label="Creation date and Authors"
-                  new-subject-template="/production"
-                  fields='[[ fieldDefinitions
-                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                    builtwork_construction_actor_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor_role"
-                    builtwork_has_time-span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_time-span"
-                  ]]'
-                >
+          </div>
 
-                  <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E12_Production"></semantic-form-hidden-input>
+          <div data-flex-layout="row top-stretch">
 
-                  <!-- Date -->
-                  <semantic-form-composite-input
-                    for="builtwork_has_time-span"
-                    new-subject-template="/date"
-                    render-header="false"
-                    fields='[[ fieldDefinitions 
-                      type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                      builtwork_date_end_of_the_begin="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_end_of_the_begin"
-                    ]]'
-                  >
-                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input> 
-                    <semantic-form-datetime-input label="Date" for='builtwork_date_end_of_the_begin' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+            <div id="source_final_medium" class="padding-5">
+              <semantic-form-select-input label="Source medium" placeholder="Choose the source medium" for='source_location_medium'>
+              </semantic-form-select-input>
+            </div>
 
-                  </semantic-form-composite-input>
+            <div id="source_final_title" class="padding-5">
+              <semantic-form-text-input label="Medium title" placeholder="Write the medium title" for='source_location_final'>
+              </semantic-form-text-input> 
+            </div>
 
-                  <!-- Actors -->
-                  <semantic-form-composite-input
-                    for="builtwork_construction_actor_role"
-                    new-subject-template="/actor_role/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
-                    label="Author"
-                    fields='[[ fieldDefinitions
-                      type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                      builtwork_construction_actor-role_actor="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
-                      builtwork_construction_actor-role_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_role"
-                    ]]'
-                  >
-                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/crmpc/PC14_carried_out_by"></semantic-form-hidden-input>
+          </div>
 
-                    <!-- Add an existing or create a new one-->
-                    <semantic-form-drag-and-drop-input
-                      render-header="false"
-                      for='builtwork_construction_actor-role_actor'
-                    ></semantic-form-drag-and-drop-input>
-                    
-                    <!-- Role -->
-                    <semantic-form-tree-picker-input 
-                    label="With role" 
-                    for='builtwork_construction_actor-role_role'
-                    tree-patterns='{
-                      "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-                      "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>"
-                    }'>
-                  </semantic-form-tree-picker-input>
+          <!-- Medium and Dimension -->
+          <div data-flex-layout="row top-stretch">
 
-                  </semantic-form-composite-input>
+            <div id="source_technique" class="padding-5">
+              <semantic-form-tree-picker-input  label="Medium" placeholder="Choose the medium" for='source_technique'>
+              </semantic-form-tree-picker-input>
+            </div>
 
-                </semantic-form-composite-input>
-              </bs-col>
-            </bs-row>
+            <div id="source_dimension" class="padding-5">
+              <semantic-form-text-input label="Dimensions" placeholder="H x B" for="source_dimension">
+              </semantic-form-text-input>
+            </div>
+
+            <div id="source_dimension_unit" class="padding-5">
+              <semantic-form-select-input label="Dimension unit" placeholder="select the dimension unit" for="source_dimension_unit">
+              </semantic-form-select-input>
+            </div>
+
+          </div>
+
+          <hr>
+
+          <!-- Synopsis and Transcription --> 
+          <div data-flex-layout="row top-stretch">
+
+             <bs-tabs id="tabs">
+              <bs-tab event-key="1" title="Synopsis">
+                
+                <semantic-form-text-input placeholder="Enter Synopsis ..." multiline="true" rows="5" render-header="false" for='source_synopsis'>
+                </semantic-form-text-input> 
+              
+              </bs-tab>
+              <bs-tab event-key="2" title="Transcription">
+              
+                <semantic-form-text-input placeholder="Enter Transcription ..." multiline="true" rows="5" render-header="false" for='source_transcription'>
+                </semantic-form-text-input> 
+
+              </bs-tab>
+            </bs-tabs>
+
+          </div>
           
-          </bs-col>
+        </div>
 
-        </bs-row>
 
-        <!-- Synopsis and Transcription -->
-        <bs-row>
-          <bs-tabs id="tabs">
-            <bs-tab event-key="1" title="Synopsis">
-              <semantic-form-text-input render-header="false" label="Synopsis" for="source_synopsis" multiline="true" placeholder="Insert synopsis"></semantic-form-text-input>
-            </bs-tab>
-            <bs-tab event-key="2" title="Transcription">
-              <semantic-form-text-input render-header="false" label="Synopsis" for="source_transcription" multiline="true" placeholder="Insert transcription"></semantic-form-text-input>
-            </bs-tab>
-          </bs-tabs>
-        </bs-row>
-
-      </bs-col>
-      
-      <!-- Related entities -->
-      <bs-col sm="12" md="3">
-        <h3>Related entities</h3>
-
-        <bs-tabs id="tabs">
-
-          <bs-tab event-key="1" title="Actors">
-            <!--
-            <semantic-form-drag-and-drop-input 
-              for="related_actors">
-            </semantic-form-drag-and-drop-input> 
-            -->
-          </bs-tab>
-
-          <bs-tab event-key="2" title="Events">
-          </bs-tab>
-
-          <bs-tab event-key="3" title="Builtworks">
-          </bs-tab>
-        </bs-tabs>
-      </bs-col>
-
-    </bs-row>
-
+      </div>
+      <div>
+        <h3>Related elements</h3>
+      </div>
+    </div>
 
   </div>
 
@@ -251,5 +227,50 @@
 
   .margin-top{
     margin-top: 40px;
+  }
+
+  .FileManager--header {
+    display: none !important;
+  }
+
+  .cardinality-support__group-instance, .SemanticTreeInput--inputAndButtons {
+    border: none !important;
+    padding: 0px !important;
+  }
+
+  .cardinality-support__single-instance {
+    border: none !important;
+  }
+
+  .h-1000{
+    min-height: 1000px;
+  }
+
+  .padding-5 {
+    padding: 0 5px;
+  }
+
+  .wrapper {
+      display: flex;
+      flex-direction: column-reverse;
+  }
+
+  .open-archival-unit{
+    margin-top: 51px;
+    border-radius: 0px;
+    padding: 10px;
+  }
+
+  #source_location .SemanticTreeInput--browseButton{
+    margin-right: 10px;
+  }
+
+  #source_location .RemovableBadge {
+    background-color: white!important;
+  }
+
+  #source_location .RemovableBadge__content, #source_location .RemovableBadge__remove {
+    max-width: none!important;
+    color: black!important;
   }
 </style>

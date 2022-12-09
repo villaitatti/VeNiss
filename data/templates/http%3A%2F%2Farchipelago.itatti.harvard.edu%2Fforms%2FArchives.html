@@ -1,30 +1,108 @@
-<semantic-form
-  new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-  fields='[[ fieldDefinitions
-    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    label="http://www.researchspace.org/pattern/general/rdfs:label" 
-    is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
-    membership="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archival_unit_forms_part"
-    typology="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_typology"
-  ]]'
-  [[>rsp:FormDefaults]]
->
-<div class="form-scroll-area">
-  <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E78_Collection'></semantic-form-hidden-input>
-  <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archives"></semantic-form-hidden-input>
+{{#if broader}}
 
-  <!-- Source name -->
-  <semantic-form-text-input label="Name" for="label"></semantic-form-text-input>
+  <semantic-query
+    query='select ?default_path where { <{{broader}}> arconto:has_full_path ?default_path }'
+    template="{{>semantic-form-with-broader_path}}">
 
-  <!-- Source Typology -->
-  <semantic-form-tree-picker-input for='typology'>
-  </semantic-form-tree-picker-input>
+    <template id="semantic-form-with-broader_path">
 
-  <!-- Parent Collection -->
-  <semantic-form-tree-picker-input label="Parent" for='membership'>
-  </semantic-form-tree-picker-input>
+      <semantic-form
+        id='{{viewId}}-vocab-form' 
+        new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+        fields='[[ fieldDefinitions
+          type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          label="http://www.researchspace.org/pattern/general/rdfs:label" 
+          is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+          membership="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archival_unit_forms_part"
+          typology="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_typology"
+          has_fullpath="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-fullpath"
+          acronym="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-acronym"
+        ]]'
+        post-action="event"
+        subject='{{node}}'
+        >
+        <div class="form-scroll-area">
+          
+          {{iri}}
+          <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E78_Collection'></semantic-form-hidden-input>
+          <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archives"></semantic-form-hidden-input>
 
-</div>
+          <!-- Source name -->
+          <semantic-form-text-input id="{{viewId}}-vocab-form-title" label="Title" for="label"></semantic-form-text-input>
 
-[[> rsp:FormDefaultActions]]
-</semantic-form>
+          <semantic-form-text-input label="Full Path label" readonly="true" id="{{viewId}}-vocab-form-fullpath-broader" for="has_fullpath" default-value="{{bindings.0.default_path.value}}"></semantic-form-text-input>
+
+          <!-- Source Typology -->
+          <semantic-form-select-input for='typology'></semantic-form-select-input>  
+          
+          <!-- Acronym -->
+          <semantic-form-text-input label="Acronym" for="acronym" placeholder="Keep this field empty if the archival unit does not have an acronym"></semantic-form-text-input>
+          
+          <!-- add broader if there is one -->
+          {{#if broader}}
+            <semantic-form-hidden-input label="Parent" for='membership' default-value="{{broader}}"></semantic-form-hidden-input>
+          {{/if}}
+
+        </div>
+
+      [[> rsp:FormDefaultActions]]
+      </semantic-form>
+    </template>
+  </semantic-query>
+
+{{/if}}
+
+{{#if node}}
+  
+  <semantic-form
+    id='{{viewId}}-vocab-form' 
+    new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+    fields='[[ fieldDefinitions
+      type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+      label="http://www.researchspace.org/pattern/general/rdfs:label" 
+      is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+      membership="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archival_unit_forms_part"
+      typology="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_typology"
+      has_fullpath="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-fullpath"
+      acronym="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-acronym"
+    ]]'
+    post-action="event"
+    subject='{{node}}'
+    >
+    <div class="form-scroll-area">
+      <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E78_Collection'></semantic-form-hidden-input>
+      <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archives"></semantic-form-hidden-input>
+
+      <!-- Source name -->
+      <semantic-form-text-input label="Title" for="label"></semantic-form-text-input>
+
+      <semantic-form-text-input readonly="true" label="Full Path label" for="has_fullpath"></semantic-form-text-input>
+
+      <!-- Source Typology -->
+      <semantic-form-select-input for='typology'></semantic-form-select-input>  
+      
+      <!-- Acronym -->
+      <semantic-form-text-input label="Acronym" for="acronym" placeholder="Keep this field empty if the archival unit does not have an acronym"></semantic-form-text-input>
+      
+      <!-- add broader if there is one -->
+      {{#if broader}}
+        <semantic-form-hidden-input label="Parent" for='membership' default-value="{{broader}}"></semantic-form-hidden-input>
+      {{/if}}
+
+
+
+    </div>
+
+  [[> rsp:FormDefaultActions]]
+  </semantic-form>
+
+{{/if}}
+
+<mp-event-proxy 
+  id='{{viewId}}-title-updated' 
+  on-event-type='Form.InputUpdated'
+  on-event-source="{{viewId}}-vocab-form-title"
+  proxy-event-type='Form.UpdateInput' 
+  proxy-targets='["{{viewId}}-vocab-form-fullpath-broader"]'
+  additional-data='{"type": "concat"}' 
+></mp-event-proxy>

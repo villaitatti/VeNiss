@@ -1,7 +1,6 @@
 # archipelago
 
+## How to commit
 
-app for archipelago
+The **master** branch is read-only. PRs are needed to add new functionalities and resolve bugs. Every PR is meant to document the reason why we updated the system to the new version
 
-
-When an update needs to be done on the online version, please merge over the branch **production**

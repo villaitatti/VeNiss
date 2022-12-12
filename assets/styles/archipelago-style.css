@@ -525,3 +525,19 @@ h1, h2, h3, h4, h5, h6 {
 .veniss-highlight {
   color: var(--archipelago-gold);
 }
+
+.veniss-actors{
+  color: var(--veniss-actor); 
+}
+
+.veniss-sources{
+  color: var(--veniss-source); 
+}
+
+.padding-5 {
+  padding: 5px;
+}
+
+.flexlayout__splitter {
+  background-color: #B1B1B1;
+}

@@ -1,135 +1,122 @@
-<ol class="page-breadcrumb">
-  <li>
-  </li>
-  <li class="active">Actors</li>
-</ol>
-
 <div class="page">
   <div class='page__body'>
-    
 
-    <semantic-search
-      categories='{
-        "<http://www.w3.org/2001/XMLSchema#date>": [
-          {
-            "kind": "date-range",
-            "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
-            "queryPattern": "{
-              $subject ?__relation__ ?prod.
-              ?prod crm:P4_has_time-span ?date_iri .
-              ?date_iri crm:P81a_end_of_the_begin ?date .
-              FILTER(?date <= ?__dateEndValue__) .
-              FILTER(?date >= ?__dateBeginValue__) .
-            }"
-          }
-        ],
-        "<http://www.w3.org/2001/XMLSchema#string>": [
-          {
-            "kind": "text",
-            "datatype": "http://www.w3.org/2001/XMLSchema#string",
-            "queryPattern": "{ ?subject rdfs:label ?__value__. }"         
-          }
-        ]
-      }'
-      search-profile='{ 
-        "categories": [
-          {
-            "iri": "<http://www.w3.org/2001/XMLSchema#date>",
-            "label": "Time"
-          },
-          {
-            "iri": "<http://www.w3.org/2001/XMLSchema#string>",
-            "label": "String"
-          },
-          {
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
-            "label": "Builtwork",
-            "thumbnail": "../../assets/icons/Builtwork.svg"
-          },
-          {
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Actor>",
-            "label": "Actor",
-            "thumbnail": "../../assets/icons/Actor.svg"
-          }
-        ],
-        "relations": [
-          {
-            "iri": "<http://www.cidoc-crm.org/cidoc-crm/P108i_was_produced_by>",
-            "label": "Constructed in",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
-            "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
-          },
-          {
-            "iri": "<http://www.cidoc-crm.org/cidoc-crm/P13_destroyed>",
-            "label": "Destroyed in in",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
-            "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
-          },
-          {
-            "iri": "<http://www.cidoc-crm.org/cidoc-crm/string>",
-            "label": "Name",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Actor>",
-            "hasRange": "<http://www.w3.org/2001/XMLSchema#string>"
-          }
-        ]
-      }'
-    >
-      <semantic-search-query-constant
-        query='select ?subject where { ?subject a arconto:Source }'
-      ></semantic-search-query-constant>
+    <div data-flex-layout="columns center-stretch">
+      <div class="Header">
+        <h1>Sources</h1>
+        <hr>
+      </div>
 
-      <div data-flex-layout="row stretch-stretch">
-        <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
-          <semantic-search-facet></semantic-search-facet>
-        </div>
+      <div class="subheader">
 
-        <semantic-search-result-holder>
-          <div data-flex-self="md-full">
+        <bs-alert bs-style="info">
+          <strong>A source is missing? </strong>
 
+          <semantic-link 
+            iri="http://www.researchspace.org/resource/ThinkingFrames"
+            urlqueryparam-view="entity-editor"
+            urlqueryparam-entity-type-config="http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Source"
+            urlqueryparam-mode="new"
+          >
+            Create a new Source
+          </semantic-link>.
+        </bs-alert>
 
-            <bs-tabs unmount-on-exit=true id='search-results' animation=false>
+      </div>
 
-              <!-- Table result -->
-              <bs-tab event-key="2" title="Table">
+      <div class="body">
+        <semantic-search>
+          <semantic-search-query-constant query='
+            select ?subject ?digital_image where { 
+              ?subject a arconto:Source.
+            }
+          '>
+          </semantic-search-query-constant>
+
+          <div data-flex-layout="row stretch-stretch">
+            <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
+              <semantic-search-facet></semantic-search-facet>
+            </div>
+
+            <semantic-search-result-holder>
+              <div data-flex-self="md-full">
+
                 <semantic-search-result>
                   <semantic-table 
                     id='table-result'
-                    query='SELECT DISTINCT ?subject WHERE { }'
+                    query='SELECT DISTINCT * WHERE { 
+                      ?subject crm:P1_is_identified_by ?appellation.
+                      ?appellation rdf:type crm:E41_Appellation;
+                        crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/attributed_title>;
+                        rdfs:label ?label.
+                    }'
+                    column-configuration='[
+                      {
+                        "displayName": "Image",
+                        "cellTemplate": "{{> visual_representation}}"
+                      },
+                      {
+                        "displayName": "Name",
+                        "cellTemplate": "{{> name}}"
+                      },
+                      {
+                        "displayName": "Edit",
+                        "cellTemplate": "{{> edit}}"
+                      }
+                    ]'
                   >
+
+                    <template id="visual_representation">
+
+                      <semantic-context storage="veniss_s3">
+
+                        <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
+                            <mp-resource-thumbnail-fallback>
+                                <with-types iri='{{subject.value}}'
+                                        template='{{> noImage}}'
+                                        [[> rsp:TypeMappings]]
+                                    >
+                                    <template id="noImage">
+                                        <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
+                                    </template>
+                                </with-types>
+                            </mp-resource-thumbnail-fallback>
+                        </mp-resource-thumbnail>
+
+                      </semantic-context>
+                      
+                    </template>
+
+                    <template id="name">
+                      
+                      <semantic-link uri="{{subject.value}}">{{label.value}}</semantic-link>
+
+                    </template>
+
+                    <template id="edit">
+                      <mp-event-trigger 
+                        id='{{subject.value}}-add-frame' 
+                        type='Dashboard.AddFrame' 
+                        data='{
+                          "resourceIri": "{{subject.value}}", 
+                          "viewId": "entity-editor"
+                        }' 
+                        targets='["thinking-frames"]'>
+                        <div style="display: flex; align-items: center;">
+                          <a class="btn btn-primary"><span class="fa fa-pencil"></span></a>
+                        </div>
+                      </mp-event-trigger>  
+                    </template>
+
                   </semantic-table>
                 </semantic-search-result>
-              </bs-tab>
 
-            </bs-tabs>
-
-            <!-- Downloads -->
-            <bs-panel>
-
-              <semantic-search-result>
-                <mp-sparql-download id='csv-download'
-                                query="SELECT * WHERE { }"
-                                header="text/csv"
-                                filename="csv-result.csv">
-                <button class="btn btn-default">Download CSV</button>
-                </mp-sparql-download>
-              </semantic-search-result>
-
-              <semantic-search-result>
-                <mp-sparql-download id='json-download'
-                                query="SELECT * WHERE { }"
-                                header="application/sparql-results+json"
-                                filename="json-result.json"
-                                >
-                <button class="btn btn-default">Download JSON</button>
-                </mp-sparql-download>
-              </semantic-search-result>
-            </bs-panel>
-          </div>
-
-        </semantic-search-result-holder>
+              </div>
+          </semantic-search-result-holder>
+        </div>
+      </semantic-search>
       </div>
-    </semantic-search>
-    
+    </div>
 
   </div>
 </div>

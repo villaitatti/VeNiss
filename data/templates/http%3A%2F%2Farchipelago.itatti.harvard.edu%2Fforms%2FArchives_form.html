@@ -1,0 +1,48 @@
+<mp-event-proxy 
+  id='{{viewId}}-resource-created' 
+  on-event-type='Form.ResourceCreated'
+  proxy-event-type='Component.TemplateUpdate' 
+  proxy-targets='["{{viewId}}-render-vocab-form"]' 
+></mp-event-proxy>
+
+<semantic-form
+  id='{{viewId}}-vocab-form' 
+  new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    label="http://www.researchspace.org/pattern/general/rdfs:label" 
+    is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+    membership="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archival_unit_forms_part"
+    typology="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_typology"
+    has_fullpath="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-fullpath"
+    acronym="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-acronym"
+  ]]'
+  post-action="event"
+  subject='{{node}}'
+  >
+<div class="form-scroll-area">
+  
+  {{iri}}
+  <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E78_Collection'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archives"></semantic-form-hidden-input>
+
+  <semantic-form-text-input for="has_fullpath" default-value="{{default_path}}"></semantic-form-text-input>
+  
+  <!-- Source name -->
+  <semantic-form-text-input label="Title" for="label"></semantic-form-text-input>
+
+  <!-- Source Typology -->
+  <semantic-form-select-input for='typology'></semantic-form-select-input>  
+  
+  <!-- Acronym -->
+  <semantic-form-text-input label="Acronym" for="acronym" placeholder="Keep this field empty if the archival unit does not have an acronym"></semantic-form-text-input>
+  
+  <!-- add broader if there is one -->
+  {{#if broader}}
+    <semantic-form-hidden-input label="Parent" for='membership' default-value="{{broader}}"></semantic-form-hidden-input>
+  {{/if}}
+
+</div>
+
+[[> rsp:FormDefaultActions]]
+</semantic-form>

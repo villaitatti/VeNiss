@@ -18,8 +18,9 @@
     source_location="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_location"
     source_location_medium="http://localhost:10214/container/fieldDefinitionContainer/source_location_medium"
     source_location_final="http://localhost:10214/container/fieldDefinitionContainer/source_location_final"
-    source_technique="http://localhost:10214/container/fieldDefinitionContainer/source_technique_medium"
 
+    source_comment="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_comment"
+    source_technique="http://localhost:10214/container/fieldDefinitionContainer/source_technique_medium"
     source_dimension="http://localhost:10214/container/fieldDefinitionContainer/source_dimension"
     source_dimension_unit="http://localhost:10214/container/fieldDefinitionContainer/source_dimension_unit"
 
@@ -162,6 +163,8 @@
 
           </div>
 
+          <hr>
+
           <!-- Medium and Dimension -->
           <div data-flex-layout="row top-stretch">
 
@@ -180,6 +183,13 @@
               </semantic-form-select-input>
             </div>
 
+          </div>
+
+          <div data-flex-layout="row top-stretch">
+            <div id="source_note" class="padding-5">
+              <semantic-form-text-input label="Additional notes" for="source_comment" placeholder="Enter an additional note here...">
+              </semantic-form-text-input>
+            </div>
           </div>
 
           <hr>

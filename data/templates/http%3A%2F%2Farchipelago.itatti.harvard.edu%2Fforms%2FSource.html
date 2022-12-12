@@ -96,7 +96,7 @@
                   placeholder="Click and start type"
                   tree-patterns='{
                     "relationPattern": "?item skos:broader ?parent", 
-                    "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/source_types>"
+                    "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/source_typologies>"
                   }'>
                 </semantic-form-tree-picker-input>
               </div>
@@ -169,7 +169,12 @@
           <div data-flex-layout="row top-stretch">
 
             <div id="source_technique" class="padding-5">
-              <semantic-form-tree-picker-input  label="Medium" placeholder="Choose the medium" for='source_technique'>
+              <semantic-form-tree-picker-input  label="Medium" placeholder="Choose the medium" for='source_technique'
+                tree-patterns='{
+                    "relationPattern": "?item skos:broader ?parent", 
+                    "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/source_materials>"
+                  }'
+                >
               </semantic-form-tree-picker-input>
             </div>
 

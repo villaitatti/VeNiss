@@ -1,4 +1,3 @@
 config.proxy.mapbox.targetUri=https://api.mapbox.com
 config.proxy.mapbox.preserveHost=false
 config.proxy.mapbox.tokenQueryName=access_token
-config.proxy.mapbox.tokenQueryValue=pk.eyJ1IjoiZ3NwaW5hY2kiLCJhIjoiY2szOHRpYnpjMGM5ZzNjcWZwZDR0OGEzeCJ9.dBzGlRpELo0yLMaWD4h2KA

@@ -1,20 +1,20 @@
 {{#if broader}}
 
   <semantic-query
-    query='select ?default_path where { <{{broader}}> arconto:has_full_path ?default_path }'
+    query='select ?default_path where { <{{broader}}> veniss:has_full_path ?default_path }'
     template="{{>semantic-form-with-broader_path}}">
 
     <template id="semantic-form-with-broader_path">
 
       <semantic-form
         id='{{viewId}}-vocab-form' 
-        new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+        new-subject-template='https://veniss.net/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
         fields='[[ fieldDefinitions
           type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
           label="http://www.researchspace.org/pattern/general/rdfs:label" 
           is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
-          membership="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archival_unit_forms_part"
-          typology="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_typology"
+          membership="https://veniss.net/container/fieldDefinitionContainer/archival_unit_forms_part"
+          typology="https://veniss.net/container/fieldDefinitionContainer/source_typology"
           has_fullpath="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-fullpath"
           acronym="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-acronym"
         ]]'
@@ -56,13 +56,13 @@
   
   <semantic-form
     id='{{viewId}}-vocab-form' 
-    new-subject-template='https://archipelago.itatti.harvard.edu/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+    new-subject-template='https://veniss.net/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
     fields='[[ fieldDefinitions
       type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
       label="http://www.researchspace.org/pattern/general/rdfs:label" 
       is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
-      membership="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archival_unit_forms_part"
-      typology="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_typology"
+      membership="https://veniss.net/container/fieldDefinitionContainer/archival_unit_forms_part"
+      typology="https://veniss.net/container/fieldDefinitionContainer/source_typology"
       has_fullpath="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-fullpath"
       acronym="http://localhost:10214/container/fieldDefinitionContainer/archival-unit-acronym"
     ]]'

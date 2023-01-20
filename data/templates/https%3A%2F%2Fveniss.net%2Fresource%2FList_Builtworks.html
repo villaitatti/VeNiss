@@ -42,12 +42,12 @@
             "label": "String"
           },
           {
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
+            "iri": "<https://veniss.net/arconto#Builtwork>",
             "label": "Builtwork",
             "thumbnail": "../../assets/icons/Builtwork.svg"
           },
           {
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Actor>",
+            "iri": "<https://veniss.net/arconto#Actor>",
             "label": "Actor",
             "thumbnail": "../../assets/icons/Actor.svg"
           }
@@ -56,26 +56,26 @@
           {
             "iri": "<http://www.cidoc-crm.org/cidoc-crm/P108i_was_produced_by>",
             "label": "Constructed in",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
+            "hasDomain": "<https://veniss.net/arconto#Builtwork>",
             "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
           },
           {
             "iri": "<http://www.cidoc-crm.org/cidoc-crm/P13_destroyed>",
             "label": "Destroyed in in",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
+            "hasDomain": "<https://veniss.net/arconto#Builtwork>",
             "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
           },
           {
             "iri": "<http://www.cidoc-crm.org/cidoc-crm/string>",
             "label": "Name",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Actor>",
+            "hasDomain": "<https://veniss.net/arconto#Actor>",
             "hasRange": "<http://www.w3.org/2001/XMLSchema#string>"
           }
         ]
       }'
     >
       <semantic-search-query-constant
-        query='select ?subject where { ?subject a arconto:Builtwork }'
+        query='select ?subject where { ?subject a veniss:Builtwork }'
       ></semantic-search-query-constant>
 
       <div data-flex-layout="row stretch-stretch">

@@ -16,20 +16,20 @@
       <semantic-search
         search-profile='{
           "categories": [{
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Event>",
+            "iri": "<https://veniss.net/arconto#Event>",
             "label": "Event",
             "thumbnail": "../../assets/icons/Event.svg"
           },
           {
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
+            "iri": "<https://veniss.net/arconto#Builtwork>",
             "label": "Builtwork",
             "thumbnail": "../../assets/icons/Builtwork.svg"
           }],
           "relations": [{
-            "iri": "<https://archipelago.itatti.harvard.edu/arconto#related_to>",
+            "iri": "<https://veniss.net/arconto#related_to>",
             "label": "Related to",
-            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Event>",
-            "hasRange": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>"
+            "hasDomain": "<https://veniss.net/arconto#Event>",
+            "hasRange": "<https://veniss.net/arconto#Builtwork>"
           }]
         }'
       >
@@ -47,7 +47,7 @@
           query='
             PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
             PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
-            PREFIX arconto: <https://archipelago.itatti.harvard.edu/arconto#>
+            PREFIX veniss: <https://veniss.net/arconto#>
             PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
             SELECT DISTINCT ?subject ?bw_id ?wkt ?bob ?eob ?boe ?eoe WHERE {
               service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
@@ -74,7 +74,7 @@
 
         <semantic-search-result-holder>
           <div id="mapNavigatorRow">
-            <div id="mapContainer">[[> arc:Map ]]</div>
+            <div id="mapContainer">[[> veniss:Map ]]</div>
             <div id="sidebarContainer">
               <div class="maptoolbar flexrows">
                 <div id="maptoolbarFirst">
@@ -125,7 +125,7 @@
                 </div>
               </div>
             <div id="navigatorContainer">
-              [[> arc:Navigator ]]
+              [[> veniss:Navigator ]]
             </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 <semantic-form 
   [[>rsp:FormDefaults]] 
-  persistence='{"type": "sparql", "targetGraphIri":"https://archipelago.itatti.harvard.edu/resource/builtwork/{{{{raw}}}}{{builtworkIdentifier}}{{{{/raw}}}}/context"}'
-  new-subject-template='https://archipelago.itatti.harvard.edu/resource/builtwork/{{{{raw}}}}{{builtworkIdentifier}}{{{{/raw}}}}'
+  persistence='{"type": "sparql", "targetGraphIri":"https://veniss.net/resource/builtwork/{{{{raw}}}}{{builtworkIdentifier}}{{{{/raw}}}}/context"}'
+  new-subject-template='https://veniss.net/resource/builtwork/{{{{raw}}}}{{builtworkIdentifier}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
   classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
   p2="http://www.researchspace.org/resource/system/authority_manager/for_P2_has_type"
@@ -14,7 +14,7 @@
   <div class="form-scroll-area">
     <semantic-form-hidden-input
       for="classtype"
-      default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object", "https://archipelago.itatti.harvard.edu/arconto#Builtwork "]'
+      default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object", "https://veniss.net/arconto#Builtwork "]'
     ></semantic-form-hidden-input>
 
     <!-- E41 Appellation -->

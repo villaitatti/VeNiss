@@ -3,15 +3,15 @@
   post-action="event"
   subject='{{node}}'
   persistence='{"type": "ldp"}'
-  new-subject-template='https://archipelago.itatti.harvard.edu/resource/vocabulary/{{{{raw}}}}{{id}}{{{{/raw}}}}'
+  new-subject-template='https://veniss.net/resource/vocabulary/{{{{raw}}}}{{id}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    archipelago_type="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_type"
-    id="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+    archipelago_type="https://veniss.net/container/fieldDefinitionContainer/archipelago_type"
+    id="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
     is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
-    broader="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/vocabulary_broader_term"
-    equivalent_class="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/owl_equivalent_class"
-    membership="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_type_broader_term"
+    broader="https://veniss.net/container/fieldDefinitionContainer/vocabulary_broader_term"
+    equivalent_class="https://veniss.net/container/fieldDefinitionContainer/owl_equivalent_class"
+    membership="https://veniss.net/container/fieldDefinitionContainer/source_type_broader_term"
   ]]'
 >
 <semantic-form-errors></semantic-form-errors>
@@ -31,5 +31,5 @@
 
 </div>
 
-[[> http://archipelago.itatti.harvard.edu/forms/Buttons]]
+[[> http://veniss.net/forms/Buttons]]
 </semantic-form>

@@ -1,44 +1,44 @@
 <semantic-form
-  new-subject-template='https://archipelago.itatti.harvard.edu/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  new-subject-template='https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label"
+    label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label"
 
-    source_identifier="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
-    source_original_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_original_title"
-    source_attributed_title="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_attributed_title"
+    source_identifier="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+    source_original_title="https://veniss.net/container/fieldDefinitionContainer/source_original_title"
+    source_attributed_title="https://veniss.net/container/fieldDefinitionContainer/source_attributed_title"
 
-    source_author="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
+    source_author="https://veniss.net/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
     entity_production_date="http://localhost:10214/container/fieldDefinitionContainer/entity_production_date"
 
     has_type="http://localhost:10214/container/fieldDefinitionContainer/source_typology"
     is_subject_of="http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of"
     source_production="http://localhost:10214/container/fieldDefinitionContainer/source_production"
 
-    source_location="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_location"
+    source_location="https://veniss.net/container/fieldDefinitionContainer/source_location"
     source_location_medium="http://localhost:10214/container/fieldDefinitionContainer/source_location_medium"
     source_location_final="http://localhost:10214/container/fieldDefinitionContainer/source_location_final"
 
-    source_comment="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_comment"
+    source_comment="https://veniss.net/container/fieldDefinitionContainer/source_comment"
     source_technique="http://localhost:10214/container/fieldDefinitionContainer/source_technique_medium"
     source_dimension="http://localhost:10214/container/fieldDefinitionContainer/source_dimension"
     source_dimension_unit="http://localhost:10214/container/fieldDefinitionContainer/source_dimension_unit"
 
-    P138i_has_representation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/veniss_source_representation"
-    source_was_measured_by="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_was_measured_by"
+    P138i_has_representation="https://veniss.net/container/fieldDefinitionContainer/veniss_source_representation"
+    source_was_measured_by="https://veniss.net/container/fieldDefinitionContainer/source_was_measured_by"
     
-    related_actors="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_actor"
-    related_events="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_events"
-    related_builtworks="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_builtworks"
+    related_actors="https://veniss.net/container/fieldDefinitionContainer/source_related_actor"
+    related_events="https://veniss.net/container/fieldDefinitionContainer/source_related_events"
+    related_builtworks="https://veniss.net/container/fieldDefinitionContainer/source_related_builtworks"
 
-    source_synopsis="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_synopsis"
-    source_transcription="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_transcription"
+    source_synopsis="https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
+    source_transcription="https://veniss.net/container/fieldDefinitionContainer/source_transcription"
   ]]'
   [[>rsp:FormDefaults]]
 >
 <div class="form-scroll-area">
 
-  <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://archipelago.itatti.harvard.edu/arconto#Source"]'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/arconto#Source"]'></semantic-form-hidden-input>
 
   <div class="container-fluid">
     <div data-flex-layout="row stretch-stretch">
@@ -137,7 +137,7 @@
                     "view": "authority-content",
                     "resource": "http://www.researchspace.org/resource/vocab/archives"
                   }'
-                  query-item-label="arconto:has_full_path"
+                  query-item-label="veniss:has_full_path"
                   tree-patterns='{
                     "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
                     "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"

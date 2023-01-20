@@ -1,27 +1,27 @@
 <semantic-form 
-  new-subject-template='https://archipelago.itatti.harvard.edu/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     label="http://www.researchspace.org/pattern/general/rdfs:label"
     type="http://localhost:10214/container/fieldDefinitionContainer/archipelago_type"
-    actor_type="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_type"
+    actor_type="https://veniss.net/container/fieldDefinitionContainer/actor_type"
     actor_title="http://localhost:10214/container/fieldDefinitionContainer/actor_titles"
     
-    actor_birth="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_birth"
-    actor_death="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death"
-    actor_name="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_name"
+    actor_birth="https://veniss.net/container/fieldDefinitionContainer/actor_birth"
+    actor_death="https://veniss.net/container/fieldDefinitionContainer/Actor_Death"
+    actor_name="https://veniss.net/container/fieldDefinitionContainer/actor_name"
 
-    actor_occupation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_occupation"
-    has_type="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_titles2"
+    actor_occupation="https://veniss.net/container/fieldDefinitionContainer/actor_occupation"
+    has_type="https://veniss.net/container/fieldDefinitionContainer/actor_titles2"
     
-    actor_givenname="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_givenname"
-    actor_familyname="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_familyname"
-    actor_alias="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_alias"
-    actor_socialstatus="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_socialstatus"
+    actor_givenname="https://veniss.net/container/fieldDefinitionContainer/actor_givenname"
+    actor_familyname="https://veniss.net/container/fieldDefinitionContainer/actor_familyname"
+    actor_alias="https://veniss.net/container/fieldDefinitionContainer/actor_alias"
+    actor_socialstatus="https://veniss.net/container/fieldDefinitionContainer/actor_socialstatus"
 
-    P138i_has_representation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_representation"
+    P138i_has_representation="https://veniss.net/container/fieldDefinitionContainer/actor_representation"
     
-    related_events="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/source_related_events"
-    related_sources="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_related_sources"
+    related_events="https://veniss.net/container/fieldDefinitionContainer/source_related_events"
+    related_sources="https://veniss.net/container/fieldDefinitionContainer/actor_related_sources"
   ]]'
   [[>rsp:FormDefaults]]
   >
@@ -37,7 +37,7 @@
         <bs-row>
 
           <bs-col xs="6" sm="3" md="2">
-            <semantic-form-hidden-input for="type" default-values='["https://archipelago.itatti.harvard.edu/arconto#Actor", "http://www.cidoc-crm.org/cidoc-crm/E39_Actor"]'></semantic-form-hidden-input>
+            <semantic-form-hidden-input for="type" default-values='["https://veniss.net/arconto#Actor", "http://www.cidoc-crm.org/cidoc-crm/E39_Actor"]'></semantic-form-hidden-input>
 
             <!-- Visual Representation -->
             <semantic-form-drag-and-drop-input 
@@ -65,12 +65,12 @@
                   new-subject-template="/given_name"
                   fields='[[ fieldDefinitions
                     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                    label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
+                    label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single" 
                     has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
                   ]]'
                 >
                   <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
-                  <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/given_name'></semantic-form-hidden-input> 
+                  <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/resource/type/given_name'></semantic-form-hidden-input> 
 
                   <semantic-form-text-input render-header="false" placeholder="Given Name of the actor" for="label"></semantic-form-text-input>
                 </semantic-form-composite-input>
@@ -84,12 +84,12 @@
                   new-subject-template="/family_name"
                   fields='[[ fieldDefinitions
                     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                    label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
+                    label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single" 
                     has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
                   ]]'
                 >
                   <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
-                  <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/family_name'></semantic-form-hidden-input> 
+                  <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/resource/type/family_name'></semantic-form-hidden-input> 
     
                   <semantic-form-text-input render-header="false" placeholder="Family Name of the actor" for="label"></semantic-form-text-input>
                 </semantic-form-composite-input>
@@ -103,12 +103,12 @@
                   new-subject-template="/alias"
                   fields='[[ fieldDefinitions
                     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                    label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single" 
+                    label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single" 
                     has_type="http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
                   ]]'
                 >
                   <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E41_Appellation'></semantic-form-hidden-input> 
-                  <semantic-form-hidden-input for="has_type" default-value='https://archipelago.itatti.harvard.edu/resource/type/alias'></semantic-form-hidden-input> 
+                  <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/resource/type/alias'></semantic-form-hidden-input> 
     
                   <semantic-form-text-input render-header="false" placeholder="Alias of the actor" for="label"></semantic-form-text-input>
                 </semantic-form-composite-input>
@@ -174,9 +174,9 @@
               new-subject-template="/birth"
               fields='[[ fieldDefinitions
                 type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                actor_has_time_span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Has_Time_Span"
-                actor_birth_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Birth_Place"
-                single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+                actor_has_time_span="https://veniss.net/container/fieldDefinitionContainer/Actor_Has_Time_Span"
+                actor_birth_place="https://veniss.net/container/fieldDefinitionContainer/Actor_Birth_Place"
+                single_label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
               ]]'
               >
 
@@ -193,8 +193,8 @@
                 render-header="false"
                 fields='[[ fieldDefinitions 
                   type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                  actor_birth_date="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/actor_birth_date"
-                  actor_birth_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Birth_Place"
+                  actor_birth_date="https://veniss.net/container/fieldDefinitionContainer/actor_birth_date"
+                  actor_birth_place="https://veniss.net/container/fieldDefinitionContainer/Actor_Birth_Place"
                   ]]'
                 >
                   <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input> 
@@ -214,9 +214,9 @@
               new-subject-template="/death"
               fields='[[ fieldDefinitions
                 type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                actor_has_time_span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Has_Time_Span"
-                actor_death_place="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death_Place"
-                single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+                actor_has_time_span="https://veniss.net/container/fieldDefinitionContainer/Actor_Has_Time_Span"
+                actor_death_place="https://veniss.net/container/fieldDefinitionContainer/Actor_Death_Place"
+                single_label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
               ]]'
               >
                 <semantic-form-hidden-input for="type" default-value="crm:E69_Death"></semantic-form-hidden-input>
@@ -231,7 +231,7 @@
                 render-header="false"
                 fields='[[ fieldDefinitions 
                   type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                  actor_death_date="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/Actor_Death_Date"
+                  actor_death_date="https://veniss.net/container/fieldDefinitionContainer/Actor_Death_Date"
                 ]]'
                 >
                   <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input> 

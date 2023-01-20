@@ -97,7 +97,7 @@
                                           }
                                           
                                           ?bw crm:P12i_was_present_at ?use_node.
-                                          ?use_node crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/use>, ?use_type.
+                                          ?use_node crm:P2_has_type <https://veniss.net/resource/type/use>, ?use_type.
                                           ?use_type rdf:type crm:E55_Type;
                                             rdfs:label ?use.
                                           ?use_node crm:P4_has_time-span ?use_date.
@@ -111,7 +111,7 @@
                                           
                                           optional {
                                             ?bw crm:P12i_was_present_at ?typology_node.
-                                            ?typology_node crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/typology>, ?typology_type.
+                                            ?typology_node crm:P2_has_type <https://veniss.net/resource/type/typology>, ?typology_type.
                                             ?typology_type rdf:type crm:E55_Type;
                                               rdfs:label ?typology.
                                             ?typology_node crm:P4_has_time-span ?typology_date.
@@ -145,7 +145,7 @@
                 </div>
     
                 <div id="navigatorContainer">
-                    [[> arc:Navigator ]]
+                    [[> veniss:Navigator ]]
                 </div>
     
             </div>

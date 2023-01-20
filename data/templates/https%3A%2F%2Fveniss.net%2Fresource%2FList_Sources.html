@@ -28,7 +28,7 @@
         <semantic-search>
           <semantic-search-query-constant query='
             select ?subject ?digital_image where { 
-              ?subject a arconto:Source.
+              ?subject a veniss:Source.
             }
           '>
           </semantic-search-query-constant>
@@ -47,7 +47,7 @@
                     query='SELECT DISTINCT * WHERE { 
                       ?subject crm:P1_is_identified_by ?appellation.
                       ?appellation rdf:type crm:E41_Appellation;
-                        crm:P2_has_type <https://archipelago.itatti.harvard.edu/resource/type/attributed_title>;
+                        crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
                         rdfs:label ?label.
                     }'
                     column-configuration='[

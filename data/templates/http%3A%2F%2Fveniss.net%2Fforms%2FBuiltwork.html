@@ -1,16 +1,16 @@
 <semantic-form
-  new-subject-template='https://archipelago.itatti.harvard.edu/resource/builtwork/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  new-subject-template='https://veniss.net/resource/builtwork/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     label="http://www.researchspace.org/pattern/general/rdfs:label"
-    single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
-    builtwork_has_material="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_material"
-    builtwork_construction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction"
-    builtwork_destruction="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_destruction"
-    builtwork_has_transformation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_transformation"
-    entity_is_complete="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/entity_is_complete"
+    single_label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+    builtwork_has_material="https://veniss.net/container/fieldDefinitionContainer/builtwork_has_material"
+    builtwork_construction="https://veniss.net/container/fieldDefinitionContainer/builtwork_construction"
+    builtwork_destruction="https://veniss.net/container/fieldDefinitionContainer/builtwork_destruction"
+    builtwork_has_transformation="https://veniss.net/container/fieldDefinitionContainer/builtwork_has_transformation"
+    entity_is_complete="https://veniss.net/container/fieldDefinitionContainer/entity_is_complete"
 
-    spacetime_volume_representation="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/spacetime_volume_representation"
+    spacetime_volume_representation="https://veniss.net/container/fieldDefinitionContainer/spacetime_volume_representation"
   ]]'
   [[>rsp:FormDefaults]]
   >
@@ -19,7 +19,7 @@
 
     <bs-row class="clearfix">
 
-      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://archipelago.itatti.harvard.edu/arconto#Builtwork"]'></semantic-form-hidden-input>
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/arconto#Builtwork"]'></semantic-form-hidden-input>
 
       <bs-col sm="12" md="9">
 
@@ -45,8 +45,8 @@
           new-subject-template="/construction"
           fields='[[ fieldDefinitions
             type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-            builtwork_construction_actor_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor_role"
-            builtwork_has_time-span="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_has_time-span"
+            builtwork_construction_actor_role="https://veniss.net/container/fieldDefinitionContainer/builtwork_construction_actor_role"
+            builtwork_has_time-span="https://veniss.net/container/fieldDefinitionContainer/builtwork_has_time-span"
           ]]'
           >
 
@@ -59,10 +59,10 @@
             render-header="false"
             fields='[[ fieldDefinitions 
               type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-              builtwork_date_bob="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_bob"
-              builtwork_date_eob="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_eob"
-              builtwork_date_boe="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_boe"
-              builtwork_date_eoe="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_date_eoe"
+              builtwork_date_bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+              builtwork_date_eob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eob"
+              builtwork_date_boe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_boe"
+              builtwork_date_eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
             ]]'
           >
             <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E4_Time-span"></semantic-form-hidden-input> 
@@ -91,8 +91,8 @@
             label="Related actor"
             fields='[[ fieldDefinitions
               type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-              builtwork_construction_actor-role_actor="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
-              builtwork_construction_actor-role_role="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/builtwork_construction_actor-role_role"
+              builtwork_construction_actor-role_actor="https://veniss.net/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
+              builtwork_construction_actor-role_role="https://veniss.net/container/fieldDefinitionContainer/builtwork_construction_actor-role_role"
             ]]'
           >
             <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/crmpc/PC14_carried_out_by"></semantic-form-hidden-input>
@@ -122,7 +122,7 @@
           for="spacetime_volume_representation"
           fields='[[ fieldDefinitions
               type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-              single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+              single_label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
               referred_to_by="http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by"
           ]]'
         >
@@ -137,7 +137,7 @@
             for="referred_to_by"
             fields='[[ fieldDefinitions
               type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-              single_label="https://archipelago.itatti.harvard.edu/container/fieldDefinitionContainer/archipelago_label_single"
+              single_label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
             ]]'
           >
 

@@ -1,3 +1,5 @@
-veniss=https://veniss.net/resource/
-veniss_ontology=https://veniss.net/ontology#
-crmpc = http://www.cidoc-crm.org/crmpc/
+veniss                  = https://veniss.net/resource/
+veniss_sql              = http://www.researchspace.org/resource/system/service/veniss_sql#
+veniss_ontology         = https://veniss.net/ontology#
+crmpc                   = http://www.cidoc-crm.org/crmpc/
+rs_sql_sail             = http://www.researchspace.org/resource/system/sql#

@@ -4,7 +4,6 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ephedra: <http://www.researchspace.org/resource/system/ephedra#> .
 @prefix rsrepo: <http://www.researchspace.org/resource/system/repository#> .
-@prefix rssqlsail: <http://www.researchspace.org/resource/system/sql#> .
 @prefix : <http://www.researchspace.org/resource/system/service/custom#> .
 
 [] a repo:Repository ;

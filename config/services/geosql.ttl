@@ -2,10 +2,10 @@
 PREFIX sp: <http://spinrdf.org/sp#>
 PREFIX spin: <http://spinrdf.org/spin#>
 PREFIX spl: <http://spinrdf.org/spl#>
-PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
-PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
 PREFIX ephedra: <http://www.researchspace.org/resource/system/ephedra#>
-PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
+PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 
 :geosql a ephedra:Service ;
 	<http://www.openrdf.org/config/sail#sailType> "researchspace:SQL" ;
@@ -13,62 +13,62 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 	ephedra:hasSPARQLPattern (
 		[
 			sp:subject :_results ;
-			sp:predicate rssqlsail:hasQueryId ;
+			sp:predicate rs_sql_sail:hasQueryId ;
 			sp:object :_queryId
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:wkt ;
+			sp:predicate veniss_sql:wkt ;
 			sp:object :_wkt
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:minX ;
+			sp:predicate veniss_sql:minX ;
 			sp:object :_MinX
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:minY ;
+			sp:predicate veniss_sql:minY ;
 			sp:object :_MinY
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:maxX ;
+			sp:predicate veniss_sql:maxX ;
 			sp:object :_MaxX
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:maxY ;
+			sp:predicate veniss_sql:maxY ;
 			sp:object :_MaxY
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:bw_id ;
+			sp:predicate veniss_sql:bw_id ;
 			sp:object :_bw_id
 		]
 		[
 			sp:subject :_results ;
-			sp:predicate archipelago:date ;
+			sp:predicate veniss_sql:date ;
 			sp:object :_date
 		]
     [
 			sp:subject :_results ;
-			sp:predicate archipelago:bob ;
+			sp:predicate veniss_sql:bob ;
 			sp:object :_bob
 		]
     [
 			sp:subject :_results ;
-			sp:predicate archipelago:eob ;
+			sp:predicate veniss_sql:eob ;
 			sp:object :_eob
 		]
     [
 			sp:subject :_results ;
-			sp:predicate archipelago:boe ;
+			sp:predicate veniss_sql:boe ;
 			sp:object :_boe
 		]
     [
 			sp:subject :_results ;
-			sp:predicate archipelago:eoe ;
+			sp:predicate veniss_sql:eoe ;
 			sp:object :_eoe
 		]
     
@@ -164,18 +164,18 @@ PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archip
 		spl:predicate :_bw_id ;
 		spl:valueType xsd:string
 	] ;
-	rssqlsail:includesSQLQuery
+	rs_sql_sail:includesSQLQuery
 	[
-		rssqlsail:hasQueryId "base" ;
-		rssqlsail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geo) as wkt from archipelago_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
+		rs_sql_sail:hasQueryId "base" ;
+		rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geo) as wkt from veniss_sql_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
 	] ;
-  rssqlsail:includesSQLQuery
+  rs_sql_sail:includesSQLQuery
 	[
-		rssqlsail:hasQueryId "production" ;
-		rssqlsail:text "SELECT DISTINCT bw_id, bob, eob, boe, eoe, ST_AsText(geom) as wkt FROM sansecondo_buildings WHERE ST_WITHIN(geom, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
+		rs_sql_sail:hasQueryId "production" ;
+		rs_sql_sail:text "SELECT DISTINCT bw_id, bob, eob, boe, eoe, ST_AsText(geom) as wkt FROM sansecondo_buildings WHERE ST_WITHIN(geom, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
 	] ;
-	rssqlsail:includesSQLQuery
+	rs_sql_sail:includesSQLQuery
 	[
-		rssqlsail:hasQueryId "test" ;
-		rssqlsail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_island_1697 UNION select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_buildings_1697"
+		rs_sql_sail:hasQueryId "test" ;
+		rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_island_1697 UNION select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_buildings_1697"
 	] .

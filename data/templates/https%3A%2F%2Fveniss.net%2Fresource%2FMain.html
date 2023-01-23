@@ -45,12 +45,9 @@
             "date": {"value": "1801-01-01"}
           }'
           query='
-            PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-            PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
-            PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
             SELECT DISTINCT ?subject ?bw_id ?wkt ?bob ?eob ?boe ?eoe WHERE {
               service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                ?root rssqlsail:hasQueryId "production";	
+                ?root rs_sql_sail:hasQueryId "production";	
                   veniss_sql:wkt ?wkt;
                   veniss_sql:bw_id ?bw_id;
                   veniss_sql:minX ?southWestLat;

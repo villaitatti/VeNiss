@@ -16,20 +16,20 @@
       <semantic-search
         search-profile='{
           "categories": [{
-            "iri": "<https://veniss.net/arconto#Event>",
+            "iri": "<https://veniss.net/veniss_ontology#Event>",
             "label": "Event",
             "thumbnail": "../../assets/icons/Event.svg"
           },
           {
-            "iri": "<https://veniss.net/arconto#Builtwork>",
+            "iri": "<https://veniss.net/veniss_ontology#Builtwork>",
             "label": "Builtwork",
             "thumbnail": "../../assets/icons/Builtwork.svg"
           }],
           "relations": [{
-            "iri": "<https://veniss.net/arconto#related_to>",
+            "iri": "<https://veniss.net/veniss_ontology#related_to>",
             "label": "Related to",
-            "hasDomain": "<https://veniss.net/arconto#Event>",
-            "hasRange": "<https://veniss.net/arconto#Builtwork>"
+            "hasDomain": "<https://veniss.net/veniss_ontology#Event>",
+            "hasRange": "<https://veniss.net/veniss_ontology#Builtwork>"
           }]
         }'
       >
@@ -46,22 +46,21 @@
           }'
           query='
             PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-            PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
-            PREFIX veniss: <https://veniss.net/arconto#>
+            PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
             PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
             SELECT DISTINCT ?subject ?bw_id ?wkt ?bob ?eob ?boe ?eoe WHERE {
               service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                 ?root rssqlsail:hasQueryId "production";	
-                  archipelago:wkt ?wkt;
-                  archipelago:bw_id ?bw_id;
-                  archipelago:minX ?southWestLat;
-                  archipelago:minY ?southWestLon;
-                  archipelago:maxX ?northEstLat;
-                  archipelago:maxY ?northEstLon;
-                  archipelago:bob ?bob;
-                  archipelago:eob ?eob;
-                  archipelago:boe ?boe;
-                  archipelago:eoe ?eoe;
+                  veniss_sql:wkt ?wkt;
+                  veniss_sql:bw_id ?bw_id;
+                  veniss_sql:minX ?southWestLat;
+                  veniss_sql:minY ?southWestLon;
+                  veniss_sql:maxX ?northEstLat;
+                  veniss_sql:maxY ?northEstLon;
+                  veniss_sql:bob ?bob;
+                  veniss_sql:eob ?eob;
+                  veniss_sql:boe ?boe;
+                  veniss_sql:eoe ?eoe;
               }
               
               ?do_id rdfs:label ?bw_id.

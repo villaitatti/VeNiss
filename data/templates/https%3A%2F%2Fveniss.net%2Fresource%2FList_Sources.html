@@ -28,7 +28,7 @@
         <semantic-search>
           <semantic-search-query-constant query='
             select ?subject ?digital_image where { 
-              ?subject a veniss:Source.
+              ?subject a veniss_ontology:Source.
             }
           '>
           </semantic-search-query-constant>
@@ -45,10 +45,12 @@
                   <semantic-table 
                     id='table-result'
                     query='SELECT DISTINCT * WHERE { 
-                      ?subject crm:P1_is_identified_by ?appellation.
-                      ?appellation rdf:type crm:E41_Appellation;
-                        crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
-                        rdfs:label ?label.
+                      optional {
+                        ?subject crm:P1_is_identified_by ?appellation.
+                        ?appellation rdf:type crm:E41_Appellation;
+                          crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
+                          rdfs:label ?label.
+                      }
                     }'
                     column-configuration='[
                       {

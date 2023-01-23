@@ -6,18 +6,18 @@
       query="SELECT DISTINCT ?subject ?wkt ?name ?function ?use ?typology ?bob ?boe ?eob ?eoe WHERE {
         ?subject rdfs:label ?name.
         OPTIONAL {
-          ?subject veniss_onto:has_use ?useNode.
+          ?subject veniss_ontology:has_use ?useNode.
           ?useNode rdfs:label ?use.
           FILTER (lang(?use) = 'en').
           FILTER (STR(?use) != 'Use').
         }
   
         OPTIONAL {
-          ?subject veniss_onto:has_typology ?typologyNode.
+          ?subject veniss_ontology:has_typology ?typologyNode.
           ?typologyNode rdfs:label ?typology.
         }
           OPTIONAL {
-          ?subject veniss_onto:has_function ?functionNode.
+          ?subject veniss_ontology:has_function ?functionNode.
           ?functionNode rdfs:label ?function.
           FILTER (lang(?function) = 'en').
           FILTER (STR(?function) != 'Function').

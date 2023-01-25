@@ -1,44 +1,21 @@
 <semantic-form
-  new-subject-template='https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  new-subject-template="https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label"
 
-    source_identifier="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
-    source_original_title="https://veniss.net/container/fieldDefinitionContainer/source_original_title"
-    source_attributed_title="https://veniss.net/container/fieldDefinitionContainer/source_attributed_title"
+    veniss_source_representation        = "https://veniss.net/container/fieldDefinitionContainer/veniss_source_representation"
+    source_attributed_title             = "https://veniss.net/container/fieldDefinitionContainer/source_attributed_title"
+    source_original_title               = "https://veniss.net/container/fieldDefinitionContainer/source_original_title"
 
-    source_author="https://veniss.net/container/fieldDefinitionContainer/builtwork_construction_actor-role_actor"
-    entity_production_date="http://localhost:10214/container/fieldDefinitionContainer/entity_production_date"
-
-    has_type="http://localhost:10214/container/fieldDefinitionContainer/source_typology"
-    is_subject_of="http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of"
-    source_production="http://localhost:10214/container/fieldDefinitionContainer/source_production"
-
-    source_location="https://veniss.net/container/fieldDefinitionContainer/source_location"
-    source_location_medium="http://localhost:10214/container/fieldDefinitionContainer/source_location_medium"
-    source_location_final="http://localhost:10214/container/fieldDefinitionContainer/source_location_final"
-
-    source_comment="https://veniss.net/container/fieldDefinitionContainer/source_comment"
-    source_technique="http://localhost:10214/container/fieldDefinitionContainer/source_technique_medium"
-    source_dimension="http://localhost:10214/container/fieldDefinitionContainer/source_dimension"
-    source_dimension_unit="http://localhost:10214/container/fieldDefinitionContainer/source_dimension_unit"
-
-    P138i_has_representation="https://veniss.net/container/fieldDefinitionContainer/veniss_source_representation"
-    source_was_measured_by="https://veniss.net/container/fieldDefinitionContainer/source_was_measured_by"
-    
-    related_actors="https://veniss.net/container/fieldDefinitionContainer/source_related_actor"
-    related_events="https://veniss.net/container/fieldDefinitionContainer/source_related_events"
-    related_builtworks="https://veniss.net/container/fieldDefinitionContainer/source_related_builtworks"
-
-    source_synopsis="https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
-    source_transcription="https://veniss.net/container/fieldDefinitionContainer/source_transcription"
+    source_typology                     = "http://localhost:10214/container/fieldDefinitionContainer/source_typology"
   ]]'
-  [[>rsp:FormDefaults]]
 >
 <div class="form-scroll-area">
 
-  <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/arconto#Source"]'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/ontology#Source"]'></semantic-form-hidden-input>
 
   <div class="container-fluid">
     <div data-flex-layout="row stretch-stretch">
@@ -52,17 +29,15 @@
           <div data-flex-layout="row top-stretch">
 
             <div id="source_visual_representation" class="padding-5">
-
               <semantic-form-file-input 
                 label="Visual representation"
-                for="P138i_has_representation"
+                for="veniss_source_representation"
                 storage='images'
                 temp-storage='tmp'
                 placeholder='Add file here'
                 name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
                 media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
                 resource-query='
-                  PREFIX rso: <http://www.researchspace.org/ontology/>
                   CONSTRUCT {
                     ?__resourceIri__ a rso:EX_File.
                     ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
@@ -76,7 +51,6 @@
                   }
                 '
               ></semantic-form-file-input>
-            
             </div>
 
             <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
@@ -91,7 +65,7 @@
 
               <div id="source_typology" class="padding-5">
                 <semantic-form-tree-picker-input 
-                  for='has_type'
+                  for='source_typology'
                   label="Typology"
                   placeholder="Click and start type"
                   tree-patterns='{
@@ -223,12 +197,15 @@
 
 
       </div>
+
+      <!-- Right -->
       <div>
         <h3>Related elements</h3>
       </div>
     </div>
 
   </div>
+
 
 </div>
 
@@ -289,3 +266,8 @@
     color: black!important;
   }
 </style>
+
+
+<!--
+
+-->

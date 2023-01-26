@@ -4,13 +4,24 @@
   subject='{{node}}'
   new-subject-template="https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
-    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
-    veniss_source_representation        = "https://veniss.net/container/fieldDefinitionContainer/veniss_source_representation"
+    source_representation               = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
     source_attributed_title             = "https://veniss.net/container/fieldDefinitionContainer/source_attributed_title"
     source_original_title               = "https://veniss.net/container/fieldDefinitionContainer/source_original_title"
-
-    source_typology                     = "http://localhost:10214/container/fieldDefinitionContainer/source_typology"
+    source_typology                     = "https://veniss.net/container/fieldDefinitionContainer/source_typology"
+    source_author                       = "https://veniss.net/container/fieldDefinitionContainer/source_author"
+    source_date                         = "https://veniss.net/container/fieldDefinitionContainer/source_date"
+    source_location                     = "https://veniss.net/container/fieldDefinitionContainer/source_location"
+    source_location_type                = "https://veniss.net/container/fieldDefinitionContainer/source_location_type"
+    source_location_name                = "https://veniss.net/container/fieldDefinitionContainer/source_location_name"
+    source_technique                    = "https://veniss.net/container/fieldDefinitionContainer/source_technique"
+    source_dimension                    = "https://veniss.net/container/fieldDefinitionContainer/source_dimension"
+    source_dimension_unit               = "https://veniss.net/container/fieldDefinitionContainer/source_dimension_unit"
+    source_comment                      = "https://veniss.net/container/fieldDefinitionContainer/source_comment"
+    source_synopsis                     = "https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
+    source_transcription                = "https://veniss.net/container/fieldDefinitionContainer/source_transcription"
+    
   ]]'
 >
 <div class="form-scroll-area">
@@ -31,7 +42,7 @@
             <div id="source_visual_representation" class="padding-5">
               <semantic-form-file-input 
                 label="Visual representation"
-                for="veniss_source_representation"
+                for="source_representation"
                 storage='images'
                 temp-storage='tmp'
                 placeholder='Add file here'
@@ -88,8 +99,8 @@
               <semantic-form-select-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-select-input>
             </div>
             
-            <div id="source_production_date" class="padding-5">
-              <semantic-form-datetime-input label="Creation date" for='entity_production_date' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+            <div id="source_date" class="padding-5">
+              <semantic-form-datetime-input label="Creation date" for='source_date' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
             </div>
 
           </div>
@@ -125,13 +136,13 @@
 
           <div data-flex-layout="row top-stretch">
 
-            <div id="source_final_medium" class="padding-5">
-              <semantic-form-select-input label="Source medium" placeholder="Choose the source medium" for='source_location_medium'>
+            <div id="source_location_type" class="padding-5">
+              <semantic-form-select-input label="Final source type" placeholder="Choose the source medium" for='source_location_type'>
               </semantic-form-select-input>
             </div>
 
-            <div id="source_final_title" class="padding-5">
-              <semantic-form-text-input label="Medium title" placeholder="Write the medium title" for='source_location_final'>
+            <div id="source_location_name" class="padding-5">
+              <semantic-form-text-input label="Final source title" placeholder="Write the medium title" for='source_location_name'>
               </semantic-form-text-input> 
             </div>
 
@@ -165,7 +176,7 @@
           </div>
 
           <div data-flex-layout="row top-stretch">
-            <div id="source_note" class="padding-5">
+            <div id="source_comment" class="padding-5">
               <semantic-form-text-input label="Additional notes" for="source_comment" placeholder="Enter an additional note here...">
               </semantic-form-text-input>
             </div>
@@ -176,22 +187,21 @@
           <!-- Synopsis and Transcription --> 
           <div data-flex-layout="row top-stretch">
 
-             <bs-tabs id="tabs">
+            <bs-tabs id="tabs">
+
               <bs-tab event-key="1" title="Synopsis">
-                
                 <semantic-form-text-input placeholder="Enter Synopsis ..." multiline="true" rows="5" render-header="false" for='source_synopsis'>
                 </semantic-form-text-input> 
-              
               </bs-tab>
-              <bs-tab event-key="2" title="Transcription">
-              
-                <semantic-form-text-input placeholder="Enter Transcription ..." multiline="true" rows="5" render-header="false" for='source_transcription'>
-                </semantic-form-text-input> 
 
+              <bs-tab event-key="2" title="Transcription">
+                <semantic-form-text-input placeholder="Enter Transcription ..." multiline="true" rows="5" render-header="false" for='source_transcription'>
+                </semantic-form-text-input>
               </bs-tab>
             </bs-tabs>
 
           </div>
+
           
         </div>
 
@@ -266,8 +276,3 @@
     color: black!important;
   }
 </style>
-
-
-<!--
-
--->

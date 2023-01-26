@@ -58,12 +58,8 @@
                         "cellTemplate": "{{> visual_representation}}"
                       },
                       {
-                        "displayName": "Name",
+                        "displayName": "Source",
                         "cellTemplate": "{{> name}}"
-                      },
-                      {
-                        "displayName": "Edit",
-                        "cellTemplate": "{{> edit}}"
                       }
                     ]'
                   >
@@ -90,12 +86,6 @@
                     </template>
 
                     <template id="name">
-                      
-                      <semantic-link uri="{{subject.value}}">{{label.value}}</semantic-link>
-
-                    </template>
-
-                    <template id="edit">
                       <mp-event-trigger 
                         id='{{subject.value}}-add-frame' 
                         type='Dashboard.AddFrame' 
@@ -104,10 +94,15 @@
                           "viewId": "entity-editor"
                         }' 
                         targets='["thinking-frames"]'>
+
                         <div style="display: flex; align-items: center;">
-                          <a class="btn btn-primary"><span class="fa fa-pencil"></span></a>
+                          <a>{{label.value}}</a>
                         </div>
                       </mp-event-trigger>  
+                    </template>
+
+                    <template id="edit">
+                      
                     </template>
 
                   </semantic-table>

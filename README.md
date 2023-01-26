@@ -38,10 +38,10 @@ For development, set username and password and then move this file to ./config/r
   rdfs:label "Default HTTP SPARQL Repository";
   rep:repositoryImpl [
       rep:repositoryType "researchspace:SPARQLBasicAuthRepository";
-      sparqlr:query-endpoint "ENDPOINT";
+      sparqlr:query-endpoint <https://veniss.net/sparql>;
       mph:quadMode true;
       mph:writable true;
-      mph:username "USERNAME" ;
-      mph:password "PASSWORD" ;
+      mph:username "${default.username}" ;
+      mph:password "${default.password}" ;
     ] .
 ```

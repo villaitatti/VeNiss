@@ -72,7 +72,15 @@
       "template": "{{> listSources}}",
       "type": "authoring"
     },
-
+    {
+      "id": "add-builtwork",
+      "label": "Builtworks",
+      "description": "Add a new builtwork",
+      "iconClass": "rs-icon rs-icon-placeholder_woodblock veniss-builtworks",
+      "resourceNotRequired": true,
+      "template": "{{> addBuiltwork}}",
+      "type": "authoring"
+    },
     [[!--
       {
         "id": "list-builtwork",
@@ -349,6 +357,9 @@
     </template>
     <template id='listSources'>
       [[> veniss:List_Sources]]
+    </template>
+    <template id='addBuiltwork'>
+      [[> http://archipelago.itatti.harvard.edu/forms/Builtwork]]
     </template>
     <template id='authorityEditor'>
       [[> rsp:AuthorityEditor]]

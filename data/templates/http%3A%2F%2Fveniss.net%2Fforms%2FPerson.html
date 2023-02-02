@@ -12,6 +12,8 @@
     person_familyname                   = "https://veniss.net/container/fieldDefinitionContainer/person_familyname"
     person_alias                        = "https://veniss.net/container/fieldDefinitionContainer/person_alias"
     person_patronymic                   = "https://veniss.net/container/fieldDefinitionContainer/person_patronymic"
+    person_title                        = "https://veniss.net/container/fieldDefinitionContainer/person_title"
+    person_social_status                = "https://veniss.net/container/fieldDefinitionContainer/person_social_status"
     
   ]]'
 >
@@ -30,7 +32,7 @@
           <div data-flex-layout="column stretch-stretch">
 
             <!-- Representation and names -->
-            <div data-flex-layout="row top-stretch">
+            <div data-flex-layout="row stretch-stretch">
 
               <div id="source_visual_representation" class="padding-5">
 
@@ -59,38 +61,47 @@
 
               </div>
 
-              <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
+              <div data-flex-layout="column stretch-stretch" data-flex-self="size-x3">
 
                 <div data-flex-layout="row top-stretch">
                   <div id="person_givenname" class="padding-5">
-                    <semantic-form-text-input label="Given name" for="person_givenname"></semantic-form-text-input>
+                    <semantic-form-text-input label="Given name" placeholder="Enter given name ..." for="person_givenname"></semantic-form-text-input>
                   </div>
 
                   <div id="person_familyname" class="padding-5">
-                    <semantic-form-text-input label="Family name" for="person_familyname"></semantic-form-text-input>
+                    <semantic-form-text-input label="Family name" placeholder="Enter family name ..." for="person_familyname"></semantic-form-text-input>
                   </div>
                 </div>
 
                 <div data-flex-layout="row top-stretch">
 
                   <div id="person_alias" class="padding-5">
-                    <semantic-form-text-input label="Alias" for="person_alias"></semantic-form-text-input>
+                    <semantic-form-text-input label="Alias" placeholder="Enter alias ..." for="person_alias"></semantic-form-text-input>
                   </div>
 
                   <div id="person_patronymic" class="padding-5">
-                    <semantic-form-text-input label="Patronymic" for="person_patronymic"></semantic-form-text-input>
+                    <semantic-form-text-input label="Patronymic" placeholder="Enter patronymic ..." for="person_patronymic"></semantic-form-text-input>
                   </div>
 
                 </div>
 
-
-                
-
               </div>
 
+            </div>
 
+            <hr>
+
+            <div data-flex-layout="row top-stretch">
+              <div id="person_title" class="padding-5">
+                <semantic-form-select-input label="Title" placeholder="Select a title ... " for="person_title"></semantic-form-select-input>
+              </div> 
+
+              <div id="person_social_status" class="padding-5">
+                <semantic-form-select-input label="Social Status" placeholder="Select a social status ... " for="person_social_status"></semantic-form-select-input>
+              </div>
 
             </div>
+
           </div>
 
         </div>

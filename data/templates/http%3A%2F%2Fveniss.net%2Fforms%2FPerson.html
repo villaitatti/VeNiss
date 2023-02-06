@@ -1,0 +1,120 @@
+<semantic-form 
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+
+    actor_representation                = "https://veniss.net/container/fieldDefinitionContainer/actor_representation"
+    
+    person_givenname                    = "https://veniss.net/container/fieldDefinitionContainer/person_givenname"
+    person_familyname                   = "https://veniss.net/container/fieldDefinitionContainer/person_familyname"
+    person_alias                        = "https://veniss.net/container/fieldDefinitionContainer/person_alias"
+    person_patronymic                   = "https://veniss.net/container/fieldDefinitionContainer/person_patronymic"
+    person_title                        = "https://veniss.net/container/fieldDefinitionContainer/person_title"
+    person_social_status                = "https://veniss.net/container/fieldDefinitionContainer/person_social_status"
+    
+  ]]'
+>
+  <div class="form-scroll-area">
+    <div class="container-fluid">
+
+      <semantic-form-errors></semantic-form-errors>
+
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor","https://veniss.net/ontology#Person"]'></semantic-form-hidden-input>
+
+      <div data-flex-layout="row stretch-stretch">
+
+        <!-- Left -->
+        <div data-flex-self="size-x2">
+
+          <div data-flex-layout="column stretch-stretch">
+
+            <!-- Representation and names -->
+            <div data-flex-layout="row stretch-stretch">
+
+              <div id="source_visual_representation" class="padding-5">
+
+                <semantic-form-file-input 
+                  label="Visual representation"
+                  for="actor_representation"
+                  storage='images'
+                  temp-storage='tmp'
+                  placeholder='Add file here'
+                  name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
+                  media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
+                  resource-query='
+                    CONSTRUCT {
+                      ?__resourceIri__ a rso:EX_File.
+                      ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
+                      ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
+                      ?__resourceIri__ rdfs:label ?__filename__.
+                    } WHERE {}
+                  '
+                  generate-iri-query='
+                    SELECT ?resourceIri {
+                      BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
+                    }
+                  '
+                ></semantic-form-file-input>
+
+              </div>
+
+              <div data-flex-layout="column stretch-stretch" data-flex-self="size-x3">
+
+                <div data-flex-layout="row top-stretch">
+                  <div id="person_givenname" class="padding-5">
+                    <semantic-form-text-input label="Given name" placeholder="Enter given name ..." for="person_givenname"></semantic-form-text-input>
+                  </div>
+
+                  <div id="person_familyname" class="padding-5">
+                    <semantic-form-text-input label="Family name" placeholder="Enter family name ..." for="person_familyname"></semantic-form-text-input>
+                  </div>
+                </div>
+
+                <div data-flex-layout="row top-stretch">
+
+                  <div id="person_alias" class="padding-5">
+                    <semantic-form-text-input label="Alias" placeholder="Enter alias ..." for="person_alias"></semantic-form-text-input>
+                  </div>
+
+                  <div id="person_patronymic" class="padding-5">
+                    <semantic-form-text-input label="Patronymic" placeholder="Enter patronymic ..." for="person_patronymic"></semantic-form-text-input>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <hr>
+
+            <div data-flex-layout="row top-stretch">
+              <div id="person_title" class="padding-5">
+                <semantic-form-select-input label="Title" placeholder="Select a title ... " for="person_title"></semantic-form-select-input>
+              </div> 
+
+              <div id="person_social_status" class="padding-5">
+                <semantic-form-select-input label="Social Status" placeholder="Select a social status ... " for="person_social_status"></semantic-form-select-input>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Right -->
+        <div>
+          <h3>Related elements</h3>
+        </div>
+
+      </div>
+      
+
+    </div>
+  </div>
+  [[> rsp:FormDefaultActions]]
+</semantic-form>

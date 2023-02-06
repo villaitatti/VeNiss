@@ -1,5 +1,4 @@
 <div class="page">
-  <div class='page__body'>
 
     <div data-flex-layout="columns center-stretch">
       <div class="Header">
@@ -9,6 +8,7 @@
 
       <div class="subheader">
 
+        <!--
         <bs-alert bs-style="info">
           <strong>A source is missing? </strong>
 
@@ -21,6 +21,7 @@
             Create a new Source
           </semantic-link>.
         </bs-alert>
+        -->
 
       </div>
 
@@ -41,72 +42,114 @@
             <semantic-search-result-holder>
               <div data-flex-self="md-full">
 
+                <!-- Count -->
                 <semantic-search-result>
-                  <semantic-table 
-                    id='table-result'
-                    query='SELECT DISTINCT * WHERE { 
-                      optional {
-                        ?subject crm:P1_is_identified_by ?appellation.
-                        ?appellation rdf:type crm:E41_Appellation;
-                          crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
-                          rdfs:label ?label.
-                      }
-                    }'
-                    column-configuration='[
-                      {
-                        "displayName": "Image",
-                        "cellTemplate": "{{> visual_representation}}"
-                      },
-                      {
-                        "displayName": "Source",
-                        "cellTemplate": "{{> name}}"
-                      }
-                    ]'
-                  >
-
-                    <template id="visual_representation">
-
-                      <semantic-context storage="veniss_s3">
-
-                        <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
-                            <mp-resource-thumbnail-fallback>
-                                <with-types iri='{{subject.value}}'
-                                        template='{{> noImage}}'
-                                        [[> rsp:TypeMappings]]
-                                    >
-                                    <template id="noImage">
-                                        <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
-                                    </template>
-                                </with-types>
-                            </mp-resource-thumbnail-fallback>
-                        </mp-resource-thumbnail>
-
-                      </semantic-context>
-                      
-                    </template>
-
-                    <template id="name">
-                      <mp-event-trigger 
-                        id='{{subject.value}}-add-frame' 
-                        type='Dashboard.AddFrame' 
-                        data='{
-                          "resourceIri": "{{subject.value}}", 
-                          "viewId": "entity-editor"
-                        }' 
-                        targets='["thinking-frames"]'>
-
-                        <div style="display: flex; align-items: center;">
-                          <a>{{label.value}}</a>
-                        </div>
-                      </mp-event-trigger>  
-                    </template>
-
-                    <template id="edit">
-                      
-                    </template>
-
-                  </semantic-table>
+                  <mp-sparql-result-counts 
+                    id='query-count'
+                    query="SELECT DISTINCT * {}"
+                    template='{{>count}}'>
+                      <template id="count">
+                        {{#if hasLimit}} 
+                          <bs-alert bs-style="warning">
+                            Showing {{numberOfResults}} of {{totalNumberOfResults}} matches. 
+                            <strong>Please, refine your search.</strong> 
+                          </bs-alert>
+                        {{else}}
+                          <bs-alert bs-style="info">
+                            <p>Found <strong>{{numberOfResults}}</strong> Sources.</p>
+                          </bs-alert>
+                        {{/if}}
+                      </template>
+                  </mp-sparql-result-counts>
                 </semantic-search-result>
+
+                 <bs-tabs unmount-on-exit=true id='search-results' animation=false>
+
+                  <bs-tab event-key="1" title="Primary sources">
+
+                    <a class="btn btn-success">
+                      <semantic-link 
+                        iri="http://www.researchspace.org/resource/ThinkingFrames"
+                        urlqueryparam-view="entity-editor"
+                        urlqueryparam-entity-type-config="http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Source2"
+                        urlqueryparam-mode="new"
+                      >
+                        Create a new Source
+                      </semantic-link>
+
+                    </a>
+                    
+                    <semantic-search-result>
+                      <semantic-table 
+                        id='table-result'
+                        query='SELECT DISTINCT * WHERE { 
+                          ?subject a veniss_ontology:Source_Primary.
+                          optional {
+                            ?subject crm:P1_is_identified_by ?appellation.
+                            ?appellation rdf:type crm:E41_Appellation;
+                              crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
+                              rdfs:label ?label.
+                          }
+                        }'
+                        column-configuration='[
+                          {
+                            "displayName": "Image",
+                            "cellTemplate": "{{> visual_representation}}"
+                          },
+                          {
+                            "displayName": "Name",
+                            "cellTemplate": "{{> name}}"
+                          }
+                        ]'
+                      >
+
+                        <template id="visual_representation">
+
+                          <semantic-context storage="veniss_s3">
+
+                            <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
+                                <mp-resource-thumbnail-fallback>
+                                    <with-types iri='{{subject.value}}'
+                                            template='{{> noImage}}'
+                                            [[> rsp:TypeMappings]]
+                                        >
+                                        <template id="noImage">
+                                            <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
+                                        </template>
+                                    </with-types>
+                                </mp-resource-thumbnail-fallback>
+                            </mp-resource-thumbnail>
+
+                          </semantic-context>
+                          
+                        </template>
+
+                        <template id="name">
+                          
+                          <mp-event-trigger 
+                            id='{{subject.value}}-add-frame' 
+                            type='Dashboard.AddFrame' 
+                            data='{
+                              "resourceIri": "{{subject.value}}", 
+                              "viewId": "entity-editor"
+                            }' 
+                            targets='["thinking-frames"]'>
+                            <div style="display: flex; align-items: center;">
+                              <a href="">{{label.value}}</a>
+                            </div>
+                          </mp-event-trigger>  
+
+                        </template>
+
+                      </semantic-table>
+                    </semantic-search-result>
+                  </bs-tab>
+
+                  <bs-tab event-key="2" title="Secondary sources">
+
+                  </bs-tab>
+
+                 </bs-tabs>
 
               </div>
           </semantic-search-result-holder>
@@ -115,5 +158,11 @@
       </div>
     </div>
 
-  </div>
 </div>
+
+<style>
+  .page{
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+</style>

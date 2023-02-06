@@ -1,0 +1,76 @@
+<semantic-form 
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  new-subject-template='https://veniss.net/resource/bibitem/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    
+    bibitem_id                          = "https://veniss.net/container/fieldDefinitionContainer/bibitem_id"
+    bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
+    bibitem_typology                    = "https://veniss.net/container/fieldDefinitionContainer/bibitem_typology"
+    bibitem_author                      = "https://veniss.net/container/fieldDefinitionContainer/bibitem_author"
+    bibitem_language                    = "https://veniss.net/container/fieldDefinitionContainer/bibitem_language" 
+    bibitem_curator                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_curator"
+    bibitem_publisher                   = "https://veniss.net/container/fieldDefinitionContainer/bibitem_publisher"
+    bibitem_date                        = "https://veniss.net/container/fieldDefinitionContainer/bibitem_date"
+  ]]'
+>
+  <div class="form-scroll-area">
+    <div class="container-fluid">
+
+      <semantic-form-errors></semantic-form-errors>
+
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression", "https://veniss.net/ontology#Source_Secondary"]'></semantic-form-hidden-input>      
+
+      <div data-flex-layout="row stretch-stretch">
+
+        <div data-flex-layout="column top-stretch">
+
+          <div id="bibitem_id">
+            <semantic-form-text-input label="Identifier" placeholder="Enter DOI, ISBN, ..." for="bibitem_id"></semantic-form-text-input>
+          </div>
+
+          <div id="bibitem_typology">
+            <semantic-form-select-input label="Typology" placeholder="Select Typology" for="bibitem_typology"></semantic-form-select-input>
+          </div>
+
+          <div id="bibitem_curator">
+            <semantic-form-text-input label="Curator" placeholder="Enter Curator ..." for="bibitem_curator"></semantic-form-text-input>
+          </div>
+
+          <div id="bibitem_date">
+            <semantic-form-text-input label="Publication date" for="bibitem_date"></semantic-form-text-input>
+          </div>
+
+
+        </div>
+
+        <div data-flex-layout="column top-stretch">
+
+          <div id="bibitem_title">
+            <semantic-form-text-input label="Title" placeholder="Enter title ..." for="bibitem_title"></semantic-form-text-input>
+          </div>
+
+          <div id="bibitem_language">
+            <semantic-form-select-input label="Language" placeholder="Enter Language ..." for="bibitem_language"></semantic-form-select-input>
+          </div>
+
+          <div id="bibitem_author">
+            <semantic-form-text-input label="Author" placeholder="Enter Author ..." for="bibitem_author"></semantic-form-text-input>
+          </div>
+
+          <div id="bibitem_publisher">
+            <semantic-form-text-input label="Publisher" placeholder="Enter Publisher ..." for="bibitem_publisher"></semantic-form-text-input>
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+    </div>
+  </div>
+  [[> rsp:FormDefaultActions]]
+</semantic-form>

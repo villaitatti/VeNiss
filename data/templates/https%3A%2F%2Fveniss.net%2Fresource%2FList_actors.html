@@ -1,106 +1,118 @@
 <div class="page">
   <div class='page__body'>
 
-  <div data-flex-layout="columns center-stretch">
-    <div class="Header">
-      <h1>List of actors</h1>
-      <hr>
-    </div>
+    <div data-flex-layout="columns center-stretch">
 
-    <div class="subheader">
-
-      <bs-alert bs-style="warning">
-        <strong>An Actor is missing? </strong>
-        <mp-event-trigger id='list-actor__new-person-add-frame' 
-          type='Dashboard.AddFrame' 
-          data='{"viewId": "entity-editor"}' 
-          targets='["thinking-frames"]'>
-          <a>Create a new Entity</a>
-        </mp-event-trigger>.
-      </bs-alert>
-
-    </div>
-
-    <div class="body">
-      <semantic-search>
-        <semantic-search-query-constant query='select ?subject where { ?subject a veniss:Actor }'>
-        </semantic-search-query-constant>
-
-        <div data-flex-layout="row stretch-stretch">
-          <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
-            <semantic-search-facet></semantic-search-facet>
-          </div>
-
-          <semantic-search-result-holder>
-            <div data-flex-self="md-full">
-
-              <semantic-search-result>
-                <semantic-table 
-                  id='table-result'
-                  query='SELECT DISTINCT ?subject ?type WHERE { 
-                    ?subject crm:P2_has_type ?type
-                  }'
-                  column-configuration='[
-                    {"variableName": "subject", "displayName": "Name"},
-                    {
-                      "displayName": "Edit",
-                      "cellTemplate": "{{> edit}}"
-                    }
-                  ]'
-                >
-                  <!-- Edit Template -->
-                  <template id="edit">
-                    <mp-event-trigger 
-                      id='{{subject.value}}-add-frame' 
-                      type='Dashboard.AddFrame' 
-                      data='{
-                        "resourceIri": "{{subject.value}}", 
-                        "viewId": "entity-editor"
-                      }' 
-                      targets='["thinking-frames"]'>
-                      <div style="display: flex; align-items: center;">
-                        <a class="btn btn-primary"><span class="fa fa-pencil"></span></a>
-                      </div>
-                    </mp-event-trigger>  
-                  </template>
-
-                </semantic-table>
-              </semantic-search-result>
-
-            </div>
-        </semantic-search-result-holder>
+      <div class="Header">
+        <h1>List of actors</h1>
+        <hr>
       </div>
-    </semantic-search>
-    </div>
-  </div>
-  
-  
 
-  
+      <div class="subheader">
 
+        <bs-alert bs-style="info">
+          <strong>An Actor is missing? </strong>
+            create a new 
+            <strong>
+              <semantic-link 
+                iri="http://www.researchspace.org/resource/ThinkingFrames"
+                urlqueryparam-view="entity-editor"
+                urlqueryparam-entity-type-config="http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Person"
+                urlqueryparam-mode="new"
+              >Person</semantic-link> 
+            </strong>
+             or a new 
+            <strong>
+              <semantic-link 
+                iri="http://www.researchspace.org/resource/ThinkingFrames"
+                urlqueryparam-view="entity-editor"
+                urlqueryparam-entity-type-config="http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Group"
+                urlqueryparam-mode="new"
+              >Group</semantic-link>
+            </strong>
 
-    <!--
+        </bs-alert>
 
-      https://archipelago.itatti.harvard.edu/resource/actor/cb203d6e-cf78-11ec-88a8-3a5becfe4abd
+      </div>
 
-      http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Actor
+      <div class="body">
+        <semantic-search>
+          <semantic-search-query-constant 
+            query='
+              select ?subject where { { ?subject a veniss_ontology:Person } union { ?subject a veniss_ontology:Group } }'>
+          </semantic-search-query-constant>
 
-        <mp-event-trigger 
-          id='list-actor__-add-frame' 
-          type='Dashboard.AddFrame' 
-          data='{
-            "resourceIri": "http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Actor", 
-            "viewId": "entity-editor"
-          }' 
-          targets='["thinking-frames"]'>
-          <div style="display: flex; align-items: center;">
-            <span class="btn btn-success">Create new Actor</span>
-          </div>
-        </mp-event-trigger> 
-  -->
-    
+          <div data-flex-layout="row stretch-stretch">
+            <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
+              <semantic-search-facet></semantic-search-facet>
+            </div>
 
-    
+            <semantic-search-result-holder>
+              <div data-flex-self="md-full">
+
+                <semantic-search-result>
+                  <semantic-table 
+                    id='table-result'
+                    query='SELECT DISTINCT ?subject ?label WHERE { 
+
+                      OPTIONAL {    ?item crm:P1_is_identified_by ?given_name_node.    ?given_name_node crm:P2_has_type <https://veniss.net/resource/type/given_name>;     rdfs:label ?given_name_label.      BIND(CONCAT(", ", ?given_name_label, " ") AS ?given_name)  }   OPTIONAL {    ?item crm:P1_is_identified_by ?family_name_node.    ?family_name_node crm:P2_has_type <https://veniss.net/resource/type/family_name>;        rdfs:label ?family_name_label.    BIND(?family_name_label AS ?family_name)  }   OPTIONAL {    ?item crm:P1_is_identified_by ?alias_node.    ?alias_node crm:P2_has_type <https://veniss.net/resource/type/person_alias>;        rdfs:label ?alias_label.    BIND(CONCAT(" (", ?alias_label, ") ") AS ?alias)  }          OPTIONAL {    ?item crm:P1_is_identified_by ?patronymic_node.    ?patronymic_node crm:P2_has_type <https://veniss.net/resource/type/person_patronymic>;        rdfs:label ?patronymic_label.    BIND(CONCAT("di ", ?patronymic_label) AS ?patronymic)  }  BIND(COALESCE(?given_name, "") AS ?given_name_final)  BIND(COALESCE(?family_name, "") AS ?family_name_final)  BIND(COALESCE(?alias, "") AS ?alias_final)  BIND(COALESCE(?patronymic, "") AS ?patronymic_final)   BIND(CONCAT(?family_name_final, ?given_name_final, ?patronymic_final, ?alias_final) AS ?label)
+                    }'
+                    column-configuration='[
+                      {
+                        "displayName": "Image",
+                        "cellTemplate": "{{> visual_representation}}"
+                      },
+                      {
+                        "displayName": "Name",
+                        "cellTemplate": "{{> name}}"
+                      }
+                    ]'
+                  >
+                    <template id="visual_representation">
+
+                      <semantic-context storage="veniss_s3">
+
+                        <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
+                            <mp-resource-thumbnail-fallback>
+                                <with-types iri='{{subject.value}}'
+                                        template='{{> noImage}}'
+                                        [[> rsp:TypeMappings]]
+                                    >
+                                    <template id="noImage">
+                                        <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-actor_no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
+                                    </template>
+                                </with-types>
+                            </mp-resource-thumbnail-fallback>
+                        </mp-resource-thumbnail>
+
+                      </semantic-context>
+                      
+                    </template>
+                    <template id="name">
+                      <mp-event-trigger 
+                        id='{{subject.value}}-add-frame' 
+                        type='Dashboard.AddFrame' 
+                        data='{
+                          "resourceIri": "{{subject.value}}", 
+                          "viewId": "entity-editor"
+                        }' 
+                        targets='["thinking-frames"]'>
+                          <a href="#">
+                            {{label.value}}
+                          </a>
+                      </mp-event-trigger>  
+                    </template>
+
+                  </semantic-table>
+                </semantic-search-result>
+
+              </div>
+          </semantic-search-result-holder>
+        </div>
+      </semantic-search>
+      </div>
+
+    </div>    
 
   </div>
 </div>

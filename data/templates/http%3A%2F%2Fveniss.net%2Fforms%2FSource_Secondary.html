@@ -10,10 +10,12 @@
     bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
     bibitem_typology                    = "https://veniss.net/container/fieldDefinitionContainer/bibitem_typology"
     bibitem_author                      = "https://veniss.net/container/fieldDefinitionContainer/bibitem_author"
+    bibitem_place                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_place"
     bibitem_language                    = "https://veniss.net/container/fieldDefinitionContainer/bibitem_language" 
     bibitem_curator                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_curator"
     bibitem_publisher                   = "https://veniss.net/container/fieldDefinitionContainer/bibitem_publisher"
     bibitem_date                        = "https://veniss.net/container/fieldDefinitionContainer/bibitem_date"
+    bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
   ]]'
 >
   <div class="form-scroll-area">
@@ -21,54 +23,183 @@
 
       <semantic-form-errors></semantic-form-errors>
 
-      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression", "https://veniss.net/ontology#Source_Secondary"]'></semantic-form-hidden-input>      
+      <semantic-form-hidden-input 
+        for="type" 
+        default-values='[
+          "http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object",
+          "http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression", 
+          "https://veniss.net/ontology#Source_Secondary",
+          "https://veniss.net/ontology#Source"
+        ]'
+      ></semantic-form-hidden-input>      
 
-      <div data-flex-layout="row stretch-stretch">
+      <div data-flex-layout="column stretch-stretch">
 
-        <div data-flex-layout="column top-stretch">
+        <!-- ID, Authors -->
+        <div data-flex-layout="row top-stretch">
 
           <div id="bibitem_id">
-            <semantic-form-text-input label="Identifier" placeholder="Enter DOI, ISBN, ..." for="bibitem_id"></semantic-form-text-input>
-          </div>
-
-          <div id="bibitem_typology">
-            <semantic-form-select-input label="Typology" placeholder="Select Typology" for="bibitem_typology"></semantic-form-select-input>
-          </div>
-
-          <div id="bibitem_curator">
-            <semantic-form-text-input label="Curator" placeholder="Enter Curator ..." for="bibitem_curator"></semantic-form-text-input>
-          </div>
-
-          <div id="bibitem_date">
-            <semantic-form-text-input label="Publication date" for="bibitem_date"></semantic-form-text-input>
-          </div>
-
-
-        </div>
-
-        <div data-flex-layout="column top-stretch">
-
-          <div id="bibitem_title">
-            <semantic-form-text-input label="Title" placeholder="Enter title ..." for="bibitem_title"></semantic-form-text-input>
-          </div>
-
-          <div id="bibitem_language">
-            <semantic-form-select-input label="Language" placeholder="Enter Language ..." for="bibitem_language"></semantic-form-select-input>
+            <div class="padding-5">
+              <semantic-form-text-input label="Identifier" placeholder="Enter DOI, ISBN, ..." for="bibitem_id"></semantic-form-text-input>
+            </div>
           </div>
 
           <div id="bibitem_author">
-            <semantic-form-text-input label="Author" placeholder="Enter Author ..." for="bibitem_author"></semantic-form-text-input>
-          </div>
-
-          <div id="bibitem_publisher">
-            <semantic-form-text-input label="Publisher" placeholder="Enter Publisher ..." for="bibitem_publisher"></semantic-form-text-input>
+            <div class="padding-5">
+              <semantic-form-text-input label="Author(s)" placeholder="Surname, Name; Surname, Name; ..." for="bibitem_author"></semantic-form-text-input>
+            </div>
           </div>
 
         </div>
 
-      </div>
+        <!-- Title -->
+        <div data-flex-layout="row top-stretch">
 
+          <div id="bibitem_title">
+            <div class="padding-5">
+              <semantic-form-text-input label="Title" placeholder="Enter title ..." for="bibitem_title"></semantic-form-text-input>
+            </div>
+          </div>
 
+        </div>
+
+        <!-- City, Date -->
+        <div data-flex-layout="row top-stretch">
+
+          <div id="bibitem_place">
+            <div class="padding-5">
+              <semantic-form-text-input label="City" placeholder="Enter city ..." for="bibitem_place"></semantic-form-text-input>
+            </div>
+          </div>
+
+          <div id="bibitem_date">
+            <div class="padding-5">
+              <semantic-form-text-input label="Publication date" for="bibitem_date"></semantic-form-text-input>
+            </div>
+          </div>
+
+        </div>
+
+        <div data-flex-layout="row top-stretch">
+
+          <div id="bibitem_curator">
+            <div class="padding-5">
+              <semantic-form-text-input label="Curator" placeholder="Enter Curator ..." for="bibitem_curator"></semantic-form-text-input>
+            </div>
+          </div>
+
+          <div id="bibitem_publisher">
+            <div class="padding-5">
+              <semantic-form-text-input label="Publisher" placeholder="Enter Publisher ..." for="bibitem_publisher"></semantic-form-text-input>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Typology, broader title and number -->
+        <div data-flex-layout="row top-stretch">
+
+          <semantic-form-switch label="Typology" for="bibitem_broader" switch-on-field="bibitem_broader_typology">
+
+            <semantic-form-switch-case label="Book">
+              <semantic-form-composite-input 
+                for="bibitem_broader" 
+                new-subject-template='/broader/{{UUID}}' 
+                fields='[[ fieldDefinitions 
+                  bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
+                  bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
+                  bibitem_broader_typology            = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_typology"
+                  bibitem_broader_number              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_number"
+                ]]'
+              >
+                <semantic-form-hidden-input for="bibitem_broader_typology" default-value='https://veniss.net/resource/type/book'></semantic-form-hidden-input>
+
+                <div data-flex-layout="row top-stretch">
+
+                  <div id="bibitem_title">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Book title" placeholder="Enter book title ..." for="bibitem_title"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                  <div id="bibitem_broader_number">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Book number" placeholder="Enter book number ..." for="bibitem_broader_number"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                </div>
+
+              </semantic-form-composite-input>
+            </semantic-form-switch-case>
+
+            <semantic-form-switch-case label="Journal">
+              <semantic-form-composite-input 
+                for="bibitem_broader" 
+                new-subject-template='/broader/{{UUID}}' 
+                fields='[[ fieldDefinitions 
+                  bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
+                  bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
+                  bibitem_broader_typology            = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_typology"
+                  bibitem_broader_number              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_number"
+                ]]'
+              >
+                <semantic-form-hidden-input for="bibitem_broader_typology" default-value='https://veniss.net/resource/type/Journal'></semantic-form-hidden-input>
+              
+                <div data-flex-layout="row top-stretch">
+
+                  <div id="bibitem_title">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Journal title" placeholder="Enter journal title ..." for="bibitem_title"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                  <div id="bibitem_broader_number">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Journal number" placeholder="Enter journal number ..." for="bibitem_broader_number"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                </div>              
+              
+              </semantic-form-composite-input>
+            </semantic-form-switch-case>
+
+            <semantic-form-switch-case label="Essay">
+              <semantic-form-composite-input 
+                for="bibitem_broader" 
+                new-subject-template='/broader/{{UUID}}' 
+                fields='[[ fieldDefinitions 
+                  bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
+                  bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
+                  bibitem_broader_typology            = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_typology"
+                  bibitem_broader_number              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_number"
+                ]]'
+              >
+                <semantic-form-hidden-input for="bibitem_broader_typology" default-value='https://veniss.net/resource/type/essay'></semantic-form-hidden-input>
+
+                <div data-flex-layout="row top-stretch">
+
+                  <div id="bibitem_title">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Serie title" placeholder="Enter serie title ..." for="bibitem_title"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                  <div id="bibitem_broader_number">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Serie number" placeholder="Enter serie number ..." for="bibitem_broader_number"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                </div>
+
+              </semantic-form-composite-input>
+            </semantic-form-switch-case>
+
+          </semantic-form-switch>
+
+        </div>
 
     </div>
   </div>

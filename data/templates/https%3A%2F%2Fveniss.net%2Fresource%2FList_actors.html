@@ -39,7 +39,7 @@
         <semantic-search>
           <semantic-search-query-constant 
             query='
-              select ?subject where { { ?subject a veniss_ontology:Person } union { ?subject a veniss_ontology:Group } }'>
+              select distinct ?subject where { ?subject a veniss_ontology:Actor }'>
           </semantic-search-query-constant>
 
           <div data-flex-layout="row stretch-stretch">
@@ -55,7 +55,39 @@
                     id='table-result'
                     query='SELECT DISTINCT ?subject ?label WHERE { 
 
-                      OPTIONAL {    ?item crm:P1_is_identified_by ?given_name_node.    ?given_name_node crm:P2_has_type <https://veniss.net/resource/type/given_name>;     rdfs:label ?given_name_label.      BIND(CONCAT(", ", ?given_name_label, " ") AS ?given_name)  }   OPTIONAL {    ?item crm:P1_is_identified_by ?family_name_node.    ?family_name_node crm:P2_has_type <https://veniss.net/resource/type/family_name>;        rdfs:label ?family_name_label.    BIND(?family_name_label AS ?family_name)  }   OPTIONAL {    ?item crm:P1_is_identified_by ?alias_node.    ?alias_node crm:P2_has_type <https://veniss.net/resource/type/person_alias>;        rdfs:label ?alias_label.    BIND(CONCAT(" (", ?alias_label, ") ") AS ?alias)  }          OPTIONAL {    ?item crm:P1_is_identified_by ?patronymic_node.    ?patronymic_node crm:P2_has_type <https://veniss.net/resource/type/person_patronymic>;        rdfs:label ?patronymic_label.    BIND(CONCAT("di ", ?patronymic_label) AS ?patronymic)  }  BIND(COALESCE(?given_name, "") AS ?given_name_final)  BIND(COALESCE(?family_name, "") AS ?family_name_final)  BIND(COALESCE(?alias, "") AS ?alias_final)  BIND(COALESCE(?patronymic, "") AS ?patronymic_final)   BIND(CONCAT(?family_name_final, ?given_name_final, ?patronymic_final, ?alias_final) AS ?label)
+                      OPTIONAL {
+                        ?subject crm:P1_is_identified_by ?given_name_node.
+                        ?given_name_node crm:P2_has_type <https://veniss.net/resource/type/given_name>;
+                          rdfs:label ?given_name_label.
+                        BIND(CONCAT(", ", ?given_name_label, " ") AS ?given_name)
+                      }
+                      OPTIONAL {
+                        ?subject crm:P1_is_identified_by ?family_name_node.
+                        ?family_name_node crm:P2_has_type <https://veniss.net/resource/type/family_name>;
+                          rdfs:label ?family_name_label.
+                        BIND(?family_name_label AS ?family_name)
+                      }
+                      OPTIONAL {
+                        ?subject crm:P1_is_identified_by ?alias_node.
+                        ?alias_node crm:P2_has_type <https://veniss.net/resource/type/person_alias>;
+                          rdfs:label ?alias_label.
+                        BIND(CONCAT(" (", ?alias_label, ") ") AS ?alias)
+                      }
+                      OPTIONAL {
+                        ?subject crm:P1_is_identified_by ?patronymic_node.
+                        ?patronymic_node crm:P2_has_type <https://veniss.net/resource/type/person_patronymic>;
+                          rdfs:label ?patronymic_label.
+                        BIND(CONCAT("di ", ?patronymic_label) AS ?patronymic)
+                      }
+                      OPTIONAL {
+                        ?subject rdfs:label ?group_label
+                      }
+                      BIND(COALESCE(?given_name, "") AS ?given_name_final)
+                      BIND(COALESCE(?family_name, "") AS ?family_name_final)
+                      BIND(COALESCE(?alias, "") AS ?alias_final)
+                      BIND(COALESCE(?patronymic, "") AS ?patronymic_final)
+                      BIND(COALESCE(?group_label, "") AS ?group_label_final)
+                      BIND(CONCAT(?group_label_final, ?family_name_final, ?given_name_final, ?patronymic_final, ?alias_final) AS ?label)
                     }'
                     column-configuration='[
                       {

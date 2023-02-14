@@ -12,6 +12,7 @@
     source_typology                     = "https://veniss.net/container/fieldDefinitionContainer/source_typology"
     source_author                       = "https://veniss.net/container/fieldDefinitionContainer/source_author"
     source_date                         = "https://veniss.net/container/fieldDefinitionContainer/source_date"
+    source_date_composite               = "https://veniss.net/container/fieldDefinitionContainer/source_date_composite"
     source_location                     = "https://veniss.net/container/fieldDefinitionContainer/source_location"
     source_location_type                = "https://veniss.net/container/fieldDefinitionContainer/source_location_type"
     source_location_name                = "https://veniss.net/container/fieldDefinitionContainer/source_location_name"
@@ -26,6 +27,8 @@
 >
 <div class="form-scroll-area">
 
+  <semantic-form-recover-notification></semantic-form-recover-notification>
+  <semantic-form-errors></semantic-form-errors>
   <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/ontology#Source", "https://veniss.net/ontology#Source_Primary"]'></semantic-form-hidden-input>
 
   <div class="container-fluid">
@@ -100,12 +103,31 @@
               <semantic-form-select-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-select-input>
             </div>
             
-            <div id="source_date" class="padding-5">
-              <semantic-form-datetime-input label="Creation date" for='source_date' placeholder="YYYY-MM-DD"></semantic-form-datetime-input>
+            <div id="source_date_composite" class="padding-5">
+              <semantic-form-composite-input label="Creation date" for='source_date_composite' new-subject-template="/creation-date/" fields='[[fieldDefinitions
+                time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
+              ]]'>
+                <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+              </semantic-form-composite-input>
             </div>
 
           </div>
-
+          <style>
+            #source_date_composite > div > div.cardinality-support > div > div > div:nth-child(-n+3){
+              display: inline-block;
+              margin-right: 2px;
+              width: 100px;
+            }
+            #source_date_composite > div > div.cardinality-support > div > div {
+              display: block;
+            }
+          </style>
           <hr>
 
           <!-- Archival location  -->

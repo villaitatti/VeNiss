@@ -14,7 +14,8 @@
     person_patronymic                   = "https://veniss.net/container/fieldDefinitionContainer/person_patronymic"
     person_title                        = "https://veniss.net/container/fieldDefinitionContainer/person_title"
     person_social_status                = "https://veniss.net/container/fieldDefinitionContainer/person_social_status"
-    
+
+    person_occupation                   = "https://veniss.net/container/fieldDefinitionContainer/person_occupation"
   ]]'
 >
   <div class="form-scroll-area">
@@ -22,7 +23,7 @@
 
       <semantic-form-errors></semantic-form-errors>
 
-      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor","https://veniss.net/ontology#Person"]'></semantic-form-hidden-input>
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor","https://veniss.net/ontology#Person", "https://veniss.net/ontology#Actor"]'></semantic-form-hidden-input>
 
       <div data-flex-layout="row stretch-stretch">
 
@@ -102,6 +103,63 @@
 
             </div>
 
+            <!-- occupations -->
+            <div data-flex-layout="row top-stretch">
+              <semantic-form-composite-input
+                for="person_occupation"
+                label="Occupation"
+                new-subject-template="/occupation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+                fields='[[ fieldDefinitions
+                  type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                  person_occupation_subject           = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_subject"
+                  person_occupation_place             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_place"
+                  person_occupation_date              = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_date"
+                  person_occupation_notes             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_notes"
+                ]]'
+                >
+                  <div data-flex-layout="column top-stretch">
+
+                    <div data-flex-layout="row top-stretch">
+
+                      <div id="person_occupation_subject" class="padding-5">
+                        <semantic-form-autocomplete-input  
+                          for='person_occupation_subject'
+                          label="Subject" 
+                          placeholder="Choose the subject ..." 
+                        >
+                        </semantic-form-autocomplete-input>
+                      </div> 
+
+                      <div id="person_occupation_place" class="padding-5">
+                        <semantic-form-text-input  
+                          readonly="true"
+                          for='person_occupation_place'
+                          label="Place" 
+                          placeholder="Places not working. Please, use the notes" 
+                        >
+                        </semantic-form-text-input>
+                      </div> 
+
+                      <div id="person_occupation_date" class="padding-5">
+                        <semantic-form-text-input  
+                          readonly="true"
+                          for='person_occupation_date'
+                          label="Date" 
+                          placeholder="Dates not working. Please, use the notes" 
+                        >
+                        </semantic-form-text-input>
+                      </div> 
+
+                    </div>
+
+                    <div id="person_occupation_notes" class="padding-5">
+                      <semantic-form-text-input label="Notes" placeholder="Insert an annotation ... " for="person_occupation_notes"></semantic-form-text-input>
+                    </div>
+
+                  </div> 
+
+              </semantic-form-composite-input>
+            </div>
           </div>
 
         </div>

@@ -14,8 +14,9 @@
     person_patronymic                   = "https://veniss.net/container/fieldDefinitionContainer/person_patronymic"
     person_title                        = "https://veniss.net/container/fieldDefinitionContainer/person_title"
     person_social_status                = "https://veniss.net/container/fieldDefinitionContainer/person_social_status"
-
     person_occupation                   = "https://veniss.net/container/fieldDefinitionContainer/person_occupation"
+    person_birth_date                   = "https://veniss.net/container/fieldDefinitionContainer/person_birth_date"
+    person_death_date                   = "https://veniss.net/container/fieldDefinitionContainer/person_death_date"
   ]]'
 >
   <div class="form-scroll-area">
@@ -86,80 +87,170 @@
 
                 </div>
 
+
               </div>
 
             </div>
 
             <hr>
 
-            <div data-flex-layout="row top-stretch">
-              <div id="person_title" class="padding-5">
-                <semantic-form-select-input label="Title" placeholder="Select a title ... " for="person_title"></semantic-form-select-input>
-              </div> 
+            <bs-tabs id="tabs">
+              
+              <!-- Registry -->
+              <bs-tab event-key="1" title="Registry">
 
-              <div id="person_social_status" class="padding-5">
-                <semantic-form-select-input label="Social Status" placeholder="Select a social status ... " for="person_social_status"></semantic-form-select-input>
-              </div>
+                <div data-flex-layout="column top-stretch">
 
-            </div>
+                  <div data-flex-layout="row top-stretch">
+                    <div id="person_title" class="padding-5">
+                      <semantic-form-select-input label="Title" placeholder="Select a title ... " for="person_title"></semantic-form-select-input>
+                    </div> 
 
-            <!-- occupations -->
-            <div data-flex-layout="row top-stretch">
-              <semantic-form-composite-input
-                for="person_occupation"
-                label="Occupation"
-                new-subject-template="/occupation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
-                fields='[[ fieldDefinitions
-                  type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                  person_occupation_subject           = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_subject"
-                  person_occupation_place             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_place"
-                  person_occupation_date              = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_date"
-                  person_occupation_notes             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_notes"
-                ]]'
-                >
-                  <div data-flex-layout="column top-stretch">
+                    <div id="person_social_status" class="padding-5">
+                      <semantic-form-select-input label="Social Status" placeholder="Select a social status ... " for="person_social_status"></semantic-form-select-input>
+                    </div>
+                  </div>
+                  
+                  <!-- Birth and death -->
+                  <div data-flex-layout="row top-stretch">
 
-                    <div data-flex-layout="row top-stretch">
+                    <div id="person_birth_date">
+                      <div id="source_date_composite" class="padding-5">
+                        <semantic-form-composite-input 
+                          label="Birth date" 
+                          for='person_birth_date' 
+                          new-subject-template="/birth/date" 
+                          fields='[[fieldDefinitions
+                            time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                            time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                            time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                            time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
+                          ]]'>
 
-                      <div id="person_occupation_subject" class="padding-5">
-                        <semantic-form-autocomplete-input  
-                          for='person_occupation_subject'
-                          label="Subject" 
-                          placeholder="Choose the subject ..." 
-                        >
-                        </semantic-form-autocomplete-input>
-                      </div> 
-
-                      <div id="person_occupation_place" class="padding-5">
-                        <semantic-form-text-input  
-                          readonly="true"
-                          for='person_occupation_place'
-                          label="Place" 
-                          placeholder="Places not working. Please, use the notes" 
-                        >
-                        </semantic-form-text-input>
-                      </div> 
-
-                      <div id="person_occupation_date" class="padding-5">
-                        <semantic-form-text-input  
-                          readonly="true"
-                          for='person_occupation_date'
-                          label="Date" 
-                          placeholder="Dates not working. Please, use the notes" 
-                        >
-                        </semantic-form-text-input>
-                      </div> 
-
+                            <div data-flex-layout="column top-stretch">
+                              <div data-flex-layout="row top-stretch">
+                                <div id="time_primitive_day" class="padding-5">
+                                  <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                                </div>
+                                <div id="time_primitive_month" class="padding-5">
+                                  <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                                </div> 
+                                <div id="time_primitive_year" class="padding-5">
+                                  <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                                </div>
+                              </div>
+                              <div id="time_primitive_year" class="padding-5">
+                                <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+                              </div>
+                            </div>
+                          
+                        </semantic-form-composite-input>
+                      </div>
+                    
                     </div>
 
-                    <div id="person_occupation_notes" class="padding-5">
-                      <semantic-form-text-input label="Notes" placeholder="Insert an annotation ... " for="person_occupation_notes"></semantic-form-text-input>
+                    <div id="person_death_date">
+                      <div id="source_date_composite" class="padding-5">
+                        <semantic-form-composite-input 
+                          label="Death date" 
+                          for='person_death_date' 
+                          new-subject-template="/death/date" 
+                          fields='[[fieldDefinitions
+                            time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                            time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                            time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                            time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
+                          ]]'>
+
+                            <div data-flex-layout="column top-stretch">
+                              <div data-flex-layout="row top-stretch">
+                                <div id="time_primitive_day" class="padding-5">
+                                  <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                                </div>
+                                <div id="time_primitive_month" class="padding-5">
+                                  <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                                </div> 
+                                <div id="time_primitive_year" class="padding-5">
+                                  <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                                </div>
+                              </div>
+                              <div id="time_primitive_year" class="padding-5">
+                                <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+                              </div>
+                            </div>
+                          
+                        </semantic-form-composite-input>
+                      </div>
+                    
                     </div>
 
-                  </div> 
+                  </div>
 
-              </semantic-form-composite-input>
-            </div>
+              </bs-tab>
+              
+              <!-- occupations -->
+              <bs-tab event-key="2" title="Activities">
+                <div data-flex-layout="row top-stretch">
+                  <semantic-form-composite-input
+                    for="person_occupation"
+                    label="Activity"
+                    new-subject-template="/occupation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+                    fields='[[ fieldDefinitions
+                      type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                      person_occupation_subject           = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_subject"
+                      person_occupation_place             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_place"
+                      person_occupation_date              = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_date"
+                      person_occupation_notes             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_notes"
+                    ]]'
+                    >
+                      <div data-flex-layout="column top-stretch">
+
+                        <div data-flex-layout="row top-stretch">
+
+                          <div id="person_occupation_subject" class="padding-5">
+                            <semantic-form-autocomplete-input  
+                              for='person_occupation_subject'
+                              label="Subject" 
+                              placeholder="Choose the subject ..." 
+                            >
+                            </semantic-form-autocomplete-input>
+                          </div> 
+
+                          <div id="person_occupation_place" class="padding-5">
+                            <semantic-form-text-input  
+                              readonly="true"
+                              for='person_occupation_place'
+                              label="Place" 
+                              placeholder="Places not working. Please, use the notes" 
+                            >
+                            </semantic-form-text-input>
+                          </div> 
+
+                          <div id="person_occupation_date" class="padding-5">
+                            <semantic-form-text-input  
+                              readonly="true"
+                              for='person_occupation_date'
+                              label="Date" 
+                              placeholder="Dates not working. Please, use the notes" 
+                            >
+                            </semantic-form-text-input>
+                          </div> 
+
+                        </div>
+
+                        <div id="person_occupation_notes" class="padding-5">
+                          <semantic-form-text-input label="Notes" placeholder="Insert an annotation ... " for="person_occupation_notes"></semantic-form-text-input>
+                        </div>
+
+                      </div> 
+
+                  </semantic-form-composite-input>
+                </div>
+              </bs-tab>
+
+            </bs-tabs>
+
+
           </div>
 
         </div>

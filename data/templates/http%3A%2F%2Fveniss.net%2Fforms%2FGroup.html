@@ -1,0 +1,159 @@
+<semantic-form 
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+
+    actor_representation                = "https://veniss.net/container/fieldDefinitionContainer/actor_representation"
+    
+    group_appellation                   = "https://veniss.net/container/fieldDefinitionContainer/group_appellation"
+    group_formation_date                = "https://veniss.net/container/fieldDefinitionContainer/group_formation_date"
+    group_dissolution_date              = "https://veniss.net/container/fieldDefinitionContainer/group_dissolution_date"
+  ]]'
+>
+  <div class="form-scroll-area">
+    <div class="container-fluid">
+
+      <semantic-form-errors></semantic-form-errors>
+
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor","https://veniss.net/ontology#Group", "https://veniss.net/ontology#Actor"]'></semantic-form-hidden-input>
+
+      <div data-flex-layout="row stretch-stretch">
+
+        <!-- Left -->
+        <div data-flex-self="size-x2">
+
+          <div data-flex-layout="column stretch-stretch">
+
+            <!-- Representation and names -->
+            <div data-flex-layout="row stretch-stretch">
+
+              <div id="source_visual_representation" class="padding-5">
+
+                <semantic-form-file-input 
+                  label="Visual representation"
+                  for="actor_representation"
+                  storage='images'
+                  temp-storage='tmp'
+                  placeholder='Add file here'
+                  name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
+                  media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
+                  resource-query='
+                    CONSTRUCT {
+                      ?__resourceIri__ a rso:EX_File.
+                      ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
+                      ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
+                      ?__resourceIri__ rdfs:label ?__filename__.
+                    } WHERE {}
+                  '
+                  generate-iri-query='
+                    SELECT ?resourceIri {
+                      BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
+                    }
+                  '
+                ></semantic-form-file-input>
+
+              </div>
+
+              <div data-flex-layout="column stretch-stretch" data-flex-self="size-x3">
+
+                <div data-flex-layout="row top-stretch">
+                  <div id="group_appellation" class="padding-5">
+                    <semantic-form-text-input label="Appellation" placeholder="Enter Group name ..." for="group_appellation"></semantic-form-text-input>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <hr>
+
+            <!-- Birth and death -->
+            <div data-flex-layout="row top-stretch">
+
+              <div id="group_formation_date" class="padding-5">
+                <semantic-form-composite-input 
+                  label="Formation date" 
+                  for='group_formation_date' 
+                  new-subject-template="/formation/date" 
+                  fields='[[fieldDefinitions
+                    time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                    time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                    time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                    time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
+                  ]]'>
+
+                    <div data-flex-layout="column top-stretch">
+                      <div data-flex-layout="row top-stretch">
+                        <div id="time_primitive_day" class="padding-5">
+                          <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                        </div>
+                        <div id="time_primitive_month" class="padding-5">
+                          <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                        </div> 
+                        <div id="time_primitive_year" class="padding-5">
+                          <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                        </div>
+                      </div>
+                      <div id="time_primitive_year" class="padding-5">
+                        <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+                      </div>
+                    </div>
+                  
+                </semantic-form-composite-input>
+              </div>
+
+              <div id="group_dissolution_date" class="padding-5">
+                <semantic-form-composite-input 
+                  label="Dissolution date" 
+                  for='group_dissolution_date' 
+                  new-subject-template="/dissolution/date" 
+                  fields='[[fieldDefinitions
+                    time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                    time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                    time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                    time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
+                  ]]'>
+
+                    <div data-flex-layout="column top-stretch">
+                      <div data-flex-layout="row top-stretch">
+                        <div id="time_primitive_day" class="padding-5">
+                          <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                        </div>
+                        <div id="time_primitive_month" class="padding-5">
+                          <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                        </div> 
+                        <div id="time_primitive_year" class="padding-5">
+                          <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                        </div>
+                      </div>
+                      <div id="time_primitive_year" class="padding-5">
+                        <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+                      </div>
+                    </div>
+                  
+                </semantic-form-composite-input>
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+        <!-- Right -->
+        <div>
+          <h3>Related elements</h3>
+        </div>
+
+      </div>
+      
+
+    </div>
+  </div>
+  [[> rsp:FormDefaultActions]]
+</semantic-form>

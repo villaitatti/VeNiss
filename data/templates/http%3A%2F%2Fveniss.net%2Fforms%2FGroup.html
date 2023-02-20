@@ -9,6 +9,8 @@
     actor_representation                = "https://veniss.net/container/fieldDefinitionContainer/actor_representation"
     
     group_appellation                   = "https://veniss.net/container/fieldDefinitionContainer/group_appellation"
+    group_type                          = "https://veniss.net/container/fieldDefinitionContainer/group_type"
+    group_where                         = "https://veniss.net/container/fieldDefinitionContainer/group_where"
     group_formation_date                = "https://veniss.net/container/fieldDefinitionContainer/group_formation_date"
     group_dissolution_date              = "https://veniss.net/container/fieldDefinitionContainer/group_dissolution_date"
   ]]'
@@ -57,12 +59,38 @@
 
               </div>
 
-              <div data-flex-layout="column stretch-stretch" data-flex-self="size-x3">
+              <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
 
                 <div data-flex-layout="row top-stretch">
                   <div id="group_appellation" class="padding-5">
                     <semantic-form-text-input label="Appellation" placeholder="Enter Group name ..." for="group_appellation"></semantic-form-text-input>
                   </div>
+                </div>
+
+                <div data-flex-layout="row top-stretch">
+
+                  <div id="group_type" class="padding-5">
+                    <semantic-form-tree-picker-input 
+                      open-dropdown-on-focus="false"
+                      label="Type" 
+                      for='group_type'
+                      placeholder="Click the + button and drag and drop"
+                      custom-button='{
+                        "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                        "view": "authority-content",
+                        "resource": "http://www.researchspace.org/resource/vocab/actor_types"
+                      }'
+                      tree-patterns='{
+                        "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
+                        "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>"
+                      }'>
+                    </semantic-form-tree-picker-input>
+                  </div>
+
+                  <div id="group_where" class="padding-5">
+                    <semantic-form-text-input readonly="true" label="Where" placeholder="Where not working" for="group_where"></semantic-form-text-input>
+                  </div>
+
                 </div>
 
               </div>

@@ -2,6 +2,7 @@
   id='{{viewId}}-vocab-form' 
   post-action="event"
   subject='{{node}}'
+  browser-persistence="true"
   new-subject-template='https://veniss.net/resource/bibitem/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -19,20 +20,21 @@
   ]]'
 >
   <div class="form-scroll-area">
+      
+    <semantic-form-errors></semantic-form-errors>
+    <semantic-form-recover-notification></semantic-form-recover-notification>
+
+    <semantic-form-hidden-input 
+      for="type" 
+      default-values='[
+        "http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object",
+        "http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression", 
+        "https://veniss.net/ontology#Source_Secondary",
+        "https://veniss.net/ontology#Source"
+      ]'
+    ></semantic-form-hidden-input>      
+
     <div class="container-fluid">
-
-      <semantic-form-errors></semantic-form-errors>
-
-      <semantic-form-hidden-input 
-        for="type" 
-        default-values='[
-          "http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object",
-          "http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression", 
-          "https://veniss.net/ontology#Source_Secondary",
-          "https://veniss.net/ontology#Source"
-        ]'
-      ></semantic-form-hidden-input>      
-
       <div data-flex-layout="column stretch-stretch">
 
         <!-- ID, Authors -->
@@ -307,8 +309,10 @@
           </semantic-form-switch>
 
         </div>
+      </div>
 
     </div>
+  
   </div>
   [[> rsp:FormDefaultActions]]
 </semantic-form>

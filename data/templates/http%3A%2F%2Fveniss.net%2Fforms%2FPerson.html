@@ -2,6 +2,7 @@
   id='{{viewId}}-vocab-form' 
   post-action="event"
   subject='{{node}}'
+  browser-persistence="true"
   new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -22,6 +23,7 @@
   <div class="form-scroll-area">
     <div class="container-fluid">
 
+      <semantic-form-recover-notification></semantic-form-recover-notification>
       <semantic-form-errors></semantic-form-errors>
 
       <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor","https://veniss.net/ontology#Person", "https://veniss.net/ontology#Actor"]'></semantic-form-hidden-input>
@@ -189,15 +191,22 @@
                   <semantic-form-composite-input
                     for="person_occupation"
                     label="Activity"
+                    render-header="false"
                     new-subject-template="/occupation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
                     fields='[[ fieldDefinitions
                       type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
                       person_occupation_subject           = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_subject"
+                      person_occupation_group             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_group"
+
                       person_occupation_place             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_place"
                       person_occupation_date              = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_date"
                       person_occupation_notes             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_notes"
                     ]]'
                     >
+
+
+                      <semantic-form-hidden-input for="type" default-value='frbroo:F51_Pursuit'></semantic-form-hidden-input>
+
                       <div data-flex-layout="column top-stretch">
 
                         <div data-flex-layout="row top-stretch">
@@ -205,12 +214,22 @@
                           <div id="person_occupation_subject" class="padding-5">
                             <semantic-form-autocomplete-input  
                               for='person_occupation_subject'
-                              label="Subject" 
-                              placeholder="Choose the subject ..." 
+                              label="Activity" 
+                              placeholder="Choose the activity ..." 
                             >
                             </semantic-form-autocomplete-input>
                           </div> 
 
+                          <div id="person_occupation_group" class="padding-5">
+                            <semantic-form-autocomplete-input  
+                              for='person_occupation_group'
+                              label="Group" 
+                              placeholder="Enter the group ..." 
+                            >
+                            </semantic-form-autocomplete-input>
+                          </div> 
+
+<!--
                           <div id="person_occupation_place" class="padding-5">
                             <semantic-form-text-input  
                               readonly="true"
@@ -229,7 +248,7 @@
                               placeholder="Dates not working. Please, use the notes" 
                             >
                             </semantic-form-text-input>
-                          </div> 
+                          </div> -->
 
                         </div>
 

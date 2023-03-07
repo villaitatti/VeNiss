@@ -1,0 +1,66 @@
+<semantic-form
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  browser-persistence="true"
+  new-subject-template='https://veniss.net/resource/vocab/actor_types/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    is_listed_in                        = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+
+    vocab_entry_label                   = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
+    vocab_entry_broader                 = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_broader"
+    vocab_entry_equivalent              = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_equivalent"
+  ]]'
+>
+
+  <div class="form-scroll-area">
+    <div class="container-fluid">
+
+      <semantic-form-recover-notification></semantic-form-recover-notification>
+      <semantic-form-errors></semantic-form-errors>
+
+      <semantic-form-hidden-input for="type" default-values='["http://www.w3.org/2004/02/skos/core#Concept","https://veniss.net/ontology#Vocab_Entry"]'></semantic-form-hidden-input>
+      <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/actor_types"></semantic-form-hidden-input>
+
+
+      <div data-flex-layout="column stretch-stretch">
+
+        <div id="vocab_entry_label" class="padding-5">
+          <semantic-form-text-input languages='["it", "en"]' label="Name" placeholder="Enter name ..." for="vocab_entry_label"></semantic-form-text-input>
+        </div>
+
+        <div id="vocab_entry_equivalent" class="padding-5">
+          <semantic-form-text-input label="Equal AAT entry" placeholder="Enter AAT ID ..." for="vocab_entry_equivalent"></semantic-form-text-input>
+        </div>
+        
+        <hr>
+
+        <div id="vocab_entry_broader" class="padding-5">
+
+          <bs-alert bs-style="danger">
+            <p><strong>Attention!</strong> Changing parent entry may have unexpected results.</p>
+          </bs-alert>
+          
+          <semantic-form-tree-picker-input 
+            label="Parent entry" 
+            placeholder="Select parent entry ..." 
+            default-value="{{broader}}" 
+            for="vocab_entry_broader"
+            tree-patterns='{
+              "relationPattern": "?item skos:broader ?parent", 
+              "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor>"
+            }'>
+          </semantic-form-tree-picker-input>
+              
+          
+        </div>
+
+
+      </div>
+
+    </div>
+  </div>
+
+[[> http://veniss.net/forms/Buttons]]
+</semantic-form>

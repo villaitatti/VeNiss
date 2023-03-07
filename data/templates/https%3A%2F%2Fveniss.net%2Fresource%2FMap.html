@@ -82,22 +82,49 @@
         url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}'
         identifier='light'
         name='Light'
-        level='basemap'
+        level='overlay'
         author=""
         location=""
         year=""></tiles-layer>
-     
       <tiles-layer
-        thumbnail='/assets/images/basemaps_thumbnails_satellite.jpg'
-        url='/proxy/mapbox/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}'
-        identifier='satellite'
-        name='Satellite View' 
+        thumbnail='/assets/images/groad.jpg'
+        url='http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}'
+        identifier='GRoadmap'
+        name='Google Roadmap' 
         level='basemap'
-        author=""
+        author="Google"
         location=""
-        year="">
+        year="2023">
       </tiles-layer>
-
+      <tiles-layer
+        thumbnail='/assets/images/gsatellite.jpg'
+        url='http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
+        identifier='GSatellite'
+        name='Google Satellite' 
+        level='basemap'
+        author="Google"
+        location=""
+        year="2023">
+      </tiles-layer>
+      <tiles-layer
+      thumbnail='/assets/images/ghybrid.jpg'
+      url='http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+      identifier='GHybrid'
+      name='Google Hybrid' 
+      level='basemap'
+      author="Google"
+      location=""
+      year="2023">
+      </tiles-layer>
+      <tiles-layer
+      thumbnail='/assets/images/basemaps_thumbnails_ortofoto.jpg'
+      url='http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}'
+      identifier='ortofoto_geoportale'
+      name='Ortofoto Geoportale'
+      level='basemap'
+      author="Comune di Venezia"
+      location=""
+      year="2022"></tiles-layer>
     </semantic-map>
   </semantic-search-result>
 </div>

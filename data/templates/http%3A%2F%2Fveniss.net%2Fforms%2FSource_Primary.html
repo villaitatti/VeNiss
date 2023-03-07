@@ -2,6 +2,7 @@
   id='{{viewId}}-vocab-form' 
   post-action="event"
   subject='{{node}}'
+  browser-persistence="true"
   new-subject-template="https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -26,9 +27,9 @@
   ]]'
 >
 <div class="form-scroll-area">
-
-  <semantic-form-recover-notification></semantic-form-recover-notification>
   <semantic-form-errors></semantic-form-errors>
+  <semantic-form-recover-notification></semantic-form-recover-notification>
+
   <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/ontology#Source", "https://veniss.net/ontology#Source_Primary"]'></semantic-form-hidden-input>
 
   <div class="container-fluid">
@@ -100,7 +101,7 @@
           <div data-flex-layout="row top-stretch">
 
             <div id="source_author" class="padding-5">
-              <semantic-form-select-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-select-input>
+              <semantic-form-autocomplete-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-autocomplete-input>
             </div>
             
             <div id="source_date_composite" class="padding-5">

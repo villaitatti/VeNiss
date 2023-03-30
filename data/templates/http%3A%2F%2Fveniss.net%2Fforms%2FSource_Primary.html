@@ -140,13 +140,35 @@
                   open-dropdown-on-focus="false"
                   label="Archival Location" 
                   for='source_location'
-                  placeholder="Search for things"
+                  placeholder="Drop here the archival unit containing this source ... "
                   custom-button='{
                     "iri": "http://www.researchspace.org/resource/ThinkingFrames",
                     "view": "authority-content",
                     "resource": "http://www.researchspace.org/resource/vocab/archives"
                   }'
-                  query-item-label="veniss:has_full_path"
+                  query-item-label='
+                    select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
+                      {
+                        select ?class ?lbl
+                        where {
+                          ?query_item_iri crm:P46i_forms_part_of* ?mid.
+                          ?mid crm:P46i_forms_part_of* ?class.
+                          ?class rdfs:label ?class_label
+                          
+                          optional {
+                            ?class crm:P1_is_identified_by ?acronym.
+                            ?acronym a crm:E41_Appellation;
+                              crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                              rdfs:label ?acronym_lbl 
+                          }
+
+                          BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                        }
+                        group by ?class ?lbl
+                        order by desc(count(?mid))
+                      }
+                    }
+                  '
                   tree-patterns='{
                     "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
                     "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"

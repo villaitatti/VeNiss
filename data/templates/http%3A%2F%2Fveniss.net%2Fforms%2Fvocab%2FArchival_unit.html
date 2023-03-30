@@ -82,7 +82,7 @@
               {
                 select ?class ?lbl
                 where {
-                  <{{node}}> crm:P46i_forms_part_of* ?mid.
+                  ?query_item_iri crm:P46i_forms_part_of* ?mid.
                   ?mid crm:P46i_forms_part_of* ?class.
                   ?class rdfs:label ?class_label
                   

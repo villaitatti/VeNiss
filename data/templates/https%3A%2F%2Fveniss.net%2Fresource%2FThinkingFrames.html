@@ -39,19 +39,11 @@
       initial-view='{"view": "[[urlParam "view"]]", "resource": "[[urlParam "resource"]]" [[#if (urlParam "entityTypeConfig")]] , "data": {"entityTypeConfig": "[[urlParam "entityTypeConfig"]]"} [[/if]]}'
     [[/if]] 
     [[#if view]]
-      initial-view='{"view": "[[view]]", "resource": "[[resource]]"}'
+      initial-view='{"resource": "[[resource]]"}'
     [[/if]] 
 
     views='[
-    {
-    	"id": "simple-search",
-      "label": "Search",
-      "iconClass": "rs-icon rs-icon-semantic_search",
-      "checkQuery": "ASK { ?value a rso:Semantic_Search . }",
-      "template": "{{> simpleSearchTemplate}}",
-      "resourceNotRequired": true,
-      "type": "search"
-    },
+   
 
     {
       "id": "list-actor",
@@ -60,17 +52,26 @@
       "iconClass": "rs-icon rs-icon-user_round veniss-actors",
       "resourceNotRequired": true,
       "template": "{{> listActor}}",
-      "type": "authoring"
+      "type": "view"
+    },
+    {
+      "id": "list-events",
+      "label": "Events",
+      "description": "Navigate through existing events or add new one",
+      "iconClass": "rs-icon rs-icon-date veniss_events",
+      "resourceNotRequired": true,
+      "template": "{{> listEvents}}",
+      "type": "view"
     },
 
-        {
+    {
       "id": "list-sources",
       "label": "Sources",
       "description": "Navigate through existing sources or add new one",
       "iconClass": "rs-icon rs-icon-page veniss-sources",
       "resourceNotRequired": true,
       "template": "{{> listSources}}",
-      "type": "authoring"
+      "type": "view"
     },
     {
       "id": "add-builtwork",
@@ -79,75 +80,10 @@
       "iconClass": "rs-icon rs-icon-placeholder_woodblock veniss-builtworks",
       "resourceNotRequired": true,
       "template": "{{> addBuiltwork}}",
-      "type": "authoring"
-    },
-    [[!--
-      {
-        "id": "list-builtwork",
-        "label": "List Builtworks",
-        "description": "List and filter through all builtworks",
-        "iconClass": "rs-icon rs-icon-placeholder_painting",
-        "resourceNotRequired": true,
-        "template": "{{> listBuiltwork}}",
-        "type": "view"
-      },
-
-      {
-        "id": "list-sources",
-        "label": "Browse Sources",
-        "description": "Browse through the Sources",
-        "iconClass": "rs-icon rs-icon-influence",
-        "resourceNotRequired": true,
-        "template": "{{> listSources}}",
-        "type": "view"
-      },
-    --]]
-
-    {
-    	"id": "entity-search",
-      "label": "Search",
-      "iconClass": "rs-icon rs-icon-semantic_search",
-      "checkQuery": "ASK { ?value a rso:Semantic_Search . }",
-      "template": "{{> entitySearchTemplate}}",
-      "resourceNotRequired": true,
-      "type": "search-by-entity-type"
-    },
-
-    {
-    	"id": "resource",
-      "label": "Entity record",
-      "description": "Drag and drop an entity here to display the entity record",
-      "dropAreaDescription": "Drag and drop any entity here to display the entity record",
-      "iconClass": "iconmoon iconmoon-file-empty",
-      "template": "{{> resourceTemplate}}",
       "type": "view"
     },
-
-    {
-    	"id": "iiif",
-      "label": "Image Viewer",
-      "description": "Drag and drop an entity here to view and compare related high-resolution images",
-      "dropAreaDescription": "Drag and drop any entity here to view and compare related high-resolution images",
-      "iconClass": "rs-icon rs-icon-images",
-      "template": "{{> iiifTemplate}}",
-      "frameVariable": "miradorVariable",
-      "type": "view"
-    },
-
-    {
-    	"id": "map",
-      "label": "Map",
-      "description": "Drag and drop a place here to explore related geographic information",
-      "dropAreaDescription": "Drag and drop here any entity of type PLACE (with associated geographic coordinates) to explore related geographic information",
-      "iconClass": "rs-icon rs-icon-map_location_grouped",
-      "checkQuery": "ASK { 
-        ?value a crm:E53_Place . 
-        ?value <http://www.cidoc-crm.org/cidoc-crm/P168_place_is_defined_by> ?coordinates . }",
-      "template": "{{> mapTemplate}}",
-      "type": "view"
-    },
-
-    {
+   
+ {
     	"id": "entity-editor",
       "label": "Entity Editor",
       "description": "Creare and author an entity through custom forms",
@@ -166,89 +102,7 @@
       "resourceNotRequired": true,
       "type": "authoring"
     }, 
-
-    {
-    	"id": "authority-content",
-      "label": "Authority Content",
-      "iconClass": "rs-icon rs-icon-form_edit",
-      "template": "{{> authorityContent}}",
-       "type": "authoring-content"
-    },
-
-    {
-    	"id": "authority-entity-configuration",
-      "label": "Authority and Entity Configuration",
-      "iconClass": "rs-icon rs-icon-form_edit",
-      "template": "{{> authorityAndEntityConfiguration}}",
-      "resourceNotRequired": true,
-      "type": "configuration"
-    },
-
-    {
-    	"id": "knowledge-map",
-      "label": "Knowledge Map",
-      "description": "Express research thinking and processes as networks of relations",
-      "iconClass": "rs-icon rs-icon-diagram",
-      "template": "{{> ontodiaTemplate}}",
-      "itemBodyTemplate": "{{> itemBodyTemplate}}",
-      "resourceNotRequired": true,
-      "frameVariable": "ontodiaVariable",
-      "type": "authoring"
-    },
-
-    {
-    	"id": "semantic-narrative",
-      "label": "Semantic Narrative",
-      "description": "Compose and share your research through an evolving narrative",
-      "iconClass": "rs-icon rs-icon-page",
-      "template": "{{> semanticNarrativeTemplate}}",
-      "itemBodyTemplate": "{{> itemBodyTemplate}}",
-      "resourceNotRequired": true,
-      "frameVariable": "narrativeVariable",
-      "checkQuery": "ASK { ?value a rso:Semantic_Narrative . }",
-      "type": "authoring"
-    },
-
-    {
-    	"id": "objectImageObservation",
-      "label": "Object Observations through Images",
-      "description": "Drag and drop an object here to combine image annotations with form authoring",
-      "dropAreaDescription": "Drag and drop any entity of type MAN-MADE OBJECT here to combine image annotations with data authoring through forms",
-      "iconClass": "rs-icon rs-icon-area_annotation",
-      "template": "{{> objectImageObservationTemplate}}",
-      "checkQuery": "
-        PREFIX ontodia: <http://ontodia.org/schema/v1#>
-        PREFIX ldp: <http://www.w3.org/ns/ldp#>
-
-        ASK {
-          {
-            ?value a ontodia:Diagram .
-            ?value ontodia:layoutData/ontodia:hasElement/ontodia:resource ?o .
-            ?o a/rdfs:subClassOf* crm:E18_Physical_Thing .
-            ?o crm:P138i_has_representation|rso:PX_has_main_representation ?image .
-          } UNION {
-            ?value a Platform:Set .
-            ?value ldp:contains / Platform:setItem ?o .
-            ?o a/rdfs:subClassOf* crm:E18_Physical_Thing .
-            ?o crm:P138i_has_representation|rso:PX_has_main_representation ?image . 
-          } UNION {
-            ?value a/rdfs:subClassOf* crm:E18_Physical_Thing .
-            ?value crm:P138i_has_representation|rso:PX_has_main_representation ?image .
-          }
-      }",
-      "unique": true,
-      "type": "authoring"
-    },
-
-[[!--     {
-    	"id": "featureSimilarityKm",
-      "label": "Exploring and Comparing (Visual) Features",
-      "iconClass": "rs-icon rs-icon-diagram",
-      "template": "{{> featureSimilarityKm }}",
-      "itemBodyTemplate": "{{> itemBodyTemplate}}",
-      "frameVariable": "ontodiaVariable",
-      "type": "authoring"
-    }, --]]
+    
 
     {
     	"id": "system-narrative",
@@ -299,24 +153,10 @@
     }
     ]'
 
-    [[#if (hasPermission "forms:ldp:*")]]
-    linked-views='[{
-      "id": "image-graph-authoring",
-      "label": "Image Graph Authoring",
-      "description": "Drag and drop an entity here to combine image annotations with knowledge map authoring",
-      "dropAreaDescription": "Drag and drop an entity here to combine image annotations with data authoring through the knowledge map system",
-      "iconClass": "rs-icon rs-icon-image_annotation_grouped",
-      "viewIds": ["knowledge-map", "iiif"],
-      "resourceNotRequired": true,
-      "type": "authoring"
-    }
-    ]'
-    [[/if]]
-
     left-panels='[{"label": "Clipboard", "template": "{{> clipboard}}"}]'
     right-panels='[{"label": "Details", "template": "{{> details}}"}]'
     >
-    <template id='clipboard'>
+     <template id='clipboard'>
         [[> rsp:Clipboard id="clipboard" defaultViewMode="grid"]]
     </template>
     <template id='details'>
@@ -353,10 +193,13 @@
       [[> rsp:EntityEditor]]
     </template>
     <template id='listActor'>
-      [[> veniss:List_actors]]
+      [[> veniss:List_Actors]]
     </template>
     <template id='listSources'>
       [[> veniss:List_Sources]]
+    </template>
+    <template id='listEvents'>
+      [[> veniss:List_Events]]
     </template>
     <template id='authorityEditor'>
       [[> rsp:AuthorityEditor]]
@@ -532,6 +375,7 @@
     <template id='mapEntitySearch'>
       [[> rsp:MapEntitySearch]]
     </template>
+   
     
   </rs-dashboard>
 </div>

@@ -1,0 +1,35 @@
+<semantic-form 
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+  ]]'
+>
+  <div class="form-scroll-area">
+    <div class="container-fluid">
+
+      <semantic-form-errors></semantic-form-errors>
+
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E5_Event", "https://veniss.net/ontology#Event"]'></semantic-form-hidden-input>
+
+      <div data-flex-layout="row stretch-stretch">
+
+        <!-- Left -->
+        <div data-flex-self="size-x2">
+
+        </div>
+
+        <!-- Right -->
+        <div>
+          <h3>Related elements</h3>
+        </div>
+
+      </div>
+      
+
+    </div>
+  </div>
+  [[> rsp:FormDefaultActions]]
+</semantic-form>

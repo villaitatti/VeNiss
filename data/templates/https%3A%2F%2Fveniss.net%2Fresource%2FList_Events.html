@@ -40,8 +40,33 @@
               <semantic-search-result>
                 <semantic-table 
                   id='table-result'
-                  query='SELECT DISTINCT ?subject ?label WHERE { }' 
+                  query='
+                    SELECT DISTINCT ?subject ?label WHERE 
+                    { 
+                      ?subject rdfs:label ?label; 
+                    }' 
+                  column-configuration='[
+                    {
+                      "displayName": "Name",
+                      "cellTemplate": "{{> name}}"
+                    }
+                  ]'
                 >
+                  <template id="name">
+                    <mp-event-trigger 
+                      id='{{subject.value}}-add-frame' 
+                      type='Dashboard.AddFrame' 
+                      data='{
+                        "resourceIri": "{{subject.value}}", 
+                        "viewId": "entity-editor"
+                      }' 
+                      targets='["thinking-frames"]'>
+                        <a href="#">
+                          {{label.value}}
+                        </a>
+                    </mp-event-trigger>  
+                  </template>
+
                 </semantic-table>
               </semantic-search-result>
 

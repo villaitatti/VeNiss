@@ -73,12 +73,12 @@
       "type": "authoring"
     },
     {
-      "id": "add-builtwork",
+      "id": "list-builtworks",
       "label": "Builtworks",
-      "description": "Add a new builtwork",
+      "description": "Navigate through existing Builtworks or create a new one.",
       "iconClass": "rs-icon rs-icon-placeholder_woodblock veniss-builtworks",
       "resourceNotRequired": true,
-      "template": "{{> addBuiltwork}}",
+      "template": "{{> listBuiltworks}}",
       "type": "authoring"
     },
     [[!--
@@ -357,6 +357,9 @@
     </template>
     <template id='listSources'>
       [[> veniss:List_Sources]]
+    </template>
+    <template id='listBuiltworks'>
+      [[> veniss:List_builtworks ]]
     </template>
     <template id='authorityEditor'>
       [[> rsp:AuthorityEditor]]

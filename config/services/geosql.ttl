@@ -71,7 +71,11 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 			sp:predicate veniss_sql:eoe ;
 			sp:object :_eoe
 		]
-    
+        [
+			sp:subject :_results ;
+			sp:predicate veniss_sql:tableName ;
+			sp:object :_tablename
+		]
 	) ;
 	spin:constraint
 	[
@@ -113,6 +117,13 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 		a spl:Argument ;
 		rdfs:comment "Date to filter" ;
 		spl:predicate :_date ;
+		spl:valueType xsd:string
+  ] ;
+    spin:constraint
+	[
+		a spl:Argument ;
+		rdfs:comment "Table Name as parameter" ;
+		spl:predicate :_tablename ;
 		spl:valueType xsd:string
   ] ;
 	spin:column
@@ -164,6 +175,7 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 		spl:predicate :_bw_id ;
 		spl:valueType xsd:string
 	] ;
+	
 	rs_sql_sail:includesSQLQuery
 	[
 		rs_sql_sail:hasQueryId "base" ;
@@ -178,4 +190,10 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 	[
 		rs_sql_sail:hasQueryId "test" ;
 		rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_island_1697 UNION select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from sansecondo_buildings_1697"
+	] ;
+	rs_sql_sail:includesSQLQuery
+	[
+		rs_sql_sail:hasQueryId "island_form" ;
+		rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from ?tablename "
 	] .
+

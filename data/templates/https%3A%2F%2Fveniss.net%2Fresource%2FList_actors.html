@@ -80,7 +80,9 @@
                       BIND(CONCAT("di ", ?patronymic_label) AS ?patronymic)
                     }
                     OPTIONAL {
-                      ?subject rdfs:label ?group_label
+                      ?subject crm:P1_is_identified_by ?appellation.
+                      ?appellation crm:P2_has_type <https://veniss.net/resource/type/appellation>;
+                        rdfs:label ?group_label
                     }
                     BIND(COALESCE(?given_name, "") AS ?given_name_final)
                     BIND(COALESCE(?family_name, "") AS ?family_name_final)

@@ -1,0 +1,86 @@
+<semantic-form 
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+
+    event_label                         = "https://veniss.net/container/fieldDefinitionContainer/event_label"
+    event_date                          = "https://veniss.net/container/fieldDefinitionContainer/event_date"
+    event_synopsis                      = "https://veniss.net/container/fieldDefinitionContainer/event_synopsis"
+    event_typology                      = "https://veniss.net/container/fieldDefinitionContainer/event_typology"
+  ]]'
+>
+  <div class="form-scroll-area">
+    <div class="container-fluid">
+
+      <semantic-form-errors></semantic-form-errors>
+
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E5_Event", "https://veniss.net/ontology#Event"]'></semantic-form-hidden-input>
+
+      <div data-flex-layout="row stretch-stretch">
+
+        <!-- Left -->
+        <div data-flex-self="size-x2">
+
+          <div data-flex-layout="column stretch-stretch">
+
+            <div id="event_label" class="padding-5">
+              <semantic-form-text-input label="Name" placeholder="Enter event name ..." for="event_label" languages='["en", "it"]'></semantic-form-text-input>
+            </div>
+
+            <div id="event_synopsis" class="padding-5">
+              <semantic-form-text-input label="Synopsis" multiline="true" placeholder="Enter event synopsis ..." for="event_synopsis"></semantic-form-text-input>
+            </div>
+
+            <div id="event_typology" class="padding-5">
+              <semantic-form-tree-picker-input label="Typology" placeholder="Select typology ..." for="event_typology"></semantic-form-tree-picker-input>
+            </div>
+
+            <div id="event_date" class="padding-5">
+              <semantic-form-composite-input 
+                label="Event date" 
+                for='event_date' 
+                new-subject-template="/date" 
+                fields='[[fieldDefinitions
+                  time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                  time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                  time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                  time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
+                ]]'>
+
+                  <div data-flex-layout="column top-stretch">
+                    <div data-flex-layout="row top-stretch">
+                      <div id="time_primitive_day" class="padding-5">
+                        <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                      </div>
+                      <div id="time_primitive_month" class="padding-5">
+                        <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                      </div> 
+                      <div id="time_primitive_year" class="padding-5">
+                        <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                      </div>
+                    </div>
+                    <div id="time_primitive_year" class="padding-5">
+                      <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+                    </div>
+                  </div>
+              </semantic-form-composite-input>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div>
+          <h3>Related elements</h3>
+        </div>
+
+      </div>
+      
+
+    </div>
+  </div>
+  [[> rsp:FormDefaultActions]]
+</semantic-form>

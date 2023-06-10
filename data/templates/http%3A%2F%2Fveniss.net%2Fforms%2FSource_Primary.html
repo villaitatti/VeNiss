@@ -28,7 +28,6 @@
 >
 <div class="form-scroll-area">
   <semantic-form-errors></semantic-form-errors>
-  <semantic-form-recover-notification></semantic-form-recover-notification>
 
   <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/ontology#Source", "https://veniss.net/ontology#Source_Primary"]'></semantic-form-hidden-input>
 
@@ -72,11 +71,11 @@
             <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
 
               <div id="source_attributed_title" class="padding-5">
-                <semantic-form-text-input languages='["en", "it"]' label="Attributed title" for="source_attributed_title"></semantic-form-text-input>
+                <semantic-form-text-input placeholder="Enter Attributed title ..." languages='["en", "it"]' label="Attributed title" for="source_attributed_title"></semantic-form-text-input>
               </div>
 
               <div id="source_original_title" class="padding-5">
-                <semantic-form-text-input languages='["en", "it"]' label="Original title" for="source_original_title"></semantic-form-text-input>
+                <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it"]' label="Original title" for="source_original_title"></semantic-form-text-input>
               </div>
 
               <div id="source_typology" class="padding-5">
@@ -140,13 +139,35 @@
                   open-dropdown-on-focus="false"
                   label="Archival Location" 
                   for='source_location'
-                  placeholder="Search for things"
+                  placeholder="Drop here the archival unit containing this source ... "
                   custom-button='{
                     "iri": "http://www.researchspace.org/resource/ThinkingFrames",
                     "view": "authority-content",
                     "resource": "http://www.researchspace.org/resource/vocab/archives"
                   }'
-                  query-item-label="veniss:has_full_path"
+                  query-item-label='
+                    select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
+                      {
+                        select ?class ?lbl
+                        where {
+                          ?query_item_iri crm:P46i_forms_part_of* ?mid.
+                          ?mid crm:P46i_forms_part_of* ?class.
+                          ?class rdfs:label ?class_label
+                          
+                          optional {
+                            ?class crm:P1_is_identified_by ?acronym.
+                            ?acronym a crm:E41_Appellation;
+                              crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                              rdfs:label ?acronym_lbl 
+                          }
+
+                          BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                        }
+                        group by ?class ?lbl
+                        order by desc(count(?mid))
+                      }
+                    }
+                  '
                   tree-patterns='{
                     "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
                     "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
@@ -297,6 +318,7 @@
 
   #source_location .RemovableBadge__content, #source_location .RemovableBadge__remove {
     max-width: none!important;
+    text-transform: none!important;
     color: black!important;
   }
 </style>

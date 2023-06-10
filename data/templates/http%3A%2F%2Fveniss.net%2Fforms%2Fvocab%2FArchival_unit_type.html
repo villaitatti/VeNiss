@@ -1,0 +1,29 @@
+<semantic-form
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  persistence='{"type": "ldp"}'
+  new-subject-template='https://veniss.net/resource/vocabulary/{{{{raw}}}}{{vocab_entry_label_single}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    is_listed_in                        = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+
+    vocab_entry_label_single            = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label_single"
+    vocab_entry_equivalent              = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_equivalent"
+  ]]'
+>
+<semantic-form-errors></semantic-form-errors>
+<div class="form-scroll-area">
+  <semantic-form-hidden-input for="type" default-value='http://www.w3.org/2004/02/skos/core#Concept'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archival_structures"></semantic-form-hidden-input>
+
+  <!-- Source name-->
+  <semantic-form-text-input label="Identifier" for="vocab_entry_label_single"></semantic-form-text-input>
+
+  <!-- Equivalent Class -->
+  <semantic-form-text-input label="Getty ID" for="vocab_entry_equivalent"></semantic-form-text-input>
+
+</div>
+
+[[> rsp:FormDefaultActions]]
+</semantic-form>

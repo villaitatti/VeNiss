@@ -3,7 +3,7 @@
     <semantic-map
       id="search-map"
       target-controls='["search-map-control"]'
-      query="SELECT DISTINCT ?bw_id ?subject ?wkt ?name ?function ?use ?typology ?bob ?boe ?eob ?eoe WHERE {
+      query="SELECT DISTINCT ?bw_id ?subject ?wkt ?name ?function ?use ?typology ?bob (year(?start) as ?eob) (year(?end) as ?boe) ?eoe WHERE {
         ?subject rdfs:label ?name.
         OPTIONAL {
           ?subject veniss_ontology:has_use ?useNode.
@@ -22,6 +22,14 @@
           FILTER (lang(?function) = 'en').
           FILTER (STR(?function) != 'Function').
         }
+
+        ?subject crm:P108i_was_produced_by ?production.
+        ?production crm:P4_has_time-span ?production_ts.
+        ?production_ts crm:P81a_end_of_the_begin ?start.
+        
+        ?subject crm:P13i_was_destroyed_by ?destruction.
+        ?destruction crm:P4_has_time-span ?destruction_ts.
+        ?destruction_ts crm:P82a_begin_of_the_end ?end.
       }
 
       

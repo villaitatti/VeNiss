@@ -5,6 +5,18 @@
 
   <semantic-search
   
+    categories='{
+      "<http://www.w3.org/2001/XMLSchema#date>": [{
+        "kind": "date-range",
+        "datatype": "http://www.w3.org/2001/XMLSchema#date",
+        "queryPattern": "{
+          $subject ?__relation__ ?date .
+          FILTER(?date <= ?__dateEndValue__) .
+          FILTER(?date >= ?__dateBeginValue__) .
+        }"
+      }]
+    }' 
+
     search-profile='{
       "categories": [
         {
@@ -32,6 +44,12 @@
           "hasRange": "<https://veniss.net/ontology#Entry>"
         },
         {
+          "iri": "<https://veniss.net/ontology#start_date>",
+          "label": "Construction date",
+          "hasDomain": "<https://veniss.net/ontology#Builtwork>",
+          "hasRange": "<http://www.w3.org/2001/XMLSchema#date>"
+        },
+        {
           "iri": "<https://veniss.net/ontology#has_use>",
           "label": "has use",
           "hasDomain": "<https://veniss.net/ontology#Builtwork>",
@@ -55,9 +73,9 @@
           <semantic-search-result>
             <semantic-table 
               id='table' 
-              query='SELECT ?label ?island ?construction_date ?function ?typology ?use WHERE {
+              query='SELECT ?label ?island (YEAR(?start) as ?construction_year) ?function ?typology ?use WHERE {
                 ?subject rdfs:label ?label;
-                  veniss_ontology:start_date ?construction_date;
+                  veniss_ontology:start_date ?start;
                   veniss_ontology:island ?island;
                   veniss_ontology:wkt ?wkt;
                   veniss_ontology:has_function ?function;

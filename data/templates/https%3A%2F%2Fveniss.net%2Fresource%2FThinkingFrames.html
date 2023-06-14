@@ -55,6 +55,15 @@
       "type": "view"
     },
     {
+      "id": "structured-search",
+      "label": "Structured Search",
+      "description": "Perform complex queries",
+      "iconClass": "rs-icon rs-icon-search",
+      "resourceNotRequired": true,
+      "template": "{{> structuredSearch}}",
+      "type": "view"
+    },
+    {
       "id": "list-events",
       "label": "Events",
       "description": "Navigate through existing events or add new one",
@@ -251,6 +260,9 @@
     </template>
     <template id='listActor'>
       [[> veniss:List_Actors]]
+    </template>
+    <template id='structuredSearch'>
+      [[> veniss:Structured_Search]]
     </template>
     <template id='listSources'>
       [[> veniss:List_Sources]]

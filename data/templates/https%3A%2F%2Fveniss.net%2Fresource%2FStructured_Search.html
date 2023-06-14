@@ -1,0 +1,103 @@
+<div class="page">
+
+  <h1>Structured search</h1> 
+
+
+  <semantic-search
+  
+    search-profile='{
+      "categories": [
+        {
+          "iri": "<https://veniss.net/ontology#Builtwork>",
+          "label": "Builtwork"
+        },
+        {
+          "iri": "<https://veniss.net/ontology#Entry>",
+          "label": "Typology"
+        },
+        {
+          "iri": "<http://www.w3.org/2004/02/skos/core#Concept>",
+          "label": "Use"
+        },
+        {
+          "iri": "<http://www.w3.org/2001/XMLSchema#date>",
+          "label": "Date"
+        }
+      ],
+      "relations": [
+        {
+          "iri": "<https://veniss.net/ontology#has_typology>",
+          "label": "has typology",
+          "hasDomain": "<https://veniss.net/ontology#Builtwork>",
+          "hasRange": "<https://veniss.net/ontology#Entry>"
+        },
+        {
+          "iri": "<https://veniss.net/ontology#has_use>",
+          "label": "has use",
+          "hasDomain": "<https://veniss.net/ontology#Builtwork>",
+          "hasRange": "<http://www.w3.org/2004/02/skos/core#Concept>"
+        }
+      ]
+    }'
+
+  >
+    <semantic-search-query-builder><!-- 2. search definition --></semantic-search-query-builder> 
+
+    <semantic-search-facet><!-- 3. faceting --></semantic-search-facet> 
+
+    <semantic-search-result-holder>
+
+      <bs-tabs unmount-on-exit=true id='search-results' animation=false>
+
+        <bs-tab event-key="1" title="Table">
+
+        <semantic-search-result>
+          <semantic-search-result>
+            <semantic-table 
+              id='table' 
+              query='SELECT ?label ?island ?construction_date ?function ?typology ?use WHERE {
+                ?subject rdfs:label ?label;
+                  veniss_ontology:start_date ?construction_date;
+                  veniss_ontology:island ?island;
+                  veniss_ontology:wkt ?wkt;
+                  veniss_ontology:has_function ?function;
+                  veniss_ontology:has_typology ?typology;
+                  veniss_ontology:has_use ?use;
+              }'>
+            </semantic-table>
+          </semantic-search-result>
+        </semantic-search-result>
+
+        </bs-tab>
+
+        <bs-tab event-key="2" title="Map">
+          <semantic-search-result>
+            <semantic-search-result>
+              <semantic-map 
+                id='map' 
+                query='SELECT ?label ?island ?construction_date ?function ?typology ?use ?wkt WHERE {
+                  ?subject rdfs:label ?label;
+                    veniss_ontology:start_date ?construction_date;
+                    veniss_ontology:island ?island;
+                    veniss_ontology:wkt ?wkt;
+                    veniss_ontology:has_function ?function;
+                    veniss_ontology:has_typology ?typology;
+                    veniss_ontology:has_use ?use;
+                }'>
+              </semantic-map>
+            </semantic-search-result>
+        </bs-tab>
+
+      </bs-tabs>
+
+    </semantic-search-result-holder>
+  </semantic-search>
+
+</div>
+
+<style>
+  .page{
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+</style>

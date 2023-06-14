@@ -46,15 +46,82 @@
           <div id="mapNavigatorContainer">
             <semantic-search-result>
               <semantic-table
-              id="table"
-              number-of-displayed-rows="1000"
-              query='SELECT DISTINCT ?iri WHERE 
-              { 
-                bind(?subject as ?iri)
-                ?subject a veniss_ontology:Builtwork
-            }'
-            >
-            </semantic-table>
+                id="table"
+                number-of-displayed-rows="1000"
+                query='SELECT DISTINCT ?iri ?label ?type ?image_name WHERE 
+                { 
+
+                  ?subject a veniss_ontology:Builtwork.
+
+                  ?relation1 a veniss_ontology:Relation;
+                    crmpc:P01_has_domain ?event;
+                    crmpc:P02_has_range ?subject.
+              
+                  ?relation2 a veniss_ontology:Relation;
+                    crmpc:P01_has_domain ?event;
+                    crmpc:P02_has_range ?object.
+                  
+                  optional {?object veniss_ontology:demo-type ?type}
+
+                  optional {
+                    ?object rdfs:label ?label.
+                  }
+
+                  OPTIONAL {
+                    ?object rso:PX_has_main_representation $representation.
+                    $representation a rso:EX_Digital_Image;
+                      crm:P1_is_identified_by $value.
+                  
+                    ?value rso:PX_has_file_name ?image_name
+                  }
+
+                  BIND(?object as ?iri)
+                }'
+                tuple-template='{{>tupleTemplate}}'
+              >
+              <template id='tupleTemplate'>
+
+                <bs-row class="demo-navigator">
+                  <bs-col sm="3" md="3">
+                    {{#if image_name}}
+                      <img class="demo-image" src="../../assets/images/demo/{{image_name.value}}" alt="{{label.value}}" title="{{label.value}}">
+                    {{else}}
+                     
+                            <mp-resource-thumbnail style="height: 100px" iri='{{iri.value}}' class='detail-img'>
+                                <mp-resource-thumbnail-fallback>
+                                    <with-types iri='{{iri.value}}'
+                                            template='{{> noImage}}'
+                                            [[> rsp:TypeMappings]]
+                                        >
+                                        <template id="noImage">
+                                            <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
+                                        </template>
+                                    </with-types>
+                                </mp-resource-thumbnail-fallback>
+                            </mp-resource-thumbnail>
+                    {{/if}}
+
+                  </bs-col>
+
+                  <bs-col sm="9" md="9">
+                    <bs-row>
+                      <h5 class="demo-type">
+                        {{#if type}}
+                          {{type.value}}
+                        {{else}}
+                          iconographic source
+                        {{/if}}
+                      </h5>
+                    </bs-row>
+                    <bs-row>
+                      {{label.value}}
+                    </bs-row>
+                  </bs-col>
+                <bs-row>
+
+              </template>
+
+              </semantic-table>
               
             </semantic-search-result>
           </div>
@@ -90,5 +157,25 @@
 
   .w-100{
     width: 100%!important;
+  }
+
+  .demo-navigator{
+    width: -moz-available;
+    width: -webkit-fill-available;
+    margin-top: 30px;
+    border-bottom: 1px solid;
+    padding-bottom: 30px;
+  }
+
+  .demo-image{
+    padding: 12px 20px;
+    margin-right: 20px;
+    height: 100px;
+    margin-left: -20px;
+  }
+
+  .demo-type{
+    font-family: "Source Sans Pro", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #9D2933;
   }
 </style>

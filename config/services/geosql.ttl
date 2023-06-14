@@ -81,7 +81,11 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 			sp:predicate veniss_sql:eoe ;
 			sp:object :_eoe
 		]
-    
+        [
+			sp:subject :_results ;
+			sp:predicate veniss_sql:tableName ;
+			sp:object :_tablename
+		]
 	) ;
 	spin:constraint
 	[
@@ -123,6 +127,13 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 		a spl:Argument ;
 		rdfs:comment "Date to filter" ;
 		spl:predicate :_date ;
+		spl:valueType xsd:string
+  ] ;
+    spin:constraint
+	[
+		a spl:Argument ;
+		rdfs:comment "Table Name as parameter" ;
+		spl:predicate :_tablename ;
 		spl:valueType xsd:string
   ] ;
 	spin:column
@@ -202,5 +213,11 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 	rs_sql_sail:includesSQLQuery
 	[
 		rs_sql_sail:hasQueryId "test" ;
-		rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, t, z, \"year\" as date, ST_AsText(geometry) as wkt FROM veniss_data AS a JOIN feature_years AS b ON a.identifier = b.identifier WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))"
+		rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(c.start) as \"bob\", MAX(c.end) as \"eoe\", t, z, ST_AsText(geometry) as wkt FROM veniss_data AS a JOIN feature_years AS b ON a.identifier = b.identifier JOIN years_dates AS c ON b.\"year\" = c.\"year\" WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857)) GROUP BY a.identifier, a.t, a.z, a.geometry"
+	] ;
+	rs_sql_sail:includesSQLQuery
+	[
+		rs_sql_sail:hasQueryId "island_form" ;
+		rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from ?tablename "
 	] .
+

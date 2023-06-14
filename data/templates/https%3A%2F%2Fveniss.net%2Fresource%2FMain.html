@@ -45,7 +45,7 @@
             "date": {"value": "1801-01-01"}
           }'
           query='
-            SELECT DISTINCT ?subject ?bw_id ?wkt ?t ?z WHERE {
+            SELECT DISTINCT ?subject ?bw_id ?wkt ?t ?z ?bob ?eoe WHERE {
               service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                 ?root rs_sql_sail:hasQueryId "test";	
                   veniss_sql:minX ?southWestLat;
@@ -57,6 +57,8 @@
                   veniss_sql:bw_id ?bw_id;
                   veniss_sql:t ?t;
                   veniss_sql:z ?z;
+                  veniss_sql:bob ?bob;
+                  veniss_sql:eoe ?eoe.
               }
               
               ?do_id rdfs:label ?bw_id.

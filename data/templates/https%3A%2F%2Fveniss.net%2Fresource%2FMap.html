@@ -53,9 +53,18 @@
           
         </p>
       </template>
-
       <tiles-layer
-        thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1945/img.png'
+      thumbnail='/assets/images/SS_Orthophoto_1982.jpg'
+      url='/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png'
+      identifier='SS_1982'
+      name='Ortofoto su pellicola'
+      level='overlay'
+      author=""
+      location=""
+      year="1982"></tiles-layer>
+      
+      <tiles-layer
+        thumbnail='/assets/images/SS_IGM_1945.jpg'
         url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1945/{z}/{x}/{y}.png'
         identifier='SS_1945'
         name='Aerial view of the island of San Secondo'
@@ -64,6 +73,27 @@
         location=""
         year="1945">
       </tiles-layer>
+
+      <tiles-layer
+      thumbnail='/assets/images/SS_Ausland_III_thumbnail.jpg'
+      url='/proxy/mapbox/v4/gspinaci.6k8e0eiv/{z}/{x}/{y}@2x.png'
+      identifier='SS_1866'
+      name='Map of San Secondo'
+      level='overlay'
+      author=""
+      location=""
+      year="1866"></tiles-layer>
+      
+      <tiles-layer
+      thumbnail='/assets/images/SS_diapositiva.jpg'
+      url='/proxy/mapbox/v4/gspinaci.ssdiapositiva/{z}/{x}/{y}@2x.png'
+      identifier='SS_diapositiva'
+      name='Diapositiva San Secondo'
+      level='overlay'
+      author=""
+      location=""
+      year=""></tiles-layer>
+      
 
       <tiles-layer
         thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1801/img.jpg'
@@ -94,6 +124,7 @@
         author=""
         location=""
         year=""></tiles-layer>
+        
 
         <tiles-layer
         thumbnail='/assets/images/basemaps_thumbnails_waterways.jpg'

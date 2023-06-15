@@ -49,7 +49,7 @@
               <semantic-table
                 id="table"
                 number-of-displayed-rows="1000"
-                query='SELECT DISTINCT ?iri ?label ?type ?image_name WHERE 
+                query='SELECT DISTINCT ?iri ?label ?type ?image_name ?project ?tooltip WHERE 
                 { 
 
                   ?subject a veniss_ontology:Builtwork.
@@ -61,6 +61,10 @@
                   ?relation2 a veniss_ontology:Relation;
                     crmpc:P01_has_domain ?event;
                     crmpc:P02_has_range ?object.
+
+                  
+                  ?object veniss_ontology:demo-project ?project;
+                    veniss_ontology:demo-project-tooltip ?tooltip.
                   
                   optional {?object veniss_ontology:demo-type ?type}
 
@@ -104,7 +108,7 @@
 
                   </bs-col>
 
-                  <bs-col sm="9" md="9">
+                  <bs-col sm="6" md="6">
                     <bs-row>
                       <h5 class="demo-type">
                         {{#if type}}
@@ -117,6 +121,21 @@
                     <bs-row>
                       {{label.value}}
                     </bs-row>
+                  </bs-col>
+                  <bs-col sm="3" md="3">
+                    
+
+
+                    <mp-popover title="Project">
+                      <mp-popover-trigger placement="top"  trigger='["hover","focus"]'> 
+                        <div class="demo-tooltip {{project.value}}">{{project.value}}</div>
+                      </mp-popover-trigger>
+                        <mp-popover-content style="background:white;">
+                        <div>{{tooltip.value}}</div>
+                        </mp-popover-content>
+                    </mp-popover>
+              
+                    
                   </bs-col>
                 <bs-row>
 
@@ -172,11 +191,51 @@
     padding: 12px 20px;
     margin-right: 20px;
     height: 100px;
-    margin-left: -20px;
   }
 
   .demo-type{
     font-family: "Source Sans Pro", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #9D2933;
   }
+
+  .demo-tooltip {
+    background-color: #333;
+    color: #fff;
+    padding: 5px 3px;
+    width: 27px;
+    border-radius: 50px;
+    text-align: center;
+  }
+
+  .VE{
+    background-color: #333;
+  }
+
+  .DB{
+    background-color: #C91F37;
+  }
+
+  .PM{
+    background-color: #264348;
+  }
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
 </style>

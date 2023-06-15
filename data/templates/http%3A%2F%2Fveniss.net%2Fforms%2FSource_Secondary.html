@@ -7,6 +7,7 @@
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     
+    source_representation               = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
     bibitem_id                          = "https://veniss.net/container/fieldDefinitionContainer/bibitem_id"
     bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
     bibitem_typology                    = "https://veniss.net/container/fieldDefinitionContainer/bibitem_typology"
@@ -137,6 +138,8 @@
                 new-subject-template='/broader' 
                 fields='[[ fieldDefinitions 
                   type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+
+    
                   bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
                   bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
                   bibitem_broader_typology            = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_typology"
@@ -313,5 +316,31 @@
     </div>
   
   </div>
+
+              <div id="source_visual_representation" class="padding-5">
+              <semantic-form-file-input 
+                label="Visual representation"
+                for="source_representation"
+                storage='images'
+                temp-storage='tmp'
+                placeholder='Add file here'
+                name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
+                media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
+                resource-query='
+                  PREFIX rso: <http://www.researchspace.org/ontology/>
+                  CONSTRUCT {
+                    ?__resourceIri__ a rso:EX_File.
+                    ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
+                    ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
+                    ?__resourceIri__ rdfs:label ?__filename__.
+                  } WHERE {}
+                '
+                generate-iri-query='
+                  SELECT ?resourceIri {
+                    BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
+                  }
+                '
+              ></semantic-form-file-input>
+            </div>
   [[> rsp:FormDefaultActions]]
 </semantic-form>

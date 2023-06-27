@@ -2,9 +2,11 @@
   <semantic-search-result>
     <semantic-map
       id="search-map"
+      year-filtering="true"
+      vector-levels='["Island","Buildings"]'
       target-controls='["search-map-control"]'
-      query="SELECT DISTINCT ?bw_id ?subject ?wkt ?name ?function ?use ?typology ?bob ?boe ?eob ?eoe WHERE {
-        ?subject rdfs:label ?name.
+      query="SELECT DISTINCT ?bw_id ?subject ?wkt ?name ?function ?use ?typology (year(?start) as ?eob) (year(?end) as ?boe) ?bob ?eoe ?t ?z WHERE {
+        ?st_vol rdfs:label ?name.
         OPTIONAL {
           ?subject veniss_ontology:has_use ?useNode.
           ?useNode rdfs:label ?use.
@@ -15,6 +17,7 @@
         OPTIONAL {
           ?subject veniss_ontology:has_typology ?typologyNode.
           ?typologyNode rdfs:label ?typology.
+          FILTER((LANG(?typology)) = 'en')
         }
           OPTIONAL {
           ?subject veniss_ontology:has_function ?functionNode.
@@ -22,6 +25,11 @@
           FILTER (lang(?function) = 'en').
           FILTER (STR(?function) != 'Function').
         }
+      
+      ?st_vol crm:P160_has_temporal_projection ?st_vol_ts.
+      ?st_vol_ts crm:P81a_end_of_the_begin ?start.
+      ?st_vol_ts crm:P81b_begin_of_the_end ?end.
+        
       }
 
       
@@ -45,9 +53,18 @@
           
         </p>
       </template>
-
       <tiles-layer
-        thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1945/img.png'
+      thumbnail='/assets/images/SS_Orthophoto_1982.jpg'
+      url='/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png'
+      identifier='SS_1982'
+      name='Ortofoto su pellicola'
+      level='overlay'
+      author=""
+      location=""
+      year="1982"></tiles-layer>
+      
+      <tiles-layer
+        thumbnail='/assets/images/SS_IGM_1945.jpg'
         url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1945/{z}/{x}/{y}.png'
         identifier='SS_1945'
         name='Aerial view of the island of San Secondo'
@@ -56,6 +73,27 @@
         location=""
         year="1945">
       </tiles-layer>
+
+      <tiles-layer
+      thumbnail='/assets/images/SS_Ausland_III_thumbnail.jpg'
+      url='/proxy/mapbox/v4/gspinaci.6k8e0eiv/{z}/{x}/{y}@2x.png'
+      identifier='SS_1866'
+      name='Map of San Secondo'
+      level='overlay'
+      author=""
+      location=""
+      year="1866"></tiles-layer>
+      
+      <tiles-layer
+      thumbnail='/assets/images/SS_diapositiva.jpg'
+      url='/proxy/mapbox/v4/gspinaci.ssdiapositiva/{z}/{x}/{y}@2x.png'
+      identifier='SS_diapositiva'
+      name='Diapositiva San Secondo'
+      level='overlay'
+      author=""
+      location=""
+      year=""></tiles-layer>
+      
 
       <tiles-layer
         thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1801/img.jpg'
@@ -82,10 +120,23 @@
         url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}'
         identifier='light'
         name='Light'
-        level='overlay'
+        level='basemap'
         author=""
         location=""
         year=""></tiles-layer>
+        
+
+        <tiles-layer
+        thumbnail='/assets/images/basemaps_thumbnails_waterways.jpg'
+        url='/proxy/mapbox/styles/v1/gspinaci/ckipvyxje12cl17lesce3u8zb/tiles/256/{z}/{x}/{y}'
+        identifier='waterways'
+        name='Waterways'
+        level='basemap'
+        author=""
+        location=""
+        year=""></tiles-layer>
+
+
       <tiles-layer
         thumbnail='/assets/images/groad.jpg'
         url='http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}'

@@ -1,5 +1,7 @@
 Default			            = https://veniss.net/resource/
 veniss                  = https://veniss.net/resource/
+veniss_form             = https://veniss.net/resource/forms/
+veniss_forms_vocab      = https://veniss.net/resource/forms/vocab/
 veniss_sql              = http://www.researchspace.org/resource/system/service/veniss_sql#
 veniss_ontology         = https://veniss.net/ontology#
 crmpc                   = http://www.cidoc-crm.org/crmpc/

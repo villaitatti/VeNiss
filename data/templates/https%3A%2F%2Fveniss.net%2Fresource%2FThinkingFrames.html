@@ -82,28 +82,6 @@
       "template": "{{> listBuiltworks}}",
       "type": "authoring"
     },
-    [[!--
-      {
-        "id": "list-builtwork",
-        "label": "List Builtworks",
-        "description": "List and filter through all builtworks",
-        "iconClass": "rs-icon rs-icon-placeholder_painting",
-        "resourceNotRequired": true,
-        "template": "{{> listBuiltwork}}",
-        "type": "view"
-      },
-
-      {
-        "id": "list-sources",
-        "label": "Browse Sources",
-        "description": "Browse through the Sources",
-        "iconClass": "rs-icon rs-icon-influence",
-        "resourceNotRequired": true,
-        "template": "{{> listSources}}",
-        "type": "view"
-      },
-    --]]
-
     {
     	"id": "entity-search",
       "label": "Search",
@@ -251,6 +229,15 @@
     </template>
     <template id='authorityEditor'>
       [[> rsp:AuthorityEditor]]
+    </template>
+    <template id='listActor'>
+      [[> veniss:List_actors]]
+    </template>
+    <template id='listSources'>
+      [[> veniss:List_Sources]]
+    </template>
+    <template id='listEvents'>
+      [[> veniss:List_Events]]
     </template>
     <template id='authorityContent'>
       [[> rsp:AuthorityContent iri=iri]]

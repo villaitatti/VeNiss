@@ -76,7 +76,19 @@
                       ?subject rdfs:label ?label.
                       ?subject crm:P1_is_identified_by ?appellation.
                       ?appellation rdfs:label ?name.
+                      OPTIONAL {
+                        ?subject crm:P87_is_identified_by ?latitude.
+                        ?latitude crm:P2_has_type <https://veniss.net/ontology#latitude>.
+                        ?latitude rdfs:label ?latitude_label. 
+                        ?subject crm:P87_is_identified_by ?longitude.
+                        ?longitude crm:P2_has_type <https://veniss.net/ontology#longitude>.
+                        ?longitude rdfs:label ?longitude_label. 
+                      }
                     }' column-configuration='[
+                    {
+                      "displayName": "Location",
+                      "cellTemplate": "{{> maplocation}}"
+                    }, 
                     {
                       "displayName": "Name",
                       "cellTemplate": "{{> name}}"
@@ -87,6 +99,20 @@
                       }
                     ]'>
                     <!-- TODO: add coordinates in federated query from geonames or tabella-->
+                    <template id="maplocation">
+                      <div style="height:200px; width: 200px;">
+                        <semantic-map-classic
+                        id='search-map'
+                        fix-zoom-level="10"
+                        query='SELECT ?lat ?lng ?description ?link WHERE {
+                          VALUES(?lat ?lng ?description ?link) {
+                            ("{{latitude_label.value}}" "{{longitude_label.value}}" "{{name.value}}" <http://www.wikidata.org/entity/Q22132500>)
+                          }
+                        }'
+                        >
+                      </semantic-map-classic>
+                      </div>
+                    </template>
                     <template id="label">
                       <div style="display: flex; align-items: center;">
                         <a subject.value="{{subject.value}}">{{label.value}}</a>
@@ -115,6 +141,7 @@
             </bs-tabs>
           </div>
         </semantic-search-result-holder>
+      </semantic-search>
     </div>
   </div>
 </div>
@@ -132,5 +159,9 @@
 
   .btn a{
     color: white !important;
+  }
+
+  .ol-attribution {
+    display: none;
   }
 </style>

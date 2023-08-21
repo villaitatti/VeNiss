@@ -71,7 +71,7 @@
 
 
                 <semantic-search-result>
-                  <semantic-table id='table-result' query='SELECT DISTINCT * WHERE { 
+                  <semantic-table id='table-result' query='SELECT * WHERE { 
                       ?subject a veniss_ontology:Island.
                       ?subject rdfs:label ?label.
                       ?subject crm:P1_is_identified_by ?appellation.
@@ -83,6 +83,10 @@
                         ?subject crm:P87_is_identified_by ?longitude.
                         ?longitude crm:P2_has_type <https://veniss.net/ontology#longitude>.
                         ?longitude rdfs:label ?longitude_label. 
+                      }
+                      OPTIONAL {
+                        ?subject crm:P48_has_preferred_identifier ?geonames_identifier.
+                        ?geonames_identifier rdfs:label ?geonames_label.
                       }
                     }' column-configuration='[
                     {
@@ -96,14 +100,18 @@
                     {
                         "displayName": "Label",
                         "cellTemplate": "{{> label}}"
+                    }, 
+                    {
+                        "displayName": "Geonames reference",
+                        "cellTemplate": "{{> geonames}}"
                       }
                     ]'>
                     <!-- TODO: add coordinates in federated query from geonames or tabella-->
                     <template id="maplocation">
-                      <div style="height:200px; width: 200px;">
+                      <div style="height:150px; width: 250px;">
                         <semantic-map-classic
                         id='search-map'
-                        fix-zoom-level="10"
+                        fix-zoom-level="11"
                         query='SELECT ?lat ?lng ?description ?link WHERE {
                           VALUES(?lat ?lng ?description ?link) {
                             ("{{latitude_label.value}}" "{{longitude_label.value}}" "{{name.value}}" <http://www.wikidata.org/entity/Q22132500>)
@@ -115,7 +123,12 @@
                     </template>
                     <template id="label">
                       <div style="display: flex; align-items: center;">
-                        <a subject.value="{{subject.value}}">{{label.value}}</a>
+                        <a href="{{subject.value}}" target="_blank">{{label.value}}</a>
+                      </div>
+                    </template>
+                    <template id="geonames">
+                      <div style="display: flex; align-items: center;">
+                        <a href="{{subject.value}}" target="_blank">{{geonames_label.value}}</a>
                       </div>
                     </template>
                     <template id="name">

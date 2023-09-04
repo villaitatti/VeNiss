@@ -128,7 +128,7 @@
                     </template>
                     <template id="geonames">
                       <div style="display: flex; align-items: center;">
-                        <a href="{{subject.value}}" target="_blank">{{geonames_label.value}}</a>
+                        <a href="{{geonames_label.value}}" target="_blank">{{geonames_label.value}}</a>
                       </div>
                     </template>
                     <template id="name">
@@ -140,7 +140,7 @@
                           "viewId": "entity-editor"
                         }' 
                         targets='["thinking-frames"]'>
-                        <div style="display: flex; align-items: center;">
+                        <div style="display: flex; align-items: center; font-weight: bold;">
                           <a href="{{subject.value}}">{{name.value}}</a>
                         </div>
                       </mp-event-trigger>
@@ -161,6 +161,10 @@
 
 
 <style>
+tr td:first-child {
+  width: 300px;
+}
+
   .subheader{
     padding-bottom: 40px;
     padding-left: 5px;

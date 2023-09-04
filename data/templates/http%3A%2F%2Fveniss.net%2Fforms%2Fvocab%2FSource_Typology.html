@@ -1,0 +1,39 @@
+<semantic-form
+  id='{{viewId}}-vocab-form' 
+  new-subject-template='https://veniss.net/resource/vocabulary/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    is_listed_in                            = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+
+    vocab_entry_label                       = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
+    vocab_entry_partof                      = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_partof"
+    vocab_entry_broader                     = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_broader"
+    vocab_entry_equivalent                  = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_equivalent"
+  ]]'
+  post-action="event"
+  subject='{{node}}'
+>
+<div class="form-scroll-area">
+  <div class="container-fluid">
+
+    <semantic-form-hidden-input for="type" default-value='http://www.w3.org/2004/02/skos/core#Concept'></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/source_types"></semantic-form-hidden-input>
+
+    <!-- Source label -->
+    <semantic-form-text-input languages='["it", "en"]' label="vocab_entry_label" for="vocab_entry_label"></semantic-form-text-input>
+
+    <!-- Equivalent Class -->
+    <semantic-form-text-input label="Getty ID" for="vocab_entry_equivalent"></semantic-form-text-input>
+
+    <!-- Parent Collection -->
+    <semantic-form-tree-picker-input 
+      label="Parent" 
+      for='vocab_entry_broader'  
+      default-values='[{{#if broader}}"{{broader}}"{{/if}}]' 
+      >
+    </semantic-form-tree-picker-input>
+  </div>
+</div>
+
+[[> rsp:FormDefaultActions]]
+</semantic-form>

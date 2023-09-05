@@ -541,3 +541,7 @@ h1, h2, h3, h4, h5, h6 {
 .flexlayout__splitter {
   background-color: #B1B1B1;
 }
+
+.source_tabs {
+  margin-top: 40px;
+}

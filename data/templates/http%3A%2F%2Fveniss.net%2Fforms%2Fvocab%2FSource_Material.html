@@ -17,25 +17,14 @@
 <div class="form-scroll-area">
   <div class="container-fluid">
 
-    <semantic-form-hidden-input for="type" default-value='http://www.w3.org/2004/02/skos/core#Concept'></semantic-form-hidden-input>
-    <semantic-form-hidden-input for="is_listed_in" default-value="https://veniss.net/resource/vocab/source_typologies"></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="type" default-values='["http://www.w3.org/2004/02/skos/core#Concept"]'></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="is_listed_in" default-value="https://veniss.net/resource/vocab/source_materials"></semantic-form-hidden-input>
 
     <!-- Source label -->
     <semantic-form-text-input languages='["it", "en"]' label="Label" for="vocab_entry_label"></semantic-form-text-input>
 
-    <!-- Abbreviation -->
-    <semantic-form-text-input label="Abbreviation" for="vocab_entry_abbreviation"></semantic-form-text-input>
-
     <!-- Equivalent Class -->
     <semantic-form-text-input label="Getty ID" for="vocab_entry_equivalent"></semantic-form-text-input>
-
-    <!-- Parent Collection -->
-    <semantic-form-tree-picker-input 
-      label="Parent" 
-      for='vocab_entry_broader'  
-      default-values='[{{#if broader}}"{{broader}}"{{/if}}]' 
-      >
-    </semantic-form-tree-picker-input>
   </div>
 </div>
 

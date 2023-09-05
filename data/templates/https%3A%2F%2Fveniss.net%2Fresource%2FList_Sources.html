@@ -78,12 +78,28 @@
                       <semantic-table 
                         id='table-result'
                         query='SELECT DISTINCT * WHERE { 
-                          ?subject a veniss_ontology:Source_Primary.
+                            ?subject a veniss_ontology:Source_Primary;
+                            crm:P1_is_identified_by ?appellation.
+
                           optional {
-                            ?subject crm:P1_is_identified_by ?appellation.
+                            ?subject crm:P53_has_former_or_current_location ?location.
+                            ?location crm:P2_has_type <https://veniss.net/resource/archival_entity/full_path>.
+                          }
+
+                          optional {
+                            ?subject crm:P53_has_former_or_current_location ?location_name.
+                            ?location_name crm:P2_has_type <https://veniss.net/resource/type/location_name>.
+                          }
+
+                          optional {
+                            $subject crm:P53_has_former_or_current_location ?medium.
+                            $medium crm:P2_has_type <https://veniss.net/resource/type/medium>
+                          }
+
+                          optional {
                             ?appellation rdf:type crm:E41_Appellation;
-                              crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
-                              rdfs:label ?label.
+                            crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
+                            rdfs:label ?label.
                           }
                         }'
                         column-configuration='[
@@ -94,6 +110,10 @@
                           {
                             "displayName": "Name",
                             "cellTemplate": "{{> name}}"
+                          },
+                          {
+                            "displayName": "Archival Location",
+                            "cellTemplate": "{{> location}}"
                           }
                         ]'
                       >
@@ -134,6 +154,67 @@
                             </div>
                           </mp-event-trigger>  
 
+                        </template>
+
+                        <template id="location">
+                          <div style="display: flex; align-items: center;">
+
+                            {{#if location}}
+                            <semantic-query
+                              query='
+                                select ?full_path where {
+
+                                  {
+                                    select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
+                                      {
+                                        select ?class ?lbl
+                                        where {
+                                          ?item crm:P46i_forms_part_of* ?mid.
+                                          ?mid crm:P46i_forms_part_of* ?class.
+                                          ?class rdfs:label ?class_label
+
+                                          optional {
+                                            ?class crm:P1_is_identified_by ?acronym.
+                                            ?acronym a crm:E41_Appellation;
+                                              crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                                              rdfs:label ?acronym_lbl 
+                                          }
+
+                                          BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                                          BIND(<{{location.value}}> as ?item)
+                                        }
+                                        group by ?class ?lbl
+                                        order by desc(count(?mid))
+                                      }
+                                    }
+                                  }
+                                  
+                                  optional {
+                                    ?medium crm:P1_is_identified_by ?abbreviation.
+                                    ?abbreviation a crm:E41_Appellation;
+                                      crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
+                                      rdfs:label ?abbreviation_lbl
+                                  }
+                                  ?medium rdfs:label ?medium_lbl
+                                  FILTER (lang(?medium_lbl) = "it")
+                                  
+                                  BIND(COALESCE(?abbreviation_lbl, ?abbreviation_lbl, ?medium_lbl) as ?medium_lbl_final)
+                                  
+                                  
+                                  optional {
+                                    ?medium_title rdfs:label ?medium_title_lbl
+                                  }
+                                
+                                  BIND(<{{medium.value}}> as ?medium)
+                                  BIND(<{{location_name.value}}> as ?medium_title)
+                                  
+                                  
+                                  BIND(CONCAT(?item_label, ", ", ?medium_lbl_final, " ", ?medium_title_lbl) as ?full_path)
+                                }
+                              '
+                            ></semantic-query>
+                            {{/if}}
+                          </div>
                         </template>
 
                       </semantic-table>

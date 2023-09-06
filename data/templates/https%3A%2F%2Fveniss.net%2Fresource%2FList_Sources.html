@@ -188,28 +188,23 @@
                                       }
                                     }
                                   }
+
+                                  ?medium rdfs:label ?medium_lbl.
+                                  FILTER((LANG(?medium_lbl)) = "it")
                                   
-                                  optional {
+                                  OPTIONAL { ?medium_title rdfs:label ?medium_title_lbl. }
+                                  
+                                  OPTIONAL { 
                                     ?medium crm:P1_is_identified_by ?abbreviation.
                                     ?abbreviation a crm:E41_Appellation;
-                                      crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
-                                      rdfs:label ?abbreviation_lbl
+                                        crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
+                                        rdfs:label ?abbreviation_lbl 
                                   }
-                                  ?medium rdfs:label ?medium_lbl
-                                  FILTER (lang(?medium_lbl) = "it")
                                   
-                                  BIND(COALESCE(?abbreviation_lbl, ?abbreviation_lbl, ?medium_lbl) as ?medium_lbl_final)
-                                  
-                                  
-                                  optional {
-                                    ?medium_title rdfs:label ?medium_title_lbl
-                                  }
-                                
+                                  BIND(COALESCE(?abbreviation_lbl, "") as ?medium_final_lbl)
                                   BIND(<{{medium.value}}> as ?medium)
                                   BIND(<{{location_name.value}}> as ?medium_title)
-                                  
-                                  
-                                  BIND(CONCAT(?item_label, ", ", ?medium_lbl_final, " ", ?medium_title_lbl) as ?full_path)
+                                  BIND(CONCAT(?item_label, ", ", ?medium_final_lbl, " ", ?medium_title_lbl) as ?full_path)
                                 }
                               '
                             ></semantic-query>

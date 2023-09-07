@@ -35,7 +35,10 @@
       </div>
 
       <div class="body">
-        <semantic-search>
+        <semantic-search
+
+
+        >
           <semantic-search-query-constant query='
             select ?subject ?digital_image where { 
               ?subject a veniss_ontology:Source.
@@ -104,14 +107,10 @@
                           }
 
                           optional {
-                            $subject crm:P67i_is_referred_to_by ?synopsis.
-                              ?synopsis crm:P103_was_intended_for <https://veniss.net/resource/type/source_synopsis>;
-                                a crm:E33_Linguistic_Object;
-                                rdfs:label ?synopsis_label.
-
-                            FILTER((LANG(?synopsis_label)) = "en")
+                            ?subject veniss_ontology:has_island ?island.
+                            ?island crm:P1_is_identified_by ?island_appellation.
+                              ?island_appellation rdfs:label ?island_lbl
                           }
-
                           
                         }'
                         column-configuration='[
@@ -124,12 +123,12 @@
                             "cellTemplate": "{{> name}}"
                           },
                           {
-                            "displayName": "Archival Location",
-                            "cellTemplate": "{{> location}}"
+                            "displayName": "Island",
+                            "variableName": "island_lbl"
                           },
                           {
-                            "displayName": "Synopsis",
-                            "variableName": "synopsis_label"
+                            "displayName": "Archival Location",
+                            "cellTemplate": "{{> location}}"
                           }
                         ]'
                       >

@@ -6,6 +6,8 @@
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
+    source_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
+
     source_representation               = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
     source_attributed_title             = "https://veniss.net/container/fieldDefinitionContainer/source_attributed_title"
     source_original_title               = "https://veniss.net/container/fieldDefinitionContainer/source_original_title"
@@ -69,18 +71,14 @@
             <semantic-form-text-input placeholder="Enter Attributed title ..." languages='["en", "it"]' label="Attributed title" for="source_attributed_title"></semantic-form-text-input>
           </div>
 
-          <div id="source_location_type" class="padding-5">
-            <semantic-form-tree-picker-input 
-              for='source_typology'
-              label="Source typology"
-              placeholder="Choose the source typology"
-              tree-patterns='{
-                "relationPattern": "?item skos:broader ?parent", 
-                "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_typologies>"
-              }'>
-            </semantic-form-tree-picker-input>
-          </div>
 
+          <div id="source_location_type" class="padding-5">
+            <semantic-form-select-input 
+              for='source_island'
+              label="Island"
+              placeholder="Select the island">
+            </semantic-form-select-input>
+          </div>
 
         </div>
 
@@ -94,9 +92,24 @@
 
           <div data-flex-layout="column top-stretch">
 
-            <div id="source_original_title" class="padding-5">
-              <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it"]' label="Original title" for="source_original_title"></semantic-form-text-input>
+            <div data-flex-layout="row center-stretch">
+              <div id="source_original_title" class="padding-5">
+                <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it"]' label="Original title" for="source_original_title"></semantic-form-text-input>
+              </div>
+
+              <div id="source_location_type" class="padding-5">
+                <semantic-form-tree-picker-input 
+                  for='source_typology'
+                  label="Source typology"
+                  placeholder="Choose the source typology"
+                  tree-patterns='{
+                    "relationPattern": "?item skos:broader ?parent", 
+                    "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_typologies>"
+                  }'>
+                </semantic-form-tree-picker-input>
+              </div>
             </div>
+
 
             <div id="source_synopsis">
               <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>

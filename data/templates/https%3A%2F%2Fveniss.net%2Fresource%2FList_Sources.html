@@ -78,8 +78,7 @@
                       <semantic-table 
                         id='table-result'
                         query='SELECT DISTINCT * WHERE { 
-                            ?subject a veniss_ontology:Source_Primary;
-                            crm:P1_is_identified_by ?appellation.
+                            ?subject a veniss_ontology:Source_Primary.
 
                           optional {
                             ?subject crm:P53_has_former_or_current_location ?location.
@@ -97,10 +96,23 @@
                           }
 
                           optional {
+                            ?subject crm:P1_is_identified_by ?appellation.
                             ?appellation rdf:type crm:E41_Appellation;
                             crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
                             rdfs:label ?label.
+                            FILTER((LANG(?label)) = "en")
                           }
+
+                          optional {
+                            $subject crm:P67i_is_referred_to_by ?synopsis.
+                              ?synopsis crm:P103_was_intended_for <https://veniss.net/resource/type/source_synopsis>;
+                                a crm:E33_Linguistic_Object;
+                                rdfs:label ?synopsis_label.
+
+                            FILTER((LANG(?synopsis_label)) = "en")
+                          }
+
+                          
                         }'
                         column-configuration='[
                           {
@@ -114,6 +126,10 @@
                           {
                             "displayName": "Archival Location",
                             "cellTemplate": "{{> location}}"
+                          },
+                          {
+                            "displayName": "Synopsis",
+                            "variableName": "synopsis_label"
                           }
                         ]'
                       >

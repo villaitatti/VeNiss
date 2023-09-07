@@ -204,22 +204,22 @@
                                     }
                                   }
 
-                                  ?medium rdfs:label ?medium_lbl.
-                                  FILTER((LANG(?medium_lbl)) = "it")
-                                  
-                                  OPTIONAL { ?medium_title rdfs:label ?medium_title_lbl. }
-                                  
-                                  OPTIONAL { 
+                                  OPTIONAL {
+                                    BIND(<{{medium.value}}> as ?medium)
                                     ?medium crm:P1_is_identified_by ?abbreviation.
                                     ?abbreviation a crm:E41_Appellation;
-                                        crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
-                                        rdfs:label ?abbreviation_lbl 
+                                      crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
+                                      rdfs:label ?abbreviation_lbl 
                                   }
-                                  
                                   BIND(COALESCE(?abbreviation_lbl, "") as ?medium_final_lbl)
-                                  BIND(<{{medium.value}}> as ?medium)
-                                  BIND(<{{location_name.value}}> as ?medium_title)
-                                  BIND(CONCAT(?item_label, ", ", ?medium_final_lbl, " ", ?medium_title_lbl) as ?full_path)
+
+                                  OPTIONAL { 
+                                    BIND(<{{location_name.value}}> as ?medium_title)
+                                    ?medium_title rdfs:label ?medium_title_lbl. 
+                                  }
+                                  BIND(COALESCE(?medium_title_lbl, "") as ?medium_title_final_lbl)
+                                  
+                                  BIND(CONCAT(?item_label, ", ", ?medium_final_lbl, " ", ?medium_title_final_lbl) as ?full_path)
                                 }
                               '
                             ></semantic-query>

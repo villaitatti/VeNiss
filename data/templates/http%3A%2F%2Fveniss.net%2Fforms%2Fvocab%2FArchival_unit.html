@@ -1,11 +1,3 @@
-<div>
-<mp-event-proxy 
-  id='{{viewId}}-resource-created' 
-  on-event-type='Form.ResourceCreated'
-  proxy-event-type='Component.TemplateUpdate' 
-  proxy-targets='["{{viewId}}-render-vocab-form"]' 
-></mp-event-proxy>
-
 <semantic-form
   id='{{viewId}}-vocab-form' 
   new-subject-template='https://veniss.net/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
@@ -24,11 +16,10 @@
   post-action="event"
   subject='{{node}}'
   >
-<div class="form-scroll-area">
 
-    <semantic-form-recover-notification></semantic-form-recover-notification>
-    <semantic-form-errors></semantic-form-errors>
-  
+  <semantic-form-errors></semantic-form-errors>
+  <div id="archival_unit" class="form-scroll-area">
+
     <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E78_Collection'></semantic-form-hidden-input>
     <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archives"></semantic-form-hidden-input>
 
@@ -51,7 +42,7 @@
 
         <!-- Unit Acronym -->
         <div id="vocab_entry_archival_unit_acronym" class="padding-5">
-          <semantic-form-text-input label="Acronym" placeholder="Enter unit Unit acronym ..." for="vocab_entry_archival_unit_acronym"></semantic-form-text-input>
+          <semantic-form-text-input label="Displayed name" placeholder="Enter unit Unit acronym ..." for="vocab_entry_archival_unit_acronym"></semantic-form-text-input>
         </div>
 
         <!-- Unit suffix -->
@@ -77,6 +68,7 @@
           label="Parent archival unit" 
           placeholder="Select parent archival unit ..." 
           for="vocab_entry_partof"
+          default-value="{{broader}}"
           query-item-label='
             select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
               {
@@ -110,21 +102,19 @@
     </div>
 
   </div>
-</div>
 
 [[> rsp:FormDefaultActions]]
 </semantic-form>
 
 <style>
-  #vocab_entry_partof .RemovableBadge {
-    background-color: #fff!important;
+  #archival_unit .RemovableBadge {
+    background-color: white!important;
   }
 
-  #vocab_entry_partof .RemovableBadge__content {
-    color: black!important;
-    text-transform: none!important;
+  #archival_unit .RemovableBadge__content, #archival_unit .RemovableBadge__remove {
     max-width: none!important;
+    text-transform: none!important;
+    color: black!important;
   }
-</style>
 
-</div>
+</style>

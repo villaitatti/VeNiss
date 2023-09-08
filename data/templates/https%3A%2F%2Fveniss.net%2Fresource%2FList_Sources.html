@@ -3,8 +3,8 @@
     <div data-flex-layout="columns center-stretch">
       <div class="Header">
         <h1>Sources</h1>
-        <hr>
       </div>
+
 
       <div class="subheader">
 
@@ -34,21 +34,44 @@
 
       </div>
 
+      <hr>
+
       <div class="body">
         <semantic-search
-
-
+          search-profile='{
+            "categories":[
+              {
+                "iri": "<https://veniss.net/ontology#Source>",
+                "label": "Source"
+              },
+              {
+                "iri": "<https://veniss.net/ontology#Island>",
+                "label": "Island"
+              }
+            ],
+            "relations":[
+              {
+                "iri": "<https://veniss.net/ontology#has_island>",
+                "label": "Related Island",
+                "hasDomain": "<https://veniss.net/ontology#Source>",
+                "hasRange": "<https://veniss.net/ontology#Island>"
+              }
+            ]
+          }'
         >
-          <semantic-search-query-constant query='
+          <semantic-search-query-constant 
+          domain="<https://veniss.net/ontology#Source>"
+          query='
             select ?subject ?digital_image where { 
-              ?subject a veniss_ontology:Source.
+              ?subject a veniss_ontology:Source;
             }
           '>
           </semantic-search-query-constant>
 
           <div data-flex-layout="row stretch-stretch">
+
             <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
-              <semantic-search-facet></semantic-search-facet>
+              <semantic-search-facet open-by-default="true"></semantic-search-facet>
             </div>
 
             <semantic-search-result-holder>
@@ -73,10 +96,9 @@
                   </mp-sparql-result-counts>
                 </semantic-search-result>
 
-                 <bs-tabs unmount-on-exit=true id='search-results' animation=false>
-
-                  <bs-tab event-key="1" title="Primary sources">
-                    
+                <bs-tabs>
+                  <!-- Primary Sources -->
+                  <bs-tab event-key="1" title="Primary Sources">
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
@@ -228,10 +250,11 @@
                         </template>
 
                       </semantic-table>
-                    </semantic-search-result>
+                    </semantic-search-result> 
                   </bs-tab>
 
-                  <bs-tab event-key="2" title="Secondary sources">
+                  <!-- Secondary Sources -->
+                  <bs-tab event-key="2" title="Secondary Sources">
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
@@ -352,13 +375,12 @@
                       </semantic-table>
                     </semantic-search-result>
                   </bs-tab>
-
-                 </bs-tabs>
+                </bs-tabs>
 
               </div>
           </semantic-search-result-holder>
         </div>
-      </semantic-search>
+        </semantic-search>
       </div>
     </div>
 

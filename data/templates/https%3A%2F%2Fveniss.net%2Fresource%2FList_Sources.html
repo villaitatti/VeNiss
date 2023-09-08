@@ -192,6 +192,8 @@
                               query='
                                 select ?full_path where {
 
+                                  BIND(<{{subject.value}}> as ?subject)
+
                                   {
                                     select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
                                       {
@@ -235,7 +237,7 @@
                                   BIND(COALESCE(?name_label, "") as ?information_carrier_name_label)
                                   
                                   BIND(CONCAT(?item_label, ?information_carrier_type_label, ?information_carrier_name_label) AS ?full_path)
-                                  BIND(<{{subject.value}}> as ?subject)
+
                                 }'
                             ></semantic-query>
                             {{/if}}

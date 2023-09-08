@@ -5,9 +5,9 @@
   new-subject-template="https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
 
     source_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
-
     source_representation               = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
     source_attributed_title             = "https://veniss.net/container/fieldDefinitionContainer/source_attributed_title"
     source_original_title               = "https://veniss.net/container/fieldDefinitionContainer/source_original_title"
@@ -67,10 +67,14 @@
 
         <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
 
+          <div id="entity_published">
+            <semantic-form-checkbox-input label="Publish Source?" for='entity_published'>
+            </semantic-form-checkbox-input>
+          </div>
+
           <div id="source_attributed_title" class="padding-5">
             <semantic-form-text-input placeholder="Enter Attributed title ..." languages='["en", "it"]' label="Attributed title" for="source_attributed_title"></semantic-form-text-input>
           </div>
-
 
           <div id="source_location_type" class="padding-5">
             <semantic-form-select-input 

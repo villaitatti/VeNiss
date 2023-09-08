@@ -15,9 +15,15 @@
     source_author                       = "https://veniss.net/container/fieldDefinitionContainer/source_author"
     source_date                         = "https://veniss.net/container/fieldDefinitionContainer/source_date"
     source_date_composite               = "https://veniss.net/container/fieldDefinitionContainer/source_date_composite"
+
     source_location                     = "https://veniss.net/container/fieldDefinitionContainer/source_location"
     source_location_type                = "https://veniss.net/container/fieldDefinitionContainer/source_location_type"
     source_location_name                = "https://veniss.net/container/fieldDefinitionContainer/source_location_name"
+
+    source_information_carrier_location = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_location"
+    source_information_carrier_type     = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_type"
+    source_information_carrier_name     = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_name"
+
     source_technique                    = "https://veniss.net/container/fieldDefinitionContainer/source_technique"
     source_dimension                    = "https://veniss.net/container/fieldDefinitionContainer/source_dimension"
     source_dimension_unit               = "https://veniss.net/container/fieldDefinitionContainer/source_dimension_unit"
@@ -129,12 +135,12 @@
         <bs-tab event-key="2" title="Archival Location">
           <div data-flex-layout="row top-stretch">
 
-            <div id="source_location" class="padding-5" data-flex-layout="row top-stretch">
+            <div id="source_information_carrier_location" class="padding-5" data-flex-layout="row top-stretch">
               <div data-flex-self="size-x3">
                 <semantic-form-tree-picker-input 
                   open-dropdown-on-focus="false"
                   label="Archival Location" 
-                  for='source_location'
+                  for='source_information_carrier_location'
                   placeholder="Drop here the archival unit containing this source ... "
                   custom-button='{
                     "iri": "http://www.researchspace.org/resource/ThinkingFrames",
@@ -177,16 +183,16 @@
 
           <div data-flex-layout="row top-stretch">
 
-            <div id="source_location_type" class="padding-5">
+            <div id="source_information_carrier_type" class="padding-5">
               <semantic-form-select-input 
-                for='source_location_type'
-                label="Archival Unit Object"
-                placeholder="Choose the archival unit object">
+                for='source_information_carrier_type'
+                label="Information Carrier type"
+                placeholder="Choose the Information Carrier type">
               </semantic-form-select-input>
             </div>
 
-            <div id="source_location_name" class="padding-5">
-              <semantic-form-text-input label="Archival Unit Title" placeholder="Write the archival unit title" for='source_location_name'>
+            <div id="source_information_carrier_name" class="padding-5">
+              <semantic-form-text-input label="Information Carrier name" placeholder="Write the Information Carrier name" for='source_information_carrier_name'>
               </semantic-form-text-input> 
             </div>
 

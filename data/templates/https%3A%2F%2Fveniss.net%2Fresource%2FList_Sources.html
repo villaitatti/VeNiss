@@ -103,21 +103,12 @@
                       <semantic-table 
                         id='table-result'
                         query='SELECT DISTINCT * WHERE { 
-                            ?subject a veniss_ontology:Source_Primary.
+                          
+                          ?subject a veniss_ontology:Source_Primary.
 
                           optional {
                             ?subject crm:P53_has_former_or_current_location ?location.
-                            ?location crm:P2_has_type <https://veniss.net/resource/archival_entity/full_path>.
-                          }
-
-                          optional {
-                            ?subject crm:P53_has_former_or_current_location ?location_name.
-                            ?location_name crm:P2_has_type <https://veniss.net/resource/type/location_name>.
-                          }
-
-                          optional {
-                            $subject crm:P53_has_former_or_current_location ?medium.
-                            $medium crm:P2_has_type <https://veniss.net/resource/type/medium>
+                            ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
                           }
 
                           optional {
@@ -227,23 +218,25 @@
                                   }
 
                                   OPTIONAL {
-                                    BIND(<{{medium.value}}> as ?medium)
-                                    ?medium crm:P1_is_identified_by ?abbreviation.
-                                    ?abbreviation a crm:E41_Appellation;
-                                      crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
-                                      rdfs:label ?abbreviation_lbl 
-                                  }
-                                  BIND(COALESCE(?abbreviation_lbl, "") as ?medium_final_lbl)
+                                    ?subject crm:P53_has_former_or_current_location ?information_carrier_type.
+                                    ?information_carrier_type crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/type>;
+                                      crm:P1_is_identified_by ?abbreviation.
 
-                                  OPTIONAL { 
-                                    BIND(<{{location_name.value}}> as ?medium_title)
-                                    ?medium_title rdfs:label ?medium_title_lbl. 
+                                    ?abbreviation crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
+                                      rdfs:label ?type_label
                                   }
-                                  BIND(COALESCE(?medium_title_lbl, "") as ?medium_title_final_lbl)
+                                  BIND(COALESCE(CONCAT(", ", ?type_label, " "), " ") as ?information_carrier_type_label)
                                   
-                                  BIND(CONCAT(?item_label, ", ", ?medium_final_lbl, " ", ?medium_title_final_lbl) as ?full_path)
-                                }
-                              '
+                                  OPTIONAL {
+                                    ?subject crm:P53_has_former_or_current_location ?information_carrier_name.
+                                    ?information_carrier_name crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/name>;
+                                      rdfs:label ?name_label
+                                  }
+                                  BIND(COALESCE(?name_label, "") as ?information_carrier_name_label)
+                                  
+                                  BIND(CONCAT(?item_label, ?information_carrier_type_label, ?information_carrier_name_label) AS ?full_path)
+                                  BIND(<{{subject.value}}> as ?subject)
+                                }'
                             ></semantic-query>
                             {{/if}}
                           </div>

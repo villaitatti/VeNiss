@@ -22,7 +22,7 @@
                         <semantic-form-errors></semantic-form-errors>
                         <!-- End form notifications -->
 
-                        <semantic-form-hidden-input for="type" default-values='["https://veniss.net/ontology#Island"]'>
+                        <semantic-form-hidden-input for="type" default-values='["https://veniss.net/ontology#Island","http://www.cidoc-crm.org/P53_Place"]'>
                         </semantic-form-hidden-input>
                         <semantic-form-text-input for="full_name" placeholder="Enter island's full name here...">
                         </semantic-form-text-input>
@@ -65,10 +65,9 @@
                                     PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
                                     SELECT DISTINCT ?bw_id ?wkt WHERE {
                                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                        ?root rs_sql_sail:hasQueryId "island_form";
+                                        ?root rs_sql_sail:hasQueryId "{{label.value}}_island_shapes";
                                         veniss_sql:wkt ?wkt;
                                         veniss_sql:bw_id ?bw_id;
-                                        veniss_sql:tableName "qgis_{{label.value}}_islands"^^xsd:string.
                                       }
                                     }'>
                                         </semantic-map-classic>
@@ -104,7 +103,7 @@
                         }' template='{{> island_location_template}}'>
                             <template id='island_location_template'>
                                 {{#each bindings}}
-                                {{label.value}}
+                                
                                 <div style="height:400px; width: 400px;">
                                     <semantic-map-classic id='search-map' fix-zoom-level="13" query='SELECT ?lat ?lng ?description ?link WHERE {
                                         VALUES(?lat ?lng ?description ?link) {

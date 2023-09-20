@@ -38,8 +38,10 @@
     <div class="body">
       <semantic-search>
         <semantic-search-query-constant query='
-          select ?subject where { 
-            ?subject a veniss_ontology:Island.
+          SELECT ?subject 
+          WHERE {
+            ?subject a ?type.
+            ?type rdfs:subClassOf <https://veniss.net/ontology#Builtwork>.
           }
         '>
         </semantic-search-query-constant>
@@ -57,6 +59,9 @@
                     <strong>Please, refine your search.</strong>
                   </bs-alert>
                   {{else}}
+                  <div style="margin-left:5px;">
+                    <h2>List</h2>
+                    </div>
                   <p>Found <strong>{{numberOfResults}}</strong> Builtworks.</p>
                   {{/if}}
                 </template>
@@ -149,7 +154,46 @@
                 </semantic-search-result>
               </bs-tab>
               <bs-tab event-key="2" title="Buildings">
+                <semantic-search-result>
+                  <semantic-table id='table-result-2' query='SELECT * WHERE { 
+                      ?subject a veniss_ontology:Building.
+                      ?subject rdfs:label ?label.
+                      ?subject crm:P53_has_former_or_current_location ?island_node.
+                      ?island_node rdfs:label ?island_label.
+                      ?island_node crm:P1_is_identified_by ?island_appellation_node.
+                      ?island_appellation_node rdfs:label ?island_appellation.
+                    }' column-configuration='[
+                    {
+                        "displayName": "Label",
+                        "cellTemplate": "{{> label}}"
+                    },
+                    {
+                      "displayName": "Island",
+                      "cellTemplate": "{{> island}}"
+                    }
+                    ]'>
+                    <template id="label">
 
+                      <mp-event-trigger 
+                      id='{{subject.value}}-add-frame' 
+                      type='Dashboard.AddFrame' 
+                      data='{
+                        "resourceIri": "{{subject.value}}", 
+                        "viewId": "entity-editor"
+                      }' 
+                      targets='["thinking-frames"]'>
+                      <div id='{{subject.value}}-addframe' style="display: flex; align-items: center; font-weight: bold;">
+                        <a href="{{subject.value}}">{{label.value}}</a>
+                      </div>
+                    </mp-event-trigger>
+                    </template>
+                    <template id="island">
+                      <div style="display: flex; align-items: center;">
+                        <a href="{{island_node.value}}" target="_blank">{{island_appellation.value}}</a>
+                      </div>
+                    </template>
+                  </semantic-table>
+                </semantic-search-result>
               </bs-tab>
             </bs-tabs>
           </div>

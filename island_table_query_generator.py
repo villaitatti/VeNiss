@@ -25,7 +25,7 @@ template = '''
 rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "{element_value}_island_shapes" ;
-    rs_sql_sail:text "select distinct \\"BW_ID\\" as bw_id, ST_AsText(geometry) as wkt from qgis_{element_value}_islands"
+    rs_sql_sail:text "select distinct \\"identifier\\" as bw_id, ST_AsText(geometry) as wkt from qgis_{element_value}_islands"
 ] ;
 '''
 

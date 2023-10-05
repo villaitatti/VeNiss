@@ -3,8 +3,8 @@
     <div data-flex-layout="columns center-stretch">
       <div class="Header">
         <h1>Sources</h1>
-        <hr>
       </div>
+
 
       <div class="subheader">
 
@@ -34,18 +34,44 @@
 
       </div>
 
+      <hr>
+
       <div class="body">
-        <semantic-search>
-          <semantic-search-query-constant query='
+        <semantic-search
+          search-profile='{
+            "categories":[
+              {
+                "iri": "<https://veniss.net/ontology#Source>",
+                "label": "Source"
+              },
+              {
+                "iri": "<https://veniss.net/ontology#Island>",
+                "label": "Island"
+              }
+            ],
+            "relations":[
+              {
+                "iri": "<https://veniss.net/ontology#has_island>",
+                "label": "Related Island",
+                "hasDomain": "<https://veniss.net/ontology#Source>",
+                "hasRange": "<https://veniss.net/ontology#Island>"
+              }
+            ]
+          }'
+        >
+          <semantic-search-query-constant 
+          domain="<https://veniss.net/ontology#Source>"
+          query='
             select ?subject ?digital_image where { 
-              ?subject a veniss_ontology:Source.
+              ?subject a veniss_ontology:Source;
             }
           '>
           </semantic-search-query-constant>
 
           <div data-flex-layout="row stretch-stretch">
+
             <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
-              <semantic-search-facet></semantic-search-facet>
+              <semantic-search-facet open-by-default="true"></semantic-search-facet>
             </div>
 
             <semantic-search-result-holder>
@@ -70,21 +96,35 @@
                   </mp-sparql-result-counts>
                 </semantic-search-result>
 
-                 <bs-tabs unmount-on-exit=true id='search-results' animation=false>
-
-                  <bs-tab event-key="1" title="Primary sources">
-                    
+                <bs-tabs>
+                  <!-- Primary Sources -->
+                  <bs-tab event-key="1" title="Primary Sources">
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
                         query='SELECT DISTINCT * WHERE { 
+                          
                           ?subject a veniss_ontology:Source_Primary.
+
+                          optional {
+                            ?subject crm:P53_has_former_or_current_location ?location.
+                            ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
+                          }
+
                           optional {
                             ?subject crm:P1_is_identified_by ?appellation.
                             ?appellation rdf:type crm:E41_Appellation;
-                              crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
-                              rdfs:label ?label.
+                            crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
+                            rdfs:label ?label.
+                            FILTER((LANG(?label)) = "en")
                           }
+
+                          optional {
+                            ?subject veniss_ontology:has_island ?island.
+                            ?island crm:P1_is_identified_by ?island_appellation.
+                              ?island_appellation rdfs:label ?island_lbl
+                          }
+                          
                         }'
                         column-configuration='[
                           {
@@ -94,6 +134,14 @@
                           {
                             "displayName": "Name",
                             "cellTemplate": "{{> name}}"
+                          },
+                          {
+                            "displayName": "Island",
+                            "variableName": "island_lbl"
+                          },
+                          {
+                            "displayName": "Archival Location",
+                            "cellTemplate": "{{> location}}"
                           }
                         ]'
                       >
@@ -136,11 +184,70 @@
 
                         </template>
 
+                        <template id="location">
+                          <div style="display: flex; align-items: center;">
+
+                            {{#if location}}
+                            <semantic-query
+                              query='
+                                select ?full_path where {
+
+                                  {
+                                    select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
+                                      {
+                                        select ?class ?lbl
+                                        where {
+                                          ?item crm:P46i_forms_part_of* ?mid.
+                                          ?mid crm:P46i_forms_part_of* ?class.
+                                          ?class rdfs:label ?class_label
+
+                                          optional {
+                                            ?class crm:P1_is_identified_by ?acronym.
+                                            ?acronym a crm:E41_Appellation;
+                                              crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                                              rdfs:label ?acronym_lbl 
+                                          }
+
+                                          BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                                          BIND(<{{location.value}}> as ?item)
+                                        }
+                                        group by ?class ?lbl
+                                        order by desc(count(?mid))
+                                      }
+                                    }
+                                  }
+
+                                  OPTIONAL {
+                                    ?subject crm:P53_has_former_or_current_location ?information_carrier_type.
+                                    ?information_carrier_type crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/type>;
+                                      crm:P1_is_identified_by ?abbreviation.
+
+                                    ?abbreviation crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
+                                      rdfs:label ?type_label
+                                  }
+                                  BIND(COALESCE(CONCAT(", ", ?type_label, " "), " ") as ?information_carrier_type_label)
+                                  
+                                  OPTIONAL {
+                                    ?subject crm:P53_has_former_or_current_location ?information_carrier_name.
+                                    ?information_carrier_name crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/name>;
+                                      rdfs:label ?name_label
+                                  }
+                                  BIND(COALESCE(?name_label, "") as ?information_carrier_name_label)
+                                  
+                                  BIND(CONCAT(?item_label, ?information_carrier_type_label, ?information_carrier_name_label) AS ?full_path)
+                                  BIND(<{{subject.value}}> as ?subject)
+                                }'
+                            ></semantic-query>
+                            {{/if}}
+                          </div>
+                        </template>
+
                       </semantic-table>
-                    </semantic-search-result>
+                    </semantic-search-result> 
                   </bs-tab>
 
-                  <bs-tab event-key="2" title="Secondary sources">
+                  <!-- Secondary Sources -->
+                  <bs-tab event-key="2" title="Secondary Sources">
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
@@ -261,13 +368,12 @@
                       </semantic-table>
                     </semantic-search-result>
                   </bs-tab>
-
-                 </bs-tabs>
+                </bs-tabs>
 
               </div>
           </semantic-search-result-holder>
         </div>
-      </semantic-search>
+        </semantic-search>
       </div>
     </div>
 

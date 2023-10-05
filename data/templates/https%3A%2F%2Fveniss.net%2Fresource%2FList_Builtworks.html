@@ -38,8 +38,10 @@
     <div class="body">
       <semantic-search>
         <semantic-search-query-constant query='
-          select ?subject where { 
-            ?subject a veniss_ontology:Island.
+          SELECT ?subject 
+          WHERE {
+            ?subject a ?type.
+            ?type rdfs:subClassOf <https://veniss.net/ontology#Builtwork>.
           }
         '>
         </semantic-search-query-constant>
@@ -57,6 +59,9 @@
                     <strong>Please, refine your search.</strong>
                   </bs-alert>
                   {{else}}
+                  <div style="margin-left:5px;">
+                    <h2>List</h2>
+                    </div>
                   <p>Found <strong>{{numberOfResults}}</strong> Builtworks.</p>
                   {{/if}}
                 </template>
@@ -71,12 +76,28 @@
 
 
                 <semantic-search-result>
-                  <semantic-table id='table-result' query='SELECT DISTINCT * WHERE { 
+                  <semantic-table id='table-result' query='SELECT * WHERE { 
                       ?subject a veniss_ontology:Island.
                       ?subject rdfs:label ?label.
                       ?subject crm:P1_is_identified_by ?appellation.
                       ?appellation rdfs:label ?name.
+                      OPTIONAL {
+                        ?subject crm:P87_is_identified_by ?latitude.
+                        ?latitude crm:P2_has_type <https://veniss.net/ontology#latitude>.
+                        ?latitude rdfs:label ?latitude_label. 
+                        ?subject crm:P87_is_identified_by ?longitude.
+                        ?longitude crm:P2_has_type <https://veniss.net/ontology#longitude>.
+                        ?longitude rdfs:label ?longitude_label. 
+                      }
+                      OPTIONAL {
+                        ?subject crm:P48_has_preferred_identifier ?geonames_identifier.
+                        ?geonames_identifier rdfs:label ?geonames_label.
+                      }
                     }' column-configuration='[
+                    {
+                      "displayName": "Location",
+                      "cellTemplate": "{{> maplocation}}"
+                    }, 
                     {
                       "displayName": "Name",
                       "cellTemplate": "{{> name}}"
@@ -84,12 +105,35 @@
                     {
                         "displayName": "Label",
                         "cellTemplate": "{{> label}}"
+                    }, 
+                    {
+                        "displayName": "Geonames reference",
+                        "cellTemplate": "{{> geonames}}"
                       }
                     ]'>
                     <!-- TODO: add coordinates in federated query from geonames or tabella-->
+                    <template id="maplocation">
+                      <div style="height:150px; width: 250px;">
+                        <semantic-map-classic
+                        id='search-map'
+                        fix-zoom-level="11"
+                        query='SELECT ?lat ?lng ?description ?link WHERE {
+                          VALUES(?lat ?lng ?description ?link) {
+                            ("{{latitude_label.value}}" "{{longitude_label.value}}" "{{name.value}}" <http://www.wikidata.org/entity/Q22132500>)
+                          }
+                        }'
+                        >
+                      </semantic-map-classic>
+                      </div>
+                    </template>
                     <template id="label">
                       <div style="display: flex; align-items: center;">
-                        <a subject.value="{{subject.value}}">{{label.value}}</a>
+                        <a href="{{subject.value}}" target="_blank">{{label.value}}</a>
+                      </div>
+                    </template>
+                    <template id="geonames">
+                      <div style="display: flex; align-items: center;">
+                        <a href="{{geonames_label.value}}" target="_blank">{{geonames_label.value}}</a>
                       </div>
                     </template>
                     <template id="name">
@@ -101,7 +145,7 @@
                           "viewId": "entity-editor"
                         }' 
                         targets='["thinking-frames"]'>
-                        <div style="display: flex; align-items: center;">
+                        <div style="display: flex; align-items: center; font-weight: bold;">
                           <a href="{{subject.value}}">{{name.value}}</a>
                         </div>
                       </mp-event-trigger>
@@ -110,17 +154,61 @@
                 </semantic-search-result>
               </bs-tab>
               <bs-tab event-key="2" title="Buildings">
+                <semantic-search-result>
+                  <semantic-table id='table-result-2' query='SELECT * WHERE { 
+                      ?subject a veniss_ontology:Building.
+                      ?subject rdfs:label ?label.
+                      ?subject crm:P53_has_former_or_current_location ?island_node.
+                      ?island_node rdfs:label ?island_label.
+                      ?island_node crm:P1_is_identified_by ?island_appellation_node.
+                      ?island_appellation_node rdfs:label ?island_appellation.
+                    }' column-configuration='[
+                    {
+                        "displayName": "Label",
+                        "cellTemplate": "{{> label}}"
+                    },
+                    {
+                      "displayName": "Island",
+                      "cellTemplate": "{{> island}}"
+                    }
+                    ]'>
+                    <template id="label">
 
+                      <mp-event-trigger 
+                      id='{{subject.value}}-add-frame' 
+                      type='Dashboard.AddFrame' 
+                      data='{
+                        "resourceIri": "{{subject.value}}", 
+                        "viewId": "entity-editor"
+                      }' 
+                      targets='["thinking-frames"]'>
+                      <div id='{{subject.value}}-addframe' style="display: flex; align-items: center; font-weight: bold;">
+                        <a href="{{subject.value}}">{{label.value}}</a>
+                      </div>
+                    </mp-event-trigger>
+                    </template>
+                    <template id="island">
+                      <div style="display: flex; align-items: center;">
+                        <a href="{{island_node.value}}" target="_blank">{{island_appellation.value}}</a>
+                      </div>
+                    </template>
+                  </semantic-table>
+                </semantic-search-result>
               </bs-tab>
             </bs-tabs>
           </div>
         </semantic-search-result-holder>
+      </semantic-search>
     </div>
   </div>
 </div>
 
 
 <style>
+tr td:first-child {
+  width: 300px;
+}
+
   .subheader{
     padding-bottom: 40px;
     padding-left: 5px;
@@ -132,5 +220,9 @@
 
   .btn a{
     color: white !important;
+  }
+
+  .ol-attribution {
+    display: none;
   }
 </style>

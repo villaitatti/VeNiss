@@ -7,95 +7,125 @@
             full_name = 'https://veniss.net/container/fieldDefinitionContainer/builtwork_island_full_name'
             island_label = 'https://veniss.net/container/fieldDefinitionContainer/builtwork_island_label'
             island_geonames='https://veniss.net/container/fieldDefinitionContainer/geonames_island'
+            island_latitude='https://veniss.net/container/fieldDefinitionContainer/latitude_island'
+            island_longitude='https://veniss.net/container/fieldDefinitionContainer/longitude_island'
             ]]">
             <bs-panel>
                 <div class="row">
 
-                <div class="col-md-6">
-                    <h3>Builtwork Data</h3>
-                    <label style="color: lightsteelblue;">Entity URI: </label>
-                    <p style="color: lightsteelblue;">{{node}}</p>
-                    <!-- Form notifications  -->
-                    <semantic-form-recover-notification></semantic-form-recover-notification>
-                    <semantic-form-errors></semantic-form-errors>
-                    <!-- End form notifications -->
+                    <div class="col-md-6">
+                        <h3>Builtwork Data</h3>
+                        <label style="color: lightsteelblue;">Entity URI: </label>
+                        <p style="color: lightsteelblue;">{{node}}</p>
+                        <!-- Form notifications  -->
+                        <semantic-form-recover-notification></semantic-form-recover-notification>
+                        <semantic-form-errors></semantic-form-errors>
+                        <!-- End form notifications -->
 
-                    <semantic-form-hidden-input for="type" default-values='["https://veniss.net/ontology#Island"]'>
-                    </semantic-form-hidden-input>
-                    <semantic-form-text-input for="full_name" placeholder="Enter island's full name here...">
-                    </semantic-form-text-input>
-                    <semantic-form-text-input for="island_label"
-                        placeholder="Enter island's label (only lowercase letters)"></semantic-form-text-input>
-                    <semantic-context repository='sari-rds'>
-                        <semantic-form-autocomplete-input for="island_geonames" label="Geonames Identifier"
-                            placeholder="Search for a geonames ID..."></semantic-form-autocomplete-input>
-                    </semantic-context>
+                        <semantic-form-hidden-input for="type" default-values='["https://veniss.net/ontology#Island","http://www.cidoc-crm.org/P53_Place"]'>
+                        </semantic-form-hidden-input>
+                        <semantic-form-text-input for="full_name" placeholder="Enter island's full name here...">
+                        </semantic-form-text-input>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <semantic-form-text-input for="island_latitude"
+                                    placeholder="Enter island's latitude...">
+                                </semantic-form-text-input>
+                            </div>
+                            <div class="col-md-6">
+                                <semantic-form-text-input for="island_longitude"
+                                    placeholder="Enter island's longitude...">
+                                </semantic-form-text-input>
+                            </div>
+                        </div>
 
+                        <semantic-form-text-input for="island_label"
+                            placeholder="Enter island's label (only lowercase letters)"></semantic-form-text-input>
+                            <semantic-form-text-input for="island_geonames"></semantic-form-text-input>
+                        
+                            <!-- <semantic-context repository='sari-rds'>
+                            <semantic-form-autocomplete-input for="island_geonames" label="Geonames Identifier"
+                                placeholder="Search for a geonames ID..."></semantic-form-autocomplete-input>
+                        </semantic-context> -->
 
+                        {{#if node}}
+                        <semantic-query query='SELECT ?item ?label {
+                            <{{node}}> rdfs:label ?label.
+                            } LIMIT 1' template='{{> test}}'>
+                            <template id='test'>
+                                {{#each bindings}}
 
-                    {{#if node}}
-                <semantic-query query='
-                SELECT ?item ?label {
-                    <{{node}}> rdfs:label ?label.
-                    
-                }' template='{{> test}}'>
-
-
-
-                    <template id='test'>
-                            {{#each bindings}}
-                                {{label.value}}
                                 <div style='height: 20vw; width: vw;'>
-                                    <h3>Map</h3>
+                                    <h3>Phases</h3>
                                     <semantic-context repository="ephedra">
-                                        <semantic-map id='segunda' fix-zoom-level=12
-                                            map-options='{"crs":"EPSG:3857", "extent": [1368358.959761288, 5692238.026840036, 1371414.0522355612, 5693523.1243780805]}'
+                                        <semantic-map-classic id='segunda' fix-zoom-level="12"
                                             query='
                                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
                                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                                     PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
                                     SELECT DISTINCT ?bw_id ?wkt WHERE {
                                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                        ?root rs_sql_sail:hasQueryId "island_form";
+                                        ?root rs_sql_sail:hasQueryId "{{label.value}}_island_shapes";
                                         veniss_sql:wkt ?wkt;
                                         veniss_sql:bw_id ?bw_id;
-                                        veniss_sql:tableName "{{label.value}}_islands"^^xsd:string.
                                       }
                                     }'>
-                                            <tiles-layer thumbnail='/assets/images/groad.jpg'
-                                                url='http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}'
-                                                identifier='GRoadmap' name='Google Roadmap' level='basemap'
-                                                author="Google" location="" year="2023">
-                                            </tiles-layer>
-                                        </semantic-map>
+                                        </semantic-map-classic>
                                     </semantic-context>
                                 </div>
-
-                            {{/each}}
-                    </template>
-
-
-
-                </semantic-query>
-                {{/if}}
-
-
-
-                </div>
-                <div class="col-md-6">
-                    <h3>BIM Model</h3>
-                    <div style="height:500px; border: 1px solid grey; border-radius: 2px;">
-                        <bim-viewer ifcurl='/assets/ed_2.ifc'>
-                    </bim-viewer>
+                                {{/each}}
+                            </template>
+                        </semantic-query>
+                        {{/if}}
                     </div>
+                    <div class="col-md-6">
+                        <h3>Island Location</h3>
+                        {{#if node}}
+                        <semantic-query query='
+                            SELECT ?item ?label ?longitude_label ?latitude_label ?geonames_label ?node {
+
+                            <{{node}}> rdfs:label ?label.
+
+                            OPTIONAL {
+                                <{{node}}> crm:P48_has_preferred_identifier ?geonames_identifier.
+                                ?geonames_identifier rdfs:label ?geonames_label.
+                            }
+
+                            <{{node}}> crm:P87_is_identified_by ?latitude.
+                            ?latitude crm:P2_has_type <https://veniss.net/ontology#latitude>.
+                            ?latitude rdfs:label ?latitude_label. 
+
+                            <{{node}}> crm:P87_is_identified_by ?longitude.
+                            ?longitude crm:P2_has_type <https://veniss.net/ontology#longitude>.
+                            ?longitude rdfs:label ?longitude_label. 
+
+                            BIND(<{{node}}> as ?node).
+                        }' template='{{> island_location_template}}'>
+                            <template id='island_location_template'>
+                                {{#each bindings}}
+                                
+                                <div style="height:400px; width: 400px;">
+                                    <semantic-map-classic id='search-map' fix-zoom-level="13" query='SELECT ?lat ?lng ?description ?link WHERE {
+                                        VALUES(?lat ?lng ?description ?link) {
+                                        ("{{latitude_label.value}}" "{{longitude_label.value}}" "{{node}}" <http://www.wikidata.org/entity/Q22132500>)
+                                  }
+                                }' tuple-template="<h3>{{label.value}}</h3>
+                                <div>Longitude: {{longitude_label.value}}</div>
+                                <div>Latitude: {{latitude_label.value}}</div>
+                                <div>Geonames: <a href='{{geonames_label.value}}' target='_blank'>link</a></div>
+                                <p>
+                                    Entity link: <a href='{{node.value}}'>{{node.value}}</a>
+                                </p>">
+                                    </semantic-map-classic>
+                                </div>
+                                {{/each}}
+                            </template>
+                        </semantic-query>
+                        {{/if}}
+                    </div>
+                    [[> rsp:FormDefaultActions]]
                 </div>
-                </div>
 
-                [[> rsp:FormDefaultActions]]
-
-
-
-                
 
                 <!-- <div style='height: 35vw;'>
                     <semantic-map
@@ -113,25 +143,17 @@
                             name='Google Roadmap' level='basemap' author="Google" location="" year="2023">
                         </tiles-layer>
                     </semantic-map>
-                </div> -->
+                </div>
+            
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+                  <h3>BIM Model</h3>
+                    <div style="height:500px; border: 1px solid grey; border-radius: 2px;">
+                        <bim-viewer ifcurl='/assets/ed_2.ifc'>
+                    </bim-viewer>
+                    </div> -->
 
             </bs-panel>
         </semantic-form>
-
     </bs-col>
 </bs-row>

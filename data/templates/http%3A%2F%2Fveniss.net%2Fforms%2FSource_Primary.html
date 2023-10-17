@@ -28,6 +28,7 @@
     source_dimension                    = "https://veniss.net/container/fieldDefinitionContainer/source_dimension"
     source_dimension_unit               = "https://veniss.net/container/fieldDefinitionContainer/source_dimension_unit"
     source_comment                      = "https://veniss.net/container/fieldDefinitionContainer/source_comment"
+
     source_synopsis                     = "https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
     source_transcription                = "https://veniss.net/container/fieldDefinitionContainer/source_transcription"
     
@@ -120,10 +121,16 @@
               </div>
             </div>
 
+            <div data-flex-layout="row top-stretch">
+              <div id="source_synopsis" class="padding-5">
+                <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>
+                </semantic-form-text-input> 
+              </div>
 
-            <div id="source_synopsis">
-              <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>
-              </semantic-form-text-input> 
+              <div id="source_transcription" class="padding-5">
+                <semantic-form-text-input placeholder="Enter transcription ..." languages='["en", "it"]' multiline="true" label="Transcription" rows="5" for='source_transcription'>
+                </semantic-form-text-input> 
+              </div>
             </div>
 
           </div>

@@ -6,6 +6,7 @@
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
+    entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
 
     source_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
     source_representation               = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
@@ -74,9 +75,14 @@
 
         <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
 
-          <div id="entity_published">
-            <semantic-form-checkbox-input label="Publish Source?" for='entity_published'>
-            </semantic-form-checkbox-input>
+          <div data-flex-layout="row top-stretch">            
+            <div id="entity_publication_notes" class="padding-5">
+              <semantic-form-text-input placeholder="Enter a note for the editor ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+            </div>
+
+            <div id="entity_published" class="padding-5">
+              <semantic-form-checkbox-input label="Record completed?" for='entity_published'></semantic-form-checkbox-input>
+            </div>
           </div>
 
           <div id="source_attributed_title" class="padding-5">

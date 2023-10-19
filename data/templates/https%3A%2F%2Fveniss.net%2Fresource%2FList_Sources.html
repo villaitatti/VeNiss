@@ -126,31 +126,42 @@
                           }
                           
                         }'
-                        column-configuration='[
-                          {
-                            "displayName": "Image",
-                            "cellTemplate": "{{> visual_representation}}"
-                          },
-                          {
-                            "displayName": "Name",
-                            "cellTemplate": "{{> name}}"
-                          },
-                          {
-                            "displayName": "Island",
-                            "variableName": "island_lbl"
-                          },
-                          {
-                            "displayName": "Archival Location",
-                            "cellTemplate": "{{> location}}"
-                          }
-                        ]'
+
+                        tuple-template="{{> table-row}}"
                       >
+
+                        <template id="table-row">
+                          <mp-event-trigger 
+                            id='{{subject.value}}-add-frame' 
+                            type='Dashboard.AddFrame' 
+                            data='{
+                              "resourceIri": "{{subject.value}}", 
+                              "viewId": "entity-editor"
+                            }' 
+                            targets='["thinking-frames"]'>
+                            <tr class="clickable-row" data-flex-layout="row center-stretch">
+                              <div>
+                                {{>visual_representation}}
+                              </div>
+                              <div data-flex-self="size-x2">
+                                {{>name}}
+                              </div>
+
+                              <div>
+                                {{>island}}
+                              </div>
+
+                              <div>
+                                {{>location}}
+                              </div>
+                            </tr>
+                          </mp-event-trigger>
+                        </template>
 
                         <template id="visual_representation">
 
                           <semantic-context storage="images">
-
-                            <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
+                            <mp-resource-thumbnail iri='{{subject.value}}' class='detail-img'>
                                 <mp-resource-thumbnail-fallback>
                                     <with-types iri='{{subject.value}}'
                                             template='{{> noImage}}'
@@ -162,26 +173,16 @@
                                     </with-types>
                                 </mp-resource-thumbnail-fallback>
                             </mp-resource-thumbnail>
-
                           </semantic-context>
                           
                         </template>
 
                         <template id="name">
-                          
-                          <mp-event-trigger 
-                            id='{{subject.value}}-add-frame' 
-                            type='Dashboard.AddFrame' 
-                            data='{
-                              "resourceIri": "{{subject.value}}", 
-                              "viewId": "entity-editor"
-                            }' 
-                            targets='["thinking-frames"]'>
-                            <div style="display: flex; align-items: center;">
-                              <a href="">{{label.value}}</a>
-                            </div>
-                          </mp-event-trigger>  
+                          <p>{{label.value}}</p>
+                        </template>
 
+                        <template id="island">
+                          {{island_lbl.value}}
                         </template>
 
                         <template id="location">
@@ -393,5 +394,21 @@
 
   .btn a{
     color: #fff!important;
+  }
+
+  .clickable-row{
+    padding: 10px 0;
+    border-top: 1px solid lightgrey;
+  }
+
+  .clickable-row:hover{
+    background-color: var(--color-primary-10);;
+    cursor: pointer;
+  }
+
+  .clickable-row .detail-img{
+    min-width: 100px;
+    height: 100px;
+    object-fit: cover;
   }
 </style>

@@ -38,6 +38,17 @@
 
       <div class="body">
         <semantic-search
+          relations='{
+            "<https://veniss.net/ontology#has_actor>": [{
+              "kind": "resource",
+              "queryPattern": "{
+                $subject crm:P108i_was_produced_by ?production.
+                ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author>.
+                ?actor_role crmpc:P01_has_domain ?production;
+                  crmpc:P02_has_range ?__value__.
+              }"
+            }]
+          }'
           search-profile='{
             "categories":[
               {
@@ -47,6 +58,10 @@
               {
                 "iri": "<https://veniss.net/ontology#Island>",
                 "label": "Island"
+              },
+              {
+                "iri": "<https://veniss.net/ontology#Actor>",
+                "label": "Actor"
               }
             ],
             "relations":[
@@ -55,6 +70,12 @@
                 "label": "Related Island",
                 "hasDomain": "<https://veniss.net/ontology#Source>",
                 "hasRange": "<https://veniss.net/ontology#Island>"
+              },
+              {
+                "iri": "<https://veniss.net/ontology#has_actor>",
+                "label": "Related Actor",
+                "hasDomain": "<https://veniss.net/ontology#Source>",
+                "hasRange": "<https://veniss.net/ontology#Actor>"
               }
             ]
           }'
@@ -102,7 +123,7 @@
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
-                        query='SELECT DISTINCT * WHERE { 
+                        query='SELECT DISTINCT ?subject ?location ?island  WHERE { 
                           
                           ?subject a veniss_ontology:Source_Primary.
 
@@ -112,19 +133,8 @@
                           }
 
                           optional {
-                            ?subject crm:P1_is_identified_by ?appellation.
-                            ?appellation rdf:type crm:E41_Appellation;
-                            crm:P2_has_type <https://veniss.net/resource/type/attributed_title>;
-                            rdfs:label ?label.
-                            FILTER((LANG(?label)) = "en")
-                          }
-
-                          optional {
                             ?subject veniss_ontology:has_island ?island.
-                            ?island crm:P1_is_identified_by ?island_appellation.
-                              ?island_appellation rdfs:label ?island_lbl
                           }
-                          
                         }'
 
                         tuple-template="{{> table-row}}"
@@ -139,22 +149,20 @@
                               "viewId": "entity-editor"
                             }' 
                             targets='["thinking-frames"]'>
-                            <tr class="clickable-row" data-flex-layout="row center-stretch">
-                              <div>
+                            <bs-row class="clickable-row">
+                              <bs-col sm="1" md="1">
                                 {{>visual_representation}}
-                              </div>
-                              <div data-flex-self="size-x2">
+                              </bs-col>
+                              <bs-col sm="4" md="4">
                                 {{>name}}
-                              </div>
-
-                              <div>
+                              </bs-col>
+                              <bs-col sm="2" md="2">
                                 {{>island}}
-                              </div>
-
-                              <div>
+                              </bs-col>
+                              <bs-col sm="5" md="5"> 
                                 {{>location}}
-                              </div>
-                            </tr>
+                              </bs-col>
+                            </bs-row>
                           </mp-event-trigger>
                         </template>
 
@@ -178,11 +186,29 @@
                         </template>
 
                         <template id="name">
-                          <p>{{label.value}}</p>
+                          <p><strong><mp-label iri="{{subject.value}}"></mp-label></strong></p>
+                          
+                          <p>
+                            <em>
+                              <semantic-query query='
+                                SELECT ?value WHERE {
+                                  BIND(<{{subject.value}}> as ?subject)
+                                  $subject crm:P108i_was_produced_by ?production.
+                                  ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author>.
+                                  ?actor_role crmpc:P01_has_domain ?production;
+                                      crmpc:P02_has_range $value
+                                } LIMIT 4
+                              '>
+                              </semantic-query>
+                            </em>
+                          </p>
+                          
                         </template>
 
                         <template id="island">
-                          {{island_lbl.value}}
+                          {{#if island}}
+                            
+                          {{/if}}
                         </template>
 
                         <template id="location">
@@ -383,6 +409,13 @@
 </div>
 
 <style>
+  .facet__category-selector-holder{
+    display: none;
+  }
+
+  .griddle-custom-row{
+    display: block!important;
+  }
   .page{
     padding-left: 20px;
     padding-right: 20px;
@@ -401,14 +434,18 @@
     border-top: 1px solid lightgrey;
   }
 
+  .clickable-row:first-child{
+    border-top: none;
+  }
+
   .clickable-row:hover{
     background-color: var(--color-primary-10);;
     cursor: pointer;
   }
 
   .clickable-row .detail-img{
-    min-width: 100px;
-    height: 100px;
+    min-width: 80px;
+    height: 80px;
     object-fit: cover;
   }
 </style>

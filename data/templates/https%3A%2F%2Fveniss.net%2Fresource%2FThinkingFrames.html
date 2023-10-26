@@ -80,7 +80,7 @@
       "iconClass": "rs-icon rs-icon-placeholder_woodblock veniss-builtworks",
       "resourceNotRequired": true,
       "template": "{{> listBuiltworks}}",
-      "type": "view"
+      "type": "authoring"
     },
     {
     	"id": "entity-search",
@@ -101,8 +101,19 @@
       "template": "{{> resourceTemplate}}",
       "type": "view"
     },
+
+    {
+    	"id": "iiif",
+      "label": "Image Viewer",
+      "description": "Drag and drop an entity here to view and compare related high-resolution images",
+      "dropAreaDescription": "Drag and drop any entity here to view and compare related high-resolution images",
+      "iconClass": "rs-icon rs-icon-images",
+      "template": "{{> iiifTemplate}}",
+      "frameVariable": "miradorVariable",
+      "type": "view"
+    },
    
- {
+    {
     	"id": "entity-editor",
       "label": "Entity Editor",
       "description": "Creare and author an entity through custom forms",
@@ -235,9 +246,6 @@
     </template>
     <template id='listSources'>
       [[> veniss:List_Sources]]
-    </template>
-    <template id='listBuiltworks'>
-      [[> veniss:List_Builtworks]]
     </template>
     <template id='listEvents'>
       [[> veniss:List_Events]]

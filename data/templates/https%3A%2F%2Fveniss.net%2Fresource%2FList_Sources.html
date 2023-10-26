@@ -132,9 +132,6 @@
                             ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
                           }
 
-                          optional {
-                            ?subject veniss_ontology:has_island ?island.
-                          }
                         }'
 
                         tuple-template="{{> table-row}}"
@@ -206,9 +203,13 @@
                         </template>
 
                         <template id="island">
-                          {{#if island}}
-                            
-                          {{/if}}
+                          <semantic-query query='
+                            SELECT ?value WHERE {
+                              BIND(<{{subject.value}}> as ?subject)
+                              ?subject veniss_ontology:has_island ?value.
+                            }
+                          '>
+                          </semantic-query>
                         </template>
 
                         <template id="location">

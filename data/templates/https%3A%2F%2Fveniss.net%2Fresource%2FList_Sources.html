@@ -281,81 +281,30 @@
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
-                        query='SELECT DISTINCT ?subject ?label WHERE { 
-                          ?subject a veniss_ontology:Source_Secondary.
-
-                          optional {
-                            ?subject frbroo:R24i_was_created_through ?publication_event.
-                            optional {
-                              ?publication_event crm:P01i_is_domain_of ?carried_out_by_curator.
-                              ?carried_out_by_curator crm:P14.1_in_the_role_of <http://veniss.net/resource/type/curator>.
-                              ?carried_out_by_curator crm:P02_has_range ?curator.
-                              ?curator rdfs:label ?curator_label
-                              bind(concat(", a cura di ", ?curator_label) as ?curator_label_final)
-                            }
-                            optional {
-                              ?publication_event crm:P01i_is_domain_of ?carried_out_by_publisher.
-                              ?carried_out_by_publisher crm:P14.1_in_the_role_of <http://veniss.net/resource/type/publisher>.
-                              ?carried_out_by_publisher crm:P02_has_range ?publisher.
-                              ?publisher rdfs:label ?publisher_label
-                              bind(concat(", ", ?publisher_label) as ?publisher_final)
-                            }
-                            optional {
-                              ?publication_event crm:P4_has_time-span ?timespan.
-                              ?timespan crm:P82a_begin_of_the_begin ?year
-                              bind(concat(", ", ?year) as ?year_final)
-                            }
-                            optional {
-                              ?publication_event crm:P7_took_place_at ?place.
-                              ?place rdfs:label ?place_label
-                              bind(concat(", ", ?place_label) as ?place_final)
-                            }
-                          }
-
-                          optional {
-                            ?subject crm:P129i_is_subject_of ?linguistic_object.
-                            ?linguistic_object crm:P94i_was_created_by ?creation.
-                            ?creation crm:P14_carried_out_by ?actor.
-                            ?actor rdfs:label ?author_final.
-                          }
-
-                          optional {
-                            ?subject crm:P1_is_identified_by ?bibitem_identifier.
-                            ?bibitem_identifier crm:P2_has_type <https://veniss.net/resource/type/title>;
-                                rdfs:label ?title
-                            bind(concat(", ", ?title) as ?title_final)
-                          }
-
-                          optional {
-                            ?subject veniss_ontology:has_broader ?broader.
-                            ?broader crm:P1_is_identified_by ?broader_title.
-                            ?broader_title 	crm:P2_has_type <https://veniss.net/resource/type/title>;
-                            rdfs:label ?broader_title_label
-                            bind(concat(", ", ?broader_title_label) as ?broader_title_final)
-                          }
-
-                          bind(coalesce(?curator_label_final, "") as ?curator_lbl)
-                          bind(coalesce(?author_final, "") as ?author_lbl)
-                          bind(coalesce(?title_final, "") as ?title_lbl)
-                          bind(coalesce(?place_final, "") as ?place_lbl)
-                          bind(coalesce(?publisher_final, "") as ?publisher_lbl)
-                          bind(coalesce(?year_final, "") as ?year_lbl)
-                          bind(coalesce(?broader_title_final, "") as ?broader_title_lbl)
-
-                          bind(concat(?author_lbl, ?title_lbl, ?broader_title_lbl, ?curator_lbl, ?place_lbl, ?publisher_lbl, ?year_lbl) as ?label)
-                          
+                        query='SELECT DISTINCT ?subject WHERE { 
+                          ?subject a veniss_ontology:Source_Secondary
                         }'
-                        column-configuration='[
-                          {
-                            "displayName": "Image",
-                            "cellTemplate": "{{> visual_representation}}"
-                          },
-                          {
-                            "displayName": "Name",
-                            "cellTemplate": "{{> name}}"
-                          }
-                        ]'
+                        tuple-template="{{> table-row}}"
                       >
+                        <template id="table-row">
+                          <mp-event-trigger 
+                            id='{{subject.value}}-add-frame' 
+                            type='Dashboard.AddFrame' 
+                            data='{
+                              "resourceIri": "{{subject.value}}", 
+                              "viewId": "entity-editor"
+                            }' 
+                            targets='["thinking-frames"]'>
+                            <bs-row class="clickable-row">
+                              <bs-col sm="1" md="1">
+                                {{>visual_representation}}
+                              </bs-col>
+                              <bs-col sm="11" md="11">
+                                {{>name}}
+                              </bs-col>
+                            </bs-row>
+                          </mp-event-trigger>
+                        </template>
 
                         <template id="visual_representation">
 
@@ -379,19 +328,8 @@
                         </template>
 
                         <template id="name">
-                          
-                          <mp-event-trigger 
-                            id='{{subject.value}}-add-frame' 
-                            type='Dashboard.AddFrame' 
-                            data='{
-                              "resourceIri": "{{subject.value}}", 
-                              "viewId": "entity-editor"
-                            }' 
-                            targets='["thinking-frames"]'>
-                            <div style="display: flex; align-items: center;">
-                              <a href="">{{label.value}}</a>
-                            </div>
-                          </mp-event-trigger>  
+
+                          <p><strong><mp-label iri="{{subject.value}}"></mp-label></strong></p>
 
                         </template>
 

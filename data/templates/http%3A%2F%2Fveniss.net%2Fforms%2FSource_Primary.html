@@ -106,11 +106,19 @@
             {{/if}}
           </div>
 
-
-
         </div>
 
         <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
+
+          <div data-flex-layout="row top-stretch" data-flex-self="size-x3">       
+            <div id="entity_publication_notes" class="padding-5">
+              <semantic-form-text-input placeholder="Enter a note for the editor ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+            </div>
+
+            <div id="entity_published" class="padding-5">
+              <semantic-form-checkbox-input label="Record completed?" for='entity_published'></semantic-form-checkbox-input>
+            </div>
+          </div>
 
           <div id="source_attributed_title" class="padding-5">
             <semantic-form-text-input placeholder="Enter Attributed title ..." languages='["en", "it"]' label="Attributed title" for="source_attributed_title"></semantic-form-text-input>
@@ -123,17 +131,7 @@
               placeholder="Select the island">
             </semantic-form-select-input>
           </div>
-
-          <div data-flex-layout="row top-stretch" data-flex-self="size-x3">       
-            <div id="entity_publication_notes" class="padding-5">
-              <semantic-form-text-input placeholder="Enter a note for the editor ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
-            </div>
-
-            <div id="entity_published" class="padding-5">
-              <semantic-form-checkbox-input label="Record completed?" for='entity_published'></semantic-form-checkbox-input>
-            </div>
-          </div>
-
+          
         </div>
 
       </div>

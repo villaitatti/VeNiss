@@ -1,5 +1,6 @@
 <nav id="veniss_navbar" class="clonedNavbar" role="navigation">
 
+  <!-- Home page bar -->
   <div id="sideNavbar" style="display: none;" class="rs-header">
     
     <ul class="nav navbar-nav" id="rs-navbar">
@@ -15,12 +16,6 @@
             <bs-menu-item><i class="fa fa-book" aria-hidden="true"></i> Narratives</bs-menu-item>
           </semantic-link-container>
 
-          <!--
-          <semantic-link-container uri="https://veniss.net/resource/ProjectDashboard">
-            <bs-menu-item><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</bs-menu-item>
-          </semantic-link-container>
-          -->
-
           <bs-menu-item divider="true"></bs-menu-item>
 
           <semantic-link-container uri="https://veniss.net/resource/ThinkingFrames" class="rs-body-m-M">
@@ -34,15 +29,6 @@
               </semantic-link>
             </li>
           </mp-anonymous-hidden>
-          
-          <!--
-          <li class="rs-xs-none">
-            <semantic-link iri="http://www.researchspace.org/resource/Documentation" title="Documentation"
-              class="rs-setting-icon" style="padding-right: 5px;">
-              <i class="fa fa-question-circle"></i> Documentation
-            </semantic-link>
-          </li>
-          -->
 
           <mp-anonymous-hidden>
             <li>
@@ -50,12 +36,12 @@
             </li>
           </mp-anonymous-hidden>
 
-          <mp-anonymous-hidden alt='<li><a href="/login" title="login" class="rs-body-m-M">Logout</a></li>'>
+          <mp-anonymous-hidden alt='<li><a href="/login" title="login" class="rs-body-m-M">Login</a></li>'>
             <bs-nav-dropdown title="Account" id="rs-account-dropdown" class="rs-account-dropdown">
 
               <bs-menu-item title='userPrincipal'>
                 <semantic-query
-                  query='SELECT ?__useruri__ ?userName { BIND(REPLACE(REPLACE(STR(?__useruri__), STR(User:), ""), "%40", "@") as ?userName) }'
+                  query='SELECT ?userName { BIND(REPLACE(REPLACE(STR(?__useruri__), STR(User:), ""), "%40", "@") as ?userName) }'
                   template='\{{> template}}'>
                   <template id='template'>
                     <semantic-link-container uri='\{{bindings.0.__useruri__.value}}'>
@@ -68,9 +54,9 @@
                 </semantic-query>
               </bs-menu-item>
 
-              <bs-menu-item href="/login" title='logout'>
+              <bs-menu-item href="/logout" title='logout'>
                 <div class="user-dropdown_item">
-                  <i class="rs-icon rs-icon-logout rs-xs-none"></i>
+                  <i class="rs-icon rs-icon-login rs-xs-none"></i>
                   <span>Logout</span>
                 </div>
               </bs-menu-item>
@@ -85,6 +71,7 @@
     </ul>
   </div>
 
+  <!-- Left page bar -->
   <div id="centralNavbar" class="rs-header">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#rs-navbar"
@@ -98,7 +85,6 @@
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
-
     <div class="collapse navbar-collapse" id="rs-navbar">
 
       <ul class="nav navbar-nav" id="rs-navbar">
@@ -131,15 +117,6 @@
               </semantic-link>
             </li>
           </mp-anonymous-hidden>
-          
-          <!--
-          <li class="rs-xs-none">
-            <semantic-link iri="http://www.researchspace.org/resource/Documentation" title="Documentation"
-              class="rs-setting-icon" style="padding-right: 5px;">
-              <i class="fa fa-question-circle"></i> Documentation
-            </semantic-link>
-          </li>
-          -->
 
           <mp-anonymous-hidden>
             <li>
@@ -147,12 +124,12 @@
             </li>
           </mp-anonymous-hidden>
 
-          <mp-anonymous-hidden alt='<li><a href="/login" title="login" class="rs-body-m-M">Logout</a></li>'>
+          <mp-anonymous-hidden alt='<li><a href="/login" title="login" class="rs-body-m-M">Login</a></li>'>
             <bs-nav-dropdown title="Account" id="rs-account-dropdown" class="rs-account-dropdown">
 
               <bs-menu-item title='userPrincipal'>
                 <semantic-query
-                  query='SELECT ?__useruri__ ?userName { BIND(REPLACE(REPLACE(STR(?__useruri__), STR(User:), ""), "%40", "@") as ?userName) }'
+                  query='SELECT ?userName { BIND(REPLACE(REPLACE(STR(?__useruri__), STR(User:), ""), "%40", "@") as ?userName) }'
                   template='\{{> template}}'>
                   <template id='template'>
                     <semantic-link-container uri='\{{bindings.0.__useruri__.value}}'>
@@ -165,9 +142,9 @@
                 </semantic-query>
               </bs-menu-item>
 
-              <bs-menu-item href="/login" title='logout'>
+              <bs-menu-item href="/logout" title='login'>
                 <div class="user-dropdown_item">
-                  <i class="rs-icon rs-icon-logout rs-xs-none"></i>
+                  <i class="rs-icon rs-icon-login rs-xs-none"></i>
                   <span>Logout</span>
                 </div>
               </bs-menu-item>

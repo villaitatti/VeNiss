@@ -11,6 +11,7 @@
             label='http://www.w3.org/2000/01/rdf-schema#label'
             building_island = 'https://veniss.net/container/fieldDefinitionContainer/building_island'
             functional-change = 'https://veniss.net/container/fieldDefinitionContainer/building_functional_change'
+            physical-changes = 'https://veniss.net/container/fieldDefinitionContainer/building_physical_changes'
             ]]">
             <bs-panel>
                 <div class="row">
@@ -67,8 +68,8 @@
                                         bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
                                         eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
                                     ]]'>
-                                                <semantic-form-datetime-input for="bob" label="Begin"></semantic-form-datetime-input>
-                                                <semantic-form-datetime-input for="eoe" label="End"></semantic-form-datetime-input>
+                                                <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
+                                                <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
                                             </semantic-form-composite-input>
                                         </semantic-form-composite-input>
                                     </div>
@@ -98,7 +99,42 @@
                                 </div>
                             </bs-tab-pane>
                             <bs-tab-pane event-key="third">
-                                <h1>THIRD</h1>
+                                <h1>Physical Changes</h1>
+                                <semantic-form-composite-input for='physical-changes'
+                                render-header="false"
+                                label="Presences"
+                                new-subject-template='/physical_changes/'
+                                fields='[[ fieldDefinitions
+                                type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                                physical-change-presence="https://veniss.net/container/fieldDefinitionContainer/physical-change-presence"
+                              ]]'
+                            >
+                              <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume'></semantic-form-hidden-input> 
+                                <semantic-form-composite-input for="physical-change-presence"
+                                label="Physical Phase"
+                                new-subject-template='/physical_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}/'
+                                fields="[[ fieldDefinitions
+                                  presence_type='http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+                                  physical_change_has_time-span = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_has_time-span'
+                                  physical_change_2d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_2d_representation'
+                                  physical_change_3d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_3d_representation'
+                                ]]"
+                                >     
+                                <semantic-form-hidden-input for="presence_type" default-value='http://www.cidoc-crm.org/cidoc-crm/E93_Presence'></semantic-form-hidden-input>
+                                <semantic-form-text-input for="physical_change_2d_representation" label="2D Representation"></semantic-form-text-input> 
+                                <semantic-form-text-input for="physical_change_3d_representation" label="3D Representation"></semantic-form-text-input> 
+                                <semantic-form-composite-input for="physical_change_has_time-span"
+                                      new-subject-template="/time-span" render-header="false" fields='[[ fieldDefinitions    
+                              bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                              eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                          ]]'>
+                                      <semantic-form-datetime-input for="bob" label="Begin"></semantic-form-datetime-input>
+                                      <semantic-form-datetime-input for="eoe" label="End"></semantic-form-datetime-input>
+                                  </semantic-form-composite-input>
+                              </semantic-form-composite-input>
+
+                                </semantic-form-composite-input>
+                              </semantic-form-composite-input>                            
                             </bs-tab-pane>
                                 </bs-tab-content>
                               </bs-col>

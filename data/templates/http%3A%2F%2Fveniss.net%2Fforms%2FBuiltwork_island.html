@@ -51,11 +51,13 @@
                         {{#if node}}
                         <semantic-query query='SELECT ?item ?label {
                             <{{node}}> rdfs:label ?label.
-                            } LIMIT 1' template='{{> test}}'>
-                            <template id='test'>
+                            } LIMIT 1' template='{{> phases}}'>
+                            <template id='phases'>
+        
                                 {{#each bindings}}
+                                <p></p>
 
-                                <div style='height: 20vw; width: vw;'>
+                                <div style='height: 20vw;'>
                                     <h3>Phases</h3>
                                     <semantic-context repository="ephedra">
                                         <semantic-map-classic id='segunda' fix-zoom-level="12"
@@ -63,7 +65,7 @@
                                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
                                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                                     PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                                    SELECT DISTINCT ?bw_id ?wkt WHERE {
+                                    SELECT DISTINCT ?wkt ?bw_id WHERE {
                                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                                         ?root rs_sql_sail:hasQueryId "{{label.value}}_island_shapes";
                                         veniss_sql:wkt ?wkt;
@@ -83,40 +85,34 @@
                         {{#if node}}
                         <semantic-query query='
                             SELECT ?item ?label ?longitude_label ?latitude_label ?geonames_label ?node {
-
-                            <{{node}}> rdfs:label ?label.
+                            ?node a <https://veniss.net/ontology#Island>.
+                            ?node rdfs:label ?label.
 
                             OPTIONAL {
-                                <{{node}}> crm:P48_has_preferred_identifier ?geonames_identifier.
+                                ?node crm:P87_is_identified_by ?latitude.
+                                ?latitude crm:P2_has_type <https://veniss.net/ontology#latitude>.
+                                ?latitude rdfs:label ?latitude_label. 
+                                ?node crm:P87_is_identified_by ?longitude.
+                                ?longitude crm:P2_has_type <https://veniss.net/ontology#longitude>.
+                                ?longitude rdfs:label ?longitude_label. 
+                              }
+                              OPTIONAL {
+                                ?node crm:P48_has_preferred_identifier ?geonames_identifier.
                                 ?geonames_identifier rdfs:label ?geonames_label.
-                            }
-
-                            <{{node}}> crm:P87_is_identified_by ?latitude.
-                            ?latitude crm:P2_has_type <https://veniss.net/ontology#latitude>.
-                            ?latitude rdfs:label ?latitude_label. 
-
-                            <{{node}}> crm:P87_is_identified_by ?longitude.
-                            ?longitude crm:P2_has_type <https://veniss.net/ontology#longitude>.
-                            ?longitude rdfs:label ?longitude_label. 
+                              }
 
                             BIND(<{{node}}> as ?node).
                         }' template='{{> island_location_template}}'>
                             <template id='island_location_template'>
                                 {{#each bindings}}
-                                
-                                <div style="height:400px; width: 400px;">
-                                    <semantic-map-classic id='search-map' fix-zoom-level="13" query='SELECT ?lat ?lng ?description ?link WHERE {
+                                <p></p>
+                                <div style="height:400px; width: 100%;">
+                                    <!-- <semantic-map-classic id='location_map' fix-zoom-level="13" query='SELECT ?lat ?lng ?description ?link ?node WHERE {
                                         VALUES(?lat ?lng ?description ?link) {
-                                        ("{{latitude_label.value}}" "{{longitude_label.value}}" "{{node}}" <http://www.wikidata.org/entity/Q22132500>)
+                                        ("{{latitude_label.value}}" "{{longitude_label.value}}" "{{node.value}}" <http://www.wikidata.org/entity/Q22132500>)
                                   }
-                                }' tuple-template="<h3>{{label.value}}</h3>
-                                <div>Longitude: {{longitude_label.value}}</div>
-                                <div>Latitude: {{latitude_label.value}}</div>
-                                <div>Geonames: <a href='{{geonames_label.value}}' target='_blank'>link</a></div>
-                                <p>
-                                    Entity link: <a href='{{node.value}}'>{{node.value}}</a>
-                                </p>">
-                                    </semantic-map-classic>
+                                }'>
+                                    </semantic-map-classic> -->
                                 </div>
                                 {{/each}}
                             </template>
@@ -157,3 +153,19 @@
         </semantic-form>
     </bs-col>
 </bs-row>
+
+<style>
+    .inline-composite .composite-input {
+        display: block !important;
+    }
+
+    .inline-composite .composite-input>div {
+        display: inline-block;
+        width: 49% !important;
+        margin-right: 1px;
+    }
+
+    .page__content-container {
+        overflow-y: auto !important;
+    }
+</style>

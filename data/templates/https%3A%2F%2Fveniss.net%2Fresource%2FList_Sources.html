@@ -123,7 +123,7 @@
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
-                        query='SELECT DISTINCT ?subject ?location ?island  WHERE { 
+                        query='SELECT DISTINCT ?subject ?location ?timespan WHERE { 
                           
                           ?subject a veniss_ontology:Source_Primary.
 
@@ -132,7 +132,18 @@
                             ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
                           }
 
-                        }'
+                          optional {
+                            ?subject crm:P108i_was_produced_by ?production.
+                            ?production a crm:E12_Production;
+                              crm:P4_has_time-span ?timespan.
+                              ?timespan a crm:E4_Time-span;
+                              crm:P170i_time_is_defined_by ?year_time_primitive.
+                            ?year_time_primitive a crm:E61_Time-Primitive;
+                              crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                              rdfs:label ?year
+                          }
+
+                        } ORDER BY ASC(?year)'
 
                         tuple-template="{{> table-row}}"
                       >
@@ -153,10 +164,13 @@
                               <bs-col sm="4" md="4">
                                 {{>name}}
                               </bs-col>
-                              <bs-col sm="2" md="2">
+                              <bs-col sm="1" md="1">
                                 {{>island}}
                               </bs-col>
-                              <bs-col sm="5" md="5"> 
+                              <bs-col sm="1" md="1">
+                                {{>date}}
+                              </bs-col>
+                              <bs-col sm="4" md="5"> 
                                 {{>location}}
                               </bs-col>
                             </bs-row>
@@ -210,6 +224,12 @@
                             }
                           '>
                           </semantic-query>
+                        </template>
+
+                        <template id="date">
+                          {{#if timespan}}
+                            <mp-label iri="{{timespan.value}}"></mp-label>
+                          {{/if}}
                         </template>
 
                         <template id="location">

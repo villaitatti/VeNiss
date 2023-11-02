@@ -170,7 +170,7 @@
               </div>
 
               <div id="source_transcription" class="padding-5">
-                <semantic-form-text-input placeholder="Enter transcription ..." languages='["en", "it"]' multiline="true" label="Transcript" rows="5" for='source_transcription'>
+                <semantic-form-text-input placeholder="Enter transcript ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcript" rows="5" for='source_transcription'>
                 </semantic-form-text-input> 
               </div>
             </div>
@@ -294,15 +294,18 @@
             
             <div id="source_date_composite" class="padding-5">
               <semantic-form-composite-input label="Creation date" for='source_date_composite' new-subject-template="/creation-date/" fields='[[fieldDefinitions
-                time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
-                time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
-                time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
-                time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
+                time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                time_primitive_note         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
               ]]'>
-                <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
-                <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
-                <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
-                <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+                <div data-flex-layout="row top-stretch">
+                  <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                  <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                  <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                  <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+                </div>
+
               </semantic-form-composite-input>
             </div>
           </div>

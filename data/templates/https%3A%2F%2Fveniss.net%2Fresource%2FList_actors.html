@@ -39,7 +39,7 @@
       <semantic-search>
         <semantic-search-query-constant 
           query='
-            select distinct ?subject where { ?subject a veniss_ontology:Actor }'>
+            SELECT DISTINCT ?subject WHERE { ?subject a veniss_ontology:Actor }'>
         </semantic-search-query-constant>
 
         <div data-flex-layout="row stretch-stretch">
@@ -53,58 +53,57 @@
               <semantic-search-result>
                 <semantic-table 
                   id='table-result'
-                  query='SELECT DISTINCT ?subject ?label WHERE { 
+                  query='SELECT DISTINCT ?subject ?dob_label WHERE { 
 
                     OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?given_name_node.
-                      ?given_name_node crm:P2_has_type <https://veniss.net/resource/type/given_name>;
-                        rdfs:label ?given_name_label.
-                      BIND(CONCAT(", ", ?given_name_label, " ") AS ?given_name)
+                      ?subject crm:P98i_was_born ?birth.
+                      ?birth a crm:E67_Birth;
+                          crm:P4_has_time-span/rdfs:label ?dob_label
                     }
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?family_name_node.
-                      ?family_name_node crm:P2_has_type <https://veniss.net/resource/type/family_name>;
-                        rdfs:label ?family_name_label.
-                      BIND(?family_name_label AS ?family_name)
-                    }
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?alias_node.
-                      ?alias_node crm:P2_has_type <https://veniss.net/resource/type/person_alias>;
-                        rdfs:label ?alias_label.
-                      BIND(CONCAT(" (", ?alias_label, ") ") AS ?alias)
-                    }
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?patronymic_node.
-                      ?patronymic_node crm:P2_has_type <https://veniss.net/resource/type/person_patronymic>;
-                        rdfs:label ?patronymic_label.
-                      BIND(CONCAT("di ", ?patronymic_label) AS ?patronymic)
-                    }
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?appellation.
-                      ?appellation crm:P2_has_type <https://veniss.net/resource/type/appellation>;
-                        rdfs:label ?group_label
-                    }
-                    BIND(COALESCE(?given_name, "") AS ?given_name_final)
-                    BIND(COALESCE(?family_name, "") AS ?family_name_final)
-                    BIND(COALESCE(?alias, "") AS ?alias_final)
-                    BIND(COALESCE(?patronymic, "") AS ?patronymic_final)
-                    BIND(COALESCE(?group_label, "") AS ?group_label_final)
-                    BIND(CONCAT(?group_label_final, ?family_name_final, ?given_name_final, ?patronymic_final, ?alias_final) AS ?label)
-                  }'
-                  column-configuration='[
-                    {
-                      "displayName": "Image",
-                      "cellTemplate": "{{> visual_representation}}"
-                    },
-                    {
-                      "displayName": "Name",
-                      "cellTemplate": "{{> name}}"
-                    }
-                  ]'
+                  } ORDER BY DESC(?dob_label)'
+                  tuple-template="{{> table-row}}"
                 >
+
+                  <template id="table-row">
+                    <mp-event-trigger 
+                      id='{{subject.value}}-add-frame' 
+                      type='Dashboard.AddFrame' 
+                      data='{
+                        "resourceIri": "{{subject.value}}", 
+                        "viewId": "entity-editor"
+                      }' 
+                      targets='["thinking-frames"]'>
+                      <bs-row class="clickable-row">
+                        <bs-col sm="1" md="1">
+                          {{>visual_representation}}
+                        </bs-col>
+                        <bs-col sm="7" md="7">
+                          <h5><mp-label iri="{{subject.value}}"></mp-label></h5>
+                          <p>
+                            <em>
+                              <semantic-query
+                                query='SELECT ?title WHERE {
+                                  ?subject crm:P1_is_identified_by ?title.
+                                  ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
+                                }'  
+                              ></semantic-query>
+                            </em>
+                          </p>
+                        </bs-col>
+
+                        <bs-col sm="2" md="2">
+                          {{#if dob_label}}
+                            <p>{{dob_label.value}}</p>
+                          {{/if}}
+                        </bs-col>
+                        
+                      </bs-row>
+                    </mp-event-trigger>
+                  </template>
+
                   <template id="visual_representation">
 
-                    <semantic-context storage="veniss_s3">
+                    <semantic-context storage="images">
 
                       <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
                           <mp-resource-thumbnail-fallback>
@@ -121,20 +120,6 @@
 
                     </semantic-context>
                     
-                  </template>
-                  <template id="name">
-                    <mp-event-trigger 
-                      id='{{subject.value}}-add-frame' 
-                      type='Dashboard.AddFrame' 
-                      data='{
-                        "resourceIri": "{{subject.value}}", 
-                        "viewId": "entity-editor"
-                      }' 
-                      targets='["thinking-frames"]'>
-                        <a href="#">
-                          {{label.value}}
-                        </a>
-                    </mp-event-trigger>  
                   </template>
 
                 </semantic-table>
@@ -162,4 +147,28 @@
   .btn a{
     color: #fff!important;
   }
+
+  .griddle-custom-row{
+    display: block!important;
+  }
+  .clickable-row{
+    padding: 10px 0;
+    border-top: 1px solid lightgrey;
+  }
+
+  .clickable-row:first-child{
+    border-top: none;
+  }
+
+  .clickable-row:hover{
+    background-color: var(--color-primary-10);;
+    cursor: pointer;
+  }
+
+  .clickable-row .detail-img{
+    min-width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+
 </style>

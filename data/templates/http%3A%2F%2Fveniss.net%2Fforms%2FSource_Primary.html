@@ -140,15 +140,18 @@
       <!-- Tabs -->
       <bs-tabs class="source_tabs" id="tabs">
 
-        <!-- Content --> 
-        <bs-tab event-key="1" title="Content">
+        <!-- Metadata --> 
+        <bs-tab event-key="1" title="Metadata">
 
           <div data-flex-layout="column top-stretch">
 
+            <div id="source_original_title" class="padding-5">
+              <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it", "de-at", "fr", "la"]' label="Original title" for="source_original_title"></semantic-form-text-input>
+            </div>
+
+            <hr>
+
             <div data-flex-layout="row center-stretch">
-              <div id="source_original_title" class="padding-5">
-                <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it", "de-at", "fr", "la"]' label="Original title" for="source_original_title"></semantic-form-text-input>
-              </div>
 
               <div id="source_location_type" class="padding-5">
                 <semantic-form-tree-picker-input 
@@ -161,18 +164,62 @@
                   }'>
                 </semantic-form-tree-picker-input>
               </div>
+
+              <div id="source_technique" class="padding-5">
+                <semantic-form-tree-picker-input  label="Source Materials" placeholder="Choose the materials" for='source_technique'
+                  tree-patterns='{
+                      "relationPattern": "?item skos:broader ?parent", 
+                      "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_materials>"
+                    }'
+                  >
+                </semantic-form-tree-picker-input>
+              </div>
+
+              <div id="source_dimension" class="padding-5">
+                <semantic-form-text-input label="Source Dimensions" placeholder="HxBmm" for="source_dimension">
+                </semantic-form-text-input>
+              </div>
+
             </div>
 
-            <div data-flex-layout="row top-stretch">
-              <div id="source_synopsis" class="padding-5">
-                <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>
-                </semantic-form-text-input> 
+            <hr>
+            
+            <div data-flex-layout="row center-stretch">
+
+              <div id="source_author" class="padding-5">
+                <semantic-form-autocomplete-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-autocomplete-input>
               </div>
 
-              <div id="source_transcription" class="padding-5">
-                <semantic-form-text-input placeholder="Enter transcript ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcript" rows="5" for='source_transcription'>
-                </semantic-form-text-input> 
+              <div id="source_date_composite" class="padding-5" style="margin-top: -7px;">
+                <semantic-form-composite-input 
+                  render-header="false"
+                  label="Creation date"
+                  for='source_date_composite' 
+                  new-subject-template="/creation-date/" 
+                  fields='[[fieldDefinitions
+                    time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                    time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                    time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                  ]]'>
+                  <div data-flex-layout="row top-stretch">
+
+                    <div class="padding-5">
+                      <semantic-form-text-input label="Creation Day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                    </div>
+
+                    <div class="padding-5">
+                      <semantic-form-text-input label="Month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                    </div>
+
+                    <div class="padding-5">
+                      <semantic-form-text-input label="Year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                    </div>
+
+                  </div>
+
+                </semantic-form-composite-input>
               </div>
+
             </div>
 
           </div>
@@ -180,8 +227,8 @@
 
         </bs-tab>
 
-        <!-- Archival location  -->
-        <bs-tab event-key="2" title="Archival Location">
+        <!-- Location  -->
+        <bs-tab event-key="2" title="Location">
           <div data-flex-layout="row top-stretch">
 
             <div id="source_information_carrier_location" class="padding-5" data-flex-layout="row top-stretch">
@@ -247,79 +294,26 @@
 
           </div>
 
-          <hr>
-
-          <!-- Medium and Dimension -->
-          <div data-flex-layout="column top-stretch">
-
-            <div id="source_technique" class="padding-5">
-              <semantic-form-tree-picker-input  label="Medium" placeholder="Choose the medium" for='source_technique'
-                tree-patterns='{
-                    "relationPattern": "?item skos:broader ?parent", 
-                    "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_materials>"
-                  }'
-                >
-              </semantic-form-tree-picker-input>
-            </div>
-
-            <div data-flex-layout="row top-stretch">
-              <div id="source_dimension" class="padding-5">
-                <semantic-form-text-input label="Dimensions" placeholder="H x B" for="source_dimension">
-                </semantic-form-text-input>
-              </div>
-
-              <div id="source_dimension_unit" class="padding-5">
-                <semantic-form-select-input label="Dimension unit" placeholder="select the dimension unit" for="source_dimension_unit">
-                </semantic-form-select-input>
-              </div>
-            </div>
-
-          </div>
-
-          <div data-flex-layout="row top-stretch">
-            <div id="source_comment" class="padding-5">
-              <semantic-form-text-input label="Additional notes" for="source_comment" placeholder="Enter an additional note here...">
-              </semantic-form-text-input>
-            </div>
-          </div>
         </bs-tab>
 
-        <!-- Author and Date -->
-        <bs-tab event-key="3" title="Author and Date">
+        <!-- Content -->
+        <bs-tab event-key="3" title="Content">
           <div data-flex-layout="row top-stretch">
 
-            <div id="source_author" class="padding-5">
-              <semantic-form-autocomplete-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-autocomplete-input>
+            <div data-flex-layout="row top-stretch">
+              <div id="source_synopsis" class="padding-5">
+                <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>
+                </semantic-form-text-input> 
+              </div>
+
+              <div id="source_transcription" class="padding-5">
+                <semantic-form-text-input placeholder="Enter transcript ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcript" rows="5" for='source_transcription'>
+                </semantic-form-text-input> 
+              </div>
             </div>
             
-            <div id="source_date_composite" class="padding-5">
-              <semantic-form-composite-input label="Creation date" for='source_date_composite' new-subject-template="/creation-date/" fields='[[fieldDefinitions
-                time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
-                time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
-                time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
-                time_primitive_note         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
-              ]]'>
-                <div data-flex-layout="row top-stretch">
-                  <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
-                  <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
-                  <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
-                  <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
-                </div>
-
-              </semantic-form-composite-input>
-            </div>
           </div>
 
-          <style>
-            #source_date_composite > div > div.cardinality-support > div > div > div:nth-child(-n+3){
-              display: inline-block;
-              margin-right: 2px;
-              width: 100px;
-            }
-            #source_date_composite > div > div.cardinality-support > div > div {
-              display: block;
-            }
-          </style>
         </bs-tab>
 
         <!-- Related elements -->

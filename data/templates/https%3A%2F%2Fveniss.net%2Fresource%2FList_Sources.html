@@ -47,6 +47,15 @@
                 ?actor_role crmpc:P01_has_domain ?production;
                   crmpc:P02_has_range ?__value__.
               }"
+            }],
+            "<https://veniss.net/ontology#has_user>" : [{
+              "kind": "resource",
+              "queryPattern": "{
+                ?subject a veniss_ontology:Source.
+                ?container <http://www.w3.org/ns/prov#wasAttributedTo> ?__value__.
+  
+                BIND(URI(CONCAT(STR(?subject), \"/container\")) as ?container)
+              }"
             }]
           }'
           search-profile='{
@@ -62,20 +71,30 @@
               {
                 "iri": "<https://veniss.net/ontology#Actor>",
                 "label": "Actor"
+              },
+              {
+                "iri": "<http://www.researchspace.org/resource/User>",
+                "label": "User"
               }
             ],
             "relations":[
               {
                 "iri": "<https://veniss.net/ontology#has_island>",
-                "label": "Related Island",
+                "label": "Islands",
                 "hasDomain": "<https://veniss.net/ontology#Source>",
                 "hasRange": "<https://veniss.net/ontology#Island>"
               },
               {
                 "iri": "<https://veniss.net/ontology#has_actor>",
-                "label": "Related Actor",
+                "label": "Authors",
                 "hasDomain": "<https://veniss.net/ontology#Source>",
                 "hasRange": "<https://veniss.net/ontology#Actor>"
+              },
+              {
+                "iri": "<https://veniss.net/ontology#has_user>",
+                "label": "Curator",
+                "hasDomain": "<https://veniss.net/ontology#Source>",
+                "hasRange": "<http://www.researchspace.org/resource/User>"
               }
             ]
           }'

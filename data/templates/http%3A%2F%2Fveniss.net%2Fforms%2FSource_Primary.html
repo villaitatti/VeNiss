@@ -137,13 +137,24 @@
           <!-- Metadata --> 
           <bs-tab event-key="1" title="Metadata">
 
-            <div data-flex-layout="column top-stretch">
+            <bs-row>
+              <bs-col lg="12" md="12" sm="12">
+                <div id="source_original_title">
+                  <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it", "de-at", "fr", "la"]' label="Original title" for="source_original_title"></semantic-form-text-input>
+                </div>
+              </bs-col>
+            </bs-row>
 
-              <div id="source_original_title" class="padding-5" data-flex-self="size-x2">
-                <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it", "de-at", "fr", "la"]' label="Original title" for="source_original_title"></semantic-form-text-input>
-              </div>
+            <bs-row>
 
-              <div id="source_location_type" class="padding-5">
+              <bs-col lg="6" md="6" sm="12">
+                <div id="source_author">
+                  <semantic-form-autocomplete-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-autocomplete-input>
+                </div>
+              </bs-col>
+
+              <bs-col lg="6" md="6" sm="12">
+                <div id="source_location_type">
                   <semantic-form-tree-picker-input 
                     for='source_typology'
                     label="Source typology"
@@ -153,18 +164,18 @@
                       "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_typologies>"
                     }'>
                   </semantic-form-tree-picker-input>
-              </div>
-
-              <div data-flex-layout="row center-stretch">
-
-                <div id="source_author" class="padding-5">
-                  <semantic-form-autocomplete-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-autocomplete-input>
                 </div>
+              </bs-col>
 
-                <div id="source_date_composite" class="padding-5" style="margin-top: -7px;">
+            </bs-row>
+
+            <hr>
+
+            <bs-row>
+              <bs-col lg="12" md="12" sm="12">
+                <div id="source_date_composite">
                   <semantic-form-composite-input 
-                    render-header="false"
-                    label="Creation date"
+                    label="Creation Date"
                     for='source_date_composite' 
                     new-subject-template="/creation-date/" 
                     fields='[[fieldDefinitions
@@ -172,34 +183,30 @@
                       time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
                       time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
                     ]]'>
-                    <div data-flex-layout="row top-stretch">
+                    
+                    <bs-row>
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
+                      </bs-col>
 
-                      <div class="padding-5">
-                        <semantic-form-text-input label="Creation Day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
-                      </div>
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
+                      </bs-col>
 
-                      <div class="padding-5">
-                        <semantic-form-text-input label="Month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
-                      </div>
-
-                      <div class="padding-5">
-                        <semantic-form-text-input label="Year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
-                      </div>
-
-                    </div>
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
+                      </bs-col>
+                    </bs-row>
 
                   </semantic-form-composite-input>
                 </div>
+              </bs-col>
+            </bs-row>
 
-              </div>
+            <hr>
 
-
-              <hr>
-
-              <div data-flex-layout="row center-stretch">
-
-                
-
+            <bs-row>
+              <bs-col lg="6" md="6" sm="12">
                 <div id="source_technique" class="padding-5">
                   <semantic-form-tree-picker-input  
                     label="Source Materials" 
@@ -217,29 +224,24 @@
                     >
                   </semantic-form-tree-picker-input>
                 </div>
+              </bs-col>
 
+              <bs-col lg="6" md="6" sm="12">
                 <div id="source_dimension" class="padding-5">
                   <semantic-form-text-input label="Source Dimensions" placeholder="HxBmm" for="source_dimension">
                   </semantic-form-text-input>
                 </div>
+              </bs-col>
 
-              </div>
-
-              <hr>
-              
-
-
-            </div>
-
+            </bs-row>
 
           </bs-tab>
 
           <!-- Location  -->
           <bs-tab event-key="2" title="Location">
-            <div data-flex-layout="row top-stretch">
-
-              <div id="source_information_carrier_location" class="padding-5" data-flex-layout="row top-stretch">
-                <div data-flex-self="size-x3">
+            <bs-row>
+              <bs-col lg="12">
+                <div id="source_information_carrier_location" >
                   <semantic-form-tree-picker-input 
                     open-dropdown-on-focus="false"
                     label="Archival Location" 
@@ -279,48 +281,52 @@
                     }'>
                   </semantic-form-tree-picker-input>
                 </div>
-                
-              </div>
+              </bs-col>
+            </bs-row>
 
-            </div>
+            <bs-row>
+              <bs-col lg="8" sm="12">
+                <div id="source_information_carrier_type">
+                  <semantic-form-select-input 
+                    for='source_information_carrier_type'
+                    label="Information Carrier type"
+                    placeholder="Choose the Information Carrier type">
+                  </semantic-form-select-input>
+                </div>
+              </bs-col>
 
-            <div data-flex-layout="row top-stretch">
+              <bs-col lg="4" sm="12">
+                <div id="source_information_carrier_name" class="padding-5">
+                  <semantic-form-text-input label="Information Carrier name" placeholder="Write the Information Carrier name" for='source_information_carrier_name'>
+                  </semantic-form-text-input> 
+                </div>
+              </bs-col>
 
-              <div id="source_information_carrier_type" class="padding-5">
-                <semantic-form-select-input 
-                  for='source_information_carrier_type'
-                  label="Information Carrier type"
-                  placeholder="Choose the Information Carrier type">
-                </semantic-form-select-input>
-              </div>
-
-              <div id="source_information_carrier_name" class="padding-5">
-                <semantic-form-text-input label="Information Carrier name" placeholder="Write the Information Carrier name" for='source_information_carrier_name'>
-                </semantic-form-text-input> 
-              </div>
-
-            </div>
+            </bs-row>
 
           </bs-tab>
 
           <!-- Content -->
           <bs-tab event-key="3" title="Content">
-            <div data-flex-layout="row top-stretch">
-
-              <div data-flex-layout="row top-stretch">
+            <bs-row>
+              <bs-col lg="12">
                 <div id="source_synopsis" class="padding-5">
                   <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>
                   </semantic-form-text-input> 
                 </div>
+              </bs-col>
+            </bs-row>
 
+            <hr>
+
+            <bs-row>
+              <bs-col lg="12">
                 <div id="source_transcription" class="padding-5">
                   <semantic-form-text-input placeholder="Enter transcript ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcript" rows="5" for='source_transcription'>
                   </semantic-form-text-input> 
                 </div>
-              </div>
-              
-            </div>
-
+              </bs-col>
+            </bs-row>
           </bs-tab>
 
           <!-- Related elements -->
@@ -406,5 +412,9 @@
     border-right: 1px solid #ccc;
     padding-right: 20px;
     margin-right: 20px;
+  }
+
+  #source_date_composite div.cardinality-support__group-instance{
+    padding: 15px!important;
   }
 </style>

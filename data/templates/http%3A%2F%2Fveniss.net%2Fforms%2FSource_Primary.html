@@ -42,290 +42,300 @@
 
   <div class="container-fluid">
 
-    <div data-flex-layout="column stretch-stretch">
+    <div data-flex-layout="row stretch-stretch">
 
-      <!-- Representation and titles -->
-      <div data-flex-layout="row top-stretch">
+      <!-- LEFT: General data -->
+      <div data-flex-layout="column top-stretch" class="left-column">
 
-        <div data-flex-layout="column top-stretch">
-          <div id="source_visual_representation" class="padding-5">
-            <semantic-form-file-input 
-              label="Visual representation"
-              for="source_representation"
-              storage='images'
-              temp-storage='tmp'
-              placeholder='Add file here'
-              name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
-              media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
-              resource-query='
+        <div id="source_visual_representation" class="padding-5">
+          <semantic-form-file-input 
+            label="Visual representation"
+            for="source_representation"
+            storage='images'
+            temp-storage='tmp'
+            placeholder='Add file here'
+            name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
+            media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
+            resource-query='
+              PREFIX rso: <http://www.researchspace.org/ontology/>
+              CONSTRUCT {
+                ?__resourceIri__ a rso:EX_File.
+                ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
+                ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
+                ?__resourceIri__ rdfs:label ?__filename__.
+              } WHERE {}
+            '
+            generate-iri-query='
+              SELECT ?resourceIri {
+                BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
+              }
+            '
+          ></semantic-form-file-input>
+
+          <!-- Check if the source has been created and has image -->
+          {{#if node}}
+            <semantic-if 
+              query='
                 PREFIX rso: <http://www.researchspace.org/ontology/>
-                CONSTRUCT {
-                  ?__resourceIri__ a rso:EX_File.
-                  ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
-                  ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
-                  ?__resourceIri__ rdfs:label ?__filename__.
-                } WHERE {}
-              '
-              generate-iri-query='
-                SELECT ?resourceIri {
-                  BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
-                }
-              '
-            ></semantic-form-file-input>
-
-            <!-- Check if the source has been created and has image -->
-            {{#if node}}
-              <semantic-if 
-                query='
-                  PREFIX rso: <http://www.researchspace.org/ontology/>
-                  ASK { 
-                    <{{node}}> rso:PX_has_main_representation ?representation.
-                    ?representation a rso:EX_Digital_Image;
-                      crm:P1_is_identified_by ?image
-                  }' 
-                then='{{> then}}' else='{{> else}}'>
-                <template id='then'>
-                  <div class="padding-5">
-                    <mp-event-trigger 
-                      id='{{node}}-add-frame-image' 
-                      type='Dashboard.AddFrame' 
-                      data='{
-                        "resourceIri": "{{node}}", 
-                        "viewId": "iiif"
-                      }' 
-                      targets='["thinking-frames"]'>
-                      
-                      <button class="btn btn-primary btn-open-image">
-                        <i class="rs-icon rs-icon-image"></i>
-                      </button>
-                    </mp-event-trigger>  
-                  </div>
-                </template>
-                <template id='else'></template>
-              </semantic-if>
-            {{/if}}
-          </div>
-
+                ASK { 
+                  <{{node}}> rso:PX_has_main_representation ?representation.
+                  ?representation a rso:EX_Digital_Image;
+                    crm:P1_is_identified_by ?image
+                }' 
+              then='{{> then}}' else='{{> else}}'>
+              <template id='then'>
+                <div class="padding-5">
+                  <mp-event-trigger 
+                    id='{{node}}-add-frame-image' 
+                    type='Dashboard.AddFrame' 
+                    data='{
+                      "resourceIri": "{{node}}", 
+                      "viewId": "iiif"
+                    }' 
+                    targets='["thinking-frames"]'>
+                    
+                    <button class="btn btn-primary btn-open-image">
+                      <i class="rs-icon rs-icon-image"></i>
+                    </button>
+                  </mp-event-trigger>  
+                </div>
+              </template>
+              <template id='else'></template>
+            </semantic-if>
+          {{/if}}
         </div>
 
-        <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
+        <div id="source_attributed_title" class="padding-5">
+          <semantic-form-text-input placeholder="Enter Attributed title ..." languages='["en", "it"]' multiline="true" label="Attributed title" for="source_attributed_title"></semantic-form-text-input>
+        </div>
 
-          <div data-flex-layout="row top-stretch" data-flex-self="size-x3">       
-            <div id="entity_publication_notes" class="padding-5">
-              <semantic-form-text-input placeholder="Enter a note for the editor ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
-            </div>
+        <div id="source_location_type" class="padding-5">
+          <semantic-form-select-input 
+            for='source_island' 
+            label="Island"
+            placeholder="Select the island">
+          </semantic-form-select-input>
+        </div>
 
-            <div id="entity_published" class="padding-5">
-              <semantic-form-checkbox-input label="Record completed?" for='entity_published'></semantic-form-checkbox-input>
-            </div>
-          </div>
+        <hr>
 
-          <div id="source_attributed_title" class="padding-5">
-            <semantic-form-text-input placeholder="Enter Attributed title ..." languages='["en", "it"]' label="Attributed title" for="source_attributed_title"></semantic-form-text-input>
-          </div>
+        <div id="entity_publication_notes" class="padding-5">
+          <semantic-form-text-input placeholder="Enter a note for the editor ..." multiline="true" label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+        </div>
 
-          <div id="source_location_type" class="padding-5">
-            <semantic-form-select-input 
-              for='source_island' 
-              label="Island"
-              placeholder="Select the island">
-            </semantic-form-select-input>
-          </div>
-          
+        <div id="entity_published" class="padding-5">
+          <semantic-form-checkbox-input label="Record completed?" for='entity_published'></semantic-form-checkbox-input>
         </div>
 
       </div>
 
       
-      <!-- Tabs -->
-      <bs-tabs class="source_tabs" id="tabs">
+      <!-- RIGHT: Tabs -->
+      <div data-flex-self="size-x3">
+        <bs-tabs class="source_tabs" id="tabs" >
 
-        <!-- Content --> 
-        <bs-tab event-key="1" title="Content">
+          <!-- Metadata --> 
+          <bs-tab event-key="1" title="Metadata">
 
-          <div data-flex-layout="column top-stretch">
-
-            <div data-flex-layout="row center-stretch">
-              <div id="source_original_title" class="padding-5">
-                <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it", "de-at", "fr", "la"]' label="Original title" for="source_original_title"></semantic-form-text-input>
-              </div>
-
-              <div id="source_location_type" class="padding-5">
-                <semantic-form-tree-picker-input 
-                  for='source_typology'
-                  label="Source typology"
-                  placeholder="Choose the source typology"
-                  tree-patterns='{
-                    "relationPattern": "?item skos:broader ?parent", 
-                    "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_typologies>"
-                  }'>
-                </semantic-form-tree-picker-input>
-              </div>
-            </div>
-
-            <div data-flex-layout="row top-stretch">
-              <div id="source_synopsis" class="padding-5">
-                <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>
-                </semantic-form-text-input> 
-              </div>
-
-              <div id="source_transcription" class="padding-5">
-                <semantic-form-text-input placeholder="Enter transcript ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcript" rows="5" for='source_transcription'>
-                </semantic-form-text-input> 
-              </div>
-            </div>
-
-          </div>
-
-
-        </bs-tab>
-
-        <!-- Archival location  -->
-        <bs-tab event-key="2" title="Archival Location">
-          <div data-flex-layout="row top-stretch">
-
-            <div id="source_information_carrier_location" class="padding-5" data-flex-layout="row top-stretch">
-              <div data-flex-self="size-x3">
-                <semantic-form-tree-picker-input 
-                  open-dropdown-on-focus="false"
-                  label="Archival Location" 
-                  for='source_information_carrier_location'
-                  placeholder="Drop here the archival unit containing this source ... "
-                  custom-button='{
-                    "iri": "http://www.researchspace.org/resource/ThinkingFrames",
-                    "view": "authority-content",
-                    "resource": "http://www.researchspace.org/resource/vocab/archives"
-                  }'
-                  query-item-label='
-                    select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
-                      {
-                        select ?class ?lbl
-                        where {
-                          ?query_item_iri crm:P46i_forms_part_of* ?mid.
-                          ?mid crm:P46i_forms_part_of* ?class.
-                          ?class rdfs:label ?class_label
-                          
-                          optional {
-                            ?class crm:P1_is_identified_by ?acronym.
-                            ?acronym a crm:E41_Appellation;
-                              crm:P2_has_type <https://veniss.net/resource/type/acronym>;
-                              rdfs:label ?acronym_lbl 
-                          }
-
-                          BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
-                        }
-                        group by ?class ?lbl
-                        order by desc(count(?mid))
-                      }
-                    }
-                  '
-                  tree-patterns='{
-                    "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-                    "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
-                  }'>
-                </semantic-form-tree-picker-input>
-              </div>
-              
-            </div>
-
-          </div>
-
-          <div data-flex-layout="row top-stretch">
-
-            <div id="source_information_carrier_type" class="padding-5">
-              <semantic-form-select-input 
-                for='source_information_carrier_type'
-                label="Information Carrier type"
-                placeholder="Choose the Information Carrier type">
-              </semantic-form-select-input>
-            </div>
-
-            <div id="source_information_carrier_name" class="padding-5">
-              <semantic-form-text-input label="Information Carrier name" placeholder="Write the Information Carrier name" for='source_information_carrier_name'>
-              </semantic-form-text-input> 
-            </div>
-
-          </div>
-
-          <hr>
-
-          <!-- Medium and Dimension -->
-          <div data-flex-layout="column top-stretch">
-
-            <div id="source_technique" class="padding-5">
-              <semantic-form-tree-picker-input  label="Medium" placeholder="Choose the medium" for='source_technique'
-                tree-patterns='{
-                    "relationPattern": "?item skos:broader ?parent", 
-                    "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_materials>"
-                  }'
-                >
-              </semantic-form-tree-picker-input>
-            </div>
-
-            <div data-flex-layout="row top-stretch">
-              <div id="source_dimension" class="padding-5">
-                <semantic-form-text-input label="Dimensions" placeholder="H x B" for="source_dimension">
-                </semantic-form-text-input>
-              </div>
-
-              <div id="source_dimension_unit" class="padding-5">
-                <semantic-form-select-input label="Dimension unit" placeholder="select the dimension unit" for="source_dimension_unit">
-                </semantic-form-select-input>
-              </div>
-            </div>
-
-          </div>
-
-          <div data-flex-layout="row top-stretch">
-            <div id="source_comment" class="padding-5">
-              <semantic-form-text-input label="Additional notes" for="source_comment" placeholder="Enter an additional note here...">
-              </semantic-form-text-input>
-            </div>
-          </div>
-        </bs-tab>
-
-        <!-- Author and Date -->
-        <bs-tab event-key="3" title="Author and Date">
-          <div data-flex-layout="row top-stretch">
-
-            <div id="source_author" class="padding-5">
-              <semantic-form-autocomplete-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-autocomplete-input>
-            </div>
-            
-            <div id="source_date_composite" class="padding-5">
-              <semantic-form-composite-input label="Creation date" for='source_date_composite' new-subject-template="/creation-date/" fields='[[fieldDefinitions
-                time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
-                time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
-                time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
-                time_primitive_note         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
-              ]]'>
-                <div data-flex-layout="row top-stretch">
-                  <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
-                  <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
-                  <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
-                  <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+            <bs-row>
+              <bs-col lg="12" md="12" sm="12">
+                <div id="source_original_title">
+                  <semantic-form-text-input placeholder="Enter Original title ..." languages='["en", "it", "de-at", "fr", "la"]' label="Original title" for="source_original_title"></semantic-form-text-input>
                 </div>
+              </bs-col>
+            </bs-row>
 
-              </semantic-form-composite-input>
-            </div>
-          </div>
+            <bs-row>
 
-          <style>
-            #source_date_composite > div > div.cardinality-support > div > div > div:nth-child(-n+3){
-              display: inline-block;
-              margin-right: 2px;
-              width: 100px;
-            }
-            #source_date_composite > div > div.cardinality-support > div > div {
-              display: block;
-            }
-          </style>
-        </bs-tab>
+              <bs-col lg="6" md="6" sm="12">
+                <div id="source_author">
+                  <semantic-form-autocomplete-input label="Author" for='source_author' placeholder="Start type to filter the authors"></semantic-form-autocomplete-input>
+                </div>
+              </bs-col>
 
-        <!-- Related elements -->
-        <bs-tab event-key="4" title="Related elements"></bs-tab>
+              <bs-col lg="6" md="6" sm="12">
+                <div id="source_location_type">
+                  <semantic-form-tree-picker-input 
+                    for='source_typology'
+                    label="Source typology"
+                    placeholder="Choose the source typology"
+                    tree-patterns='{
+                      "relationPattern": "?item skos:broader ?parent", 
+                      "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_typologies>"
+                    }'>
+                  </semantic-form-tree-picker-input>
+                </div>
+              </bs-col>
 
-      </bs-tabs>
+            </bs-row>
+
+            <hr>
+
+            <bs-row>
+              <bs-col lg="12" md="12" sm="12">
+                <div id="source_date_composite">
+                  <semantic-form-composite-input 
+                    label="Creation Date"
+                    for='source_date_composite' 
+                    new-subject-template="/creation-date/" 
+                    fields='[[fieldDefinitions
+                      time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                      time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                      time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                    ]]'>
+                    
+                    <bs-row>
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
+                      </bs-col>
+
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
+                      </bs-col>
+
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
+                      </bs-col>
+                    </bs-row>
+
+                  </semantic-form-composite-input>
+                </div>
+              </bs-col>
+            </bs-row>
+
+            <hr>
+
+            <bs-row>
+              <bs-col lg="6" md="6" sm="12">
+                <div id="source_technique" class="padding-5">
+                  <semantic-form-tree-picker-input  
+                    label="Source Materials" 
+                    placeholder="Choose the materials" 
+                    for='source_technique'
+                    custom-button='{
+                      "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                      "view": "authority-content",
+                      "resource": "https://veniss.net/resource/vocab/source_materials"
+                    }'
+                    tree-patterns='{
+                        "relationPattern": "?item skos:broader ?parent", 
+                        "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/source_materials>"
+                      }'
+                    >
+                  </semantic-form-tree-picker-input>
+                </div>
+              </bs-col>
+
+              <bs-col lg="6" md="6" sm="12">
+                <div id="source_dimension" class="padding-5">
+                  <semantic-form-text-input label="Source Dimensions" placeholder="HxBmm" for="source_dimension">
+                  </semantic-form-text-input>
+                </div>
+              </bs-col>
+
+            </bs-row>
+
+          </bs-tab>
+
+          <!-- Location  -->
+          <bs-tab event-key="2" title="Location">
+            <bs-row>
+              <bs-col lg="12">
+                <div id="source_information_carrier_location" >
+                  <semantic-form-tree-picker-input 
+                    open-dropdown-on-focus="false"
+                    label="Archival Location" 
+                    for='source_information_carrier_location'
+                    placeholder="Drop here the archival unit containing this source ... "
+                    custom-button='{
+                      "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                      "view": "authority-content",
+                      "resource": "http://www.researchspace.org/resource/vocab/archives"
+                    }'
+                    query-item-label='
+                      select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
+                        {
+                          select ?class ?lbl
+                          where {
+                            ?query_item_iri crm:P46i_forms_part_of* ?mid.
+                            ?mid crm:P46i_forms_part_of* ?class.
+                            ?class rdfs:label ?class_label
+                            
+                            optional {
+                              ?class crm:P1_is_identified_by ?acronym.
+                              ?acronym a crm:E41_Appellation;
+                                crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                                rdfs:label ?acronym_lbl 
+                            }
+
+                            BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                          }
+                          group by ?class ?lbl
+                          order by desc(count(?mid))
+                        }
+                      }
+                    '
+                    tree-patterns='{
+                      "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
+                      "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
+                    }'>
+                  </semantic-form-tree-picker-input>
+                </div>
+              </bs-col>
+            </bs-row>
+
+            <bs-row>
+              <bs-col lg="8" sm="12">
+                <div id="source_information_carrier_type">
+                  <semantic-form-select-input 
+                    for='source_information_carrier_type'
+                    label="Information Carrier type"
+                    placeholder="Choose the Information Carrier type">
+                  </semantic-form-select-input>
+                </div>
+              </bs-col>
+
+              <bs-col lg="4" sm="12">
+                <div id="source_information_carrier_name" class="padding-5">
+                  <semantic-form-text-input label="Information Carrier name" placeholder="Write the Information Carrier name" for='source_information_carrier_name'>
+                  </semantic-form-text-input> 
+                </div>
+              </bs-col>
+
+            </bs-row>
+
+          </bs-tab>
+
+          <!-- Content -->
+          <bs-tab event-key="3" title="Content">
+            <bs-row>
+              <bs-col lg="12">
+                <div id="source_synopsis" class="padding-5">
+                  <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>
+                  </semantic-form-text-input> 
+                </div>
+              </bs-col>
+            </bs-row>
+
+            <hr>
+
+            <bs-row>
+              <bs-col lg="12">
+                <div id="source_transcription" class="padding-5">
+                  <semantic-form-text-input placeholder="Enter transcript ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcript" rows="5" for='source_transcription'>
+                  </semantic-form-text-input> 
+                </div>
+              </bs-col>
+            </bs-row>
+          </bs-tab>
+
+          <!-- Related elements -->
+          <bs-tab event-key="4" title="Related elements"></bs-tab>
+
+        </bs-tabs>
+
+      </div>
+
       
     </div>
 
@@ -384,7 +394,7 @@
     padding: 10px;
   }
 
-  #source_information_carrier_location .SemanticTreeInput--browseButton{
+  .SemanticTreeInput--browseButton{
     margin-right: 10px;
   }
 
@@ -392,9 +402,19 @@
     background-color: white!important;
   }
 
-  #source_information_carrier_location .RemovableBadge__content, #source_location .RemovableBadge__remove {
+  #source_information_carrier_location .RemovableBadge__content, #source_information_carrier_location .RemovableBadge__remove {
     max-width: none!important;
     text-transform: none!important;
     color: black!important;
+  }
+
+  .left-column{
+    border-right: 1px solid #ccc;
+    padding-right: 20px;
+    margin-right: 20px;
+  }
+
+  #source_date_composite div.cardinality-support__group-instance{
+    padding: 15px!important;
   }
 </style>

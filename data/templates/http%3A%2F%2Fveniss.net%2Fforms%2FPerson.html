@@ -138,12 +138,15 @@
                   <semantic-form-composite-input 
                     label="Birth Date"
                     for='person_birth_date' 
-                    new-subject-template="/birth/date/" 
+                    new-subject-template="/birth/date" 
                     fields='[[fieldDefinitions
+                      type                        = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
                       time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
                       time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
                       time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
                     ]]'>
+                    
+                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
                     
                     <bs-row>
                       <bs-col sm="4">
@@ -176,7 +179,7 @@
                       time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
                     ]]'>
 
-                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E2_Time-Span"></semantic-form-hidden-input>
+                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
                     
                     <bs-row>
                       <bs-col sm="4">

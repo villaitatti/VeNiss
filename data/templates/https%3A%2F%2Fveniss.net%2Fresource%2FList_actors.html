@@ -53,14 +53,23 @@
               <semantic-search-result>
                 <semantic-table 
                   id='table-result'
-                  query='SELECT DISTINCT ?subject ?dob_label WHERE { 
+                  query='SELECT DISTINCT ?subject ?birth_timespan ?death_timespan WHERE { 
 
                     OPTIONAL {
                       ?subject crm:P98i_was_born ?birth.
                       ?birth a crm:E67_Birth;
-                          crm:P4_has_time-span/rdfs:label ?dob_label
+                        crm:P4_has_time-span ?birth_timespan.
+                      ?birth_timespan crm:P170i_time_is_defined_by ?time_primitive_birth.
                     }
-                  } ORDER BY DESC(?dob_label)'
+
+                    OPTIONAL {
+                      ?subject crm:P100i_died_in ?death.
+                      ?death a crm:E69_Death;
+                        crm:P4_has_time-span ?death_timespan.
+                      ?death_timespan crm:P170i_time_is_defined_by ?time_primitive_death.
+                    }
+                    
+                  } order by DESC(?birth_timespan) DESC(?death_timespan)'
                   tuple-template="{{> table-row}}"
                 >
 
@@ -92,8 +101,14 @@
                         </bs-col>
 
                         <bs-col sm="2" md="2">
-                          {{#if dob_label}}
-                            <p>{{dob_label.value}}</p>
+                          {{#if birth_timespan}}
+                            <p><mp-label iri="{{birth_timespan.value}}"></mp-label></p>
+                          {{/if}}
+                        </bs-col>
+
+                        <bs-col sm="2" md="2">
+                          {{#if death_timespan}}
+                            <p><mp-label iri="{{death_timespan.value}}"></mp-label></p>
                           {{/if}}
                         </bs-col>
                         

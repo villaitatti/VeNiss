@@ -47,6 +47,15 @@
                 ?actor_role crmpc:P01_has_domain ?production;
                   crmpc:P02_has_range ?__value__.
               }"
+            }],
+            "<https://veniss.net/ontology#has_user>" : [{
+              "kind": "resource",
+              "queryPattern": "{
+                ?subject a veniss_ontology:Source.
+                ?container <http://www.w3.org/ns/prov#wasAttributedTo> ?__value__.
+  
+                BIND(URI(CONCAT(STR(?subject), \"/container\")) as ?container)
+              }"
             }]
           }'
           search-profile='{
@@ -62,20 +71,30 @@
               {
                 "iri": "<https://veniss.net/ontology#Actor>",
                 "label": "Actor"
+              },
+              {
+                "iri": "<http://www.researchspace.org/resource/User>",
+                "label": "User"
               }
             ],
             "relations":[
               {
                 "iri": "<https://veniss.net/ontology#has_island>",
-                "label": "Related Island",
+                "label": "Islands",
                 "hasDomain": "<https://veniss.net/ontology#Source>",
                 "hasRange": "<https://veniss.net/ontology#Island>"
               },
               {
                 "iri": "<https://veniss.net/ontology#has_actor>",
-                "label": "Related Actor",
+                "label": "Authors",
                 "hasDomain": "<https://veniss.net/ontology#Source>",
                 "hasRange": "<https://veniss.net/ontology#Actor>"
+              },
+              {
+                "iri": "<https://veniss.net/ontology#has_user>",
+                "label": "Curator",
+                "hasDomain": "<https://veniss.net/ontology#Source>",
+                "hasRange": "<http://www.researchspace.org/resource/User>"
               }
             ]
           }'
@@ -123,7 +142,7 @@
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
-                        query='SELECT DISTINCT ?subject ?location ?island  WHERE { 
+                        query='SELECT DISTINCT ?subject ?location ?timespan WHERE { 
                           
                           ?subject a veniss_ontology:Source_Primary.
 
@@ -132,7 +151,18 @@
                             ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
                           }
 
-                        }'
+                          optional {
+                            ?subject crm:P108i_was_produced_by ?production.
+                            ?production a crm:E12_Production;
+                              crm:P4_has_time-span ?timespan.
+                              ?timespan a crm:E4_Time-span;
+                              crm:P170i_time_is_defined_by ?year_time_primitive.
+                            ?year_time_primitive a crm:E61_Time-Primitive;
+                              crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                              rdfs:label ?year
+                          }
+
+                        } ORDER BY ASC(?year)'
 
                         tuple-template="{{> table-row}}"
                       >
@@ -156,7 +186,10 @@
                               <bs-col sm="2" md="2">
                                 {{>island}}
                               </bs-col>
-                              <bs-col sm="5" md="5"> 
+                              <bs-col sm="1" md="1">
+                                {{>date}}
+                              </bs-col>
+                              <bs-col sm="4" md="4"> 
                                 {{>location}}
                               </bs-col>
                             </bs-row>
@@ -183,7 +216,7 @@
                         </template>
 
                         <template id="name">
-                          <p><strong><mp-label iri="{{subject.value}}"></mp-label></strong></p>
+                          <h3 class="align-text"><mp-label iri="{{subject.value}}"></mp-label></h3>
                           
                           <p>
                             <em>
@@ -203,71 +236,83 @@
                         </template>
 
                         <template id="island">
-                          <semantic-query query='
-                            SELECT ?value WHERE {
-                              BIND(<{{subject.value}}> as ?subject)
-                              ?subject veniss_ontology:has_island ?value.
-                            }
-                          '>
+                          <p>
+                            <semantic-query query='
+                              SELECT ?value WHERE {
+                                BIND(<{{subject.value}}> as ?subject)
+                                ?subject veniss_ontology:has_island ?value.
+                              }
+                            '>
                           </semantic-query>
+                          </p>
+                        </template>
+
+                        <template id="date">
+                          {{#if timespan}}
+                            <p>
+                              <mp-label iri="{{timespan.value}}"></mp-label>
+                            </p>
+                          {{/if}}
                         </template>
 
                         <template id="location">
                           <div style="display: flex; align-items: center;">
 
                             {{#if location}}
-                            <semantic-query
-                              query='
-                                select ?full_path where {
+                              <p>
+                                <semantic-query
+                                  query='
+                                    select ?full_path where {
 
-                                  BIND(<{{subject.value}}> as ?subject)
+                                      BIND(<{{subject.value}}> as ?subject)
 
-                                  {
-                                    select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
                                       {
-                                        select ?class ?lbl
-                                        where {
-                                          ?item crm:P46i_forms_part_of* ?mid.
-                                          ?mid crm:P46i_forms_part_of* ?class.
-                                          ?class rdfs:label ?class_label
+                                        select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
+                                          {
+                                            select ?class ?lbl
+                                            where {
+                                              ?item crm:P46i_forms_part_of* ?mid.
+                                              ?mid crm:P46i_forms_part_of* ?class.
+                                              ?class rdfs:label ?class_label
 
-                                          optional {
-                                            ?class crm:P1_is_identified_by ?acronym.
-                                            ?acronym a crm:E41_Appellation;
-                                              crm:P2_has_type <https://veniss.net/resource/type/acronym>;
-                                              rdfs:label ?acronym_lbl 
+                                              optional {
+                                                ?class crm:P1_is_identified_by ?acronym.
+                                                ?acronym a crm:E41_Appellation;
+                                                  crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                                                  rdfs:label ?acronym_lbl 
+                                              }
+
+                                              BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                                              BIND(<{{location.value}}> as ?item)
+                                            }
+                                            group by ?class ?lbl
+                                            order by desc(count(?mid))
                                           }
-
-                                          BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
-                                          BIND(<{{location.value}}> as ?item)
                                         }
-                                        group by ?class ?lbl
-                                        order by desc(count(?mid))
                                       }
-                                    }
-                                  }
 
-                                  OPTIONAL {
-                                    ?subject crm:P53_has_former_or_current_location ?information_carrier_type.
-                                    ?information_carrier_type crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/type>;
-                                      crm:P1_is_identified_by ?abbreviation.
+                                      OPTIONAL {
+                                        ?subject crm:P53_has_former_or_current_location ?information_carrier_type.
+                                        ?information_carrier_type crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/type>;
+                                          crm:P1_is_identified_by ?abbreviation.
 
-                                    ?abbreviation crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
-                                      rdfs:label ?type_label
-                                  }
-                                  BIND(COALESCE(CONCAT(", ", ?type_label, " "), " ") as ?information_carrier_type_label)
-                                  
-                                  OPTIONAL {
-                                    ?subject crm:P53_has_former_or_current_location ?information_carrier_name.
-                                    ?information_carrier_name crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/name>;
-                                      rdfs:label ?name_label
-                                  }
-                                  BIND(COALESCE(?name_label, "") as ?information_carrier_name_label)
-                                  
-                                  BIND(CONCAT(?item_label, ?information_carrier_type_label, ?information_carrier_name_label) AS ?full_path)
+                                        ?abbreviation crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
+                                          rdfs:label ?type_label
+                                      }
+                                      BIND(COALESCE(CONCAT(", ", ?type_label, " "), " ") as ?information_carrier_type_label)
+                                      
+                                      OPTIONAL {
+                                        ?subject crm:P53_has_former_or_current_location ?information_carrier_name.
+                                        ?information_carrier_name crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/name>;
+                                          rdfs:label ?name_label
+                                      }
+                                      BIND(COALESCE(?name_label, "") as ?information_carrier_name_label)
+                                      
+                                      BIND(CONCAT(?item_label, ?information_carrier_type_label, ?information_carrier_name_label) AS ?full_path)
 
-                                }'
-                            ></semantic-query>
+                                    }'
+                                ></semantic-query>
+                              </p>
                             {{/if}}
                           </div>
                         </template>
@@ -386,5 +431,9 @@
     min-width: 80px;
     height: 80px;
     object-fit: cover;
+  }
+
+  .align-text{
+    margin-top: 0px;
   }
 </style>

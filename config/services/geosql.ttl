@@ -247,7 +247,7 @@ rs_sql_sail:includesSQLQuery
 rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "lazzarettovecchio_island_shapes" ;
-    rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from qgis_lazzarettovecchio_islands"
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from qgis_lazzarettovecchio_islands"
 ] ;
 
 rs_sql_sail:includesSQLQuery
@@ -325,7 +325,7 @@ rs_sql_sail:includesSQLQuery
 rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "sanservolo_island_shapes" ;
-    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(geometry) as wkt from qgis_sanservolo_islands"
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from qgis_sanservolo_islands"
 ] ;
 
 rs_sql_sail:includesSQLQuery

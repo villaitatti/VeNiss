@@ -36,75 +36,153 @@
     </div>
 
     <div class="body">
-      <semantic-search>
-        <semantic-search-query-constant 
+      <semantic-search
+      relations='{
+            "<https://veniss.net/ontology#has_user>" : [{
+              "kind": "resource",
+              "queryPattern": "{
+                ?subject a veniss_ontology:Actor.
+                ?container <http://www.w3.org/ns/prov#wasAttributedTo> ?__value__.
+  
+                BIND(URI(CONCAT(STR(?subject), \"/container\")) as ?container)
+              }"
+            }]
+          }'
+          search-profile='{
+            "categories":[
+              {
+                "iri": "<https://veniss.net/ontology#Source>",
+                "label": "Source"
+              },
+              {
+                "iri": "<https://veniss.net/ontology#Island>",
+                "label": "Island"
+              },
+              {
+                "iri": "<https://veniss.net/ontology#Actor>",
+                "label": "Actor"
+              },
+              {
+                "iri": "<http://www.researchspace.org/resource/User>",
+                "label": "User"
+              }
+            ],
+            "relations":[
+              {
+                "iri": "<https://veniss.net/ontology#has_user>",
+                "label": "Curator",
+                "hasDomain": "<https://veniss.net/ontology#Actor>",
+                "hasRange": "<http://www.researchspace.org/resource/User>"
+              }
+            ]
+          }'
+      >
+        <semantic-search-query-constant
+          domain="<https://veniss.net/ontology#Actor>"
           query='
-            select distinct ?subject where { ?subject a veniss_ontology:Actor }'>
+            SELECT DISTINCT ?subject WHERE { ?subject a veniss_ontology:Actor }'>
         </semantic-search-query-constant>
 
         <div data-flex-layout="row stretch-stretch">
           <div data-flex-self="size-1of3" style="flex: 0 0 20px;">
-            <semantic-search-facet></semantic-search-facet>
+            <semantic-search-facet open-by-default="true"></semantic-search-facet>
           </div>
 
           <semantic-search-result-holder>
             <div data-flex-self="md-full">
 
+              <!-- Count -->
+              <semantic-search-result>
+                <mp-sparql-result-counts 
+                  id='query-count'
+                  query="SELECT DISTINCT * {}"
+                  template='{{>count}}'>
+                    <template id="count">
+                      {{#if hasLimit}} 
+                        <bs-alert bs-style="warning">
+                          Showing {{numberOfResults}} of {{totalNumberOfResults}} matches. 
+                          <strong>Please, refine your search.</strong> 
+                        </bs-alert>
+                      {{else}}
+                          <p>Found <strong>{{numberOfResults}}</strong> Actors.</p>
+                      {{/if}}
+                    </template>
+                </mp-sparql-result-counts>
+              </semantic-search-result>
+
               <semantic-search-result>
                 <semantic-table 
                   id='table-result'
-                  query='SELECT DISTINCT ?subject ?label WHERE { 
-
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?given_name_node.
-                      ?given_name_node crm:P2_has_type <https://veniss.net/resource/type/given_name>;
-                        rdfs:label ?given_name_label.
-                      BIND(CONCAT(", ", ?given_name_label, " ") AS ?given_name)
-                    }
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?family_name_node.
-                      ?family_name_node crm:P2_has_type <https://veniss.net/resource/type/family_name>;
-                        rdfs:label ?family_name_label.
-                      BIND(?family_name_label AS ?family_name)
-                    }
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?alias_node.
-                      ?alias_node crm:P2_has_type <https://veniss.net/resource/type/person_alias>;
-                        rdfs:label ?alias_label.
-                      BIND(CONCAT(" (", ?alias_label, ") ") AS ?alias)
-                    }
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?patronymic_node.
-                      ?patronymic_node crm:P2_has_type <https://veniss.net/resource/type/person_patronymic>;
-                        rdfs:label ?patronymic_label.
-                      BIND(CONCAT("di ", ?patronymic_label) AS ?patronymic)
-                    }
-                    OPTIONAL {
-                      ?subject crm:P1_is_identified_by ?appellation.
-                      ?appellation crm:P2_has_type <https://veniss.net/resource/type/appellation>;
-                        rdfs:label ?group_label
-                    }
-                    BIND(COALESCE(?given_name, "") AS ?given_name_final)
-                    BIND(COALESCE(?family_name, "") AS ?family_name_final)
-                    BIND(COALESCE(?alias, "") AS ?alias_final)
-                    BIND(COALESCE(?patronymic, "") AS ?patronymic_final)
-                    BIND(COALESCE(?group_label, "") AS ?group_label_final)
-                    BIND(CONCAT(?group_label_final, ?family_name_final, ?given_name_final, ?patronymic_final, ?alias_final) AS ?label)
-                  }'
-                  column-configuration='[
-                    {
-                      "displayName": "Image",
-                      "cellTemplate": "{{> visual_representation}}"
-                    },
-                    {
-                      "displayName": "Name",
-                      "cellTemplate": "{{> name}}"
-                    }
-                  ]'
+                  query='
+                    SELECT DISTINCT ?subject ?birth_year ?death_year WHERE { 
+                      OPTIONAL {
+                          ?subject crm:P98i_was_born ?birth.
+                          ?birth a crm:E67_Birth;
+                                crm:P4_has_time-span ?birth_timespan.
+                          ?birth_timespan crm:P170i_time_is_defined_by ?time_primitive_birth.
+                          ?time_primitive_birth a crm:E61_Time-Primitive;
+                            crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                            rdfs:label ?birth_year
+                      }
+                      OPTIONAL {
+                        ?subject crm:P100i_died_in ?death.
+                          ?death a crm:E69_Death;
+                                crm:P4_has_time-span ?death_timespan.
+                        ?death_timespan crm:P170i_time_is_defined_by ?time_primitive_death.
+                          ?time_primitive_death a crm:E61_Time-Primitive;
+                                crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                              rdfs:label ?death_year.
+                        }                    
+                      } order by DESC(?birth_year) DESC(?death_year)'
+                  tuple-template="{{> table-row}}"
                 >
+
+                  <template id="table-row">
+                    <mp-event-trigger 
+                      id='{{subject.value}}-add-frame' 
+                      type='Dashboard.AddFrame' 
+                      data='{
+                        "resourceIri": "{{subject.value}}", 
+                        "viewId": "entity-editor"
+                      }' 
+                      targets='["thinking-frames"]'>
+                      <bs-row class="clickable-row">
+                        <bs-col sm="1" md="1">
+                          {{>visual_representation}}
+                        </bs-col>
+                        <bs-col sm="7" md="7">
+                          <h3><mp-label iri="{{subject.value}}"></mp-label></h3>
+                          <p>
+                            <em>
+                              <semantic-query
+                                query='SELECT ?title WHERE {
+                                  ?subject crm:P1_is_identified_by ?title.
+                                  ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
+                                }'  
+                              ></semantic-query>
+                            </em>
+                          </p>
+                        </bs-col>
+
+                        <bs-col sm="2" md="2">
+                          {{#if birth_year}}
+                            <p>{{birth_year.value}}</p>
+                          {{/if}}
+                        </bs-col>
+
+                        <bs-col sm="2" md="2">
+                          {{#if death_year}}
+                            <p>{{death_year.value}}</p>
+                          {{/if}}
+                        </bs-col>
+                        
+                      </bs-row>
+                    </mp-event-trigger>
+                  </template>
+
                   <template id="visual_representation">
 
-                    <semantic-context storage="veniss_s3">
+                    <semantic-context storage="images">
 
                       <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
                           <mp-resource-thumbnail-fallback>
@@ -121,20 +199,6 @@
 
                     </semantic-context>
                     
-                  </template>
-                  <template id="name">
-                    <mp-event-trigger 
-                      id='{{subject.value}}-add-frame' 
-                      type='Dashboard.AddFrame' 
-                      data='{
-                        "resourceIri": "{{subject.value}}", 
-                        "viewId": "entity-editor"
-                      }' 
-                      targets='["thinking-frames"]'>
-                        <a href="#">
-                          {{label.value}}
-                        </a>
-                    </mp-event-trigger>  
                   </template>
 
                 </semantic-table>
@@ -162,4 +226,28 @@
   .btn a{
     color: #fff!important;
   }
+
+  .griddle-custom-row{
+    display: block!important;
+  }
+  .clickable-row{
+    padding: 10px 0;
+    border-top: 1px solid lightgrey;
+  }
+
+  .clickable-row:first-child{
+    border-top: none;
+  }
+
+  .clickable-row:hover{
+    background-color: var(--color-primary-10);;
+    cursor: pointer;
+  }
+
+  .clickable-row .detail-img{
+    min-width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+
 </style>

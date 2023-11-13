@@ -1,0 +1,35 @@
+
+  @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+  @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+  @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+  @prefix cidoc-crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+  @prefix veniss-ontology: <https://veniss.net/ontology#> .
+
+  <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423>
+      rdf:type veniss-ontology:Island ;
+      rdf:type <http://www.cidoc-crm.org/P53_Place> ;
+      rdfs:label "carbonera"^^xsd:string ;
+      cidoc-crm:P1_is_identified_by <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423/appellation> ;
+      cidoc-crm:P48_has_preferred_identifier <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423/geonames_identifier> ;
+      cidoc-crm:P87_is_identified_by <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423/latitude> ;
+      cidoc-crm:P87_is_identified_by <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423/longitude> .
+
+  <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423/appellation>
+      cidoc-crm:P2_has_type cidoc-crm:E41_Appellation ;
+      rdfs:label "Carbonera"^^xsd:string .
+
+  <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423/geonames_identifier>
+      rdf:type cidoc-crm:E42_Identifier ;
+      rdfs:label "7910739"^^xsd:string .
+
+  <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423/latitude>
+      cidoc-crm:P2_has_type cidoc-crm:E47_Spatial_Coordinates ;
+      cidoc-crm:P2_has_type veniss-ontology:latitude ;
+      rdfs:label "45.48123"^^xsd:string .
+
+  <https://veniss.net/resource/builtwork/240a3b68-eb28-4149-81fc-b3c8de198423/longitude>
+      cidoc-crm:P2_has_type cidoc-crm:E47_Spatial_Coordinates ;
+      cidoc-crm:P2_has_type veniss-ontology:longitude ;
+      rdfs:label "12.35241"^^xsd:string .
+
+  

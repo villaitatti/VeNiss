@@ -13,7 +13,7 @@
     repo:repositoryType "openrdf:SailRepository" ;
     reposail:sailImpl [
       sail:sailType "researchspace:SQLSail" ;
-      ephedra:serviceURL "jdbc:postgresql://vitgeo.cjaiad67yr5p.eu-central-1.rds.amazonaws.com:5432/postgres" ;
+      ephedra:serviceURL "jdbc:postgresql://geodb.veniss.net:5432/veniss_prod" ;
       rsrepo:username "${geo.username}" ;
       rsrepo:password "${geo.password}" ;
       ephedra:implementsService :geosql ;

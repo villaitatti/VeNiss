@@ -1,0 +1,120 @@
+<semantic-form
+  id='{{viewId}}-vocab-form' 
+  new-subject-template='https://veniss.net/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    is_listed_in                            = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+
+    vocab_entry_label                       = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
+    vocab_entry_partof                      = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_partof"
+    vocab_entry_equivalent                  = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_equivalent"
+    vocab_entry_archival_unit_typology      = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_archival_unit_typology"
+    vocab_entry_archival_unit_acronym       = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_archival_unit_acronym"
+    vocab_entry_archival_unit_prefix        = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_archival_unit_prefix"
+
+  ]]'
+  post-action="event"
+  subject='{{node}}'
+  >
+
+  <semantic-form-errors></semantic-form-errors>
+  <div id="archival_unit" class="form-scroll-area">
+
+    <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E78_Collection'></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archives"></semantic-form-hidden-input>
+
+    <div data-flex-layout="column stretch-stretch">
+
+      <!-- Unit name -->
+      <div id="vocab_entry_label" class="padding-5">
+        <semantic-form-text-input languages='["it", "en"]' label="Unit appellation" placeholder="Enter unit appellation ..." for="vocab_entry_label"></semantic-form-text-input>
+      </div>
+
+    </div>
+    
+    <div data-flex-layout="column stretch-stretch">
+
+      <div data-flex-layout="row stretch-stretch">
+
+        <div id="vocab_entry_archival_unit_typology" class="padding-5">
+          <semantic-form-select-input label="Typology", placeholder="Select unit typology ..." for="vocab_entry_archival_unit_typology"></semantic-form-select-input>
+        </div>
+
+        <!-- Unit Acronym -->
+        <div id="vocab_entry_archival_unit_acronym" class="padding-5">
+          <semantic-form-text-input label="Displayed name" placeholder="Enter unit Unit acronym ..." for="vocab_entry_archival_unit_acronym"></semantic-form-text-input>
+        </div>
+
+        <!-- Unit suffix -->
+        <div id="vocab_entry_archival_unit_prefix" class="padding-5">
+          <semantic-form-text-input label="Prefix" placeholder="Enter unit Unit prefix ..." for="vocab_entry_archival_unit_prefix"></semantic-form-text-input>
+        </div>
+
+      </div>
+
+    </div>
+
+    <hr>
+
+    <div data-flex-layout="column top-stretch" style="margin-top: 50px">
+
+      <bs-alert bs-style="danger">
+        <p><strong>Danger zone!</strong> Changing the parent archival unit may change the entire structure.</p>
+      </bs-alert>
+
+      <!-- add broader if there is one -->
+      <div id="vocab_entry_partof" class="padding-5">
+        <semantic-form-tree-picker-input 
+          label="Parent archival unit" 
+          placeholder="Select parent archival unit ..." 
+          for="vocab_entry_partof"
+          default-value="{{broader}}"
+          query-item-label='
+            select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
+              {
+                select ?class ?lbl
+                where {
+                  ?query_item_iri crm:P46i_forms_part_of* ?mid.
+                  ?mid crm:P46i_forms_part_of* ?class.
+                  ?class rdfs:label ?class_label
+                  
+                  optional {
+                    ?class crm:P1_is_identified_by ?acronym.
+                    ?acronym a crm:E41_Appellation;
+                      crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                      rdfs:label ?acronym_lbl 
+                  }
+
+                  BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                }
+                group by ?class ?lbl
+                order by desc(count(?mid))
+              }
+            }
+          '
+          tree-patterns='{
+            "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
+            "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
+          }'>
+        </semantic-form-tree-picker-input>
+      </div>
+
+    </div>
+
+  </div>
+
+[[> rsp:FormDefaultActions]]
+</semantic-form>
+
+<style>
+  #archival_unit .RemovableBadge {
+    background-color: white!important;
+  }
+
+  #archival_unit .RemovableBadge__content, #archival_unit .RemovableBadge__remove {
+    max-width: none!important;
+    text-transform: none!important;
+    color: black!important;
+  }
+
+</style>

@@ -1,0 +1,177 @@
+<link rel="stylesheet" href="../../assets/styles/archipelago-main.css" />
+<div id="mainContainer">
+    <div id="mapNavigatorContainer" class="flexrows">
+    <!-- Event to handle bounding box search-->
+    <mp-event-proxy
+      id="on-moveend-search-map"
+      on-event-source="search-map"
+      on-event-type="SemanticMap.BoundingBoxChanged"
+      proxy-event-type="SemanticSearch.QueryConstant.SetParameters"
+      proxy-targets='["search-map-query"]'
+    >
+    </mp-event-proxy>
+
+    <!-- Structured search with geospatial -->
+    <semantic-context repository="ephedra">
+      <semantic-search
+        search-profile='{
+          "categories": [{
+            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Event>",
+            "label": "Event",
+            "thumbnail": "../../assets/icons/Event.svg"
+          },
+          {
+            "iri": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>",
+            "label": "Builtwork",
+            "thumbnail": "../../assets/icons/Builtwork.svg"
+          }],
+          "relations": [{
+            "iri": "<https://archipelago.itatti.harvard.edu/arconto#related_to>",
+            "label": "Related to",
+            "hasDomain": "<https://archipelago.itatti.harvard.edu/arconto#Event>",
+            "hasRange": "<https://archipelago.itatti.harvard.edu/arconto#Builtwork>"
+          }]
+        }'
+      >
+
+        <semantic-search-query-constant
+
+          id="search-map-query"
+          parameters='{
+            "southWestLat": {"value": "1368358.959761288"},
+            "southWestLon": {"value": "5692238.026840036"},
+            "northEstLat": {"value": "1371414.0522355612"},
+            "northEstLon": {"value": "5693523.1243780805"},
+            "date": {"value": "1801-01-01"}
+          }'
+          query='
+            PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+            PREFIX archipelago: <http://www.researchspace.org/resource/system/service/archipelago#>
+            PREFIX arconto: <https://archipelago.itatti.harvard.edu/arconto#>
+            PREFIX rssqlsail: <http://www.researchspace.org/resource/system/sql#>
+            SELECT DISTINCT ?subject ?bw_id ?wkt ?bob ?eob ?boe ?eoe WHERE {
+              service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                ?root rssqlsail:hasQueryId "production";	
+                  archipelago:wkt ?wkt;
+                  archipelago:bw_id ?bw_id;
+                  archipelago:minX ?southWestLat;
+                  archipelago:minY ?southWestLon;
+                  archipelago:maxX ?northEstLat;
+                  archipelago:maxY ?northEstLon;
+                  archipelago:bob ?bob;
+                  archipelago:eob ?eob;
+                  archipelago:boe ?boe;
+                  archipelago:eoe ?eoe;
+              }
+              
+              ?do_id rdfs:label ?bw_id.
+              ?do crm:P1_is_identified_by ?do_id.
+              
+              ?st_vol crm:P67i_is_referred_to_by ?do;
+                      crm:P129_is_about ?subject
+            }'
+        ></semantic-search-query-constant>
+
+        <semantic-search-result-holder>
+          <div id="mapNavigatorRow">
+            <div id="mapContainer">[[> arc:Map ]]</div>
+            <div id="sidebarContainer">
+              <div class="maptoolbar flexrows">
+                <div id="maptoolbarFirst">
+                    <mp-event-trigger
+                      id="event-trigger2"
+                      type="Component.TemplateUpdate"
+                      data='{"showbasemaps": true}'
+                      targets='["sidebar"]'
+                    >
+                    <div class="toolbarIconContainer">
+                      <em id="basemapsBtn" class="fa fa-globe toolbarIcon"></em>
+                      <label>Basemaps</label>
+                    </div>
+                    </mp-event-trigger>
+                    <mp-event-trigger
+                      id="event-trigger3"
+                      type="Component.TemplateUpdate"
+                      data='{"showhistoricalmaps": true}'
+                      targets='["sidebar"]'
+                    >
+                    <div class="toolbarIconContainer">
+                      <em id="historicalmapsBtn" class="fa fa-map toolbarIcon"></em>
+                      <label>Historical Maps</label>
+                    </div>
+                    </mp-event-trigger>
+                    <mp-event-trigger
+                      id="event-trigger4"
+                      type="Component.TemplateUpdate"
+                      data='{"showoptions": true}'
+                      targets='["sidebar"]'
+                    >
+                    <div class="toolbarIconContainer">
+                      <em id="optionsBtn" class="fa fa-cogs toolbarIcon"></em>
+                      <label>Control Panel</label>
+                    </div>
+                    </mp-event-trigger>
+                    <mp-event-trigger
+                      id="event-trigger5"
+                      type="Component.TemplateUpdate"
+                      data='{"showentities": true}'
+                      targets='["sidebar"]'
+                    >
+                    <div class="toolbarIconContainer">
+                      <em id="entitiesBtn" class="fa fa-id-card toolbarIcon"></em>
+                      <label>Entities</label>
+                    </div>
+                    </mp-event-trigger>
+                </div>
+              </div>
+            <div id="navigatorContainer">
+              [[> arc:Navigator ]]
+            </div>
+            </div>
+          </div>
+        </semantic-search-result-holder>
+      </semantic-search>
+    </semantic-context>
+  </div>
+</div>
+
+
+<style>
+  #sideNavbar {
+    display: block !important;
+  }
+
+  #centralNavbar {
+    display: none !important;
+  }
+
+  #archipelagoNavbar {
+  width: var(--sidebar-width) !important;
+  min-height: var(--nav-height, 58px);
+    height: var(--nav-height, 58px);
+    border: none;
+    font-size: 14px;
+    margin-bottom: 0px;
+    background-color: var(--color-navbar-bg, #1d0a6e);
+   z-index: 1030;
+   right: 0;
+   color: white !important;
+   position: absolute;
+   -webkit-box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15); 
+   box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15);
+}
+
+.clonedNavbar:nth-child(2){
+  display: none !important;
+}
+#archipelagoNavbar > li > a {
+  font-weight: 300;
+}
+
+#archipelagoNavbar > #main-header-dropdown, .rs-application .navbar-default a#rs-account-dropdown {
+  font-family: "Roboto", sans-serif, sans-serif;
+  font-size: 13.5px;
+  background-color: transparent;
+  font-weight: 300;
+}
+</style>

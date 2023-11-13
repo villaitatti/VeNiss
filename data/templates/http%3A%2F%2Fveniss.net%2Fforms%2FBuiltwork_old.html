@@ -1,0 +1,196 @@
+<semantic-form
+  new-subject-template='https://veniss.net/resource/builtwork/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    label="http://www.researchspace.org/pattern/general/rdfs:label"
+    single_label="https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+    builtwork_has_material="https://veniss.net/container/fieldDefinitionContainer/builtwork_has_material"
+    builtwork_construction="https://veniss.net/container/fieldDefinitionContainer/builtwork_construction"
+    builtwork_destruction="https://veniss.net/container/fieldDefinitionContainer/builtwork_destruction"
+    builtwork_has_transformation="https://veniss.net/container/fieldDefinitionContainer/builtwork_has_transformation"
+    entity_is_complete="https://veniss.net/container/fieldDefinitionContainer/entity_is_complete"
+    builtwork_island_geonames="https://veniss.net/container/fieldDefinitionContainer/builtwork_island_geonames"
+    switch-builtwork-functional-change="https://veniss.net/container/fieldDefinitionContainer/switch-builtwork-functional-change"
+  ]]'
+  [[>rsp:FormDefaults]]
+  >
+  <semantic-form-errors></semantic-form-errors>
+  <div class="form-scroll-area">
+
+    <bs-row class="clearfix" style="margin-left: 100px;">
+        <h1>Insert new Builtwork</h1>
+        <!-- TODO: INSERT TYPES DROPDOWN. ISLAND, BUILDING, OPEN SPACE, WATERWAY. ARCONTO#ISLAND ETC.-->
+      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/arconto#Builtwork"]'></semantic-form-hidden-input>
+      <bs-col sm="12" md="4">
+        <bs-row>
+          <!-- Label -->
+          <bs-col sm="12" md="12">
+            <semantic-form-text-input for="label" label="Label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        <bs-row>
+          <!-- Island Name -->
+          <bs-col sm="12" md="6">
+            <semantic-form-text-input for="builtwork_island_name" label="Island Full Name"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+        <bs-row>
+          <!-- Geonames Identifier -->
+          <bs-col sm="12" md="12">
+            <semantic-context repository='sari-rds'>
+              <semantic-form-autocomplete-input for="builtwork_island_geonames" label="Geonames Identifier" placeholder="Search for a geonames ID..."></semantic-form-autocomplete-input> 
+            </semantic-context>
+          </bs-col>
+        </bs-row>
+      </bs-col>
+      <bs-col sm="6" md="8">
+      </bs-col>
+    </bs-row>
+    <!-- MAP - FEATURE SELECTOR -->
+    <bs-row class="clearfix" style="margin-left: 100px; margin-top:20px;">
+      <bs-col sm="12" md="6">
+        <h2>Functional Changes</h2>
+        <semantic-timeline query='PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+          SELECT ?start ?end ?functionalType ?functionalValue  WHERE {
+          VALUES (?start ?end ?functionalType ?functionalValue) {
+            ("1599-07-21"^^xsd:date "1710-07-02"^^xsd:date "Function" "Public")
+            ("1710-08-20"^^xsd:date "1800-05-30"^^xsd:date "Function" "Private")
+            ("1505-06-21"^^xsd:date "1780-04-15"^^xsd:date "Use" "Religious")
+            ("1500-03-06"^^xsd:date "1800-04-17"^^xsd:date "Typology" "Church")
+          }
+        }
+        ' tuple-template="{{> template}}" tuple-template-height="42">
+                    <template id="template">
+                      <div>
+                        <i>{{functionalType.value}}</i> - <b>{{functionalValue.value}}</b>
+                        <div>{{start.value}} - {{end.value}}</div>
+                      </div>
+                    </template>
+        </semantic-timeline>
+      </bs-col>
+      <bs-col sm="12" md="6">
+        <h3>Edit Functional Changes</h3>
+        <semantic-form-composite-input for="switch-builtwork-functional-change" new-subject-template="/functionalChange/{{{{raw}}}}{{UUID}}{{{{/raw}}}}" fields='[[ fieldDefinitions
+          builtwork-functional-change-type="http://localhost:10214/container/fieldDefinitionContainer/builtwork_functional_change_type"
+          builtwork-functional-change-value="http://localhost:10214/container/fieldDefinitionContainer/functional-change-value"
+          hasTimeSpan="http://localhost:10214/container/fieldDefinitionContainer/has_time_span"
+        ]]'>
+
+          <semantic-form-select-input for="builtwork-functional-change-type"></semantic-form-select-input>
+
+
+          <semantic-form-text-input render-header="false" for="builtwork-functional-change-value"></semantic-form-text-input>
+
+
+
+            <semantic-form-composite-input
+            for="hasTimeSpan"
+            label="Time Span"
+            render-header="true"
+            new-subject-template="/date"
+            render-header="false"
+            fields='[[ fieldDefinitions 
+              builtwork_date_bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+              builtwork_date_eob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eob"
+              builtwork_date_boe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_boe"
+              builtwork_date_eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+              classtype="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            ]]'
+          >
+            <semantic-form-hidden-input for="classtype" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
+            <semantic-form-datetime-input label="From" for="beginOfTimeSpan"></semantic-form-datetime-input>
+            <semantic-form-datetime-input label="To" for="endOfTimeSpan"></semantic-form-datetime-input>
+          </semantic-form-composite-input>
+
+            
+          </semantic-form-composite-input>
+      </bs-col>
+    </bs-row>
+    <bs-row class="clearfix" style="margin-left: 100px; margin-top:20px;">
+      <bs-col sm="12" md="8">
+        <h2>Physical Changes:</h2> 
+        <div id="mapContainerone" style="border: 1px solid black; width: 100%; height:300px;">
+          <semantic-context repository="ephedra">
+            <semantic-map
+              id="feudal"
+              fix-zoom-level="12"
+              features-selection-targets='["island-feature-input"]'
+              fix-center="[1370000.000000000, 5692800.000000000]"
+              map-options='{"crs":"EPSG:3857", "extent": [958358.959761288, 3681238.026850056, 1785414.0522355612, 9705635.9345880805]}'
+              query='PREFIX arconto: <https://veniss.net/arconto#>
+              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+              PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+              SELECT DISTINCT ?bw_id ?subject ?wkt ?name ?function ?use ?typology ?bob ?eoe ?boe ?eob WHERE {
+                SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                  ?root <http://www.researchspace.org/resource/system/sql#hasQueryId> "production";
+                    <http://www.researchspace.org/resource/system/service/archipelago#wkt> ?wkt;
+                    <http://www.researchspace.org/resource/system/service/archipelago#bw_id> ?bw_id;
+                    <http://www.researchspace.org/resource/system/service/archipelago#minX> "1368358.959761288"^^xsd:string;
+                    <http://www.researchspace.org/resource/system/service/archipelago#minY> "5692238.026840036"^^xsd:string;
+                    <http://www.researchspace.org/resource/system/service/archipelago#maxX> "1371414.0522355612"^^xsd:string;
+                    <http://www.researchspace.org/resource/system/service/archipelago#maxY> "5693523.1243780805"^^xsd:string;
+                    <http://www.researchspace.org/resource/system/service/archipelago#bob> ?bob;
+                    <http://www.researchspace.org/resource/system/service/archipelago#eob> ?eob;
+                    <http://www.researchspace.org/resource/system/service/archipelago#boe> ?boe;
+                    <http://www.researchspace.org/resource/system/service/archipelago#eoe> ?eoe.
+                }
+                ?do_id rdfs:label ?bw_id.
+                ?do crm:P1_is_identified_by ?do_id.
+                ?st_vol crm:P67i_is_referred_to_by ?do;
+                  crm:P129_is_about ?subject.
+                ?subject rdfs:label ?name.
+                OPTIONAL {
+                  ?subject arconto:has_use ?useNode.
+                  ?useNode rdfs:label ?use.
+                  FILTER((LANG(?use)) = "en")
+                  FILTER((STR(?use)) != "Use")
+                }
+                OPTIONAL {
+                  ?subject arconto:has_typology ?typologyNode.
+                  ?typologyNode rdfs:label ?typology.
+                }
+                OPTIONAL {
+                  ?subject arconto:has_function ?functionNode.
+                  ?functionNode rdfs:label ?function.
+                  FILTER((LANG(?function)) = "en")
+                  FILTER((STR(?function)) != "Function")
+                }
+              }
+              ORDER BY DESC (?subject)
+              LIMIT 1000'
+              tuple-template='<b>{{description.value}}</b>'>
+                <tiles-layer
+                thumbnail='/assets/images/basemaps_thumbnails_light.jpg'
+                url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}'
+                identifier='light'
+                name='Light'
+                level='basemap'
+                author=""
+                location=""
+                year="">
+              </tiles-layer>
+            </semantic-map>
+          </semantic-context>
+          <semantic-map-controls
+              id="basemap-control"
+              target-map-id="feudal"
+              features-taxonomies="use,function,name,typology"
+              features-color-taxonomies="use,function"
+              features-options-enabled="false"
+              filters-initialization='{"basemap":false,"overlay":false,"feature":false}'
+              show-filters='false'
+            >
+            </semantic-map-controls>
+        </div>
+      </bs-col>
+      <bs-col md="1">
+        <semantic-form-event-input id="island-feature-input" for="label">
+        </semantic-form-event-input>
+      </bs-col>
+    </bs-row>
+  </div>
+  [[> rsp:FormDefaultActions]]
+
+</semantic-form>

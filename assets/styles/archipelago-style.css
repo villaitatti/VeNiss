@@ -518,6 +518,10 @@ h1, h2, h3, h4, h5, h6 {
         text-align: right;
     }
 
+   #logoTitleText img {
+       width: 80%;
+   } 
+
     .rs-header-logo {
         height: 100% !important;
     }
@@ -528,6 +532,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .veniss-actors{
   color: var(--veniss-actor); 
+}
+
+.veniss_events{
+  color: var(--veniss-event);
 }
 
 .veniss-sources{
@@ -551,4 +559,8 @@ h1, h2, h3, h4, h5, h6 {
   border-right: 1px solid #ccc;
   padding-right: 20px;
   margin-right: 20px;
+
+.source_tabs {
+  margin-top: 40px;
+
 }

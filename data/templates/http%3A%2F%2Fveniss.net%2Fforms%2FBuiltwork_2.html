@@ -1,0 +1,59 @@
+<bs-row>
+  <bs-col xs=12>
+
+    <semantic-form new-subject-template='https://veniss.net/resource/builtworkoz/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+      browser-persistence=true form-id='example-8' fields='[
+      { 
+        "id": "self",
+        "minOccurs": 1,
+        "maxOccurs": 1,
+        "selectPattern": "SELECT ?value { BIND(?subject AS ?value) }",
+        "insertPattern": "INSERT {} WHERE {}"
+      }
+    ]'>
+      <bs-panel>
+        <!-- Form notifications  -->
+        <semantic-form-recover-notification></semantic-form-recover-notification>
+        <semantic-form-errors></semantic-form-errors>
+        <!-- End form notifications -->
+        <semantic-form-switch label="scegli" for="self" switch-on-field="type" render-header="false">
+
+          <!-- Island Form -->
+          <semantic-form-switch-case label="Island">
+            <semantic-form-composite-input for="self" new-subject-template="." fields="[[fieldDefinitions
+            type = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+            full_name = 'https://veniss.net/container/fieldDefinitionContainer/builtwork_island_full_name'
+            island_label = 'https://veniss.net/container/fieldDefinitionContainer/builtwork_island_label'
+            island_geonames='https://veniss.net/container/fieldDefinitionContainer/geonames_island'
+            ]]">
+              <semantic-form-hidden-input for="type" default-value='https://veniss.net/ontology#Island'></semantic-form-hidden-input>
+              <semantic-form-text-input for="full_name" placeholder="Enter island's full name here..."></semantic-form-text-input>
+              <semantic-form-text-input for="island_label" placeholder="Enter island's label (only lowercase letters)"></semantic-form-text-input>
+              <semantic-context repository='sari-rds'>
+                <semantic-form-autocomplete-input for="island_geonames" label="Geonames Identifier" placeholder="Search for a geonames ID..."></semantic-form-autocomplete-input> 
+              </semantic-context> 
+            </semantic-form-composite-input>
+          </semantic-form-switch-case>
+          <!-- END Island Form -->
+
+
+          <!-- Building Form -->
+          <semantic-form-switch-case label="Building">
+            <semantic-form-composite-input for="self" new-subject-template="." fields='[[ fieldDefinitions type = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" ]]'>
+              <semantic-form-hidden-input for="type" default-value='https://veniss.net/ontology#Building'></semantic-form-hidden-input>
+            </semantic-form-composite-input>
+          </semantic-form-switch-case>
+          <!-- END - Building Form -->
+
+          <!-- TODO: Water, etc. Form-->
+
+        </semantic-form-switch>
+        <div class="semantic-form-footer-buttons" style="margin-top: 20px;">
+          <button name="submit" class="btn btn-primary">Save</button>
+          <button name="reset" class="btn btn-secondary">Reset</button>
+        </div>
+      </bs-panel>
+    </semantic-form>
+
+  </bs-col>
+</bs-row>

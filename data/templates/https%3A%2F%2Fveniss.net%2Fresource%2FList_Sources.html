@@ -142,7 +142,7 @@
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
-                        query='SELECT DISTINCT ?subject ?location ?timespan WHERE { 
+                        query='SELECT DISTINCT ?subject ?location ?year_label WHERE { 
                           
                           ?subject a veniss_ontology:Source_Primary.
 
@@ -159,10 +159,10 @@
                               crm:P170i_time_is_defined_by ?year_time_primitive.
                             ?year_time_primitive a crm:E61_Time-Primitive;
                               crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
-                              rdfs:label ?year
+                              rdfs:label ?year_label
                           }
 
-                        } ORDER BY ASC(?year)'
+                        } ORDER BY DESC(?year_label)'
 
                         tuple-template="{{> table-row}}"
                       >
@@ -248,9 +248,9 @@
                         </template>
 
                         <template id="date">
-                          {{#if timespan}}
+                          {{#if year_label}}
                             <p>
-                              <mp-label iri="{{timespan.value}}"></mp-label>
+                              {{year_label.value}}
                             </p>
                           {{/if}}
                         </template>

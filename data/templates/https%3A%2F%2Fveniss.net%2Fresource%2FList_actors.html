@@ -214,27 +214,29 @@
                     <semantic-table 
                       id='table-result'
                       query='
-                        SELECT DISTINCT ?subject ?birth_year ?death_year WHERE {
+                        SELECT DISTINCT ?subject ?formation_year ?dissolution_year WHERE {
                           ?subject a veniss_ontology:Group.
                           OPTIONAL {
-                              ?subject crm:P98i_was_born ?birth.
-                              ?birth a crm:E67_Birth;
-                                    crm:P4_has_time-span ?birth_timespan.
-                              ?birth_timespan crm:P170i_time_is_defined_by ?time_primitive_birth.
-                              ?time_primitive_birth a crm:E61_Time-Primitive;
-                                crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
-                                rdfs:label ?birth_year
+                            ?subject crm:P95i_was_formed_by ?formation.
+                            ?formation a crm:E66_Formation;
+                              crm:P4_has_time-span ?formation_timespan.
+
+                            ?formation_timespan crm:P170i_time_is_defined_by ?time_primitive_formation.
+                            ?time_primitive_formation a crm:E61_Time-Primitive;
+                              crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                              rdfs:label ?formation_year
                           }
                           OPTIONAL {
-                            ?subject crm:P100i_died_in ?death.
-                              ?death a crm:E69_Death;
-                                    crm:P4_has_time-span ?death_timespan.
-                            ?death_timespan crm:P170i_time_is_defined_by ?time_primitive_death.
-                              ?time_primitive_death a crm:E61_Time-Primitive;
-                                    crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
-                                  rdfs:label ?death_year.
-                            }                    
-                          } order by DESC(?birth_year) DESC(?death_year)'
+                            ?subject crm:P99i_dissolved_by ?dissolution.
+                            ?dissolution a crm:E68_Dissolution;
+                              crm:P4_has_time-span ?dissolution_timespan.
+
+                            ?dissolution_timespan crm:P170i_time_is_defined_by ?time_primitive_dissolution.
+                            ?time_primitive_dissolution a crm:E61_Time-Primitive;
+                              crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                              rdfs:label ?dissolution_year.
+                          }                    
+                        } order by DESC(?formation_year) DESC(?dissolution_year)'
                       tuple-template="{{> table-row}}"
                     >
 
@@ -266,14 +268,14 @@
                             </bs-col>
 
                             <bs-col sm="2" md="2">
-                              {{#if birth_year}}
-                                <p>{{birth_year.value}}</p>
+                              {{#if formation_year}}
+                                <p>{{formation_year.value}}</p>
                               {{/if}}
                             </bs-col>
 
                             <bs-col sm="2" md="2">
-                              {{#if death_year}}
-                                <p>{{death_year.value}}</p>
+                              {{#if dissolution_year}}
+                                <p>{{dissolution_year.value}}</p>
                               {{/if}}
                             </bs-col>
                             

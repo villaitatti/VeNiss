@@ -110,99 +110,206 @@
                 </mp-sparql-result-counts>
               </semantic-search-result>
 
-              <semantic-search-result>
-                <semantic-table 
-                  id='table-result'
-                  query='
-                    SELECT DISTINCT ?subject ?birth_year ?death_year WHERE { 
-                      OPTIONAL {
-                          ?subject crm:P98i_was_born ?birth.
-                          ?birth a crm:E67_Birth;
-                                crm:P4_has_time-span ?birth_timespan.
-                          ?birth_timespan crm:P170i_time_is_defined_by ?time_primitive_birth.
-                          ?time_primitive_birth a crm:E61_Time-Primitive;
-                            crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
-                            rdfs:label ?birth_year
-                      }
-                      OPTIONAL {
-                        ?subject crm:P100i_died_in ?death.
-                          ?death a crm:E69_Death;
-                                crm:P4_has_time-span ?death_timespan.
-                        ?death_timespan crm:P170i_time_is_defined_by ?time_primitive_death.
-                          ?time_primitive_death a crm:E61_Time-Primitive;
+              <bs-tabs>
+                <!-- Person -->
+                <bs-tab event-key="1" title="Person">
+                  <semantic-search-result>
+                    <semantic-table 
+                      id='table-result'
+                      query='
+                        SELECT DISTINCT ?subject ?birth_year ?death_year WHERE {
+                          ?subject a veniss_ontology:Person.
+                          OPTIONAL {
+                              ?subject crm:P98i_was_born ?birth.
+                              ?birth a crm:E67_Birth;
+                                    crm:P4_has_time-span ?birth_timespan.
+                              ?birth_timespan crm:P170i_time_is_defined_by ?time_primitive_birth.
+                              ?time_primitive_birth a crm:E61_Time-Primitive;
                                 crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
-                              rdfs:label ?death_year.
-                        }                    
-                      } order by DESC(?birth_year) DESC(?death_year)'
-                  tuple-template="{{> table-row}}"
-                >
+                                rdfs:label ?birth_year
+                          }
+                          OPTIONAL {
+                            ?subject crm:P100i_died_in ?death.
+                              ?death a crm:E69_Death;
+                                    crm:P4_has_time-span ?death_timespan.
+                            ?death_timespan crm:P170i_time_is_defined_by ?time_primitive_death.
+                              ?time_primitive_death a crm:E61_Time-Primitive;
+                                    crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                                  rdfs:label ?death_year.
+                            }                    
+                          } order by DESC(?birth_year) DESC(?death_year)'
+                      tuple-template="{{> table-row}}"
+                    >
 
-                  <template id="table-row">
-                    <mp-event-trigger 
-                      id='{{subject.value}}-add-frame' 
-                      type='Dashboard.AddFrame' 
-                      data='{
-                        "resourceIri": "{{subject.value}}", 
-                        "viewId": "entity-editor"
-                      }' 
-                      targets='["thinking-frames"]'>
-                      <bs-row class="clickable-row">
-                        <bs-col sm="1" md="1">
-                          {{>visual_representation}}
-                        </bs-col>
-                        <bs-col sm="7" md="7">
-                          <h3><mp-label iri="{{subject.value}}"></mp-label></h3>
-                          <p>
-                            <em>
-                              <semantic-query
-                                query='SELECT ?title WHERE {
-                                  ?subject crm:P1_is_identified_by ?title.
-                                  ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
-                                }'  
-                              ></semantic-query>
-                            </em>
-                          </p>
-                        </bs-col>
+                      <template id="table-row">
+                        <mp-event-trigger 
+                          id='{{subject.value}}-add-frame' 
+                          type='Dashboard.AddFrame' 
+                          data='{
+                            "resourceIri": "{{subject.value}}", 
+                            "viewId": "entity-editor"
+                          }' 
+                          targets='["thinking-frames"]'>
+                          <bs-row class="clickable-row">
+                            <bs-col sm="1" md="1">
+                              {{>visual_representation}}
+                            </bs-col>
+                            <bs-col sm="7" md="7">
+                              <h3><mp-label iri="{{subject.value}}"></mp-label></h3>
+                              <p>
+                                <em>
+                                  <semantic-query
+                                    query='SELECT ?title WHERE {
+                                      ?subject crm:P1_is_identified_by ?title.
+                                      ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
+                                    }'  
+                                  ></semantic-query>
+                                </em>
+                              </p>
+                            </bs-col>
 
-                        <bs-col sm="2" md="2">
-                          {{#if birth_year}}
-                            <p>{{birth_year.value}}</p>
-                          {{/if}}
-                        </bs-col>
+                            <bs-col sm="2" md="2">
+                              {{#if birth_year}}
+                                <p>{{birth_year.value}}</p>
+                              {{/if}}
+                            </bs-col>
 
-                        <bs-col sm="2" md="2">
-                          {{#if death_year}}
-                            <p>{{death_year.value}}</p>
-                          {{/if}}
-                        </bs-col>
+                            <bs-col sm="2" md="2">
+                              {{#if death_year}}
+                                <p>{{death_year.value}}</p>
+                              {{/if}}
+                            </bs-col>
+                            
+                          </bs-row>
+                        </mp-event-trigger>
+                      </template>
+
+                      <template id="visual_representation">
+
+                        <semantic-context storage="images">
+
+                          <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
+                              <mp-resource-thumbnail-fallback>
+                                  <with-types iri='{{subject.value}}'
+                                          template='{{> noImage}}'
+                                          [[> rsp:TypeMappings]]
+                                      >
+                                      <template id="noImage">
+                                          <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-actor_no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
+                                      </template>
+                                  </with-types>
+                              </mp-resource-thumbnail-fallback>
+                          </mp-resource-thumbnail>
+
+                        </semantic-context>
                         
-                      </bs-row>
-                    </mp-event-trigger>
-                  </template>
+                      </template>
 
-                  <template id="visual_representation">
+                    </semantic-table>
+                  </semantic-search-result>
+                </bs-tab>
 
-                    <semantic-context storage="images">
+                <!-- Group -->
+                <bs-tab event-key="2" title="Group">
+                    <semantic-table 
+                      id='table-result'
+                      query='
+                        SELECT DISTINCT ?subject ?formation_year ?dissolution_year WHERE {
+                          ?subject a veniss_ontology:Group.
+                          OPTIONAL {
+                            ?subject crm:P95i_was_formed_by ?formation.
+                            ?formation a crm:E66_Formation;
+                              crm:P4_has_time-span ?formation_timespan.
 
-                      <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
-                          <mp-resource-thumbnail-fallback>
-                              <with-types iri='{{subject.value}}'
-                                      template='{{> noImage}}'
-                                      [[> rsp:TypeMappings]]
-                                  >
-                                  <template id="noImage">
-                                      <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-actor_no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
-                                  </template>
-                              </with-types>
-                          </mp-resource-thumbnail-fallback>
-                      </mp-resource-thumbnail>
+                            ?formation_timespan crm:P170i_time_is_defined_by ?time_primitive_formation.
+                            ?time_primitive_formation a crm:E61_Time-Primitive;
+                              crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                              rdfs:label ?formation_year
+                          }
+                          OPTIONAL {
+                            ?subject crm:P99i_dissolved_by ?dissolution.
+                            ?dissolution a crm:E68_Dissolution;
+                              crm:P4_has_time-span ?dissolution_timespan.
 
-                    </semantic-context>
-                    
-                  </template>
+                            ?dissolution_timespan crm:P170i_time_is_defined_by ?time_primitive_dissolution.
+                            ?time_primitive_dissolution a crm:E61_Time-Primitive;
+                              crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                              rdfs:label ?dissolution_year.
+                          }                    
+                        } order by DESC(?formation_year) DESC(?dissolution_year)'
+                      tuple-template="{{> table-row}}"
+                    >
 
-                </semantic-table>
-              </semantic-search-result>
+                      <template id="table-row">
+                        <mp-event-trigger 
+                          id='{{subject.value}}-add-frame' 
+                          type='Dashboard.AddFrame' 
+                          data='{
+                            "resourceIri": "{{subject.value}}", 
+                            "viewId": "entity-editor"
+                          }' 
+                          targets='["thinking-frames"]'>
+                          <bs-row class="clickable-row">
+                            <bs-col sm="1" md="1">
+                              {{>visual_representation}}
+                            </bs-col>
+                            <bs-col sm="7" md="7">
+                              <h3><mp-label iri="{{subject.value}}"></mp-label></h3>
+                              <p>
+                                <em>
+                                  <semantic-query
+                                    query='SELECT ?title WHERE {
+                                      ?subject crm:P1_is_identified_by ?title.
+                                      ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
+                                    }'  
+                                  ></semantic-query>
+                                </em>
+                              </p>
+                            </bs-col>
+
+                            <bs-col sm="2" md="2">
+                              {{#if formation_year}}
+                                <p>{{formation_year.value}}</p>
+                              {{/if}}
+                            </bs-col>
+
+                            <bs-col sm="2" md="2">
+                              {{#if dissolution_year}}
+                                <p>{{dissolution_year.value}}</p>
+                              {{/if}}
+                            </bs-col>
+                            
+                          </bs-row>
+                        </mp-event-trigger>
+                      </template>
+
+                      <template id="visual_representation">
+
+                        <semantic-context storage="images">
+
+                          <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
+                              <mp-resource-thumbnail-fallback>
+                                  <with-types iri='{{subject.value}}'
+                                          template='{{> noImage}}'
+                                          [[> rsp:TypeMappings]]
+                                      >
+                                      <template id="noImage">
+                                          <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-actor_no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
+                                      </template>
+                                  </with-types>
+                              </mp-resource-thumbnail-fallback>
+                          </mp-resource-thumbnail>
+
+                        </semantic-context>
+                        
+                      </template>
+
+                    </semantic-table>
+                </bs-tab>
+
+              </bs-tabs>
+
+
 
             </div>
         </semantic-search-result-holder>

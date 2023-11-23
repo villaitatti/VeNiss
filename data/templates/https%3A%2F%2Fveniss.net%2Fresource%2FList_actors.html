@@ -149,8 +149,22 @@
                           } order by DESC(?birth_year) DESC(?death_year)'
                       tuple-template="{{> table-row}}"
                     >
+                    
 
                       <template id="table-row">
+                        <bs-row class="show-one">
+                          <bs-col sm="1" md="1">
+                          </bs-col>
+                          <bs-col sm="7" md="7">
+                            <strong>Name</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Birth</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Death</strong>
+                          </bs-col>
+                        </bs-row>
                         <mp-event-trigger 
                           id='{{subject.value}}-add-frame' 
                           type='Dashboard.AddFrame' 
@@ -367,6 +381,15 @@
     min-width: 80px;
     height: 80px;
     object-fit: cover;
+  }
+
+  .show-one{
+    display: none;
+  }
+
+  .show-one:first-of-type{
+    display: block!important;
+    margin-bottom: 10px;
   }
 
 </style>

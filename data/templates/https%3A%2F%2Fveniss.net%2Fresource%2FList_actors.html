@@ -117,8 +117,17 @@
                     <semantic-table 
                       id='table-result'
                       query='
-                        SELECT DISTINCT ?subject ?birth_year ?death_year WHERE {
+                        SELECT DISTINCT ?subject ?birth_year ?death_year ?title_label WHERE {
                           ?subject a veniss_ontology:Person.
+                          OPTIONAL {
+                            $subject crm:P1_is_identified_by ?title.
+                              ?title crm:P2_has_type ?title_value.
+                              $title_value crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types>;
+                              skos:broader <https://veniss.net/resource/vocab/actor_types/7a5d96c0-74b2-11ee-a7ed-3a5becfe4abe>;
+                              rdfs:label ?title_label
+                            
+                            FILTER(LANG(?title_label) = "en")
+                          }
                           OPTIONAL {
                               ?subject crm:P98i_was_born ?birth.
                               ?birth a crm:E67_Birth;
@@ -165,6 +174,9 @@
                                     }'  
                                   ></semantic-query>
                                 </em>
+                                <div>
+                                  <em><a href="#">{{title_label.value}}</a></em>
+                                </div>
                               </p>
                             </bs-col>
 

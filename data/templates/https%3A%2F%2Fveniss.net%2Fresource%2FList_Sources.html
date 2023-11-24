@@ -168,6 +168,22 @@
                       >
 
                         <template id="table-row">
+                          <bs-row class="show-one">
+                            <bs-col sm="1" md="1">
+                            </bs-col>
+                            <bs-col sm="4" md="4">
+                              <strong>Name</strong>
+                            </bs-col>
+                            <bs-col sm="2" md="2">
+                              <strong>Island</strong>
+                            </bs-col>
+                            <bs-col sm="1" md="1">
+                              <strong>Date</strong>
+                            </bs-col>
+                            <bs-col sm="4" md="4">
+                              <strong>Location</strong>
+                            </bs-col>
+                          </bs-row>
                           <mp-event-trigger 
                             id='{{subject.value}}-add-frame' 
                             type='Dashboard.AddFrame' 
@@ -413,5 +429,14 @@
 
   .align-text{
     margin-top: 0px;
+  }
+
+  .show-one{
+    display: none;
+  }
+
+  .show-one:first-of-type{
+    display: block!important;
+    margin-bottom: 10px;
   }
 </style>

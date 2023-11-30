@@ -23,8 +23,55 @@
     </div>
 
     <div class="body">
-      <semantic-search>
+      <semantic-search
+
+        relations='{
+          "<https://veniss.net/ontology#has_user>" : [{
+            "kind": "resource",
+            "queryPattern": "{
+              ?subject a veniss_ontology:Source.
+              ?container <http://www.w3.org/ns/prov#wasAttributedTo> ?__value__.
+
+              BIND(URI(CONCAT(STR(?subject), \"/container\")) as ?container)
+            }"
+          }]
+        }'
+      
+        search-profile='{
+          "categories": [
+            {
+              "iri": "<https://veniss.net/ontology#Event>",
+              "label": "Event"
+            },
+            {
+              "iri": "<https://veniss.net/ontology#Island>",
+              "label": "Island"
+            },
+            {
+              "iri": "<http://www.researchspace.org/resource/User>",
+              "label": "User"
+            }
+          ],
+          "relations": [
+            {
+              "iri": "<https://veniss.net/ontology#has_island>",
+              "label": "Islands",
+              "hasDomain": "<https://veniss.net/ontology#Event>",
+              "hasRange": "<https://veniss.net/ontology#Island>"
+            },
+            {
+                "iri": "<https://veniss.net/ontology#has_user>",
+                "label": "Curator",
+                "hasDomain": "<https://veniss.net/ontology#Event>",
+                "hasRange": "<http://www.researchspace.org/resource/User>"
+              }
+          ]
+        }'
+
+
+      >
         <semantic-search-query-constant 
+          domain='<https://veniss.net/ontology#Event>'
           query='
             select distinct ?subject where { ?subject a veniss_ontology:Event }'>
         </semantic-search-query-constant>
@@ -155,5 +202,10 @@
     .griddle-custom-row{
     display: block!important;
   }
+
+   .facet__category-selector-holder{
+    display: none;
+  }
+
 
 </style>

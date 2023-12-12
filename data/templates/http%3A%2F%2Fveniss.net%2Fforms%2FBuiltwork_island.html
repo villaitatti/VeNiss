@@ -60,7 +60,11 @@
                                 <div style='height: 20vw;'>
                                     <h3>Phases</h3>
                                     <semantic-context repository="ephedra">
-                                        <semantic-map id='phasesMap' fix-zoom-level="12"
+                                        <semantic-map
+                                        id='phasesMap'
+                                        fix-zoom-level="12"
+                                        year-filtering="true"
+                                        target-controls='["phases-map-control"]'
                                         map-options='{"crs":"EPSG:4326"}'
                                             query='
                                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -75,6 +79,23 @@
                                     }'>
                                         </semantic-map>
                                     </semantic-context>
+                                    <semantic-map-controls
+                                    id="phases-map-control"
+                                    target-map-id="phasesMap"
+                                    features-taxonomies="use,function,name,typology"
+                                    features-color-taxonomies="use,function"
+                                    features-options-enabled="false"
+                                    filters-initialization='{"basemap":true,"overlay":false,"feature":true}'
+                                    vector-levels='["Island","Buildings"]'
+                                    show-filters="false"
+                                    timeline='{
+                                        "min":1500,
+                                        "max":2023,
+                                        "mode":"marked",
+                                        "default":2023
+                                      }'
+                                      >
+                                    </semantic-map-controls>
                                 </div>
                                 {{/each}}
                             </template>

@@ -7,8 +7,7 @@
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
-    entity_related_actor                = "https://veniss.net/container/fieldDefinitionContainer/entity_related_actor"   
-    entity_related_builtwork            = "https://veniss.net/container/fieldDefinitionContainer/entity_related_builtwork"
+    entity_related_entity               = "https://veniss.net/container/fieldDefinitionContainer/entity_related_entity"   
 
     source_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
     source_representation               = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
@@ -336,17 +335,12 @@
 
             <bs-row>
               <bs-col lg="12">
-                <div id="entity_related_entity">
-                  <semantic-form-drag-and-drop-input label="Mentioned people" for='entity_related_actor'></semantic-form-drag-and-drop-input>
-                </div>
-              </bs-col>
-            </bs-row>
 
-            <bs-row>
-              <bs-col lg="12">
-                <div id="entity_related_entity">
-                  <semantic-form-drag-and-drop-input label="Mentioned builtworks" for='entity_related_builtwork'></semantic-form-drag-and-drop-input>
-                </div>
+                <semantic-form-drag-and-drop-input 
+                  render-header="false"
+                  for='entity_related_entity'>
+                </semantic-form-drag-and-drop-input>
+                
               </bs-col>
             </bs-row>
 
@@ -372,6 +366,10 @@
   .btn-open-image{
     position: relative;
     top: -40px;
+  }
+
+  .btn > a{
+    color: white;
   }
 
   #form-body{

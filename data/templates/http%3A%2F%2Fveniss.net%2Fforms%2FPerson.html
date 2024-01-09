@@ -8,6 +8,7 @@
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
+    entity_related_entity               = "https://veniss.net/container/fieldDefinitionContainer/entity_related_entity"   
 
     actor_representation                = "https://veniss.net/container/fieldDefinitionContainer/actor_representation"
     
@@ -276,6 +277,22 @@
 
                 </semantic-form-composite-input>
               </div>
+            </bs-tab>
+
+            <!-- Related elements -->
+            <bs-tab event-key="4" title="Related Entities">
+
+              <bs-row>
+                <bs-col lg="12">
+
+                  <semantic-form-drag-and-drop-input 
+                    render-header="false"
+                    for='entity_related_entity'>
+                  </semantic-form-drag-and-drop-input>
+                  
+                </bs-col>
+              </bs-row>
+
             </bs-tab>
 
           </bs-tabs>

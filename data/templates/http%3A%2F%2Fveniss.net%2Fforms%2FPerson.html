@@ -2,7 +2,6 @@
   id='{{viewId}}-vocab-form' 
   post-action="event"
   subject='{{node}}'
-  browser-persistence="true"
   new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -206,37 +205,171 @@
           
             <!-- occupations -->
             <bs-tab event-key="2" title="Activities">
-              <div data-flex-layout="row top-stretch">
-                <semantic-form-composite-input
-                  for="person_occupation"
-                  label="Activity"
-                  render-header="false"
-                  new-subject-template="/occupation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
-                  fields='[[ fieldDefinitions
-                    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                    person_occupation_subject           = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_subject"
-                    person_occupation_group             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_group"
+              <semantic-form-composite-input
+                for="person_occupation"
+                label="Activity"
+                render-header="false"
+                new-subject-template="/occupation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+                fields='[[ fieldDefinitions
+                  type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                  person_occupation_subject           = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_subject"
+                  person_occupation_group             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_group"
 
-                    person_occupation_place             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_place"
-                    person_occupation_date              = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_date"
-                    person_occupation_notes             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_notes"
-                  ]]'
-                  >
+                  person_occupation_place             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_place"
+                  person_occupation_start             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_start"
+                  person_occupation_end               = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_end"
+                  person_occupation_notes             = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_notes"
+                  person_occupation_island            = "https://veniss.net/container/fieldDefinitionContainer/person_occupation_island"
+                ]]'
+                >
 
-                    <semantic-form-hidden-input for="type" default-value='frbroo:F51_Pursuit'></semantic-form-hidden-input>
+                  <semantic-form-hidden-input for="type" default-value='frbroo:F51_Pursuit'></semantic-form-hidden-input>
 
+                  <bs-row>
+                    <!-- Subject -->
+                    <bs-col lg="6" sm="12">
+                      <div id="person_occupation_subject">
+                        <semantic-form-autocomplete-input  
+                          for='person_occupation_subject'
+                          label="Activity" 
+                          placeholder="Choose the activity ..." 
+                        >
+                        </semantic-form-autocomplete-input>
+                      </div> 
+                    </bs-col>
+
+
+                    <bs-col lg="6" sm="12">
+                      <div id="person_occupation_group" class="padding-5">
+                          <semantic-form-autocomplete-input  
+                            for='person_occupation_group'
+                            label="Group" 
+                            placeholder="Enter the group ..." 
+                          >
+                          </semantic-form-autocomplete-input>
+                        </div> 
+                    </bs-col>
+                  </bs-row>
+
+                  <!-- Date Start -->
+                  <bs-row>
+                    <bs-col lg="12" md="12" sm="12">
+                      <div id="person_occupation_start">
+                        <semantic-form-composite-input 
+                          label="Started in"
+                          for='person_occupation_start' 
+                          new-subject-template="/date-start" 
+                          fields='[[fieldDefinitions
+
+                            has_type                    = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+                            time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                            time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                            time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                          ]]'>
+
+                          <semantic-form-hidden-input for="has_type" default-value="https://veniss.net/resource/type/occupation_start"></semantic-form-hidden-input>
+                          
+                          <bs-row>
+                            <bs-col sm="4">
+                              <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
+                            </bs-col>
+
+                            <bs-col sm="4">
+                              <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
+                            </bs-col>
+
+                            <bs-col sm="4">
+                              <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
+                            </bs-col>
+                          </bs-row>
+
+                        </semantic-form-composite-input>
+                      </div>
+
+                    </bs-col>
+                  </bs-row>
+
+                  <!-- Date End -->
+                  <bs-row>
+                    <bs-col lg="12" md="12" sm="12">
+                      <div id="person_occupation_end">
+                        <semantic-form-composite-input 
+                          label="Ended in"
+                          for='person_occupation_end' 
+                          new-subject-template="/date-end" 
+                          fields='[[fieldDefinitions
+
+                            has_type                    = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+                            time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                            time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                            time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                          ]]'>
+
+                          <semantic-form-hidden-input for="has_type" default-value="https://veniss.net/resource/type/occupation_end"></semantic-form-hidden-input>
+                          
+                          <bs-row>
+                            <bs-col sm="4">
+                              <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
+                            </bs-col>
+
+                            <bs-col sm="4">
+                              <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
+                            </bs-col>
+
+                            <bs-col sm="4">
+                              <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
+                            </bs-col>
+                          </bs-row>
+
+                        </semantic-form-composite-input>
+                      </div>
+
+                    </bs-col> 
+                  </bs-row>
+
+                  <bs-row>
+
+                    <bs-col lg="6" sm="12">
+                      <div id="person_occupation_notes">
+                        <semantic-form-text-input label="Place" placeholder="Insert place" for="person_occupation_notes"></semantic-form-text-input>
+                      </div>
+                    </bs-col>
+
+                    <bs-col lg="6" sm="12">
+                      <div id="person_occupation_island">
+                        <semantic-form-select-input label="Island" placeholder="Select Island" for="person_occupation_island"></semantic-form-select-input>
+                      </div>
+                    </bs-col>
+                  </bs-row>
+
+                <hr>
+
+              </semantic-form-composite-input>
+            </bs-tab>
+
+          </bs-tabs>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  [[> rsp:FormDefaultActions]]
+
+<style>
+  .FileManager--header {
+    display: none !important;
+  }
+</style>
+
+
+<!-- 
                     <div data-flex-layout="column top-stretch">
 
                       <div data-flex-layout="row top-stretch">
 
-                        <div id="person_occupation_subject" class="padding-5">
-                          <semantic-form-autocomplete-input  
-                            for='person_occupation_subject'
-                            label="Activity" 
-                            placeholder="Choose the activity ..." 
-                          >
-                          </semantic-form-autocomplete-input>
-                        </div> 
+                        
 
                         <div id="person_occupation_group" class="padding-5">
                           <semantic-form-autocomplete-input  
@@ -247,7 +380,6 @@
                           </semantic-form-autocomplete-input>
                         </div> 
 
-                        <!--
                         <div id="person_occupation_place" class="padding-5">
                           <semantic-form-text-input  
                             readonly="true"
@@ -266,19 +398,20 @@
                             placeholder="Dates not working. Please, use the notes" 
                           >
                           </semantic-form-text-input>
-                        </div> -->
+                        </div>
 
                       </div>
 
+                    
                       <div id="person_occupation_notes" class="padding-5">
                         <semantic-form-text-input label="Notes" placeholder="Insert an annotation ... " for="person_occupation_notes"></semantic-form-text-input>
                       </div>
-
+                   
                     </div> 
 
                 </semantic-form-composite-input>
               </div>
-            </bs-tab>
+            </bs-tab> -->
 
             <!-- Related elements 
             <bs-tab event-key="4" title="Related Entities">

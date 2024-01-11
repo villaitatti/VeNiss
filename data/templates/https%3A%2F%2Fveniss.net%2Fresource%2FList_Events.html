@@ -23,8 +23,55 @@
     </div>
 
     <div class="body">
-      <semantic-search>
+      <semantic-search
+
+        relations='{
+          "<https://veniss.net/ontology#has_user>" : [{
+            "kind": "resource",
+            "queryPattern": "{
+              ?subject a veniss_ontology:Source.
+              ?container <http://www.w3.org/ns/prov#wasAttributedTo> ?__value__.
+
+              BIND(URI(CONCAT(STR(?subject), \"/container\")) as ?container)
+            }"
+          }]
+        }'
+      
+        search-profile='{
+          "categories": [
+            {
+              "iri": "<https://veniss.net/ontology#Event>",
+              "label": "Event"
+            },
+            {
+              "iri": "<https://veniss.net/ontology#Island>",
+              "label": "Island"
+            },
+            {
+              "iri": "<http://www.researchspace.org/resource/User>",
+              "label": "User"
+            }
+          ],
+          "relations": [
+            {
+              "iri": "<https://veniss.net/ontology#has_island>",
+              "label": "Islands",
+              "hasDomain": "<https://veniss.net/ontology#Event>",
+              "hasRange": "<https://veniss.net/ontology#Island>"
+            },
+            {
+                "iri": "<https://veniss.net/ontology#has_user>",
+                "label": "Curator",
+                "hasDomain": "<https://veniss.net/ontology#Event>",
+                "hasRange": "<http://www.researchspace.org/resource/User>"
+              }
+          ]
+        }'
+
+
+      >
         <semantic-search-query-constant 
+          domain='<https://veniss.net/ontology#Event>'
           query='
             select distinct ?subject where { ?subject a veniss_ontology:Event }'>
         </semantic-search-query-constant>
@@ -41,18 +88,31 @@
                 <semantic-table 
                   id='table-result'
                   query='
-                    SELECT DISTINCT ?subject ?label WHERE 
+                    SELECT DISTINCT ?subject ?year WHERE 
                     { 
-                      ?subject rdfs:label ?label; 
-                    }' 
-                  column-configuration='[
-                    {
-                      "displayName": "Name",
-                      "cellTemplate": "{{> name}}"
-                    }
-                  ]'
+                      OPTIONAL {
+                        ?subject crm:P4_has_time-span ?timespan.
+                        ?timespan crm:P170i_time_is_defined_by ?time_primitive.
+
+                        ?time_primitive a crm:E61_Time-Primitive;
+                          rdfs:label ?year;
+                          crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>.
+                      }
+                    } ORDER BY ASC(?year)' 
+                  tuple-template="{{> table-row}}"
                 >
-                  <template id="name">
+                  <template id="table-row">
+                    <bs-row class="show-one">
+                      <bs-col sm="9" md="9">
+                        <strong>Name</strong>
+                      </bs-col>
+                      <bs-col sm="2" md="2">
+                        <strong>Island</strong>
+                      </bs-col> 
+                      <bs-col sm="1" md="1">
+                        <strong>Year</strong>
+                      </bs-col> 
+                    </bs-row>
                     <mp-event-trigger 
                       id='{{subject.value}}-add-frame' 
                       type='Dashboard.AddFrame' 
@@ -61,10 +121,30 @@
                         "viewId": "entity-editor"
                       }' 
                       targets='["thinking-frames"]'>
-                        <a href="#">
-                          {{label.value}}
-                        </a>
-                    </mp-event-trigger>  
+                      <bs-row class="clickable-row">
+                        <bs-col sm="9" md="9">
+                          <h3 class="align-text"><mp-label iri="{{subject.value}}"></mp-label></h3> 
+                        </bs-col>
+                        <bs-col sm="2" md="2">
+                          <p>
+                            <semantic-query query='
+                              SELECT ?value WHERE {
+                                BIND(<{{subject.value}}> as ?subject)
+                                ?subject veniss_ontology:has_island ?value.
+                              }
+                            '>
+                            </semantic-query>
+                          </p>
+                        </bs-col>
+                        <bs-col sm="1" md="1">
+                          {{#if year}}
+                            <p>
+                              {{year.value}}
+                            </p>
+                          {{/if}}
+                        </bs-col>
+                      </bs-row>
+                    </mp-event-trigger>
                   </template>
 
                 </semantic-table>
@@ -85,6 +165,19 @@
     padding-left: 20px;
     padding-right: 20px;
   }
+  
+  .show-one{
+    display: none;
+  }
+
+  .show-one:first-of-type{
+    display: block!important;
+    margin-bottom: 10px;
+  }
+
+  .align-text{
+    margin-top: 0px;
+  }
 
   .search-container {
     margin-top: 10px;
@@ -92,4 +185,27 @@
   .btn a{
     color: #fff!important;
   }
+
+  .clickable-row{
+    padding: 10px 0;
+    border-top: 1px solid lightgrey;
+  }
+
+  .clickable-row:first-child{
+    border-top: none;
+  }
+
+  .clickable-row:hover{
+    background-color: var(--color-primary-10);;
+    cursor: pointer;
+  }
+    .griddle-custom-row{
+    display: block!important;
+  }
+
+   .facet__category-selector-holder{
+    display: none;
+  }
+
+
 </style>

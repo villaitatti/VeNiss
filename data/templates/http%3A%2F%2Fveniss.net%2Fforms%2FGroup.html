@@ -5,6 +5,8 @@
   new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
+    entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
 
     actor_representation                = "https://veniss.net/container/fieldDefinitionContainer/actor_representation"
     
@@ -24,158 +26,163 @@
 
       <div data-flex-layout="row stretch-stretch">
 
-        <!-- Left -->
-        <div data-flex-self="size-x2">
+        <!-- LEFT: General data -->
+        <div data-flex-layout="column top-stretch" class="left-column">
 
-          <div data-flex-layout="column stretch-stretch">
+          <div id="source_visual_representation" class="padding-5" class="left-column">
 
-            <!-- Representation and names -->
-            <div data-flex-layout="row stretch-stretch">
+            <div id="actor_representation">
+              <semantic-form-file-input 
+                label="Visual representation"
+                for="actor_representation"
+                storage='images'
+                temp-storage='tmp'
+                placeholder='Add file here'
+                name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
+                media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
+                resource-query='
+                  PREFIX rso: <http://www.researchspace.org/ontology/>
+                  CONSTRUCT {
+                    ?__resourceIri__ a rso:EX_File.
+                    ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
+                    ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
+                    ?__resourceIri__ rdfs:label ?__filename__.
+                  } WHERE {}
+                '
+                generate-iri-query='
+                  SELECT ?resourceIri {
+                    BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
+                  }
+                '
+              ></semantic-form-file-input>
+            </div>
 
-              <div id="source_visual_representation" class="padding-5">
+            <hr>
 
-                <semantic-form-file-input 
-                  label="Visual representation"
-                  for="actor_representation"
-                  storage='images'
-                  temp-storage='tmp'
-                  placeholder='Add file here'
-                  name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
-                  media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
-                  resource-query='
-                    CONSTRUCT {
-                      ?__resourceIri__ a rso:EX_File.
-                      ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
-                      ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
-                      ?__resourceIri__ rdfs:label ?__filename__.
-                    } WHERE {}
-                  '
-                  generate-iri-query='
-                    SELECT ?resourceIri {
-                      BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
-                    }
-                  '
-                ></semantic-form-file-input>
+            <div id="entity_publication_notes" class="padding-5">
+              <semantic-form-text-input placeholder="Enter a note for the editor ..." multiline="true" label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+            </div>
 
-              </div>
+            <div id="entity_published" class="padding-5">
+              <semantic-form-checkbox-input label="Record completed?" for='entity_published'></semantic-form-checkbox-input>
+            </div>
 
-              <div data-flex-layout="column top-stretch" data-flex-self="size-x3">
+          </div>
 
-                <div data-flex-layout="row top-stretch">
-                  <div id="group_appellation" class="padding-5">
-                    <semantic-form-text-input label="Appellation" placeholder="Enter Group name ..." for="group_appellation"></semantic-form-text-input>
+
+
+        </div>
+
+        <!-- Right -->
+        <div data-flex-self="size-x3">
+          <bs-tabs id="tabs">
+            <!-- Metadata -->
+            <bs-tab event-key="1" title="Metadata">
+
+              <bs-row>
+                <bs-col lg="6" md="12" sm="12">
+                  <div id="group_appellation">
+                    <semantic-form-text-input label="Name" placeholder="Enter Group name ..." for="group_appellation" languages='["en","it"]'></semantic-form-text-input>
                   </div>
-                </div>
+                </bs-col>
 
-                <div data-flex-layout="row top-stretch">
-
-                  <div id="group_type" class="padding-5">
+                <bs-col lg="6" md="12" sm="12">
+                  <div id="group_type">
                     <semantic-form-tree-picker-input 
-                      open-dropdown-on-focus="false"
                       label="Type" 
                       for='group_type'
                       placeholder="Click the + button and drag and drop"
                       custom-button='{
                         "iri": "http://www.researchspace.org/resource/ThinkingFrames",
                         "view": "authority-content",
-                        "resource": "http://www.researchspace.org/resource/vocab/actor_types"
+                        "resource": "https://veniss.net/resource/vocab/actor_types"
                       }'
                       tree-patterns='{
-                        "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-                        "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>"
+                        "relationPattern": "?item skos:broader ?parent", 
+                        "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types>"
                       }'>
                     </semantic-form-tree-picker-input>
                   </div>
+                </bs-col>
+              </bs-row>
 
-                  <div id="group_where" class="padding-5">
-                    <semantic-form-text-input readonly="true" label="Where" placeholder="Where not working" for="group_where"></semantic-form-text-input>
-                  </div>
+              <bs-row>
+                <bs-col lg="12" md="12" sm="12">
+                <div id="group_formation_date">
+                  <semantic-form-composite-input 
+                    label="Formation date"
+                    for='group_formation_date' 
+                    new-subject-template="/formation/date" 
+                    fields='[[fieldDefinitions
+                      type                        = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                      time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                      time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                      time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                    ]]'>
+                    
+                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
+                    
+                    <bs-row>
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
+                      </bs-col>
 
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
+                      </bs-col>
+
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
+                      </bs-col>
+                    </bs-row>
+
+                  </semantic-form-composite-input>
                 </div>
+              </bs-col>
+              </bs-row>
 
-              </div>
+              <bs-row>
+                <bs-col lg="12" md="12" sm="12">
+                <div id="group_dissolution_date">
+                  <semantic-form-composite-input 
+                    label="Dissolution date"
+                    for='group_dissolution_date' 
+                    new-subject-template="/dissolution/date" 
+                    fields='[[fieldDefinitions
+                      type                        = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                      time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                      time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                      time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                    ]]'>
+                    
+                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
+                    
+                    <bs-row>
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
+                      </bs-col>
 
-            </div>
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
+                      </bs-col>
 
-            <hr>
+                      <bs-col sm="4">
+                        <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
+                      </bs-col>
+                    </bs-row>
 
-            <!-- Birth and death -->
-            <div data-flex-layout="row top-stretch">
+                  </semantic-form-composite-input>
+                </div>
+              </bs-col>
+              </bs-row>
 
-              <div id="group_formation_date" class="padding-5">
-                <semantic-form-composite-input 
-                  label="Formation date" 
-                  for='group_formation_date' 
-                  new-subject-template="/formation/date" 
-                  fields='[[fieldDefinitions
-                    time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
-                    time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
-                    time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
-                    time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
-                  ]]'>
+            </bs-tab>
 
-                    <div data-flex-layout="column top-stretch">
-                      <div data-flex-layout="row top-stretch">
-                        <div id="time_primitive_day" class="padding-5">
-                          <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
-                        </div>
-                        <div id="time_primitive_month" class="padding-5">
-                          <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
-                        </div> 
-                        <div id="time_primitive_year" class="padding-5">
-                          <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
-                        </div>
-                      </div>
-                      <div id="time_primitive_year" class="padding-5">
-                        <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
-                      </div>
-                    </div>
-                  
-                </semantic-form-composite-input>
-              </div>
+            <!-- Related entities -->
+            <bs-tab event-key="2" title="Related entities">
+            </bs-tab>
 
-              <div id="group_dissolution_date" class="padding-5">
-                <semantic-form-composite-input 
-                  label="Dissolution date" 
-                  for='group_dissolution_date' 
-                  new-subject-template="/dissolution/date" 
-                  fields='[[fieldDefinitions
-                    time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
-                    time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
-                    time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
-                    time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
-                  ]]'>
-
-                    <div data-flex-layout="column top-stretch">
-                      <div data-flex-layout="row top-stretch">
-                        <div id="time_primitive_day" class="padding-5">
-                          <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
-                        </div>
-                        <div id="time_primitive_month" class="padding-5">
-                          <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
-                        </div> 
-                        <div id="time_primitive_year" class="padding-5">
-                          <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
-                        </div>
-                      </div>
-                      <div id="time_primitive_year" class="padding-5">
-                        <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
-                      </div>
-                    </div>
-                  
-                </semantic-form-composite-input>
-              </div>
-
-            </div>
-
-
-          </div>
-
-        </div>
-
-        <!-- Right -->
-        <div>
-          <h3>Related elements</h3>
+          </bs-tabs>
         </div>
 
       </div>

@@ -280,7 +280,7 @@
               </div>
             </bs-tab>
 
-            <!-- Related elements -->
+            <!-- Related elements 
             <bs-tab event-key="4" title="Related Entities">
 
                <bs-row>
@@ -312,99 +312,52 @@
               </bs-col>
             </bs-row>
 
-              <!--
-              <bs-row>
-                <bs-col lg="12">
-
-                  <semantic-form-drag-and-drop-input 
-                    render-header="false"
-                    for='entity_related_entity'>
-                  </semantic-form-drag-and-drop-input>
-                  
-                </bs-col>
-              </bs-row>
-
-
-              <bs-row>
-                <semantic-form-composite-input 
-                  for='entity_relation'
-                  label="Related Entities"
-                  new-subject-template='https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-                  fields='[[fieldDefinitions
-                    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-
-                    relation_entity                     = "https://veniss.net/container/fieldDefinitionContainer/relation_entity"
-                    veniss_label                        = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label"
-                      
-                  ]]'>
-
-                  <semantic-form-hidden-input for="type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
-                  
-
-                  <bs-row>
-                    <bs-col md="2">
-                      <semantic-form-drag-and-drop-input 
-                        for='relation_entity'
-                        render-header="false"
-                      >
-                      </semantic-form-drag-and-drop-input> 
-                    </bs-col>
-
-                    <bs-col md="10">
-                      <semantic-form-text-input label="Notes" placeholder="Write the notes for this relation ..." for='veniss_label'>
-                      </semantic-form-text-input> 
-                    </bs-col>
-
-                  </bs-row>
-
-
-                </semantic-form-composite-input>
-              </bs-row> -->
+             
 
             </bs-tab>
 
-                      <bs-tab event-key="5" title="Related Entities v2 (Composite input)">
-            <bs-row>
-              <bs-col>
+            <bs-tab event-key="5" title="Related Entities v2 (Composite input)">
+              <bs-row>
+                <bs-col>
 
-                <semantic-form-composite-input 
-                  for='entity_relation'
-                  label="Related Entities"
-                  new-subject-template='https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-                  fields='[[fieldDefinitions
-                    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                  <semantic-form-composite-input 
+                    for='entity_relation'
+                    label="Related Entities"
+                    new-subject-template='https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+                    fields='[[fieldDefinitions
+                      type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
-                    relation_entity                     = "https://veniss.net/container/fieldDefinitionContainer/relation_entity"
-                    veniss_label                        = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label"
-                      
-                  ]]'>
+                      relation_entity                     = "https://veniss.net/container/fieldDefinitionContainer/relation_entity"
+                      veniss_label                        = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label"
+                        
+                    ]]'>
 
-                  <semantic-form-hidden-input for="type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
-                  
+                    <semantic-form-hidden-input for="type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+                    
 
-                  <bs-row>
-                    <bs-col md="2">
-                      <semantic-form-drag-and-drop-input 
-                        for='relation_entity'
-                        render-header="false"
-                      >
-                      </semantic-form-drag-and-drop-input> 
-                    </bs-col>
+                    <bs-row>
+                      <bs-col md="2">
+                        <semantic-form-drag-and-drop-input 
+                          for='relation_entity'
+                          render-header="false"
+                        >
+                        </semantic-form-drag-and-drop-input> 
+                      </bs-col>
 
-                    <bs-col md="10">
-                      <semantic-form-text-input label="Notes" placeholder="Write the notes for this relation ..." for='veniss_label'>
-                      </semantic-form-text-input> 
-                    </bs-col>
+                      <bs-col md="10">
+                        <semantic-form-text-input label="Notes" placeholder="Write the notes for this relation ..." for='veniss_label'>
+                        </semantic-form-text-input> 
+                      </bs-col>
 
-                  </bs-row>
+                    </bs-row>
 
 
-                </semantic-form-composite-input>
-          
+                  </semantic-form-composite-input>
+            
 
-              </bs-col>
-            </bs-row>
-          </bs-tab>
+                </bs-col>
+              </bs-row>
+            </bs-tab>-->
 
           </bs-tabs>
 

@@ -7,6 +7,8 @@
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
+    entity_related_entity               = "https://veniss.net/container/fieldDefinitionContainer/entity_related_entity"   
+    entity_relation                     = "https://veniss.net/container/fieldDefinitionContainer/entity_relation"
 
     actor_representation                = "https://veniss.net/container/fieldDefinitionContainer/actor_representation"
     
@@ -404,6 +406,103 @@
                       <div id="person_occupation_notes" class="padding-5">
                         <semantic-form-text-input label="Notes" placeholder="Insert an annotation ... " for="person_occupation_notes"></semantic-form-text-input>
                       </div>
+                   
+                    </div> 
+
+                </semantic-form-composite-input>
+              </div>
+            </bs-tab> -->
+
+            <!-- Related elements 
+            <bs-tab event-key="4" title="Related Entities">
+
+               <bs-row>
+              <bs-col>
+
+
+                <semantic-table
+                  query="select distinct ?entity where {
+                    ?node veniss_ontology:is_domain_of|veniss_ontology:is_range_of ?relation.
+                    ?relation veniss_ontology:has_domain|veniss_ontology:has_range ?entity
+                    FILTER(?node != ?entity)
+                    BIND(<{{node}}> as ?node)
+                  }"
+                >
+                </semantic-table>
+
+                <button class="btn btn-primary">
+                  <semantic-link 
+                    iri="http://www.researchspace.org/resource/ThinkingFrames"
+                    urlqueryparam-view="entity-editor"
+                    urlqueryparam-entity-type-config="http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Relation"
+                    urlqueryparam-mode="new"
+                  >
+                    Create new relation
+                  </semantic-link>
+                </button>
+
+
+              </bs-col>
+            </bs-row>
+
+             
+
+            </bs-tab>
+
+            <bs-tab event-key="5" title="Related Entities v2 (Composite input)">
+              <bs-row>
+                <bs-col>
+
+                  <semantic-form-composite-input 
+                    for='entity_relation'
+                    label="Related Entities"
+                    new-subject-template='https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+                    fields='[[fieldDefinitions
+                      type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+
+                      relation_entity                     = "https://veniss.net/container/fieldDefinitionContainer/relation_entity"
+                      veniss_label                        = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label"
+                        
+                    ]]'>
+
+                    <semantic-form-hidden-input for="type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
                     
 
-                    </div> -->
+                    <bs-row>
+                      <bs-col md="2">
+                        <semantic-form-drag-and-drop-input 
+                          for='relation_entity'
+                          render-header="false"
+                        >
+                        </semantic-form-drag-and-drop-input> 
+                      </bs-col>
+
+                      <bs-col md="10">
+                        <semantic-form-text-input label="Notes" placeholder="Write the notes for this relation ..." for='veniss_label'>
+                        </semantic-form-text-input> 
+                      </bs-col>
+
+                    </bs-row>
+
+
+                  </semantic-form-composite-input>
+            
+
+                </bs-col>
+              </bs-row>
+            </bs-tab>-->
+
+          </bs-tabs>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  [[> rsp:FormDefaultActions]]
+<style>
+  .FileManager--header {
+    display: none !important;
+  }
+</style>

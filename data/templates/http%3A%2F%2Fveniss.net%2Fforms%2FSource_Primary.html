@@ -5,10 +5,9 @@
   new-subject-template="https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    entity_event                        = "https://veniss.net/container/fieldDefinitionContainer/entity_event"   
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
-    entity_related_entity               = "https://veniss.net/container/fieldDefinitionContainer/entity_related_entity"   
-    entity_relation                     = "https://veniss.net/container/fieldDefinitionContainer/entity_relation"
 
     source_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
     source_representation               = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
@@ -338,132 +337,21 @@
             </bs-row>
           </bs-tab>
 
-          <!-- Related elements 
-          <bs-tab event-key="4" title="Related Entities v1 (Drag and Drop)">
+          <bs-tab event-key="4" title="Related Events">
 
             <bs-row>
               <bs-col lg="12">
 
                 <semantic-form-drag-and-drop-input 
-                  render-header="false"
-                  for='entity_related_entity'
-                >
-                </semantic-form-drag-and-drop-input>
+                  label="Related Entities"
+                  for='entity_event'
+                  nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
+
                 
               </bs-col>
             </bs-row>
 
           </bs-tab>
-
-          <bs-tab event-key="5" title="Related Entities v2 (Composite input)">
-            <bs-row>
-              <bs-col>
-
-                <semantic-form-composite-input 
-                  for='entity_relation'
-                  label="Related Entities"
-                  new-subject-template='https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-                  fields='[[fieldDefinitions
-                    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-
-                    relation_entity                     = "https://veniss.net/container/fieldDefinitionContainer/relation_entity"
-                    veniss_label                        = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label"
-                      
-                  ]]'>
-
-                  <semantic-form-hidden-input for="type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
-                  
-
-                  <bs-row>
-                    <bs-col md="2">
-                      <semantic-form-drag-and-drop-input 
-                        for='relation_entity'
-                        render-header="false"
-                      >
-                      </semantic-form-drag-and-drop-input> 
-                    </bs-col>
-
-                    <bs-col md="10">
-                      <semantic-form-text-input label="Notes" placeholder="Write the notes for this relation ..." for='veniss_label'>
-                      </semantic-form-text-input> 
-                    </bs-col>
-
-                  </bs-row>
-
-
-                </semantic-form-composite-input>
-          
-
-              </bs-col>
-            </bs-row>
-          </bs-tab>
-
-          <bs-tab event-key="6" title="Related Entities v3 (external form)">
-            <bs-row>
-              <bs-col>
-
-
-                <semantic-table
-                  query="select distinct ?relation ?entity where {
-                    ?node veniss_ontology:is_domain_of|veniss_ontology:is_range_of ?relation.
-                    ?relation veniss_ontology:has_domain|veniss_ontology:has_range ?entity
-                    FILTER(?node != ?entity)
-                    BIND(<{{node}}> as ?node)
-                  }"    
-                  tuple-template="{{> table-row}}"
-                >
-
-                  <template id="table-row">
-                    <mp-event-trigger 
-                      id='{{relation.value}}-add-frame' 
-                      type='Dashboard.AddFrame' 
-                      data='{
-                        "resourceIri": "{{relation.value}}", 
-                        "viewId": "entity-editor"
-                      }' 
-                      targets='["thinking-frames"]'>
-                      <bs-row class="clickable-row">
-                        <bs-col sm="1" md="1">
-                          img here
-                        </bs-col>
-                        <bs-col sm="4" md="4">
-                          <h3 class="align-text"><mp-label iri="{{entity.value}}"></mp-label></h3>
-                        </bs-col>
-                        
-                      </bs-row>
-                    </mp-event-trigger>
-                  </template>
-
-
-                </semantic-table>
-
-                <button class="btn btn-primary">
-                  <semantic-link 
-                    iri="http://www.researchspace.org/resource/ThinkingFrames"
-                    urlqueryparam-view="entity-editor"
-                    urlqueryparam-entity-type-config="http://www.researchspace.org/resource/system/vocab/authority_manager_config_types/data/Relation"
-                    urlqueryparam-mode="new"
-                  >
-                    Create new relation
-                  </semantic-link>
-                </button>
-
-
-              </bs-col>
-            </bs-row>
-
-          </bs-tab>
-
-          <bs-tab event-key="7" title="Related Entities v4">
-
-              <semantic-form-drag-and-drop-input 
-                for='entity_related_entity'
-                nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'></semantic-form-drag-and-drop-input>
-              
-              </semantic-form-drag-and-drop-input>
-
-          </bs-tab>
-          -->
 
         </bs-tabs>
 

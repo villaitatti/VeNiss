@@ -5,6 +5,7 @@
   new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    entity_event                        = "https://veniss.net/container/fieldDefinitionContainer/entity_event"
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
 
@@ -179,7 +180,17 @@
             </bs-tab>
 
             <!-- Related entities -->
-            <bs-tab event-key="2" title="Related entities">
+            <bs-tab event-key="2" title="Related Events">
+              <bs-row>
+                <bs-col lg="12">
+
+                  <semantic-form-drag-and-drop-input 
+                    label="Related Events"
+                    for='entity_event'
+                    nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
+                  
+                </bs-col>
+              </bs-row>
             </bs-tab>
 
           </bs-tabs>

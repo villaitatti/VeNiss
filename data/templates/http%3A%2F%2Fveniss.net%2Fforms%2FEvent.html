@@ -14,6 +14,8 @@
     event_synopsis                      = "https://veniss.net/container/fieldDefinitionContainer/event_synopsis"
     event_typology                      = "https://veniss.net/container/fieldDefinitionContainer/event_typology"
     event_entity                        = "https://veniss.net/container/fieldDefinitionContainer/event_entity"
+
+    event_relation                      = "https://veniss.net/container/fieldDefinitionContainer/event_relation"
   ]]'
 >
   <div class="form-scroll-area">
@@ -104,14 +106,34 @@
 
             <bs-tab event-key="2" title="Related entities">
 
-              <div id="event_entity" class="padding-5">
+              <div id="event_entity">
 
-                <semantic-form-drag-and-drop-input 
-                  label="Related Entities"
-                  for='event_entity'>
+                <semantic-form-composite-input
+                  label="Related Entity"
+                  render-header="false"
+                  for="event_relation"
+                  new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}" 
+                  fields='[[fieldDefinitions
+                    relation_role                       = "https://veniss.net/container/fieldDefinitionContainer/relation_role"
+                    relation_entity                     = "https://veniss.net/container/fieldDefinitionContainer/relation_entity"
+                  ]]'
+                >
 
+                  <bs-row>
+                    <bs-col lg="3">
+                      <semantic-form-drag-and-drop-input 
+                        label="Entity"
+                        for='relation_entity'>
+                      </semantic-form-drag-and-drop-input>
+                    </bs-col>
+                    <bs-col lg="9">
+                      <semantic-form-text-input placeholder="Enter note for this relation" label="Notes" for="relation_role"></semantic-form-text-input>
+                    </bs-col>
+                  </bs-row>
+
+                </semantic-form-composite-input>
+                
               </div>
-
 
             </bs-tab>
           </bs-tabs>
@@ -132,6 +154,12 @@
       padding-right: 20px;
       margin-right: 20px;
     }
+
+    #event_entity .composite-input {
+      border-bottom: 1px solid lightgray;
+      padding-bottom: 25px;
+    }
+
   </style>
   
 </semantic-form>

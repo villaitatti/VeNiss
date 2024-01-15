@@ -5,8 +5,11 @@
   new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    entity_event                        = "https://veniss.net/container/fieldDefinitionContainer/entity_event"
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
+    entity_related_entity               = "https://veniss.net/container/fieldDefinitionContainer/entity_related_entity"   
+    entity_relation                     = "https://veniss.net/container/fieldDefinitionContainer/entity_relation"
 
     actor_representation                = "https://veniss.net/container/fieldDefinitionContainer/actor_representation"
     
@@ -345,6 +348,23 @@
               </semantic-form-composite-input>
             </bs-tab>
 
+            <!-- relations -->
+            <bs-tab event-key="3" title="Related Events">
+
+              <bs-row>
+                <bs-col lg="12">
+
+                  <semantic-form-drag-and-drop-input 
+                    label="Related Entities"
+                    for='entity_event'
+                    nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
+
+                  
+                </bs-col>
+              </bs-row>
+
+            </bs-tab>
+
           </bs-tabs>
 
         </div>
@@ -360,50 +380,3 @@
     display: none !important;
   }
 </style>
-
-
-<!-- 
-                    <div data-flex-layout="column top-stretch">
-
-                      <div data-flex-layout="row top-stretch">
-
-                        
-
-                        <div id="person_occupation_group" class="padding-5">
-                          <semantic-form-autocomplete-input  
-                            for='person_occupation_group'
-                            label="Group" 
-                            placeholder="Enter the group ..." 
-                          >
-                          </semantic-form-autocomplete-input>
-                        </div> 
-
-                        <div id="person_occupation_place" class="padding-5">
-                          <semantic-form-text-input  
-                            readonly="true"
-                            for='person_occupation_place'
-                            label="Place" 
-                            placeholder="Places not working. Please, use the notes" 
-                          >
-                          </semantic-form-text-input>
-                        </div> 
-
-                        <div id="person_occupation_date" class="padding-5">
-                          <semantic-form-text-input  
-                            readonly="true"
-                            for='person_occupation_date'
-                            label="Date" 
-                            placeholder="Dates not working. Please, use the notes" 
-                          >
-                          </semantic-form-text-input>
-                        </div>
-
-                      </div>
-
-                    
-                      <div id="person_occupation_notes" class="padding-5">
-                        <semantic-form-text-input label="Notes" placeholder="Insert an annotation ... " for="person_occupation_notes"></semantic-form-text-input>
-                      </div>
-                    
-
-                    </div> -->

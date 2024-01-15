@@ -5,6 +5,7 @@
   new-subject-template="https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    entity_event                        = "https://veniss.net/container/fieldDefinitionContainer/entity_event"   
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
 
@@ -226,10 +227,17 @@
                 </div>
               </bs-col>
 
-              <bs-col lg="6" md="6" sm="12">
+              <bs-col lg="4" md="4" sm="6">
                 <div id="source_dimension" class="padding-5">
-                  <semantic-form-text-input label="Source Dimensions" placeholder="HxBmm" for="source_dimension">
+                  <semantic-form-text-input label="Source Dimension" placeholder="Height x Base" for="source_dimension">
                   </semantic-form-text-input>
+                </div>
+              </bs-col>
+
+              <bs-col lg="2" md="2" sm="6">
+                <div id="source_dimension_unit" class="padding-5">
+                  <semantic-form-select-input label="Dimension unit" for="source_dimension_unit">
+                  </semantic-form-select-input>
                 </div>
               </bs-col>
 
@@ -329,8 +337,21 @@
             </bs-row>
           </bs-tab>
 
-          <!-- Related elements -->
-          <bs-tab event-key="4" title="Related elements"></bs-tab>
+          <bs-tab event-key="4" title="Related Events">
+
+            <bs-row>
+              <bs-col lg="12">
+
+                <semantic-form-drag-and-drop-input 
+                  label="Related Entities"
+                  for='entity_event'
+                  nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
+
+                
+              </bs-col>
+            </bs-row>
+
+          </bs-tab>
 
         </bs-tabs>
 
@@ -352,6 +373,10 @@
   .btn-open-image{
     position: relative;
     top: -40px;
+  }
+
+  .btn > a{
+    color: white;
   }
 
   #form-body{
@@ -416,5 +441,25 @@
 
   #source_date_composite div.cardinality-support__group-instance{
     padding: 15px!important;
+  }
+
+  .clickable-row{
+    padding: 10px 0;
+    border-top: 1px solid lightgrey;
+  }
+
+  .clickable-row:first-child{
+    border-top: none;
+  }
+
+  .clickable-row:hover{
+    background-color: var(--color-primary-10);;
+    cursor: pointer;
+  }
+
+  .clickable-row .detail-img{
+    min-width: 80px;
+    height: 80px;
+    object-fit: cover;
   }
 </style>

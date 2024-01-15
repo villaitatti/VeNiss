@@ -103,8 +103,8 @@
                 >
                   <template id="table-row">
                     <bs-row class="show-one">
-                      <bs-col sm="9" md="9">
-                        <strong>Name</strong>
+                      <bs-col sm="4" md="4">
+                        <strong>Event</strong>
                       </bs-col>
                       <bs-col sm="2" md="2">
                         <strong>Island</strong>
@@ -122,8 +122,14 @@
                       }' 
                       targets='["thinking-frames"]'>
                       <bs-row class="clickable-row">
-                        <bs-col sm="9" md="9">
-                          <h3 class="align-text"><mp-label iri="{{subject.value}}"></mp-label></h3> 
+                        <bs-col sm="4" md="4">
+
+                          <mp-draggable iri='{{subject.value}}'>
+                            <div class="rs-draggable-container">
+                              <mp-label iri='{{subject.value}}' class="detail-label"></mp-label>
+                            </div>
+                          </mp-draggable>
+
                         </bs-col>
                         <bs-col sm="2" md="2">
                           <p>
@@ -205,6 +211,10 @@
 
    .facet__category-selector-holder{
     display: none;
+  }
+
+  .rs-draggable-container {
+    border: 1px solid #f6f6f6;
   }
 
 

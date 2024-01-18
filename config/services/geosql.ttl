@@ -213,7 +213,7 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 	rs_sql_sail:includesSQLQuery
 	[
 		rs_sql_sail:hasQueryId "test" ;
-		rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(c.start) as \"bob\", MAX(c.end) as \"eoe\", t, z, ST_AsText(geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_years AS b ON a.identifier = b.identifier JOIN PRODUCTION.years_dates AS c ON b.\"year\" = c.\"year\" WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857)) GROUP BY a.identifier, a.t, a.z, a.geometry"
+		rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(c.start) as \"bob\", MAX(c.end) as \"eoe\", t, z, ST_AsText(geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_sources AS b ON a.identifier = b.identifier JOIN PRODUCTION.sources_years AS c ON b.source = c.source WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857)) GROUP BY a.identifier, a.t, a.z, a.geometry"
 	] ;
 	rs_sql_sail:includesSQLQuery
 	[

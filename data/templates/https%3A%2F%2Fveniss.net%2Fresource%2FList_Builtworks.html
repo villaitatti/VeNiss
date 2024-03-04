@@ -195,6 +195,61 @@
                   </semantic-table>
                 </semantic-search-result>
               </bs-tab>
+              <bs-tab event-key="3" title="New Geometries">
+                <semantic-search-result>
+                  <semantic-context repository="ephedra">
+                  <semantic-table id='table-result-3' query='
+                    PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                    PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    SELECT DISTINCT ?bw_id ?wkt WHERE {
+                      SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                        ?root rs_sql_sail:hasQueryId "sansecondo_buildings";
+                          veniss_sql:wkt ?wkt;
+                          veniss_sql:bw_id ?bw_id.
+                      }
+                      MINUS {
+                        ?building rdf:type <https://veniss.net/ontology#Building>.
+                        ?building crm:P196_defines ?spacetime_volume.
+                        ?spacetime_volume crm:P166i_had_presence ?phase.
+                        ?phase crm:P138i_has_representation ?representation.
+                        ?representation crm:P2_has_type <https://veniss.net/ontology#2d_representation>.
+                        ?representation rdfs:label ?bw_id.
+                      }
+                    }' column-configuration='[
+                      {
+                        "displayName": "BW ID",
+                        "cellTemplate": "{{> bwId}}"
+                      },
+                      {
+                        "displayName": "Geometry",
+                        "cellTemplate": "{{> geometry}}"
+                      }
+                    ]'>
+                    <template id="bwId">
+                      <div style="display: flex; align-items: center; font-weight: bold;">
+                        {{bw_id.value}}
+                      </div>
+                    </template>
+                    <template id="geometry">
+                      <div style="height:100px; width: 250px;">
+                        <semantic-map-classic
+                        fix-zoom-level="17"
+                        query='
+                          SELECT ?wkt ?description WHERE {
+                            VALUES(?wkt ?description) {
+                              ("{{wkt.value}}" "Geometry Visualization")
+                            }
+                          }
+                        '
+                      ></semantic-map-classic>
+                      </div>
+                    </template>
+                  </semantic-table>
+                </semantic-context>
+                </semantic-search-result>
+              </bs-tab>
             </bs-tabs>
           </div>
         </semantic-search-result-holder>

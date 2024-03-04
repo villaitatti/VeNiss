@@ -54,7 +54,7 @@
                                   </bs-tab-pane>
                                   <bs-tab-pane event-key="second">
                                     <div class="row">
-                                    <div class="col-md-6 inline-composite">
+                                    <div class="col-md-6 inline-composite-2">
                                         <semantic-form-composite-input for="functional-change" render-header="false"
                                             new-subject-template='/functional_change-{{{{raw}}}}{{UUID}}{{{{/raw}}}}' fields='[[fieldDefinitions
                                     functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
@@ -68,9 +68,9 @@
                                         bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
                                         eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
                                     ]]'>
-                                                <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
-                                                <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
-                                            </semantic-form-composite-input>
+                                                  <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
+                                                  <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                              </semantic-form-composite-input>
                                         </semantic-form-composite-input>
                                     </div>
                                     <div class="col-md-6">
@@ -110,7 +110,7 @@
                               ]]'
                             >
                               <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume'></semantic-form-hidden-input> 
-                                <semantic-form-composite-input for="physical-change-presence"
+                              <semantic-form-composite-input for="physical-change-presence"
                                 label="Physical Phase"
                                 new-subject-template='/physical_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}/'
                                 fields="[[ fieldDefinitions
@@ -120,20 +120,25 @@
                                   physical_change_3d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_3d_representation'
                                 ]]"
                                 >     
-                                <semantic-form-hidden-input for="presence_type" default-value='http://www.cidoc-crm.org/cidoc-crm/E93_Presence'></semantic-form-hidden-input>
-                                <semantic-form-text-input for="physical_change_2d_representation" label="2D Representation"></semantic-form-text-input> 
-                                <semantic-form-text-input for="physical_change_3d_representation" label="3D Representation"></semantic-form-text-input> 
-                                <semantic-form-composite-input for="physical_change_has_time-span"
-                                      new-subject-template="/time-span" render-header="false" fields='[[ fieldDefinitions    
-                              bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
-                              eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
-                          ]]'>
-                                      <semantic-form-datetime-input for="bob" label="Begin"></semantic-form-datetime-input>
-                                      <semantic-form-datetime-input for="eoe" label="End"></semantic-form-datetime-input>
-                                  </semantic-form-composite-input>
+                                <div class="inline-inputs-3">
+                                  <semantic-form-hidden-input for="presence_type" default-value='http://www.cidoc-crm.org/cidoc-crm/E93_Presence'></semantic-form-hidden-input>
+                                  <semantic-context repository="ephedra">
+                                    <semantic-form-autocomplete-input for="physical_change_2d_representation" label="2D Representation"></semantic-form-autocomplete-input>
+                                  </semantic-context>
+                                  <semantic-form-text-input for="physical_change_3d_representation" label="3D Representation"></semantic-form-text-input> 
+                                  <semantic-form-composite-input for="physical_change_has_time-span"
+                                        new-subject-template="/time-span" render-header="false" fields='[[ fieldDefinitions    
+                                bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                            ]]'>
+                                      <div class="inline-inputs-2">
+                                        <semantic-form-datetime-input for="bob" label="Begin"></semantic-form-datetime-input>
+                                        <semantic-form-datetime-input for="eoe" label="End"></semantic-form-datetime-input>
+                                      </div>
+                                    </semantic-form-composite-input>
+                                </div>
                               </semantic-form-composite-input>
-
-                                </semantic-form-composite-input>
+                                </semantic-form-composite-input>  
                               </semantic-form-composite-input>                            
                             </bs-tab-pane>
                                 </bs-tab-content>
@@ -159,15 +164,39 @@
 
 
 <style>
-    .inline-composite .composite-input {
+    .inline-composite-2 .composite-input {
         display: block !important;
     }
 
-    .inline-composite .composite-input>div {
+    .inline-composite-2 .composite-input>div {
         display: inline-block;
         width: 49% !important;
         margin-right: 1px;
     }
+
+
+    .inline-inputs-3 {
+        display: block !important;
+    }
+
+    .inline-inputs-3 > .semantic-form-input-decorator {
+        display: inline-block;
+        width: 33% !important;
+        margin-right: 1px;
+    }
+
+    /* Remove notifications div from inline */ 
+    .inline-inputs-3>div:first-child {
+      display:block;
+    }
+
+    .inline-inputs-2  > .semantic-form-input-decorator {
+        display: inline-block;
+        width: 45% !important;
+        margin-right: 1px;
+    }
+
+
 
     .page__content-container {
         overflow-y: auto !important;

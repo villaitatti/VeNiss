@@ -4,7 +4,7 @@
       id="search-map"
       year-filtering="true"
       vector-levels='["Island","Buildings"]'
-      target-controls='["search-map-control"]'
+      target-controls='["search-map-control", "historical-map-control", "basemap-control"]'
       query="SELECT DISTINCT ?bw_id ?subject ?wkt ?name ?function ?use ?typology (year(?start) as ?eob) (year(?end) as ?boe) ?bob ?eoe ?t ?z WHERE {
         ?st_vol rdfs:label ?name.
         OPTIONAL {

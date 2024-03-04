@@ -1,6 +1,6 @@
 <bs-row>
     <bs-col xs=12>
-
+        <bs-panel>
         <semantic-form new-subject-template='https://veniss.net/resource/builtwork/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
             id='{{viewId}}-vocab-form' post-action="event" subject='{{node}}' fields="[[fieldDefinitions
             type = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
@@ -10,7 +10,6 @@
             island_latitude='https://veniss.net/container/fieldDefinitionContainer/latitude_island'
             island_longitude='https://veniss.net/container/fieldDefinitionContainer/longitude_island'
             ]]">
-            <bs-panel>
                 <div class="row">
 
                     <div class="col-md-6">
@@ -60,21 +59,41 @@
                                 <div style='height: 20vw;'>
                                     <h3>Phases</h3>
                                     <semantic-context repository="ephedra">
-                                        <semantic-map id='phasesMap' fix-zoom-level="12"
+                                        <semantic-map
+                                        id='phasesMap'
+                                        fix-zoom-level="12"
+                                        year-filtering="true"
+                                        target-controls='["phases-map-control"]'
                                         map-options='{"crs":"EPSG:4326"}'
                                             query='
                                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
                                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                                     PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                                    SELECT DISTINCT ?wkt ?bw_id WHERE {
+                                    SELECT DISTINCT ?wkt ?bw_id ?bob ?eoe WHERE {
                                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                                         ?root rs_sql_sail:hasQueryId "{{label.value}}_island_shapes";
                                         veniss_sql:wkt ?wkt;
                                         veniss_sql:bw_id ?bw_id;
+                                        veniss_sql:bob ?bob;
+                                        veniss_sql:eoe ?eoe;
                                       }
                                     }'>
                                         </semantic-map>
                                     </semantic-context>
+                                    <semantic-map-controls
+                                    id="phases-map-control"
+                                    target-map-id="phasesMap"
+                                    features-options-enabled="false"
+                                    filters-initialization='{"basemap":true,"overlay":false,"feature":true}'
+                                    show-filters="false"
+                                    timeline='{
+                                        "min":1500,
+                                        "max":2023,
+                                        "mode":"marked",
+                                        "default":2023
+                                      }'
+                                      >
+                                    </semantic-map-controls>
                                 </div>
                                 {{/each}}
                             </template>
@@ -120,7 +139,6 @@
                         </semantic-query>
                         {{/if}}
                     </div>
-                    [[> rsp:FormDefaultActions]]
                 </div>
 
 
@@ -132,8 +150,9 @@
                     </bim-viewer>
                     </div> -->
 
-            </bs-panel>
         </semantic-form>
+        [[> rsp:FormDefaultActions]]
+    </bs-panel>
     </bs-col>
 </bs-row>
 
@@ -151,4 +170,16 @@
     .page__content-container {
         overflow-y: auto !important;
     }
+
+    .timeSliderContainer {
+        width: 100%;
+        height: 100px;
+        display:block;
+        position: relative;
+    }
+
+    .yearLabel {
+        display: none;
+    }
+
 </style>

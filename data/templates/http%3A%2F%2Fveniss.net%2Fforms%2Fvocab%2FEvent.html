@@ -2,7 +2,6 @@
   id='{{viewId}}-vocab-form' 
   post-action="event"
   subject='{{node}}'
-  browser-persistence="true"
   new-subject-template='https://veniss.net/resource/vocab/actor_types/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -17,11 +16,10 @@
   <div class="form-scroll-area">
     <div class="container-fluid">
 
-      <semantic-form-recover-notification></semantic-form-recover-notification>
       <semantic-form-errors></semantic-form-errors>
 
       <semantic-form-hidden-input for="type" default-values='["http://www.w3.org/2004/02/skos/core#Concept","https://veniss.net/ontology#Vocab_Entry"]'></semantic-form-hidden-input>
-      <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/event"></semantic-form-hidden-input>
+      <semantic-form-hidden-input for="is_listed_in" default-value="https://veniss.net/resource/vocab/event_types"></semantic-form-hidden-input>
 
 
       <div data-flex-layout="column stretch-stretch">
@@ -49,7 +47,7 @@
             for="vocab_entry_broader"
             tree-patterns='{
               "relationPattern": "?item skos:broader ?parent", 
-              "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor>"
+              "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/event_types>"
             }'>
           </semantic-form-tree-picker-input>
               

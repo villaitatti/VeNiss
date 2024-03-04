@@ -1,0 +1,40 @@
+<semantic-form 
+  id='{{viewId}}-vocab-form' 
+  post-action="event"
+  subject='{{node}}'
+  new-subject-template='https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    label                               = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"  
+    
+    
+    relation_domain                     = "https://veniss.net/container/fieldDefinitionContainer/relation_domain"
+    relation_range                      = "https://veniss.net/container/fieldDefinitionContainer/relation_range"
+  ]]'
+>
+  <div class="form-scroll-area">
+    <semantic-form-errors></semantic-form-errors>
+
+    <semantic-form-hidden-input for="type" default-values='["https://veniss.net/ontology#Relation"]'></semantic-form-hidden-input>
+
+    <div class="container-fluid">
+
+        <bs-col md="3">
+          <semantic-form-drag-and-drop-input label="Domain" for='relation_domain'>
+          </semantic-form-drag-and-drop-input>
+        </bs-col>
+
+        <bs-col md="6">
+          <semantic-form-text-input label="With Role" for='label'>
+          </semantic-form-text-input>
+        </bs-col>
+
+        <bs-col md="3">
+          <semantic-form-drag-and-drop-input label="Range" for='relation_range'>
+          </semantic-form-drag-and-drop-input>
+        </bs-col>
+      </bs-row>
+
+    </div>
+  </div>
+  [[> rsp:FormDefaultActions]]

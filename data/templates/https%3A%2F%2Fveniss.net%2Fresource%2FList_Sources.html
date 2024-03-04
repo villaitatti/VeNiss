@@ -1,4 +1,4 @@
-<div class="page">
+<div id="source_list" class="page">
 
     <div data-flex-layout="columns center-stretch">
       <div class="Header">
@@ -36,7 +36,7 @@
 
       <hr>
 
-      <div class="body">
+      <div>
         <semantic-search
           relations='{
             "<https://veniss.net/ontology#has_actor>": [{
@@ -142,7 +142,7 @@
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
-                        query='SELECT DISTINCT ?subject ?location ?timespan WHERE { 
+                        query='SELECT DISTINCT ?subject ?location ?year_label WHERE { 
                           
                           ?subject a veniss_ontology:Source_Primary.
 
@@ -159,41 +159,64 @@
                               crm:P170i_time_is_defined_by ?year_time_primitive.
                             ?year_time_primitive a crm:E61_Time-Primitive;
                               crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
-                              rdfs:label ?year
+                              rdfs:label ?year_label
                           }
 
-                        } ORDER BY ASC(?year)'
+                        } ORDER BY DESC(?year_label)'
 
                         tuple-template="{{> table-row}}"
                       >
 
                         <template id="table-row">
-                          <mp-event-trigger 
-                            id='{{subject.value}}-add-frame' 
-                            type='Dashboard.AddFrame' 
-                            data='{
-                              "resourceIri": "{{subject.value}}", 
-                              "viewId": "entity-editor"
-                            }' 
-                            targets='["thinking-frames"]'>
-                            <bs-row class="clickable-row">
-                              <bs-col sm="1" md="1">
-                                {{>visual_representation}}
-                              </bs-col>
-                              <bs-col sm="4" md="4">
-                                {{>name}}
-                              </bs-col>
-                              <bs-col sm="2" md="2">
-                                {{>island}}
-                              </bs-col>
-                              <bs-col sm="1" md="1">
-                                {{>date}}
-                              </bs-col>
-                              <bs-col sm="4" md="4"> 
-                                {{>location}}
-                              </bs-col>
-                            </bs-row>
-                          </mp-event-trigger>
+
+                          <bs-row class="show-one">
+                            <bs-col sm="1" md="1">
+                            </bs-col>
+                            <bs-col sm="4" md="4">
+                              <strong>Name</strong>
+                            </bs-col>
+                            <bs-col sm="2" md="2">
+                              <strong>Island</strong>
+                            </bs-col>
+                            <bs-col sm="1" md="1">
+                              <strong>Date</strong>
+                            </bs-col>
+                            <bs-col sm="4" md="4">
+                              <strong>Location</strong>
+                            </bs-col>
+                          </bs-row>
+
+                          <mp-draggable iri='{{subject.value}}'>
+                            <div class="rs-draggable-container">
+                              <mp-event-trigger 
+                                id='{{subject.value}}-add-frame' 
+                                type='Dashboard.AddFrame' 
+                                data='{
+                                  "resourceIri": "{{subject.value}}", 
+                                  "viewId": "entity-editor"
+                                }' 
+                                targets='["thinking-frames"]'>
+                                <bs-row class="clickable-row">
+                                  <bs-col sm="1" md="1">
+                                    {{>visual_representation}}
+                                  </bs-col>
+                                  <bs-col sm="4" md="4">
+                                    {{>name}}
+                                  </bs-col>
+                                  <bs-col sm="2" md="2">
+                                    {{>island}}
+                                  </bs-col>
+                                  <bs-col sm="1" md="1">
+                                    {{>date}}
+                                  </bs-col>
+                                  <bs-col sm="4" md="4"> 
+                                    {{>location}}
+                                  </bs-col>
+                                </bs-row>
+                              </mp-event-trigger>
+                            </div>
+                          </mp-draggable>
+
                         </template>
 
                         <template id="visual_representation">
@@ -248,9 +271,9 @@
                         </template>
 
                         <template id="date">
-                          {{#if timespan}}
+                          {{#if year_label}}
                             <p>
-                              <mp-label iri="{{timespan.value}}"></mp-label>
+                              {{year_label.value}}
                             </p>
                           {{/if}}
                         </template>
@@ -341,40 +364,18 @@
                             }' 
                             targets='["thinking-frames"]'>
                             <bs-row class="clickable-row">
-                              <bs-col sm="1" md="1">
-                                {{>visual_representation}}
-                              </bs-col>
-                              <bs-col sm="11" md="11">
+                              <bs-col sm="12" lg="12">
                                 {{>name}}
                               </bs-col>
                             </bs-row>
                           </mp-event-trigger>
                         </template>
 
-                        <template id="visual_representation">
-
-                          <semantic-context storage="veniss_s3">
-
-                            <mp-resource-thumbnail style="height: 100px" iri='{{subject.value}}' class='detail-img'>
-                                <mp-resource-thumbnail-fallback>
-                                    <with-types iri='{{subject.value}}'
-                                            template='{{> noImage}}'
-                                            [[> rsp:TypeMappings]]
-                                        >
-                                        <template id="noImage">
-                                            <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
-                                        </template>
-                                    </with-types>
-                                </mp-resource-thumbnail-fallback>
-                            </mp-resource-thumbnail>
-
-                          </semantic-context>
-                          
-                        </template>
+                        
 
                         <template id="name">
 
-                          <p><strong><mp-label iri="{{subject.value}}"></mp-label></strong></p>
+                          <p><mp-label iri="{{subject.value}}"></mp-label></p>
 
                         </template>
 
@@ -393,47 +394,50 @@
 </div>
 
 <style>
-  .facet__category-selector-holder{
+   #source_list .facet__category-selector-holder{
     display: none;
   }
-
-  .griddle-custom-row{
-    display: block!important;
+  #source_list .search-container {
+    margin-top: 10px;
   }
-  .page{
+  #source_list .page{
     padding-left: 20px;
     padding-right: 20px;
   }
-
-  .search-container {
-    margin-top: 10px;
+  #source_list .align-text{
+    margin-top: 0px;
   }
-
-  .btn a{
+  #source_list .btn a{
     color: #fff!important;
   }
-
-  .clickable-row{
-    padding: 10px 0;
-    border-top: 1px solid lightgrey;
+  #source_list .griddle-custom-row{
+    display: block!important;
   }
-
-  .clickable-row:first-child{
+  #source_list .clickable-row{
+    padding: 10px 0;
+    border-top: 1px solid lightgrey!important;
+  }
+  #source_list .clickable-row:first-child{
     border-top: none;
   }
-
-  .clickable-row:hover{
+  #source_list .clickable-row:hover{
     background-color: var(--color-primary-10);;
     cursor: pointer;
   }
-
-  .clickable-row .detail-img{
+  #source_list .clickable-row .detail-img{
     min-width: 80px;
     height: 80px;
     object-fit: cover;
   }
-
-  .align-text{
-    margin-top: 0px;
+  #source_list .show-one{
+    display: none;
+  }
+  #source_list .show-one:first-of-type{
+    display: block!important;
+    margin-bottom: 10px;
+  }
+  #source_list .rs-draggable-container{
+    padding: none;
+    border: none;
   }
 </style>

@@ -1,19 +1,35 @@
 <semantic-form
-  new-subject-template='https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-  fields='[[ fieldDefinitions
-    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    label="http://www.researchspace.org/pattern/general/rdfs:label"
-    is_listed_in="http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
-  ]]'
-  [[>rsp:FormDefaults]]
->
-<div class="form-scroll-area">
-  <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/arconto#Source"]'></semantic-form-hidden-input>
-  <semantic-form-hidden-input for="is_listed_in" default-value='http://www.researchspace.org/resource/vocab/actor_types'></semantic-form-hidden-input>
+    new-subject-template='https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+    fields='[[ fieldDefinitions
+        type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        is_listed_in                        = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
 
-  <!-- Source name-->
-  <semantic-form-text-input languages='["en", "it"]' label="Title" for="label"></semantic-form-text-input>
-</div>
+        vocab_entry_label                   = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
+        vocab_entry_broader                 = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_broader"
+    ]]'
+    [[>rsp:FormDefaults]]>
 
-[[> rsp:FormDefaultActions]]
+    <div class="form-scroll-area">
+        <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","https://veniss.net/arconto#Source"]'></semantic-form-hidden-input>
+        <semantic-form-hidden-input for="is_listed_in" default-value='http://www.researchspace.org/resource/vocab/actor_types'></semantic-form-hidden-input>
+
+        <!-- Source name-->
+        <semantic-form-text-input languages='["en", "it"]' label="Title" for="vocab_entry_label"></semantic-form-text-input>
+
+        <bs-alert bs-style="danger">
+            <p><strong>Danger zone!</strong> Changing the parent archival unit may change the entire structure.</p>
+        </bs-alert>
+
+        <semantic-form-tree-picker-input
+            label="Broader"
+            placeholder="Select broader entry ..."
+            default-value="{{broader}}"
+            for="vocab_entry_broader"
+            tree-patterns='{
+                "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/builtwork_types>"
+            }'>
+        </semantic-form-tree-picker-input>
+    </div>
+
+    [[> rsp:FormDefaultActions]]
 </semantic-form>

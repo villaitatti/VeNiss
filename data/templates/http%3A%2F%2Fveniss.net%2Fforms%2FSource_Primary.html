@@ -34,6 +34,8 @@
     source_synopsis                     = "https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
     source_transcription                = "https://veniss.net/container/fieldDefinitionContainer/source_transcription"
     
+    source_builtwork                    = "https://veniss.net/container/fieldDefinitionContainer/source_builtwork"   
+    
   ]]'
 >
 <div class="form-scroll-area">
@@ -337,6 +339,7 @@
             </bs-row>
           </bs-tab>
 
+          <!-- Related Events -->
           <bs-tab event-key="4" title="Related Events">
 
             <bs-row>
@@ -344,9 +347,28 @@
 
                 <semantic-form-drag-and-drop-input 
                   label="Related Entities"
+                  render-header="false"
                   for='entity_event'
                   nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
+                </semantic-form-drag-and-drop-input>
 
+                
+              </bs-col>
+            </bs-row>
+
+          </bs-tab>
+
+          <!-- Builtwork depicted -->
+          <bs-tab event-key="5" title="Depicted Built works">
+
+            <bs-row>
+              <bs-col lg="12">
+
+                <semantic-form-drag-and-drop-input 
+                  label="Source builtwork"
+                  render-header="false"
+                  for='source_builtwork'>
+                </semantic-form-drag-and-drop-input>
                 
               </bs-col>
             </bs-row>

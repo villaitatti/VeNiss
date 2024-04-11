@@ -46,26 +46,18 @@
           }'
           query='
             SELECT DISTINCT ?subject ?bw_id ?wkt ?t ?z ?bob ?eoe WHERE {
-              service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                ?root rs_sql_sail:hasQueryId "test";	
-                  veniss_sql:minX ?southWestLat;
-                  veniss_sql:minY ?southWestLon;
-                  veniss_sql:maxX ?northEstLat;
-                  veniss_sql:maxY ?northEstLon;
+                service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                    ?root rs_sql_sail:hasQueryId "production";	
+                    veniss_sql:minX ?southWestLat;
+                    veniss_sql:minY ?southWestLon;
+                    veniss_sql:maxX ?northEstLat;
+                    veniss_sql:maxY ?northEstLon;
 
-                  veniss_sql:wkt ?wkt;
-                  veniss_sql:bw_id ?bw_id;
-                  veniss_sql:t ?t;
-                  veniss_sql:z ?z;
-                  veniss_sql:bob ?bob;
-                  veniss_sql:eoe ?eoe.
-              }
-              
-              ?do_id rdfs:label ?bw_id.
-              ?do crm:P1_is_identified_by ?do_id.
-              
-              ?st_vol crm:P67i_is_referred_to_by ?do;
-                crm:P129_is_about ?subject
+                    veniss_sql:wkt ?wkt;
+                    veniss_sql:bw_id ?bw_id;
+                    veniss_sql:t ?t;
+                    veniss_sql:z ?z;
+                }
             }'
         ></semantic-search-query-constant>
 

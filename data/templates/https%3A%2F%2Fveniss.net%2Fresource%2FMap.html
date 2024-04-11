@@ -3,46 +3,47 @@
         <semantic-map
             id="search-map"
             year-filtering="true"
-            vector-levels='["Island","Buildings"]'
             target-controls='["search-map-control"]'
             query="SELECT DISTINCT * WHERE {
 
-                ?2drepresentation rdfs:label ?bw_id.
-                ?phase crm:P4_has_time-span ?timespan;
-                    crm:P138i_has_representation ?2drepresentation.
-                ?physical_changes crm:P166i_had_presence ?phase.
-                ?subject crm:P196i_is_defined_by ?physical_changes.
-                
-                OPTIONAL {
-                    ?timespan crm:P82a_begin_of_the_begin ?bob
-                }
-
-                OPTIONAL {
-                    ?timespan crm:P82b_end_of_the_end ?eoe
-                } 
-
-                OPTIONAL {
-                    ?subject veniss_ontology:has_use ?useNode.
-                    ?useNode rdfs:label ?use.
-                    FILTER (lang(?use) = 'en').
-                    FILTER (STR(?use) != 'Use').
-                }
-        
-                OPTIONAL {
-                    ?subject veniss_ontology:has_typology ?typologyNode.
-                    ?typologyNode rdfs:label ?typology.
-                    FILTER((LANG(?typology)) = 'en')
-                }
-
-                OPTIONAL {
-                    ?subject veniss_ontology:has_function ?functionNode.
-                    ?functionNode rdfs:label ?function.
-                    FILTER (lang(?function) = 'en').
-                    FILTER (STR(?function) != 'Function').
-                }
-
-
-            } ORDER BY DESC(?subject)"
+              ?2drepresentation rdfs:label ?bw_id.
+              ?phase crm:P4_has_time-span ?timespan;
+                  crm:P138i_has_representation ?2drepresentation.
+              ?physical_changes crm:P166i_had_presence ?phase.
+              ?subject crm:P196i_is_defined_by ?physical_changes.
+              
+              OPTIONAL {
+                  ?timespan crm:P82a_begin_of_the_begin ?bob
+              }
+          
+              OPTIONAL { ?timespan crm:P82b_end_of_the_end ?original_eoe. }
+              BIND(COALESCE(?original_eoe, '3000-01-01'^^xsd:date) AS ?eoe)
+              
+              OPTIONAL {
+                  ?subject veniss_ontology:has_use ?useNode.
+                  ?useNode rdfs:label ?original_use.
+                  FILTER (lang(?original_use) = 'en').
+                  FILTER (STR(?original_use) != 'Use').
+              }
+              BIND(COALESCE(?original_use, 'Unknown') AS ?use)
+          
+              OPTIONAL {
+                  ?subject veniss_ontology:has_typology ?typologyNode.
+                  ?typologyNode rdfs:label ?original_typology.
+                  FILTER((LANG(?original_typology)) = 'en')
+              }
+              BIND(COALESCE(?original_typology, 'Unknown') AS ?typology)
+          
+              OPTIONAL {
+                  ?subject veniss_ontology:has_function ?functionNode.
+                  ?functionNode rdfs:label ?original_function.
+                  FILTER (lang(?original_function) = 'en').
+                  FILTER (STR(?original_function) != 'Function').
+              }
+              BIND(COALESCE(?original_function, 'Unknown') AS ?function)
+          
+          } ORDER BY DESC(?subject)
+          "
             map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
             fix-zoom-level="17"
             fix-center="[1370000.000000000, 5692800.000000000]"
@@ -61,7 +62,7 @@
 
             <tiles-layer
                 thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/1696.jpg'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/{z}/{x}/{y}@2x.png'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/{z}/{x}/{y}.png'
                 identifier='SSC_1696'
                 name='Ortofoto su pellicola'
                 level='overlay'
@@ -72,7 +73,7 @@
 
             <tiles-layer
                 thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/1801.jpg'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/{z}/{x}/{y}@2x.png'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/{z}/{x}/{y}.png'
                 identifier='SSC_1801'
                 name='ISCAG Forti e Castelli'
                 level='overlay'
@@ -83,7 +84,7 @@
 
             <tiles-layer
                 thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/1809.jpeg'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809//{z}/{x}/{y}@2x.png'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809//{z}/{x}/{y}.png'
                 identifier='SSC_1809'
                 name="Dipartimento dell'adriatico"
                 level='overlay'

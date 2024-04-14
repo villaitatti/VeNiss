@@ -9,40 +9,31 @@
               ?2drepresentation rdfs:label ?bw_id.
               ?phase crm:P4_has_time-span ?timespan;
                   crm:P138i_has_representation ?2drepresentation.
+
               ?physical_changes crm:P166i_had_presence ?phase.
               ?subject crm:P196i_is_defined_by ?physical_changes.
-              
-              OPTIONAL {
-                  ?timespan crm:P82a_begin_of_the_begin ?bob
-              }
-          
+              OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?bob }
               OPTIONAL { ?timespan crm:P82b_end_of_the_end ?original_eoe. }
               BIND(COALESCE(?original_eoe, '3000-01-01'^^xsd:date) AS ?eoe)
               
               OPTIONAL {
-                  ?subject veniss_ontology:has_use ?useNode.
-                  ?useNode rdfs:label ?original_use.
-                  FILTER (lang(?original_use) = 'en').
-                  FILTER (STR(?original_use) != 'Use').
-              }
-              BIND(COALESCE(?original_use, 'Unknown') AS ?use)
+                ?subject crm:P16i_was_used_for ?useNode.
+                ?useNode crm:P2_has_type ?useType.
+                ?useType rdfs:label ?useTypeLabel.
+                ?useType skos:broader ?parent.
+                ?parent rdfs:label ?parentLabel.
+                FILTER((LANG(?useTypeLabel)) = 'en').
+                FILTER((LCASE(STR(?parentLabel))) = 'use').
+            }
+              BIND(COALESCE(?useTypeLabel, 'Unknown') AS ?use)
           
-              OPTIONAL {
-                  ?subject veniss_ontology:has_typology ?typologyNode.
-                  ?typologyNode rdfs:label ?original_typology.
-                  FILTER((LANG(?original_typology)) = 'en')
-              }
-              BIND(COALESCE(?original_typology, 'Unknown') AS ?typology)
+
           
-              OPTIONAL {
-                  ?subject veniss_ontology:has_function ?functionNode.
-                  ?functionNode rdfs:label ?original_function.
-                  FILTER (lang(?original_function) = 'en').
-                  FILTER (STR(?original_function) != 'Function').
-              }
-              BIND(COALESCE(?original_function, 'Unknown') AS ?function)
-          
+              ?subject rdfs:label ?name_full.
+
+              BIND(STRBEFORE(?name_full, '–') AS ?name)
           } ORDER BY DESC(?subject)
+          LIMIT 1000
           "
             map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
             fix-zoom-level="17"
@@ -51,7 +42,6 @@
 
             <template id="details">
                 <h3>{{name.value}}</h3>
-                <div>Typology: {{typology.value}}</div>
                 <div>Use: {{use.value}}</div>
                 <div>Creation: {{bob.value}}</div>
                 <div>Destruction: {{eoe.value}}</div>

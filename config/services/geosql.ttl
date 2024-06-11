@@ -5,7 +5,7 @@ PREFIX spl: <http://spinrdf.org/spl#>
 PREFIX ephedra: <http://www.researchspace.org/resource/system/ephedra#>
 PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
 PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
-PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
+PREFIX : <http://www.researchspace.org/resource/system/repository#>
 
 :geosql a ephedra:Service ;
 	<http://www.openrdf.org/config/sail#sailType> "researchspace:SQL" ;
@@ -99,7 +99,7 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 		a spl:Argument ;
 		rdfs:comment "Minimum X" ;
 		spl:predicate :_MinX ;
-		spl:valueType xsd:float
+	    spl:valueType xsd:float
   ] ;
   spin:constraint
 	[

@@ -48,10 +48,10 @@
             SELECT DISTINCT ?subject ?bw_id ?wkt ?t ?z ?bob ?eoe WHERE {
                 service <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                     ?root rs_sql_sail:hasQueryId "production";	
-                    veniss_sql:minX ?southWestLat;
-                    veniss_sql:minY ?southWestLon;
-                    veniss_sql:maxX ?northEstLat;
-                    veniss_sql:maxY ?northEstLon;
+                    veniss_sql:minX "1369976.3700049379840493";
+                    veniss_sql:minY "5685579.3808039482682943";
+                    veniss_sql:maxX "1377990.9423133304808289";
+                    veniss_sql:maxY "5692943.0214672936126590";
 
                     veniss_sql:wkt ?wkt;
                     veniss_sql:bw_id ?bw_id;

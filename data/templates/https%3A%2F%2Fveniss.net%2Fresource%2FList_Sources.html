@@ -142,27 +142,51 @@
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
-                        query='SELECT DISTINCT ?subject ?location ?year_label WHERE { 
+                        query='SELECT DISTINCT ?subject ?label ?islands ?authors ?year_lbl WHERE { 
                           
-                          ?subject a veniss_ontology:Source_Primary.
+                            ?subject a veniss_ontology:Source_Primary;
+                              rdfs:label ?label.
 
-                          optional {
-                            ?subject crm:P53_has_former_or_current_location ?location.
-                            ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
-                          }
+                            OPTIONAL {
+                                ?subject crm:P53_has_former_or_current_location ?location.
+                                ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
+                            }
 
-                          optional {
-                            ?subject crm:P108i_was_produced_by ?production.
-                            ?production a crm:E12_Production;
-                              crm:P4_has_time-span ?timespan.
+                            OPTIONAL {
+                              SELECT ?subject (group_concat(?island_lbl;separator="; ") as ?islands) WHERE {
+                                ?subject veniss_ontology:has_island ?island.
+                                ?island crm:P1_is_identified_by ?island_id.
+                                ?island_id rdfs:label ?island_lbl
+                              } 
+                              GROUP BY ?subject
+                              LIMIT 4
+                            }
+
+                            OPTIONAL {
+                              SELECT DISTINCT ?subject (group_concat(?author_lbl;separator="; ") as ?authors) WHERE {
+                                
+                                ?subject crm:P108i_was_produced_by ?production.
+                                ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author>.
+                                ?actor_role crmpc:P01_has_domain ?production;
+                                  crmpc:P02_has_range ?author.
+                                ?author rdfs:label ?author_lbl
+                              } 
+                              GROUP BY ?subject
+                              LIMIT 4
+                            }
+
+                            OPTIONAL {
+                              ?subject crm:P108i_was_produced_by ?production.
+                              ?production a crm:E12_Production;
+                                crm:P4_has_time-span ?timespan.
                               ?timespan a crm:E4_Time-span;
-                              crm:P170i_time_is_defined_by ?year_time_primitive.
-                            ?year_time_primitive a crm:E61_Time-Primitive;
-                              crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
-                              rdfs:label ?year_label
-                          }
-
-                        } ORDER BY DESC(?year_label)'
+                                crm:P170i_time_is_defined_by ?year_time_primitive.
+                              ?year_time_primitive a crm:E61_Time-Primitive;
+                                crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                                rdfs:label ?year_lbl
+                            }
+                        } 
+                        ORDER BY DESC(?year_lbl)'
 
                         tuple-template="{{> table-row}}"
                       >
@@ -239,35 +263,13 @@
                         </template>
 
                         <template id="name">
-                          <h3 class="align-text"><mp-label iri="{{subject.value}}"></mp-label></h3>
-                          
-                          <p>
-                            <em>
-                              <semantic-query query='
-                                SELECT ?value WHERE {
-                                  BIND(<{{subject.value}}> as ?subject)
-                                  $subject crm:P108i_was_produced_by ?production.
-                                  ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author>.
-                                  ?actor_role crmpc:P01_has_domain ?production;
-                                      crmpc:P02_has_range $value
-                                } LIMIT 4
-                              '>
-                              </semantic-query>
-                            </em>
-                          </p>
+                          <h3 class="align-text">{{label.value}}</h3>
+                          <p><em>{{authors.value}}</em></p>
                           
                         </template>
 
                         <template id="island">
-                          <p>
-                            <semantic-query query='
-                              SELECT ?value WHERE {
-                                BIND(<{{subject.value}}> as ?subject)
-                                ?subject veniss_ontology:has_island ?value.
-                              }
-                            '>
-                          </semantic-query>
-                          </p>
+                          <p>{{islands.value}}</p>
                         </template>
 
                         <template id="date">

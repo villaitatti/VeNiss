@@ -34,6 +34,9 @@
     source_synopsis                     = "https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
     source_transcription                = "https://veniss.net/container/fieldDefinitionContainer/source_transcription"
     
+    source_builtwork                    = "https://veniss.net/container/fieldDefinitionContainer/source_builtwork"   
+    source_historical_map               = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map"     
+    source_historical_map_url           = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map_url"
   ]]'
 >
 <div class="form-scroll-area">
@@ -337,19 +340,48 @@
             </bs-row>
           </bs-tab>
 
-          <bs-tab event-key="4" title="Related Events">
+          <!-- Related Entities -->
+          <bs-tab event-key="4" title="Related Entities">
 
             <bs-row>
               <bs-col lg="12">
 
+                <!-- Related Events -->
                 <semantic-form-drag-and-drop-input 
-                  label="Related Entities"
+                  label="Related Events"
                   for='entity_event'
                   nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
+                </semantic-form-drag-and-drop-input>
 
+              </bs-col>
+            </bs-row>
+
+            <hr>
+
+            <bs-row>
+              <bs-col lg="12">
+                <!-- Related Builtworks -->
+                <semantic-form-drag-and-drop-input 
+                  label="Related Builtworks"
+                  for='source_builtwork'>
+                </semantic-form-drag-and-drop-input>
                 
               </bs-col>
             </bs-row>
+
+
+          </bs-tab>
+
+          <!-- Builtwork depicted -->
+          <bs-tab event-key="5" title="Historical Map">
+
+            <div id="entity_published" class="padding-5">
+                <semantic-form-checkbox-input label="Is Historical Map?" for='source_historical_map'></semantic-form-checkbox-input>
+            </div>
+
+            <div id="entity_published" class="padding-5">
+                <semantic-form-text-input label="XYZ Url" for='source_historical_map_url'></semantic-form-text-input>
+            </div>
 
           </bs-tab>
 

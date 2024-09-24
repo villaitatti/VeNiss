@@ -550,10 +550,10 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #B1B1B1;
 }
 
-.cardinality-support__group-instance, .cardinality-support__single-instance, .SemanticTreeInput--inputAndButtons {
+/* .cardinality-support__group-instance, .cardinality-support__single-instance, .SemanticTreeInput--inputAndButtons {
   border: none !important;
   padding: 0px !important;
-}
+} */
 
 .left-column{
   border-right: 1px solid #ccc;

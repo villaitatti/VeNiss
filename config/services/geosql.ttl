@@ -565,5 +565,11 @@ rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "veniss_buildings" ;
     rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(geometry) as wkt from PRODUCTION.veniss_data"
+] ;
+
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "veniss_buildings_4326" ;
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from PRODUCTION.veniss_data"
 ] .
 

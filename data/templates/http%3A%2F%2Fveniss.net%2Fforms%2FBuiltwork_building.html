@@ -22,7 +22,7 @@
                                   Functional Changes
                                 </bs-nav-item>
                                 <bs-nav-item event-key="third">
-                                  Physical Changes
+                                  Physical Forms
                                 </bs-nav-item>
                               </bs-nav>
                             </bs-col>
@@ -94,7 +94,7 @@
                               </div>
                           </bs-tab-pane>
                           <bs-tab-pane event-key="third">
-                              <h1>Physical Changes</h1>
+                              <h1>Physical Forms</h1>
                               <semantic-form-composite-input for='physical-changes'
                               render-header="false"
                               label="Presences"
@@ -133,7 +133,7 @@
                                 <semantic-form-text-input for="physical_change_3d_representation" label="3D Representation"></semantic-form-text-input> 
                               </div>
                             </semantic-form-composite-input>
-                              </semantic-form-composite-input>  
+                              </semantic-form-composite-input>                           
                             </semantic-form-composite-input>                            
                           </bs-tab-pane>
                               </bs-tab-content>
@@ -180,21 +180,39 @@
       margin-right: 1px;
   }
 
-  /* Remove notifications div from inline */ 
-  .inline-inputs-3>div:first-child {
-    display:block;
-  }
 
   .inline-inputs-2  > .semantic-form-input-decorator {
       display: inline-block;
       width: 40% !important;
-      margin-right: 1px;
+      margin-right: 5px;
   }
 
+  .inline-inputs-3 > .semantic-form-input-decorator:nth-of-type(2) {
+    display: none;
+}
 
+.semantic-form {
+  overflow: visible !important;
+}
 
   .page__content-container, .semantic-form {
-      overflow-y: auto !important;
+      overflow-y: visible !important;
   }
+/* 
+  .cardinality-support__group-instance, .cardinality-support__single-instance, .SemanticTreeInput--inputAndButtons {
+    border: 1px solid rgba(29, 9, 110, 0.13)  !important;
+    padding: 5px !important;
+} */
+
+.cardinality-support__add-value--another {
+    margin-top: 6px;
+    align-self: start;
+    font-size: 13px;
+    font-weight: bold;
+    background: #1f1f1f;
+    padding: 10px;
+    border-radius: 2px;
+    color: white;
+}
 
 </style>

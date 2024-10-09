@@ -4,39 +4,41 @@
   subject='{{node}}'
   new-subject-template="https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
-    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    entity_event                        = "https://veniss.net/container/fieldDefinitionContainer/entity_event"   
-    entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
-    entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
+    type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    entity_event                            = "https://veniss.net/container/fieldDefinitionContainer/entity_event"   
+    entity_published                        = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
+    entity_publication_notes                = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
 
-    source_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
-    source_representation               = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
-    source_attributed_title             = "https://veniss.net/container/fieldDefinitionContainer/source_attributed_title"
-    source_original_title               = "https://veniss.net/container/fieldDefinitionContainer/source_original_title"
-    source_typology                     = "https://veniss.net/container/fieldDefinitionContainer/source_typology"
-    source_author                       = "https://veniss.net/container/fieldDefinitionContainer/source_author"
-    source_date                         = "https://veniss.net/container/fieldDefinitionContainer/source_date"
-    source_date_composite               = "https://veniss.net/container/fieldDefinitionContainer/source_date_composite"
+    source_island                           = "https://veniss.net/container/fieldDefinitionContainer/source_island"
+    source_representation                   = "https://veniss.net/container/fieldDefinitionContainer/source_representation"
+    source_attributed_title                 = "https://veniss.net/container/fieldDefinitionContainer/source_attributed_title"
+    source_original_title                   = "https://veniss.net/container/fieldDefinitionContainer/source_original_title"
+    source_typology                         = "https://veniss.net/container/fieldDefinitionContainer/source_typology"
+    source_author                           = "https://veniss.net/container/fieldDefinitionContainer/source_author"
+    source_date                             = "https://veniss.net/container/fieldDefinitionContainer/source_date"
+    source_date_composite                   = "https://veniss.net/container/fieldDefinitionContainer/source_date_composite"
 
-    source_location                     = "https://veniss.net/container/fieldDefinitionContainer/source_location"
-    source_location_type                = "https://veniss.net/container/fieldDefinitionContainer/source_location_type"
-    source_location_name                = "https://veniss.net/container/fieldDefinitionContainer/source_location_name"
+    source_location                         = "https://veniss.net/container/fieldDefinitionContainer/source_location"
+    source_location_type                    = "https://veniss.net/container/fieldDefinitionContainer/source_location_type"
+    source_location_name                    = "https://veniss.net/container/fieldDefinitionContainer/source_location_name"
 
-    source_information_carrier_location = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_location"
-    source_information_carrier_type     = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_type"
-    source_information_carrier_name     = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_name"
+    source_information_carrier_location     = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_location"
+    source_information_carrier_type         = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_type"
+    source_information_carrier_name         = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_name"
 
-    source_technique                    = "https://veniss.net/container/fieldDefinitionContainer/source_technique"
-    source_dimension                    = "https://veniss.net/container/fieldDefinitionContainer/source_dimension"
-    source_dimension_unit               = "https://veniss.net/container/fieldDefinitionContainer/source_dimension_unit"
-    source_comment                      = "https://veniss.net/container/fieldDefinitionContainer/source_comment"
+    source_technique                        = "https://veniss.net/container/fieldDefinitionContainer/source_technique"
+    source_dimension                        = "https://veniss.net/container/fieldDefinitionContainer/source_dimension"
+    source_dimension_unit                   = "https://veniss.net/container/fieldDefinitionContainer/source_dimension_unit"
+    source_comment                          = "https://veniss.net/container/fieldDefinitionContainer/source_comment"
 
-    source_synopsis                     = "https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
-    source_transcription                = "https://veniss.net/container/fieldDefinitionContainer/source_transcription"
+    source_synopsis                         = "https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
+    source_transcription                    = "https://veniss.net/container/fieldDefinitionContainer/source_transcription"
     
-    source_builtwork                    = "https://veniss.net/container/fieldDefinitionContainer/source_builtwork"   
-    source_historical_map               = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map"     
-    source_historical_map_url           = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map_url"
+
+    source_forms_part_of_secondary_source   = "https://veniss.net/container/fieldDefinitionContainer/source_forms_part_of_secondary_source"
+    source_builtwork                        = "https://veniss.net/container/fieldDefinitionContainer/source_builtwork"   
+    source_historical_map                   = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map"     
+    source_historical_map_url               = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map_url"
   ]]'
 >
 <div class="form-scroll-area">
@@ -139,7 +141,7 @@
         <bs-tabs class="source_tabs" id="tabs" >
 
           <!-- Metadata --> 
-          <bs-tab event-key="1" title="Metadata">
+          <bs-tab event-key="1" title="Physical Object">
 
             <bs-row>
               <bs-col lg="12" md="12" sm="12">
@@ -248,77 +250,7 @@
 
           </bs-tab>
 
-          <!-- Location  -->
-          <bs-tab event-key="2" title="Location">
-            <bs-row>
-              <bs-col lg="12">
-                <div id="source_information_carrier_location" >
-                  <semantic-form-tree-picker-input 
-                    open-dropdown-on-focus="false"
-                    label="Archival Location" 
-                    for='source_information_carrier_location'
-                    placeholder="Drop here the archival unit containing this source ... "
-                    custom-button='{
-                      "iri": "http://www.researchspace.org/resource/ThinkingFrames",
-                      "view": "authority-content",
-                      "resource": "http://www.researchspace.org/resource/vocab/archives"
-                    }'
-                    query-item-label='
-                      select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
-                        {
-                          select ?class ?lbl
-                          where {
-                            ?query_item_iri crm:P46i_forms_part_of* ?mid.
-                            ?mid crm:P46i_forms_part_of* ?class.
-                            ?class rdfs:label ?class_label
-                            
-                            optional {
-                              ?class crm:P1_is_identified_by ?acronym.
-                              ?acronym a crm:E41_Appellation;
-                                crm:P2_has_type <https://veniss.net/resource/type/acronym>;
-                                rdfs:label ?acronym_lbl 
-                            }
-
-                            BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
-                          }
-                          group by ?class ?lbl
-                          order by desc(count(?mid))
-                        }
-                      }
-                    '
-                    tree-patterns='{
-                      "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-                      "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
-                    }'>
-                  </semantic-form-tree-picker-input>
-                </div>
-              </bs-col>
-            </bs-row>
-
-            <bs-row>
-              <bs-col lg="8" sm="12">
-                <div id="source_information_carrier_type">
-                  <semantic-form-select-input 
-                    for='source_information_carrier_type'
-                    label="Information Carrier type"
-                    placeholder="Choose the Information Carrier type">
-                  </semantic-form-select-input>
-                </div>
-              </bs-col>
-
-              <bs-col lg="4" sm="12">
-                <div id="source_information_carrier_name" class="padding-5">
-                  <semantic-form-text-input label="Information Carrier name" placeholder="Write the Information Carrier name" for='source_information_carrier_name'>
-                  </semantic-form-text-input> 
-                </div>
-              </bs-col>
-
-            </bs-row>
-
-          </bs-tab>
-
-          <!-- Content -->
-          <bs-tab event-key="3" title="Content">
+          <bs-tab event-key="2" title="Conceptual object">
             <bs-row>
               <bs-col lg="12">
                 <div id="source_synopsis" class="padding-5">
@@ -333,16 +265,88 @@
             <bs-row>
               <bs-col lg="12">
                 <div id="source_transcription" class="padding-5">
-                  <semantic-form-text-input placeholder="Enter transcript ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcript" rows="5" for='source_transcription'>
+                  <semantic-form-text-input placeholder="Enter transcription ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcription" rows="5" for='source_transcription'>
                   </semantic-form-text-input> 
                 </div>
               </bs-col>
             </bs-row>
           </bs-tab>
 
-          <!-- Related Entities -->
-          <bs-tab event-key="4" title="Related Entities">
+          <!-- Location  -->
+          <bs-tab event-key="3" title="location">
+            <bs-row>
+              <bs-col lg="12">
 
+                <bs-tabs>
+                  <bs-tab event-key="1" title="Archival">
+                    <bs-row>
+                      <bs-col lg="12" sm="12">
+                        <div id="source_information_carrier_location" >
+                          <semantic-form-tree-picker-input 
+                            open-dropdown-on-focus="false"
+                            label="Archival Location" 
+                            for='source_information_carrier_location'
+                            placeholder="Drop here the archival unit containing this source ... "
+                            custom-button='{
+                              "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                              "view": "authority-content",
+                              "resource": "http://www.researchspace.org/resource/vocab/archives"
+                            }'
+                            
+                            tree-patterns='{
+                              "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
+                              "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
+                            }'>
+                          </semantic-form-tree-picker-input>
+                        </div>
+                      </bs-col>
+                    </bs-row>
+                    <bs-row>
+                      <bs-col lg="8" sm="12">
+                        <div id="source_information_carrier_type">
+                          <semantic-form-select-input 
+                            for='source_information_carrier_type'
+                            label="Describe the object where this source is stored"
+                            placeholder="Choose the Information Carrier type">
+                          </semantic-form-select-input>
+                        </div>
+                      </bs-col>
+
+                      <bs-col lg="4" sm="12">
+                        <div id="source_information_carrier_name" class="padding-5">
+                          <semantic-form-text-input label="Information Carrier name" placeholder="Write the Information Carrier name" for='source_information_carrier_name'>
+                          </semantic-form-text-input> 
+                        </div>
+                      </bs-col>
+
+                    </bs-row>
+                  </bs-tab>
+
+                  <bs-tab event-key="2" title="Secondary source">
+                    <div>
+                      <bs-row>
+                        <bs-col lg="12">
+                          <!-- Secondary source -->
+                          <semantic-form-drag-and-drop-input 
+                            label="Secondary Source in which this source appears"
+                            for='source_forms_part_of_secondary_source'>
+                          </semantic-form-drag-and-drop-input>
+                        </bs-col>
+                      </bs-row>
+                    </div>
+                  </bs-tab>
+                </bs-tabs>
+
+
+              </bs-col>
+            </bs-row>
+
+            
+
+          </bs-tab>
+
+          <!-- Related Entities -->
+          <bs-tab event-key="4" title="Events">
             <bs-row>
               <bs-col lg="12">
 
@@ -355,9 +359,9 @@
 
               </bs-col>
             </bs-row>
+          </bs-tab>
 
-            <hr>
-
+          <bs-tab event-key="5" title="Built works">
             <bs-row>
               <bs-col lg="12">
                 <!-- Related Builtworks -->
@@ -368,21 +372,12 @@
                 
               </bs-col>
             </bs-row>
-
-
           </bs-tab>
 
-          <!-- Builtwork depicted -->
-          <bs-tab event-key="5" title="Historical Map">
-
-            <div id="entity_published" class="padding-5">
-                <semantic-form-checkbox-input label="Is Historical Map?" for='source_historical_map'></semantic-form-checkbox-input>
-            </div>
-
-            <div id="entity_published" class="padding-5">
-                <semantic-form-text-input label="XYZ Url" for='source_historical_map_url'></semantic-form-text-input>
-            </div>
-
+          <bs-tab event-key="5" title="People">
+            <bs-row>
+              
+            </bs-row>
           </bs-tab>
 
         </bs-tabs>

@@ -157,7 +157,7 @@
                 <semantic-context repository="ephedra">
                 <semantic-search-result>
                   <semantic-table id='table-result-2' query='
-                    SELECT ?subject ?label ?island_appellation ?wkt ?bw_id WHERE { 
+                    SELECT ?subject ?label ?island_appellation ?wkt ?bw_id ?bob ?eoe WHERE { 
                       ?subject a <https://veniss.net/ontology#Building>.
                       ?subject <http://www.w3.org/2000/01/rdf-schema#label> ?label.
                       ?subject <http://www.cidoc-crm.org/cidoc-crm/P53_has_former_or_current_location> ?island_node.
@@ -170,7 +170,9 @@
                       ?presence <http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation> ?representation.
                       ?representation <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#2d_representation>.
                       ?representation <http://www.w3.org/2000/01/rdf-schema#label> ?2d_representation_label.
-              
+                      ?presence crm:P4_has_time-span ?time_span .
+                      ?time_span crm:P82a_begin_of_the_begin ?bob .
+                      ?time_span crm:P82b_end_of_the_end ?eoe .
                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                         ?root <http://www.researchspace.org/resource/system/sql#hasQueryId> "veniss_buildings_4326";
                         <http://www.researchspace.org/resource/system/service/veniss_sql#wkt> ?wkt;
@@ -186,6 +188,14 @@
                     {
                       "displayName": "Label",
                       "cellTemplate": "{{> label}}"
+                    },
+                    {
+                      "displayName": "Begin",
+                      "cellTemplate": "{{> begin}}"
+                    },
+                    {
+                      "displayName": "End",
+                      "cellTemplate": "{{> end}}"
                     },
                     {
                       "displayName": "Island",
@@ -227,6 +237,16 @@
                         <a href="{{island_node.value}}" target="_blank">{{island_appellation.value}}</a>
                       </div>
                     </template>
+                    <template id="begin">
+                        <div style="display: flex; align-items: center;">
+                          {{bob.value}}
+                        </div>
+                    </template>
+                    <template id="end">
+                      <div style="display: flex; align-items: center;">
+                        {{eoe.value}}
+                      </div>
+                  </template>
                   </semantic-table>
                 </semantic-search-result>
               </semantic-context>

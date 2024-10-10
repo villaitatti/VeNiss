@@ -263,7 +263,7 @@
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                     SELECT DISTINCT ?bw_id ?wkt WHERE {
                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                        ?root rs_sql_sail:hasQueryId "sansecondo_buildings";
+                        ?root rs_sql_sail:hasQueryId "veniss_buildings_4326";
                           veniss_sql:wkt ?wkt;
                           veniss_sql:bw_id ?bw_id.
                       }

@@ -207,3 +207,7 @@ body {
   border: none !important;
   padding: 0px !important;
 }
+
+.griddle-container {
+  padding-bottom: 50px;
+}

@@ -143,10 +143,17 @@
                       <semantic-table 
                         id='table-result'
                         query='
-                        SELECT ?subject ?label (GROUP_CONCAT(DISTINCT ?island_lbl; SEPARATOR=" ;") as ?islands) (GROUP_CONCAT(DISTINCT ?author_lbl; SEPARATOR=" ;") as ?authors) ?year_lbl ?location WHERE {
+                        SELECT ?subject ?filename ?label (GROUP_CONCAT(DISTINCT ?island_lbl; SEPARATOR=" ;") as ?islands) (GROUP_CONCAT(DISTINCT ?author_lbl; SEPARATOR=" ;") as ?authors) ?year_lbl ?location WHERE {
   
                           ?subject A veniss_ontology:Source_Primary;
                                   rdfs:label ?label.
+
+                          OPTIONAL {
+                            ?subject rso:PX_has_main_representation ?representation.
+                            ?representation a rso:EX_Digital_Image;
+  	                          crm:P1_is_identified_by ?image.
+                            ?image <http://www.researchspace.org/ontology/PX_has_file_name> ?filename
+                          }
                           
                           OPTIONAL {
                             ?subject veniss_ontology:has_island ?island.
@@ -178,7 +185,7 @@
                             ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
                           }
                         } 
-                        GROUP BY ?subject ?label ?year_lbl ?location
+                        GROUP BY ?subject ?filename ?label ?year_lbl ?location
                         ORDER BY ASC(?year_lbl)
                         '
 
@@ -240,18 +247,12 @@
                         <template id="visual_representation">
 
                           <semantic-context storage="images">
-                            <mp-resource-thumbnail iri='{{subject.value}}' class='detail-img'>
-                                <mp-resource-thumbnail-fallback>
-                                    <with-types iri='{{subject.value}}'
-                                            template='{{> noImage}}'
-                                            [[> rsp:TypeMappings]]
-                                        >
-                                        <template id="noImage">
-                                            <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-no-image'}} detail-icon-noimg" alt="{{directTypesLabels}}" title='{{directTypesLabels}}'></span>
-                                        </template>
-                                    </with-types>
-                                </mp-resource-thumbnail-fallback>
-                            </mp-resource-thumbnail>
+                            {{#if filename}}
+                              <img src="https://veniss.net/proxy/IIIF/{{filename.value}}/full/!400,400/0/default.jpg" alt="{{subject.value}}" class='detail-img'>
+                            {{else}}
+                              <img src="../../assets/images/placeholderx80.png" alt="placeholder" class='detail-img'>
+                            {{/if}}
+                            
                           </semantic-context>
                           
                         </template>
@@ -390,6 +391,10 @@
 </div>
 
 <style>
+
+  #source_list{
+    margin-bottom: 200px;
+  }
    #source_list .facet__category-selector-holder{
     display: none;
   }

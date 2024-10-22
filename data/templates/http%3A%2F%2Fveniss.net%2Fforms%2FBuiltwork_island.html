@@ -127,12 +127,12 @@
                                 {{#each bindings}}
                                 <p></p>
                                 <div style="height:400px; width: 100%;">
-                                    <semantic-map-classic id='location_map' fix-zoom-level="13" query='SELECT ?lat ?lng ?description ?link ?node WHERE {
+                                    <semantic-map id='location_map' fix-zoom-level="13" query='SELECT ?lat ?lng ?description ?link ?node WHERE {
                                         VALUES(?lat ?lng ?description ?link) {
                                         ("{{latitude_label.value}}" "{{longitude_label.value}}" "{{node.value}}" <http://www.wikidata.org/entity/Q22132500>)
                                   }
                                 }'>
-                                    </semantic-map-classic>
+                                    </semantic-map>
                                 </div>
                                 {{/each}}
                             </template>

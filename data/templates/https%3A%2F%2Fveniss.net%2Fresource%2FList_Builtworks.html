@@ -114,7 +114,7 @@
                     <!-- TODO: add coordinates in federated query from geonames or tabella-->
                     <template id="maplocation">
                       <div style="height:150px; width: 250px;">
-                        <semantic-map-classic
+                        <semantic-map
                         id='search-map'
                         fix-zoom-level="11"
                         query='SELECT ?lat ?lng ?description ?link WHERE {
@@ -123,7 +123,7 @@
                           }
                         }'
                         >
-                      </semantic-map-classic>
+                      </semantic-map>
                       </div>
                     </template>
                     <template id="label">
@@ -154,47 +154,105 @@
                 </semantic-search-result>
               </bs-tab>
               <bs-tab event-key="2" title="Buildings">
+                <semantic-context repository="ephedra">
                 <semantic-search-result>
-                  <semantic-table id='table-result-2' query='SELECT * WHERE { 
-                      ?subject a veniss_ontology:Building.
-                      ?subject rdfs:label ?label.
-                      ?subject crm:P53_has_former_or_current_location ?island_node.
-                      ?island_node rdfs:label ?island_label.
-                      ?island_node crm:P1_is_identified_by ?island_appellation_node.
-                      ?island_appellation_node rdfs:label ?island_appellation.
-                    }' column-configuration='[
+                  <semantic-table id='table-result-2' query='
+                    SELECT ?subject ?label ?island_appellation ?wkt ?bw_id ?bob ?eoe WHERE { 
+                      ?subject a <https://veniss.net/ontology#Building>.
+                      ?subject <http://www.w3.org/2000/01/rdf-schema#label> ?label.
+                      ?subject <http://www.cidoc-crm.org/cidoc-crm/P53_has_former_or_current_location> ?island_node.
+                      ?island_node <http://www.w3.org/2000/01/rdf-schema#label> ?island_label.
+                      ?island_node <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> ?island_appellation_node.
+                      ?island_appellation_node <http://www.w3.org/2000/01/rdf-schema#label> ?island_appellation.
+                      
+                      ?subject <http://www.cidoc-crm.org/cidoc-crm/P196i_is_defined_by> ?physical_changes.
+                      ?physical_changes <http://www.cidoc-crm.org/cidoc-crm/P166i_had_presence> ?presence.
+                      ?presence <http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation> ?representation.
+                      ?representation <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#2d_representation>.
+                      ?representation <http://www.w3.org/2000/01/rdf-schema#label> ?2d_representation_label.
+                      ?presence crm:P4_has_time-span ?time_span .
+                      ?time_span crm:P82a_begin_of_the_begin ?bob .
+                      ?time_span crm:P82b_end_of_the_end ?eoe .
+                      SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                        ?root <http://www.researchspace.org/resource/system/sql#hasQueryId> "veniss_buildings_4326";
+                        <http://www.researchspace.org/resource/system/service/veniss_sql#wkt> ?wkt;
+                        <http://www.researchspace.org/resource/system/service/veniss_sql#bw_id> ?bw_id.
+                      }
+                      FILTER(?2d_representation_label = ?bw_id)
+                    }
+                  ' column-configuration='[
                     {
-                        "displayName": "Label",
-                        "cellTemplate": "{{> label}}"
+                      "displayName": "Shape",
+                      "cellTemplate": "{{> shape}}"
+                    },
+                    {
+                      "displayName": "Label",
+                      "cellTemplate": "{{> label}}"
+                    },
+                    {
+                      "displayName": "Begin",
+                      "cellTemplate": "{{> begin}}"
+                    },
+                    {
+                      "displayName": "End",
+                      "cellTemplate": "{{> end}}"
                     },
                     {
                       "displayName": "Island",
                       "cellTemplate": "{{> island}}"
                     }
-                    ]'>
-                    <template id="label">
-
-                      <mp-event-trigger 
-                      id='{{subject.value}}-add-frame' 
-                      type='Dashboard.AddFrame' 
-                      data='{
-                        "resourceIri": "{{subject.value}}", 
-                        "viewId": "entity-editor"
-                      }' 
-                      targets='["thinking-frames"]'>
-                      <div id='{{subject.value}}-addframe' style="display: flex; align-items: center; font-weight: bold;">
-                        <a href="{{subject.value}}">{{label.value}}</a>
+                  ]'>
+                    <template id="shape">
+                      <div style="display: flex; align-items: center; font-weight: bold;">
+                        <div style="height:100px; width: 250px;">
+                          <semantic-map
+                          fix-zoom-level="17"
+                          query='
+                          SELECT ?wkt ?description WHERE {
+                            VALUES(?wkt ?description) {
+                              ("{{{wkt.value}}}" "Geometry Visualization")
+                            }
+                          }
+                        '
+                        ></semantic-map>
+                        </div>
                       </div>
-                    </mp-event-trigger>
+                    </template>
+                    <template id="label">
+                      <mp-event-trigger 
+                        id='{{subject.value}}-add-frame-label' 
+                        type='Dashboard.AddFrame' 
+                        data='{
+                          "resourceIri": "{{subject.value}}", 
+                          "viewId": "entity-editor"
+                        }' 
+                        targets='["thinking-frames"]'>
+                        <div id='{{subject.value}}-addframe-label' style="display: flex; align-items: center; font-weight: bold;">
+                          <a href="{{subject.value}}">{{label.value}}</a>
+                        </div>
+                      </mp-event-trigger>
                     </template>
                     <template id="island">
                       <div style="display: flex; align-items: center;">
                         <a href="{{island_node.value}}" target="_blank">{{island_appellation.value}}</a>
                       </div>
                     </template>
+                    <template id="begin">
+                        <div style="display: flex; align-items: center;">
+                          {{bob.value}}
+                        </div>
+                    </template>
+                    <template id="end">
+                      <div style="display: flex; align-items: center;">
+                        {{eoe.value}}
+                      </div>
+                  </template>
                   </semantic-table>
                 </semantic-search-result>
+              </semantic-context>
               </bs-tab>
+              
+              
               <bs-tab event-key="3" title="New Geometries">
                 <semantic-search-result>
                   <semantic-context repository="ephedra">
@@ -205,7 +263,7 @@
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                     SELECT DISTINCT ?bw_id ?wkt WHERE {
                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                        ?root rs_sql_sail:hasQueryId "sansecondo_buildings";
+                        ?root rs_sql_sail:hasQueryId "veniss_buildings_4326";
                           veniss_sql:wkt ?wkt;
                           veniss_sql:bw_id ?bw_id.
                       }
@@ -234,7 +292,7 @@
                     </template>
                     <template id="geometry">
                       <div style="height:100px; width: 250px;">
-                        <semantic-map-classic
+                        <semantic-map
                         fix-zoom-level="17"
                         query='
                           SELECT ?wkt ?description WHERE {
@@ -243,7 +301,7 @@
                             }
                           }
                         '
-                      ></semantic-map-classic>
+                      ></semantic-map>
                       </div>
                     </template>
                   </semantic-table>

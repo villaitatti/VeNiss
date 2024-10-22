@@ -206,4 +206,9 @@ body {
 .cardinality-support__group-instance, .SemanticTreeInput--inputAndButtons {
   border: none !important;
   padding: 0px !important;
-}*/
+
+}
+
+.griddle-container {
+  padding-bottom: 50px;
+}

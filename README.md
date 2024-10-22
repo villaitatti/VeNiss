@@ -45,5 +45,3 @@ For development, set username and password and then move this file to ./config/r
       mph:password "${default.password}" ;
     ] .
 ```
-
-test

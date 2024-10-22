@@ -202,8 +202,12 @@ body {
 .ol-popup-content a {
   color: var(--archipelago-gold);
 }
-/*
+
 .cardinality-support__group-instance, .SemanticTreeInput--inputAndButtons {
   border: none !important;
   padding: 0px !important;
-}*/
+}
+
+.griddle-footer {
+  margin-bottom: 50px!important;
+}

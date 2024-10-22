@@ -141,7 +141,7 @@
         <bs-tabs class="source_tabs" id="tabs" >
 
           <!-- Metadata --> 
-          <bs-tab event-key="1" title="Physical Object">
+          <bs-tab event-key="1" title="Metadata">
 
             <bs-row>
               <bs-col lg="12" md="12" sm="12">
@@ -250,7 +250,8 @@
 
           </bs-tab>
 
-          <bs-tab event-key="2" title="Conceptual object">
+          <!-- Content -->
+          <bs-tab event-key="2" title="Content">
             <bs-row>
               <bs-col lg="12">
                 <div id="source_synopsis" class="padding-5">
@@ -346,39 +347,50 @@
           </bs-tab>
 
           <!-- Related Entities -->
-          <bs-tab event-key="4" title="Events">
+          <bs-tab event-key="4" title="Related Entities">
             <bs-row>
               <bs-col lg="12">
 
-                <!-- Related Events -->
-                <semantic-form-drag-and-drop-input 
-                  label="Related Events"
-                  for='entity_event'
-                  nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
-                </semantic-form-drag-and-drop-input>
+                <bs-tabs>
+                  <bs-tab event-key="1" title="Events">
+                    <!-- Related Events -->
+                    <semantic-form-drag-and-drop-input 
+                      label="Related Events"
+                      for='entity_event'
+                      nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
+                    </semantic-form-drag-and-drop-input>
+                  </bs-tab>
+
+
+                  <bs-tab event-key="2" title="Built works">
+                    <bs-row>
+                      <bs-col lg="12">
+                        <!-- Related Builtworks -->
+                        <semantic-form-drag-and-drop-input 
+                          label="Related Builtworks"
+                          for='source_builtwork'>
+                        </semantic-form-drag-and-drop-input>
+                        
+                      </bs-col>
+                    </bs-row>
+                  </bs-tab>
+
+                  <bs-tab event-key="3" title="People">
+                    <bs-row>
+                      
+                    </bs-row>
+                  </bs-tab>
+
+                </bs-tabs>
+              </bs-col>
+            </bs-row>
+
+
 
               </bs-col>
             </bs-row>
           </bs-tab>
 
-          <bs-tab event-key="5" title="Built works">
-            <bs-row>
-              <bs-col lg="12">
-                <!-- Related Builtworks -->
-                <semantic-form-drag-and-drop-input 
-                  label="Related Builtworks"
-                  for='source_builtwork'>
-                </semantic-form-drag-and-drop-input>
-                
-              </bs-col>
-            </bs-row>
-          </bs-tab>
-
-          <bs-tab event-key="5" title="People">
-            <bs-row>
-              
-            </bs-row>
-          </bs-tab>
 
         </bs-tabs>
 

@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page" id="actor_list">
 
   <div data-flex-layout="columns center-stretch">
 
@@ -37,7 +37,7 @@
 
     <div class="body">
       <semantic-search
-      relations='{
+        relations='{
             "<https://veniss.net/ontology#has_user>" : [{
               "kind": "resource",
               "queryPattern": "{
@@ -117,8 +117,17 @@
                     <semantic-table 
                       id='table-result'
                       query='
-                        SELECT DISTINCT ?subject ?birth_year ?death_year WHERE {
+                        SELECT DISTINCT ?subject ?birth_year ?death_year ?title_label WHERE {
                           ?subject a veniss_ontology:Person.
+                          OPTIONAL {
+                            $subject crm:P1_is_identified_by ?title.
+                              ?title crm:P2_has_type ?title_value.
+                              $title_value crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types>;
+                              skos:broader <https://veniss.net/resource/vocab/actor_types/7a5d96c0-74b2-11ee-a7ed-3a5becfe4abe>;
+                              rdfs:label ?title_label
+                            
+                            FILTER(LANG(?title_label) = "en")
+                          }
                           OPTIONAL {
                               ?subject crm:P98i_was_born ?birth.
                               ?birth a crm:E67_Birth;
@@ -140,48 +149,67 @@
                           } order by DESC(?birth_year) DESC(?death_year)'
                       tuple-template="{{> table-row}}"
                     >
-
                       <template id="table-row">
-                        <mp-event-trigger 
-                          id='{{subject.value}}-add-frame' 
-                          type='Dashboard.AddFrame' 
-                          data='{
-                            "resourceIri": "{{subject.value}}", 
-                            "viewId": "entity-editor"
-                          }' 
-                          targets='["thinking-frames"]'>
-                          <bs-row class="clickable-row">
-                            <bs-col sm="1" md="1">
-                              {{>visual_representation}}
-                            </bs-col>
-                            <bs-col sm="7" md="7">
-                              <h3><mp-label iri="{{subject.value}}"></mp-label></h3>
-                              <p>
-                                <em>
-                                  <semantic-query
-                                    query='SELECT ?title WHERE {
-                                      ?subject crm:P1_is_identified_by ?title.
-                                      ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
-                                    }'  
-                                  ></semantic-query>
-                                </em>
-                              </p>
-                            </bs-col>
+                        <bs-row class="show-one">
+                          <bs-col sm="1" md="1">
+                          </bs-col>
+                          <bs-col sm="7" md="7">
+                            <strong>Name</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Birth</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Death</strong>
+                          </bs-col>
+                        </bs-row>
+                        <mp-draggable iri='{{subject.value}}'>
+                          <div class="rs-draggable-container">
+                            <mp-event-trigger 
+                              id='{{subject.value}}-add-frame' 
+                              type='Dashboard.AddFrame' 
+                              data='{
+                                "resourceIri": "{{subject.value}}", 
+                                "viewId": "entity-editor"
+                              }' 
+                              targets='["thinking-frames"]'>
+                              <bs-row class="clickable-row">
+                                <bs-col sm="1" md="1">
+                                  {{>visual_representation}}
+                                </bs-col>
+                                <bs-col sm="7" md="7">
+                                  <h3><mp-label iri="{{subject.value}}"></mp-label></h3>
+                                  <p>
+                                    <em>
+                                      <semantic-query
+                                        query='SELECT ?title WHERE {
+                                          ?subject crm:P1_is_identified_by ?title.
+                                          ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
+                                        }'  
+                                      ></semantic-query>
+                                    </em>
+                                    <div>
+                                      <em><a href="#">{{title_label.value}}</a></em>
+                                    </div>
+                                  </p>
+                                </bs-col>
 
-                            <bs-col sm="2" md="2">
-                              {{#if birth_year}}
-                                <p>{{birth_year.value}}</p>
-                              {{/if}}
-                            </bs-col>
+                                <bs-col sm="2" md="2">
+                                  {{#if birth_year}}
+                                    <p>{{birth_year.value}}</p>
+                                  {{/if}}
+                                </bs-col>
 
-                            <bs-col sm="2" md="2">
-                              {{#if death_year}}
-                                <p>{{death_year.value}}</p>
-                              {{/if}}
-                            </bs-col>
-                            
-                          </bs-row>
-                        </mp-event-trigger>
+                                <bs-col sm="2" md="2">
+                                  {{#if death_year}}
+                                    <p>{{death_year.value}}</p>
+                                  {{/if}}
+                                </bs-col>
+                                
+                              </bs-row>
+                            </mp-event-trigger>
+                          </div>
+                        </mp-draggable>
                       </template>
 
                       <template id="visual_representation">
@@ -241,46 +269,63 @@
                     >
 
                       <template id="table-row">
-                        <mp-event-trigger 
-                          id='{{subject.value}}-add-frame' 
-                          type='Dashboard.AddFrame' 
-                          data='{
-                            "resourceIri": "{{subject.value}}", 
-                            "viewId": "entity-editor"
-                          }' 
-                          targets='["thinking-frames"]'>
-                          <bs-row class="clickable-row">
-                            <bs-col sm="1" md="1">
-                              {{>visual_representation}}
-                            </bs-col>
-                            <bs-col sm="7" md="7">
-                              <h3><mp-label iri="{{subject.value}}"></mp-label></h3>
-                              <p>
-                                <em>
-                                  <semantic-query
-                                    query='SELECT ?title WHERE {
-                                      ?subject crm:P1_is_identified_by ?title.
-                                      ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
-                                    }'  
-                                  ></semantic-query>
-                                </em>
-                              </p>
-                            </bs-col>
+                        <bs-row class="show-one">
+                          <bs-col sm="1" md="1">
+                          </bs-col>
+                          <bs-col sm="7" md="7">
+                            <strong>Name</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Formation</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Dissolution</strong>
+                          </bs-col>
+                        </bs-row>
+                        <mp-draggable iri='{{subject.value}}'>
+                          <div class="rs-draggable-container">
+                            <mp-event-trigger 
+                              id='{{subject.value}}-add-frame' 
+                              type='Dashboard.AddFrame' 
+                              data='{
+                                "resourceIri": "{{subject.value}}", 
+                                "viewId": "entity-editor"
+                              }' 
+                              targets='["thinking-frames"]'>
+                              <bs-row class="clickable-row">
+                                <bs-col sm="1" md="1">
+                                  {{>visual_representation}}
+                                </bs-col>
+                                <bs-col sm="7" md="7">
+                                  <h3><mp-label iri="{{subject.value}}"></mp-label></h3>
+                                  <p>
+                                    <em>
+                                      <semantic-query
+                                        query='SELECT ?title WHERE {
+                                          ?subject crm:P1_is_identified_by ?title.
+                                          ?title crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/actor_types>
+                                        }'  
+                                      ></semantic-query>
+                                    </em>
+                                  </p>
+                                </bs-col>
 
-                            <bs-col sm="2" md="2">
-                              {{#if formation_year}}
-                                <p>{{formation_year.value}}</p>
-                              {{/if}}
-                            </bs-col>
+                                <bs-col sm="2" md="2">
+                                  {{#if formation_year}}
+                                    <p>{{formation_year.value}}</p>
+                                  {{/if}}
+                                </bs-col>
 
-                            <bs-col sm="2" md="2">
-                              {{#if dissolution_year}}
-                                <p>{{dissolution_year.value}}</p>
-                              {{/if}}
-                            </bs-col>
-                            
-                          </bs-row>
-                        </mp-event-trigger>
+                                <bs-col sm="2" md="2">
+                                  {{#if dissolution_year}}
+                                    <p>{{dissolution_year.value}}</p>
+                                  {{/if}}
+                                </bs-col>
+                                
+                              </bs-row>
+                            </mp-event-trigger>
+                          </div>
+                        </mp-draggable>
                       </template>
 
                       <template id="visual_representation">
@@ -308,9 +353,6 @@
                 </bs-tab>
 
               </bs-tabs>
-
-
-
             </div>
         </semantic-search-result-holder>
       </div>
@@ -322,39 +364,44 @@
 </div>
 
 <style>
-  .page{
+  #actor_list .page{
     padding-left: 20px;
     padding-right: 20px;
   }
-
-  .search-container {
+  #actor_list .search-container {
     margin-top: 10px;
   }
-  .btn a{
+  #actor_list .btn a{
     color: #fff!important;
   }
-
-  .griddle-custom-row{
+  #actor_list .griddle-custom-row{
     display: block!important;
   }
-  .clickable-row{
-    padding: 10px 0;
-    border-top: 1px solid lightgrey;
+  #actor_list .show-one{
+    display: none;
   }
-
-  .clickable-row:first-child{
+  #actor_list .show-one:first-of-type{
+    display: block!important;
+    margin-bottom: 10px;
+  }
+  #actor_list .clickable-row{
+    padding: 10px 0;
+    border-top: 1px solid lightgrey!important;
+  }
+  #actor_list .clickable-row:first-child{
     border-top: none;
   }
-
-  .clickable-row:hover{
+  #actor_list .clickable-row:hover{
     background-color: var(--color-primary-10);;
     cursor: pointer;
   }
-
-  .clickable-row .detail-img{
+  #actor_list .clickable-row .detail-img{
     min-width: 80px;
     height: 80px;
     object-fit: cover;
   }
-
+  #actor_list .rs-draggable-container{
+    padding: none;
+    border: none;
+  }
 </style>

@@ -1,207 +1,265 @@
 <div id="mapContainer">
-  <semantic-search-result>
-    <semantic-map
-      id="search-map"
-      year-filtering="true"
-      vector-levels='["Island","Buildings"]'
-      target-controls='["search-map-control"]'
-      query="SELECT DISTINCT ?bw_id ?subject ?wkt ?name ?function ?use ?typology (year(?start) as ?eob) (year(?end) as ?boe) ?bob ?eoe ?t ?z WHERE {
-        ?st_vol rdfs:label ?name.
-        OPTIONAL {
-          ?subject veniss_ontology:has_use ?useNode.
-          ?useNode rdfs:label ?use.
-          FILTER (lang(?use) = 'en').
-          FILTER (STR(?use) != 'Use').
-        }
-  
-        OPTIONAL {
-          ?subject veniss_ontology:has_typology ?typologyNode.
-          ?typologyNode rdfs:label ?typology.
-          FILTER((LANG(?typology)) = 'en')
-        }
-          OPTIONAL {
-          ?subject veniss_ontology:has_function ?functionNode.
-          ?functionNode rdfs:label ?function.
-          FILTER (lang(?function) = 'en').
-          FILTER (STR(?function) != 'Function').
-        }
-      
-      ?st_vol crm:P160_has_temporal_projection ?st_vol_ts.
-      ?st_vol_ts crm:P81a_end_of_the_begin ?start.
-      ?st_vol_ts crm:P81b_begin_of_the_end ?end.
-        
-      }
+    <semantic-search-result>
+        <semantic-map-advanced
+            id="search-map"
+            year-filtering="true"
+            target-controls='["search-map-control"]'
+            query="SELECT DISTINCT * WHERE {
 
-      
-      
-      ORDER BY DESC(?subject)"
-      map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
-      fix-zoom-level="17"
-      fix-center="[1370000.000000000, 5692800.000000000]"
-      tuple-template="{{> details }}"
-    >
+              ?2drepresentation rdfs:label ?bw_id.
+              ?phase crm:P4_has_time-span ?timespan;
+                  crm:P138i_has_representation ?2drepresentation.
 
-      <template id="details">
-        <h3>{{name.value}}</h3>
-          <div>Typology: {{typology.value}}</div>
-          <div>Use: {{use.value}}</div>
-          <div>Creation: {{bob.value}}</div>
-          <div>Destruction: {{eoe.value}}</div>
-        <p>
-          <semantic-link iri="{{subject.value}}">See details</semantic-link>
+              ?physical_changes crm:P166i_had_presence ?phase.
+              ?subject crm:P196i_is_defined_by ?physical_changes.
+              OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?bob }
+              OPTIONAL { ?timespan crm:P82b_end_of_the_end ?original_eoe. }
+              BIND(COALESCE(?original_eoe, '3000-01-01'^^xsd:date) AS ?eoe)
+              
+              OPTIONAL {
+                ?subject crm:P16i_was_used_for ?useNode.
+                ?useNode crm:P2_has_type ?useType.
+                ?useType rdfs:label ?useTypeLabel.
+                ?useType skos:broader ?parent.
+                ?parent rdfs:label ?parentLabel.
+                FILTER((LANG(?useTypeLabel)) = 'en').
+                FILTER((LCASE(STR(?parentLabel))) = 'use').
+            }
+              BIND(COALESCE(?useTypeLabel, 'Unknown') AS ?use)
           
+
           
-        </p>
-      </template>
-      <tiles-layer
-      thumbnail='/assets/images/SS_Orthophoto_1982.jpg'
-      url='/proxy/mapbox/v4/gspinaci.4g3g986z/{z}/{x}/{y}@2x.png'
-      identifier='SS_1982'
-      name='Ortofoto su pellicola'
-      level='overlay'
-      author=""
-      location=""
-      year="1982"></tiles-layer>
-      
-      <tiles-layer
-        thumbnail='/assets/images/SS_IGM_1945.jpg'
-        url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1945/{z}/{x}/{y}.png'
-        identifier='SS_1945'
-        name='Aerial view of the island of San Secondo'
-        level='overlay'
-        author="Royal Air Force"
-        location=""
-        year="1945">
-      </tiles-layer>
+              ?subject rdfs:label ?name_full.
 
-      <tiles-layer
-      thumbnail='/assets/images/SS_Ausland_III_thumbnail.jpg'
-      url='/proxy/mapbox/v4/gspinaci.6k8e0eiv/{z}/{x}/{y}@2x.png'
-      identifier='SS_1866'
-      name='Map of San Secondo'
-      level='overlay'
-      author=""
-      location=""
-      year="1866"></tiles-layer>
-      
-      <tiles-layer
-      thumbnail='/assets/images/SS_diapositiva.jpg'
-      url='/proxy/mapbox/v4/gspinaci.ssdiapositiva/{z}/{x}/{y}@2x.png'
-      identifier='SS_diapositiva'
-      name='Diapositiva San Secondo'
-      level='overlay'
-      author=""
-      location=""
-      year=""></tiles-layer>
-      
+              BIND(STRBEFORE(?name_full, '–') AS ?name)
+          } ORDER BY DESC(?subject)
+          LIMIT 1000
+          "
+            map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
+            fix-zoom-level="12"
+            fix-center="[1370000.000000000, 5692800.000000000]"
+            tuple-template="{{> details }}">
 
-      <tiles-layer
-        thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1801/img.jpg'
-        url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1801/{z}/{x}/{y}.png'
-        identifier='SS_1801'
-        name='Plan of the island of San Secondo'
-        level='overlay'
-        author="K.K. Fortifications Local Direction zu Venedig"
-        location=""
-        year="1801">
-      </tiles-layer>
+            <template id="details">
+                <h3>{{name.value}}</h3>
+                <div>Use: {{use.value}}</div>
+                <div>Creation: {{bob.value}}</div>
+                <div>Destruction: {{eoe.value}}</div>
+                <p>
+                    <semantic-link iri="{{subject.value}}">See details</semantic-link>
+                </p>
+            </template>
 
-      <tiles-layer
-        thumbnail='/assets/images/1763_Polynomial2_NN.jpg'
-        url='/proxy/mapbox/v4/gspinaci.cxuajku9/{z}/{x}/{y}@2x.png'
-        identifier='1763_Polynomial2_NN'
-        name='Map of the Venetian Lagoon'
-        level='overlay'
-        author="Angelo Emo"
-        location="Venice, Archivio di Stato di Venezia, Savi ed esecutori alle acque, Disegni, Laguna, dis. 167"
-        year="1763"></tiles-layer>
-        <tiles-layer
-        thumbnail='/assets/images/basemaps_thumbnails_light.jpg'
-        url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}'
-        identifier='light'
-        name='Light'
-        level='basemap'
-        author=""
-        location=""
-        year=""></tiles-layer>
+            <tiles-layer
+                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/img.jpg'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/{z}/{x}/{y}.png'
+                identifier='SSC_1696'
+                name='Ortofoto su pellicola'
+                level='overlay'
+                author="Vincenzo Maria Coronelli"
+                location=""
+                year="1696">
+            </tiles-layer>
+
+            <tiles-layer
+                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/img.png'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/{z}/{x}/{y}.png'
+                identifier='SSC_1801'
+                name='Plans of the island of San Secondo'
+                level='overlay'
+                author="K.K. Fortifications Local Direction zu Venedig"
+                location=""
+                year="1801">
+            </tiles-layer>
+
+            <tiles-layer
+                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/img.png'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/{z}/{x}/{y}.png'
+                identifier='SSC_1809'
+                name="Dipartimento dell'adriatico"
+                level='overlay'
+                author="Gaspare Strada"
+                location=""
+                year="1809">
+            </tiles-layer>
+
+            <tiles-layer
+                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1839/img.png'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1839/{z}/{x}/{y}.png'
+                identifier='SSC_1839'
+                name=""
+                level='overlay'
+                author="Austrian Cadaster"
+                location=""
+                year="1839">
+            </tiles-layer>
+
+            <tiles-layer
+                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1850/img.jpg'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1850/{z}/{x}/{y}.png'
+                identifier='SSC_1850'
+                name=""
+                level='overlay'
+                author="Dipartimento Genio Militare Venezia"
+                location=""
+                year="1850">
+            </tiles-layer>
+
+            <tiles-layer
+                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1859/img.png'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1859/{z}/{x}/{y}.png'
+                identifier='SSC_1859'
+                name=""
+                level='overlay'
+                author="Ausland III"
+                location=""
+                year="1859">
+            </tiles-layer>
+
+            <tiles-layer
+                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1945/img.png'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1945/{z}/{x}/{y}.png'
+                identifier='SSC_1945'
+                name="Aereal View of the Island of San Secondo"
+                level='overlay'
+                author="Royal Air Force"
+                location=""
+                year="1945">
+            </tiles-layer>
         
+            <tiles-layer
+                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1982/img.jpg'
+                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1982/{z}/{x}/{y}.png'
+                identifier='SSC_1982'
+                name=""
+                level='overlay'
+                author="Ortofoto"
+                location=""
+                year="1982">
+            </tiles-layer>
+            
+            <tiles-layer
+                thumbnail='/assets/images/basemaps_thumbnails_light.jpg'
+                url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}'
+                identifier='light'
+                name='Light'
+                level='basemap'
+                author=""
+                location=""
+                year="">
+            </tiles-layer>
 
-        <tiles-layer
-        thumbnail='/assets/images/basemaps_thumbnails_waterways.jpg'
-        url='/proxy/mapbox/styles/v1/gspinaci/ckipvyxje12cl17lesce3u8zb/tiles/256/{z}/{x}/{y}'
-        identifier='waterways'
-        name='Waterways'
-        level='basemap'
-        author=""
-        location=""
-        year=""></tiles-layer>
+            <tiles-layer
+                thumbnail='/assets/images/basemaps_thumbnails_waterways.jpg'
+                url='/proxy/mapbox/styles/v1/gspinaci/ckipvyxje12cl17lesce3u8zb/tiles/256/{z}/{x}/{y}'
+                identifier='waterways'
+                name='Waterways'
+                level='basemap'
+                author=""
+                location=""
+                year="">
+            </tiles-layer>
 
+            <tiles-layer
+                thumbnail='/assets/images/groad.jpg'
+                url='http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}'
+                identifier='GRoadmap'
+                name='Google Roadmap'
+                level='basemap'
+                author="Google"
+                location=""
+                year="2023">
+            </tiles-layer>
 
-      <tiles-layer
-        thumbnail='/assets/images/groad.jpg'
-        url='http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}'
-        identifier='GRoadmap'
-        name='Google Roadmap' 
-        level='basemap'
-        author="Google"
-        location=""
-        year="2023">
-      </tiles-layer>
-      <tiles-layer
-        thumbnail='/assets/images/gsatellite.jpg'
-        url='http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
-        identifier='GSatellite'
-        name='Google Satellite' 
-        level='basemap'
-        author="Google"
-        location=""
-        year="2023">
-      </tiles-layer>
-      <tiles-layer
-      thumbnail='/assets/images/ghybrid.jpg'
-      url='http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
-      identifier='GHybrid'
-      name='Google Hybrid' 
-      level='basemap'
-      author="Google"
-      location=""
-      year="2023">
-      </tiles-layer>
-      <tiles-layer
-      thumbnail='/assets/images/basemaps_thumbnails_ortofoto.jpg'
-      url='http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}'
-      identifier='ortofoto_geoportale'
-      name='Ortofoto Geoportale'
-      level='basemap'
-      author="Comune di Venezia"
-      location=""
-      year="2022"></tiles-layer>
-    </semantic-map>
-  </semantic-search-result>
+            <tiles-layer
+                thumbnail='/assets/images/gsatellite.jpg'
+                url='http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
+                identifier='GSatellite'
+                name='Google Satellite'
+                level='basemap'
+                author="Google"
+                location=""
+                year="2023">
+            </tiles-layer>
+
+            <tiles-layer
+                thumbnail='/assets/images/ghybrid.jpg'
+                url='http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+                identifier='GHybrid'
+                name='Google Hybrid'
+                level='basemap'
+                author="Google"
+                location=""
+                year="2023">
+            </tiles-layer>
+
+            <tiles-layer
+                thumbnail='/assets/images/basemaps_thumbnails_ortofoto.jpg'
+                url='http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}'
+                identifier='ortofoto_geoportale'
+                name='Ortofoto Geoportale'
+                level='basemap'
+                author="Comune di Venezia"
+                location=""
+                year="2022">
+            </tiles-layer>
+        </semantic-map-advanced>
+    </semantic-search-result>
 </div>
 
+<!--
 
-      <!--
-      <tiles-layer
-        thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1852/img.jpg'
-        url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1852/{z}/{x}/{y}.png'
-        identifier='SS_1852'
-        name='Forte san secondo'
-        level='overlay'
-        author="Unknown author"
-        location=""
-        year="1852">
-      </tiles-layer>
-      -->
+<tiles-layer
+                         thumbnail='/assets/images/SS_IGM_1945.jpg'
+                         url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1945/{z}/{x}/{y}.png'
+                         identifier='SS_1945'
+                         name='Aerial view of the island of San Secondo'
+                         level='overlay'
+                         author="Royal Air Force"
+                         location=""
+                         year="1945">
+            </tiles-layer>
 
-      <!--
-      <tiles-layer
-        thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1697/img.jpg'
-        url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1697/{z}/{x}/{y}.png'
-        identifier='SS_1697'
-        name='Giardini et Horti'
-        level='overlay'
-        author="Coronelli"
-        location=""
-        year="1697">
-      </tiles-layer>-->
+            <tiles-layer
+                         thumbnail='/assets/images/SS_Ausland_III_thumbnail.jpg'
+                         url='/proxy/mapbox/v4/gspinaci.6k8e0eiv/{z}/{x}/{y}@2x.png'
+                         identifier='SS_1866'
+                         name='Map of San Secondo'
+                         level='overlay'
+                         author=""
+                         location=""
+                         year="1866"></tiles-layer>
+
+            <tiles-layer
+                         thumbnail='/assets/images/SS_diapositiva.jpg'
+                         url='/proxy/mapbox/v4/gspinaci.ssdiapositiva/{z}/{x}/{y}@2x.png'
+                         identifier='SS_diapositiva'
+                         name='Diapositiva San Secondo'
+                         level='overlay'
+                         author=""
+                         location=""
+                         year=""></tiles-layer>
+
+
+            <tiles-layer
+                         thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1801/img.jpg'
+                         url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1801/{z}/{x}/{y}.png'
+                         identifier='SS_1801'
+                         name='Plan of the island of San Secondo'
+                         level='overlay'
+                         author="K.K. Fortifications Local Direction zu Venedig"
+                         location=""
+                         year="1801">
+            </tiles-layer>
+
+            <tiles-layer
+                         thumbnail='/assets/images/1763_Polynomial2_NN.jpg'
+                         url='/proxy/mapbox/v4/gspinaci.cxuajku9/{z}/{x}/{y}@2x.png'
+                         identifier='1763_Polynomial2_NN'
+                         name='Map of the Venetian Lagoon'
+                         level='overlay'
+                         author="Angelo Emo"
+                         location="Venice, Archivio di Stato di Venezia, Savi ed esecutori alle acque, Disegni, Laguna, dis. 167"
+                         year="1763"></tiles-layer>
+
+-->

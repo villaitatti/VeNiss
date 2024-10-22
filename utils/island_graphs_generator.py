@@ -11,6 +11,11 @@ def read_islands_from_csv(filename):
         islands = [row[0] for row in reader]
     return islands
 
+
+def transform_island_to_label(island_name):
+    return ''.join([c for c in island_name if c.isalpha()]).lower()
+
+
 def get_island_details(island_name, tsv_file):
     """Fetches details of the given island from the TSV file."""
     with open(tsv_file, 'r') as file:
@@ -19,10 +24,10 @@ def get_island_details(island_name, tsv_file):
             if row[1] == island_name and row[7] == "ISL":
                 return {
                     "island_full_name": island_name,
-                    "island_label": ''.join([c for c in island_name if c.isalpha()]).lower(),
+                    "island_label": transform_island_to_label(island_name),
                     "latitude": row[4],
                     "longitude": row[5],
-                    "geonames_id": row[0]
+                    "geonames_id": 'https://www.geonames.org/' + row[0] + '/'
                 }
     return None
 
@@ -142,15 +147,23 @@ def generate_ttl_file(island_data):
   print(f"TTL file generated: {ttl_filename}")
 
 
-
 def main():
     islands = read_islands_from_csv('islands_list.csv')
+    blacklisted_islands = read_islands_from_csv('islands_blacklist.csv')
+    for blacklisted in blacklisted_islands:
+        print(f"Blacklisted:{blacklisted}")
+    for island in islands:
+        print(f"Island:{transform_island_to_label(island)}")
     island_details_list = []
 
     for island in islands:
-        details = get_island_details(island, 'geonames_IT.tsv')
-        if details:
-            island_details_list.append(details)
+        if transform_island_to_label(island) not in blacklisted_islands:
+            print(f"Island {island} not in blacklisted")
+            details = get_island_details(island, 'it.tsv')
+            print(details)
+            print("############################################")
+            if details:
+                island_details_list.append(details)
     
     for island_data in island_details_list:
         generate_ttl_file(island_data)

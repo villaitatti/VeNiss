@@ -5,7 +5,7 @@ PREFIX spl: <http://spinrdf.org/spl#>
 PREFIX ephedra: <http://www.researchspace.org/resource/system/ephedra#>
 PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
 PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
-PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
+PREFIX : <http://www.researchspace.org/resource/system/repository#>
 
 :geosql a ephedra:Service ;
 	<http://www.openrdf.org/config/sail#sailType> "researchspace:SQL" ;
@@ -99,7 +99,7 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 		a spl:Argument ;
 		rdfs:comment "Minimum X" ;
 		spl:predicate :_MinX ;
-		spl:valueType xsd:float
+	    spl:valueType xsd:float
   ] ;
   spin:constraint
 	[
@@ -200,20 +200,15 @@ PREFIX : <http://www.researchspace.org/resource/system/service/custom#>
 		spl:predicate :_z ;
 		spl:valueType xsd:string
 	] ;
-	rs_sql_sail:includesSQLQuery
-	[
-		rs_sql_sail:hasQueryId "base" ;
-		rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geo) as wkt from veniss_sql_table where ST_WITHIN(geo, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
-	] ;
   rs_sql_sail:includesSQLQuery
 	[
 		rs_sql_sail:hasQueryId "production" ;
-		rs_sql_sail:text "SELECT DISTINCT bw_id, bob, eob, boe, eoe, ST_AsText(geom) as wkt FROM sansecondo_buildings WHERE ST_WITHIN(geom, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
+		rs_sql_sail:text "SELECT DISTINCT identifier as bw_id, ST_AsText(geometry) as wkt, t, z FROM PRODUCTION.veniss_data WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
 	] ;
 	rs_sql_sail:includesSQLQuery
 	[
 		rs_sql_sail:hasQueryId "test" ;
-		rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(c.start) as \"bob\", MAX(c.end) as \"eoe\", t, z, ST_AsText(geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_years AS b ON a.identifier = b.identifier JOIN PRODUCTION.years_dates AS c ON b.\"year\" = c.\"year\" WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857)) GROUP BY a.identifier, a.t, a.z, a.geometry"
+		rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(c.start) as \"bob\", MAX(c.end) as \"eoe\", t, z, ST_AsText(geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_sources AS b ON a.identifier = b.identifier JOIN PRODUCTION.sources_years AS c ON b.source = c.source WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857)) GROUP BY a.identifier, a.t, a.z, a.geometry"
 	] ;
 	rs_sql_sail:includesSQLQuery
 	[
@@ -247,8 +242,18 @@ rs_sql_sail:includesSQLQuery
 rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "lazzarettovecchio_island_shapes" ;
-    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from qgis_lazzarettovecchio_islands"
+    #rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from qgis_lazzarettovecchio_islands"
+	rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(b.start) as \"bob\", MAX(b.end) as \"eoe\", ST_AsText(ST_Transform(a.geometry, 4326)) as wkt FROM qgis_lazzarettovecchio_islands as a JOIN PRODUCTION.feature_sources as f ON a.identifier = f.identifier JOIN PRODUCTION.sources_years as b ON f.\"source\" = b.\"source\" GROUP BY a.identifier, a.geometry"
 ] ;
+
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "lazzarettovecchio_buildings" ;
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(geometry) as wkt from qgis_lazzarettovecchio_buildings"
+] ;
+
+
+
 
 rs_sql_sail:includesSQLQuery
 [
@@ -320,6 +325,12 @@ rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "sansecondo_island_shapes" ;
     rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from qgis_sansecondo_islands"
+] ;
+
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "sansecondo_buildings" ;
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from qgis_sansecondo_buildings"
 ] ;
 
 rs_sql_sail:includesSQLQuery
@@ -548,5 +559,17 @@ rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "trezze_island_shapes" ;
     rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from qgis_trezze_islands"
+] ;
+
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "veniss_buildings" ;
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(geometry) as wkt from PRODUCTION.veniss_data"
+] ;
+
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "veniss_buildings_4326" ;
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from PRODUCTION.veniss_data"
 ] .
 

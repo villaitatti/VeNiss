@@ -6,6 +6,7 @@
   fields='[[ fieldDefinitions
     type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     entity_event                            = "https://veniss.net/container/fieldDefinitionContainer/entity_event"   
+    source_person                           = "https://veniss.net/container/fieldDefinitionContainer/source_person"
     entity_published                        = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes                = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
 
@@ -377,6 +378,11 @@
 
                   <bs-tab event-key="3" title="People">
                     <bs-row>
+                      <!-- Related People -->
+                        <semantic-form-drag-and-drop-input 
+                          label="Related People"
+                          for='source_person'>
+                        </semantic-form-drag-and-drop-input>
                       
                     </bs-row>
                   </bs-tab>

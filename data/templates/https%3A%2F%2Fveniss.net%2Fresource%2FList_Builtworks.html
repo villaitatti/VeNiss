@@ -176,15 +176,19 @@
                         # Get per-building aggregates: construction, demolition, number of phases
                         {
                           SELECT ?subject
-                                 (MIN(?bob) AS ?construction)
-                                 (MAX(?eoe) AS ?demolition)
+                                 (MIN(?start) AS ?construction)
+                                 (MAX(?end) AS ?demolition)
                                  (COUNT(DISTINCT ?presence) AS ?number_of_phases)
                           WHERE {
                             ?subject crm:P196i_is_defined_by ?physical_changes .
                             ?physical_changes crm:P166i_had_presence ?presence .
                             ?presence crm:P4_has_time-span ?time_span .
                             ?time_span crm:P82a_begin_of_the_begin ?bob .
-                            ?time_span crm:P82b_end_of_the_end ?eoe .
+                            OPTIONAL { 
+                              ?time_span crm:P82b_end_of_the_end ?eoe 
+                              BIND(YEAR(?eoe) AS ?end)   
+                            }
+                            BIND(YEAR(?bob) AS ?start) 
                           }
                           GROUP BY ?subject
                         }
@@ -193,34 +197,31 @@
                     tuple-template="{{>table-row}}">
 
                       <template id="table-row">
-
-                        <bs-row class="show-one">
-                          <bs-col sm="2" md="2">
-                            <strong>Shape</strong>
-                          </bs-col>
-                          <bs-col sm="3" md="3">
-                            <strong>Label</strong>
-                          </bs-col>
-                          <bs-col sm="2" md="2">
-                            <strong>Island</strong>
-                          </bs-col>
-                          <bs-col sm="1" md="1">
-                            <strong>Phases</strong>
-                          </bs-col>
-                          <bs-col sm="2" md="2">
-                            <strong>Construction</strong>
-                          </bs-col>
-                          <bs-col sm="2" md="2">
-                            <strong>Demolition</strong>
-                          </bs-col>
-                        </bs-row>
-
-                        <mp-draggable iri='{{subject.value}}'>
-                          <div class="rs-draggable-container">
+                        <div class="clickable-row">
+                          <bs-row class="show-one">
+                            <bs-col sm="2" md="2">
+                              <strong>Shape</strong>
+                            </bs-col>
+                            <bs-col sm="3" md="3">
+                              <strong>Label</strong>
+                            </bs-col>
+                            <bs-col sm="2" md="2">
+                              <strong>Island</strong>
+                            </bs-col>
+                            <bs-col sm="1" md="1">
+                              <strong>Phases</strong>
+                            </bs-col>
+                            <bs-col sm="2" md="2">
+                              <strong>From</strong>
+                            </bs-col>
+                            <bs-col sm="2" md="2">
+                              <strong>To</strong>
+                            </bs-col>
+                          </bs-row>
+                          <div class="data">
                             <mp-collapsible-div expanded='false'>
-
                               <mp-collapsible-div-trigger>
-                                <bs-row class="clickable-row">
+                                <bs-row>
                                   <bs-col sm="3" md="3" sm-offset="2" md-offset="2">{{>label}}</bs-col>
                                   <bs-col sm="2" md="2">{{>island}}</bs-col>
                                   <bs-col sm="1" md="1">{{>phases}}</bs-col>
@@ -240,8 +241,14 @@
                                       ?presence crm:P138i_has_representation ?representation;
                                                 crm:P4_has_time-span ?time_span.
                                       
-                                      ?time_span crm:P82a_begin_of_the_begin ?start;
-                                                crm:P82b_end_of_the_end ?end.
+                                      ?time_span crm:P82a_begin_of_the_begin ?bob.
+
+                                      OPTIONAL {
+                                        ?time_span crm:P82b_end_of_the_end ?eoe.
+                                        BIND(YEAR(?eoe) AS ?end)
+                                      }
+
+                                      BIND(YEAR(?bob) AS ?start)
 
                                       ?representation crm:P2_has_type veniss_ontology:2d_representation;
                                         rdfs:label ?bw_id.
@@ -288,26 +295,27 @@
                                   </template>
                                 </semantic-query>
                               </mp-collapsible-div-content>
-
                             </mp-collapsible-div>
-
                           </div>
-                        </mp-draggable>
-
+                        </div>
                       </template>
 
                       <template id="label">
-                        <mp-event-trigger 
-                          id='{{subject.value}}-add-frame' 
-                          type='Dashboard.AddFrame' 
-                          data='{
-                            "resourceIri": "{{subject.value}}", 
-                            "viewId": "entity-editor"
-                          }' 
-                          targets='["thinking-frames"]'>
-                          <strong>{{label.value}}</strong>
-                            
-                        </mp-event-trigger>
+                        <mp-draggable iri='{{subject.value}}'>
+                          <span class="rs-draggable-container">
+                            <mp-event-trigger 
+                              id='{{subject.value}}-add-frame' 
+                              type='Dashboard.AddFrame' 
+                              data='{
+                                "resourceIri": "{{subject.value}}", 
+                                "viewId": "entity-editor"
+                              }' 
+                              targets='["thinking-frames"]'>
+                              <strong style="text-decoration: underline;">{{label.value}}</strong>
+                                
+                            </mp-event-trigger>
+                          </span>
+                        </mp-draggable>
                       </template>
 
                       <template id="island">
@@ -423,14 +431,14 @@ tr td:first-child {
   #builtwork_list .griddle-custom-row{
     display: block!important;
   }
-  #builtwork_list .clickable-row{
+  #builtwork_list .clickable-row .data{
     padding: 10px 0;
     border-top: 1px solid lightgrey!important;
   }
-  #builtwork_list .clickable-row:first-child{
+  #builtwork_list .clickable-row:first-child .data:first-child{
     border-top: none;
   }
-  #builtwork_list .clickable-row:hover{
+  #builtwork_list .clickable-row .data:hover{
     background-color: var(--color-primary-10);;
     cursor: pointer;
   }
@@ -442,7 +450,7 @@ tr td:first-child {
   #builtwork_list .show-one{
     display: none;
   }
-  #builtwork_list .show-one:first-of-type{
+  #builtwork_list .clickable-row:first-of-type .show-one{
     display: block!important;
     margin-bottom: 10px;
   }
@@ -462,5 +470,12 @@ tr td:first-child {
 
   #builtwork_list .collapsible-div-content{
     padding: 0!important;
+  }
+
+  #builtwork_list .collapsible-div-content .row{
+  }
+
+  #builtwork_list .ol-zoom {
+    display: none!important;
   }
 </style>

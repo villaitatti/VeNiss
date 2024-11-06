@@ -153,105 +153,121 @@
                   </semantic-table>
                 </semantic-search-result>
               </bs-tab>
+
+
+
+
+
+
+
               <bs-tab event-key="2" title="Buildings">
                 <semantic-context repository="ephedra">
-                <semantic-search-result>
-                  <semantic-table id='table-result-2' query='
-                    SELECT ?subject ?label ?island_appellation ?wkt ?bw_id ?bob ?eoe WHERE { 
-                      ?subject a <https://veniss.net/ontology#Building>.
-                      ?subject <http://www.w3.org/2000/01/rdf-schema#label> ?label.
-                      ?subject <http://www.cidoc-crm.org/cidoc-crm/P53_has_former_or_current_location> ?island_node.
-                      ?island_node <http://www.w3.org/2000/01/rdf-schema#label> ?island_label.
-                      ?island_node <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> ?island_appellation_node.
-                      ?island_appellation_node <http://www.w3.org/2000/01/rdf-schema#label> ?island_appellation.
+                  <semantic-search-result>
+                    <semantic-table id='table-result-2' query='
+                      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                      PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                      PREFIX sql: <http://www.researchspace.org/resource/system/sql#>
+                      PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
                       
-                      ?subject <http://www.cidoc-crm.org/cidoc-crm/P196i_is_defined_by> ?physical_changes.
-                      ?physical_changes <http://www.cidoc-crm.org/cidoc-crm/P166i_had_presence> ?presence.
-                      ?presence <http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation> ?representation.
-                      ?representation <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#2d_representation>.
-                      ?representation <http://www.w3.org/2000/01/rdf-schema#label> ?2d_representation_label.
-                      ?presence crm:P4_has_time-span ?time_span .
-                      ?time_span crm:P82a_begin_of_the_begin ?bob .
-                      ?time_span crm:P82b_end_of_the_end ?eoe .
-                      SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                        ?root <http://www.researchspace.org/resource/system/sql#hasQueryId> "veniss_buildings_4326";
-                        <http://www.researchspace.org/resource/system/service/veniss_sql#wkt> ?wkt;
-                        <http://www.researchspace.org/resource/system/service/veniss_sql#bw_id> ?bw_id.
-                      }
-                      FILTER(?2d_representation_label = ?bw_id)
-                    }
-                  ' column-configuration='[
-                    {
-                      "displayName": "Shape",
-                      "cellTemplate": "{{> shape}}"
-                    },
-                    {
-                      "displayName": "Label",
-                      "cellTemplate": "{{> label}}"
-                    },
-                    {
-                      "displayName": "Begin",
-                      "cellTemplate": "{{> begin}}"
-                    },
-                    {
-                      "displayName": "End",
-                      "cellTemplate": "{{> end}}"
-                    },
-                    {
-                      "displayName": "Island",
-                      "cellTemplate": "{{> island}}"
-                    }
-                  ]'>
-                    <template id="shape">
-                      <div style="display: flex; align-items: center; font-weight: bold;">
-                        <div style="height:100px; width: 250px;">
-                          <semantic-map
-                          fix-zoom-level="17"
-                          query='
-                          SELECT ?wkt ?description WHERE {
-                            VALUES(?wkt ?description) {
-                              ("{{{wkt.value}}}" "Geometry Visualization")
-                            }
+                      SELECT
+                        ?subject ?label ?island_appellation ?island_node
+                        ?number_of_phases ?construction ?demolition
+                      WHERE {
+                        # Main building information
+                        ?subject a <https://veniss.net/ontology#Building> .
+                        ?subject rdfs:label ?label .
+                        ?subject crm:P53_has_former_or_current_location ?island_node .
+                        ?island_node crm:P1_is_identified_by ?island_appellation_node .
+                        ?island_appellation_node rdfs:label ?island_appellation .
+              
+                        # Get per-building aggregates: construction, demolition, number of phases
+                        {
+                          SELECT ?subject
+                                 (MIN(?bob) AS ?construction)
+                                 (MAX(?eoe) AS ?demolition)
+                                 (COUNT(DISTINCT ?presence) AS ?number_of_phases)
+                          WHERE {
+                            ?subject crm:P196i_is_defined_by ?physical_changes .
+                            ?physical_changes crm:P166i_had_presence ?presence .
+                            ?presence crm:P4_has_time-span ?time_span .
+                            ?time_span crm:P82a_begin_of_the_begin ?bob .
+                            ?time_span crm:P82b_end_of_the_end ?eoe .
                           }
-                        '
-                        ></semantic-map>
-                        </div>
-                      </div>
-                    </template>
-                    <template id="label">
-                      <mp-event-trigger 
-                        id='{{subject.value}}-add-frame-label' 
-                        type='Dashboard.AddFrame' 
-                        data='{
-                          "resourceIri": "{{subject.value}}", 
-                          "viewId": "entity-editor"
-                        }' 
-                        targets='["thinking-frames"]'>
-                        <div id='{{subject.value}}-addframe-label' style="display: flex; align-items: center; font-weight: bold;">
-                          <a href="{{subject.value}}">{{label.value}}</a>
-                        </div>
-                      </mp-event-trigger>
-                    </template>
-                    <template id="island">
-                      <div style="display: flex; align-items: center;">
-                        <a href="{{island_node.value}}" target="_blank">{{island_appellation.value}}</a>
-                      </div>
-                    </template>
-                    <template id="begin">
+                          GROUP BY ?subject
+                        }
+                      }
+                    ' column-configuration='[
+                      {
+                        "displayName": "Label",
+                        "cellTemplate": "{{> label}}"
+                      },
+                      {
+                        "displayName": "Island",
+                        "cellTemplate": "{{> island}}"
+                      },
+                      {
+                        "displayName": "Number of Phases",
+                        "cellTemplate": "{{> phases}}"
+                      },
+                      {
+                        "displayName": "Construction",
+                        "cellTemplate": "{{> construction}}"
+                      },
+                      {
+                        "displayName": "Demolition",
+                        "cellTemplate": "{{> demolition}}"
+                      }
+                    ]'>
+                      <template id="label">
+                        <mp-event-trigger 
+                          id='{{subject.value}}-add-frame-label' 
+                          type='Dashboard.AddFrame' 
+                          data='{
+                            "resourceIri": "{{subject.value}}", 
+                            "viewId": "entity-editor"
+                          }' 
+                          targets='["thinking-frames"]'>
+                          <div id='{{subject.value}}-addframe-label' style="display: flex; align-items: center; font-weight: bold;">
+                            <a href="{{subject.value}}">{{label.value}}</a>
+                          </div>
+                        </mp-event-trigger>
+                      </template>
+                      <template id="island">
                         <div style="display: flex; align-items: center;">
-                          {{bob.value}}
+                          <a href="{{island_node.value}}" target="_blank">{{island_appellation.value}}</a>
                         </div>
-                    </template>
-                    <template id="end">
-                      <div style="display: flex; align-items: center;">
-                        {{eoe.value}}
-                      </div>
-                  </template>
-                  </semantic-table>
-                </semantic-search-result>
-              </semantic-context>
+                      </template>
+                      <template id="phases">
+                        <div style="display: flex; align-items: center;">
+                          {{number_of_phases.value}}
+                        </div>
+                      </template>
+                      <template id="construction">
+                        <div style="display: flex; align-items: center;">
+                          {{construction.value}}
+                        </div>
+                      </template>
+                      <template id="demolition">
+                        <div style="display: flex; align-items: center;">
+                          {{demolition.value}}
+                        </div>
+                      </template>
+                    </semantic-table>
+                  </semantic-search-result>
+                </semantic-context>
               </bs-tab>
               
+              
+
+
+
+
+
+
+
+
+
+
               
               <bs-tab event-key="3" title="New Geometries">
                 <semantic-search-result>

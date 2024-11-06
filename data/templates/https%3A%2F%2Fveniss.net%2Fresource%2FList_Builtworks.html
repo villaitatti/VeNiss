@@ -35,7 +35,7 @@
 
     </div>
 
-    <div class="body">
+    <div id="builtwork_list" class="body">
       <semantic-search>
         <semantic-search-query-constant query='
           SELECT ?subject 
@@ -67,7 +67,6 @@
                 </template>
               </mp-sparql-result-counts>
             </semantic-search-result>
-
 
             <bs-tabs unmount-on-exit=true id='search-results' animation=false>
 
@@ -154,12 +153,6 @@
                 </semantic-search-result>
               </bs-tab>
 
-
-
-
-
-
-
               <bs-tab event-key="2" title="Buildings">
                 <semantic-context repository="ephedra">
                   <semantic-search-result>
@@ -196,79 +189,150 @@
                           GROUP BY ?subject
                         }
                       }
-                    ' column-configuration='[
-                      {
-                        "displayName": "Label",
-                        "cellTemplate": "{{> label}}"
-                      },
-                      {
-                        "displayName": "Island",
-                        "cellTemplate": "{{> island}}"
-                      },
-                      {
-                        "displayName": "Number of Phases",
-                        "cellTemplate": "{{> phases}}"
-                      },
-                      {
-                        "displayName": "Construction",
-                        "cellTemplate": "{{> construction}}"
-                      },
-                      {
-                        "displayName": "Demolition",
-                        "cellTemplate": "{{> demolition}}"
-                      }
-                    ]'>
+                    ' 
+                    tuple-template="{{>table-row}}">
+
+                      <template id="table-row">
+
+                        <bs-row class="show-one">
+                          <bs-col sm="2" md="2">
+                            <strong>Shape</strong>
+                          </bs-col>
+                          <bs-col sm="3" md="3">
+                            <strong>Label</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Island</strong>
+                          </bs-col>
+                          <bs-col sm="1" md="1">
+                            <strong>Phases</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Construction</strong>
+                          </bs-col>
+                          <bs-col sm="2" md="2">
+                            <strong>Demolition</strong>
+                          </bs-col>
+                        </bs-row>
+
+                        <mp-draggable iri='{{subject.value}}'>
+                          <div class="rs-draggable-container">
+                            <mp-collapsible-div expanded='false'>
+
+                              <mp-collapsible-div-trigger>
+                                <bs-row class="clickable-row">
+                                  <bs-col sm="3" md="3" sm-offset="2" md-offset="2">{{>label}}</bs-col>
+                                  <bs-col sm="2" md="2">{{>island}}</bs-col>
+                                  <bs-col sm="1" md="1">{{>phases}}</bs-col>
+                                  <bs-col sm="2" md="2">{{>construction}}</bs-col>
+                                  <bs-col sm="2" md="2">{{>demolition}}</bs-col>
+                                </bs-row>
+                              </mp-collapsible-div-trigger>
+
+                              <mp-collapsible-div-content>
+                                <semantic-query
+                                  query='
+                                    SELECT ?presence ?bw_id ?wkt ?start ?end WHERE { 
+                                      <{{subject.value}}> 
+                                              crm:P196i_is_defined_by ?physical_changes.
+                                      
+                                      ?physical_changes crm:P166i_had_presence ?presence.
+                                      ?presence crm:P138i_has_representation ?representation;
+                                                crm:P4_has_time-span ?time_span.
+                                      
+                                      ?time_span crm:P82a_begin_of_the_begin ?start;
+                                                crm:P82b_end_of_the_end ?end.
+
+                                      ?representation crm:P2_has_type veniss_ontology:2d_representation;
+                                        rdfs:label ?bw_id.
+
+                                      SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                        ?root <http://www.researchspace.org/resource/system/sql#hasQueryId> "veniss_buildings_4326";
+                                        <http://www.researchspace.org/resource/system/service/veniss_sql#wkt> ?wkt;
+                                        <http://www.researchspace.org/resource/system/service/veniss_sql#bw_id> ?bw_id.
+                                      }
+                                    } ORDER BY DESC(?start) 
+                                  '
+                                  template='{{>presence}}'
+                                >
+                                  <template id="presence">
+                                    {{#each bindings }}
+                                      <bs-row style="margin-top: 10px;">
+                                        <bs-col sm="2" md="2">
+                                          <div style="height:100px">
+                                            <semantic-map
+                                              fix-zoom-level="17"
+                                              query='
+                                              SELECT ?wkt ?description WHERE {
+                                                VALUES(?wkt ?description) {
+                                                  ("{{{wkt.value}}}" "Geometry Visualization")
+                                                }
+                                              }
+                                            '
+                                            ></semantic-map>
+                                          </div>
+                                        </bs-col>
+                                        <bs-col sm="3" md="3">
+                                          <strong>{{bw_id.value}}</strong>  
+                                        </bs-col>
+                                        <bs-col sm="2" md="2" sm-offset="3" md-offset="3">
+                                          {{start.value}}
+                                        </bs-col>
+                                        <bs-col sm="2" md="2">
+                                          {{end.value}}
+                                        </bs-col>
+                                      </bs-row>
+                                    {{/each}}
+                                    </bs-row>
+                                    
+                                  </template>
+                                </semantic-query>
+                              </mp-collapsible-div-content>
+
+                            </mp-collapsible-div>
+
+                          </div>
+                        </mp-draggable>
+
+                      </template>
+
                       <template id="label">
                         <mp-event-trigger 
-                          id='{{subject.value}}-add-frame-label' 
+                          id='{{subject.value}}-add-frame' 
                           type='Dashboard.AddFrame' 
                           data='{
                             "resourceIri": "{{subject.value}}", 
                             "viewId": "entity-editor"
                           }' 
                           targets='["thinking-frames"]'>
-                          <div id='{{subject.value}}-addframe-label' style="display: flex; align-items: center; font-weight: bold;">
-                            <a href="{{subject.value}}">{{label.value}}</a>
-                          </div>
+                          <strong>{{label.value}}</strong>
+                            
                         </mp-event-trigger>
                       </template>
+
                       <template id="island">
-                        <div style="display: flex; align-items: center;">
-                          <a href="{{island_node.value}}" target="_blank">{{island_appellation.value}}</a>
-                        </div>
+                        <a href="{{island_node.value}}" target="_blank">{{island_appellation.value}}</a>
                       </template>
+
                       <template id="phases">
-                        <div style="display: flex; align-items: center;">
-                          {{number_of_phases.value}}
-                        </div>
+                        <mp-collapsible-div-trigger>
+                        {{number_of_phases.value}}
+                        </mp-collapsible-div-trigger>
                       </template>
+
                       <template id="construction">
-                        <div style="display: flex; align-items: center;">
-                          {{construction.value}}
-                        </div>
+                        {{construction.value}}
                       </template>
+
                       <template id="demolition">
-                        <div style="display: flex; align-items: center;">
-                          {{demolition.value}}
-                        </div>
+                        {{demolition.value}}
                       </template>
+
                     </semantic-table>
                   </semantic-search-result>
                 </semantic-context>
               </bs-tab>
-              
-              
 
-
-
-
-
-
-
-
-
-
-              
               <bs-tab event-key="3" title="New Geometries">
                 <semantic-search-result>
                   <semantic-context repository="ephedra">
@@ -324,6 +388,7 @@
                 </semantic-context>
                 </semantic-search-result>
               </bs-tab>
+
             </bs-tabs>
           </div>
         </semantic-search-result-holder>
@@ -353,5 +418,49 @@ tr td:first-child {
 
   .ol-attribution {
     display: none;
+  }
+
+  #builtwork_list .griddle-custom-row{
+    display: block!important;
+  }
+  #builtwork_list .clickable-row{
+    padding: 10px 0;
+    border-top: 1px solid lightgrey!important;
+  }
+  #builtwork_list .clickable-row:first-child{
+    border-top: none;
+  }
+  #builtwork_list .clickable-row:hover{
+    background-color: var(--color-primary-10);;
+    cursor: pointer;
+  }
+  #builtwork_list .clickable-row .detail-img{
+    min-width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+  #builtwork_list .show-one{
+    display: none;
+  }
+  #builtwork_list .show-one:first-of-type{
+    display: block!important;
+    margin-bottom: 10px;
+  }
+  #builtwork_list .rs-draggable-container{
+    padding: none;
+    border: none;
+  }
+
+  #builtwork_list .collapsible-panel-trigger::before{
+    display: none;
+  }
+
+  #builtwork_list .rs-draggable-container{
+    padding: 0!important;
+    margin-bottom: 0!important;
+  }
+
+  #builtwork_list .collapsible-div-content{
+    padding: 0!important;
   }
 </style>

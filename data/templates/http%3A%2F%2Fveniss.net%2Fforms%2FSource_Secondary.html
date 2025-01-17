@@ -131,6 +131,104 @@
               </semantic-form-composite-input>
             </semantic-form-switch-case>
 
+            <semantic-form-switch-case label="Catalogue">
+              <semantic-form-composite-input 
+                for="bibitem_broader" 
+                new-subject-template='/broader' 
+                fields='[[ fieldDefinitions 
+                  type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                  bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
+                  bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
+                  bibitem_broader_typology            = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_typology"
+                ]]'
+              >
+                <semantic-form-hidden-input for="bibitem_broader_typology" default-value='https://veniss.net/resource/type/catalogue'></semantic-form-hidden-input>
+                <semantic-form-hidden-input for="type" default-values='["http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression"]'></semantic-form-hidden-input>
+
+                <div data-flex-layout="row top-stretch">
+
+                  <div id="bibitem_title">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Catalogue title" placeholder="Enter catalogue title ..." for="bibitem_title"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                </div>
+
+              </semantic-form-composite-input>
+            </semantic-form-switch-case>
+
+            <semantic-form-switch-case label="Essay">
+              <semantic-form-composite-input 
+                for="bibitem_broader" 
+                new-subject-template='/broader' 
+                fields='[[ fieldDefinitions 
+                  type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                  bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
+                  bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
+                  bibitem_broader_typology            = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_typology"
+                  bibitem_broader_number              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_number"
+                  bibitem_broader_volume              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_volume"
+                  bibitem_broader_page                = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_pages"
+                  bibitem_broader_serie_title         = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_serie_title"
+                  bibitem_broader_serie_number        = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_serie_number"
+                ]]'
+              >
+                <semantic-form-hidden-input for="bibitem_broader_typology" default-value='https://veniss.net/resource/type/essay'></semantic-form-hidden-input>
+                <semantic-form-hidden-input for="type" default-values='["http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression"]'></semantic-form-hidden-input>
+
+                <div data-flex-layout="row top-stretch">
+
+                  <div id="bibitem_title">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Book title" placeholder="Enter book title ..." for="bibitem_title"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                  <div id="bibitem_broader_number">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Book number" placeholder="Enter journal number ..." for="bibitem_broader_number"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                </div>
+
+                <div data-flex-layout="row top-stretch">
+
+                  <div id="bibitem_broader_volume">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Volume" placeholder="Enter volume ..." for="bibitem_broader_volume"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+
+                  <div id="bibitem_broader_page">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Page(s)" placeholder="Enter page(s) ..." for="bibitem_broader_page"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                </div>
+
+                <div data-flex-layout="row top-stretch">
+
+                 <div id="bibitem_broader_serie_title">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Serie title" placeholder="Enter serie title ..." for="bibitem_broader_serie_title"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                  <div id="bibitem_broader_serie_number">
+                    <div class="padding-5">
+                      <semantic-form-text-input  label="Serie number" placeholder="Enter serie number ..." for="bibitem_broader_serie_number"></semantic-form-text-input> 
+                    </div>
+                  </div>
+
+                </div>
+
+              </semantic-form-composite-input>
+            </semantic-form-switch-case>
+
             <semantic-form-switch-case label="Journal article">
               <semantic-form-composite-input 
                 for="bibitem_broader" 
@@ -143,7 +241,7 @@
                   bibitem_broader_number              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_number"
                   bibitem_broader_volume              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_volume"
                   bibitem_broader_issue               = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_issue"
-                  bibitem_broader_page                = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_page"  
+                  bibitem_broader_page                = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_pages"  
                   bibitem_broader_serie_title         = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_serie_title"
                   bibitem_broader_serie_number        = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_serie_number"
                 ]]'
@@ -205,104 +303,6 @@
 
                 </div>
               
-              </semantic-form-composite-input>
-            </semantic-form-switch-case>
-
-            <semantic-form-switch-case label="Essay">
-              <semantic-form-composite-input 
-                for="bibitem_broader" 
-                new-subject-template='/broader' 
-                fields='[[ fieldDefinitions 
-                  type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                  bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
-                  bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
-                  bibitem_broader_typology            = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_typology"
-                  bibitem_broader_number              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_number"
-                  bibitem_broader_volume              = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_volume"
-                  bibitem_broader_page                = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_page"
-                  bibitem_broader_serie_title         = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_serie_title"
-                  bibitem_broader_serie_number        = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_serie_number"
-                ]]'
-              >
-                <semantic-form-hidden-input for="bibitem_broader_typology" default-value='https://veniss.net/resource/type/essay'></semantic-form-hidden-input>
-                <semantic-form-hidden-input for="type" default-values='["http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression"]'></semantic-form-hidden-input>
-
-                <div data-flex-layout="row top-stretch">
-
-                  <div id="bibitem_title">
-                    <div class="padding-5">
-                      <semantic-form-text-input  label="Book title" placeholder="Enter book title ..." for="bibitem_title"></semantic-form-text-input> 
-                    </div>
-                  </div>
-
-                  <div id="bibitem_broader_number">
-                    <div class="padding-5">
-                      <semantic-form-text-input  label="Book number" placeholder="Enter journal number ..." for="bibitem_broader_number"></semantic-form-text-input> 
-                    </div>
-                  </div>
-
-                </div>
-
-                <div data-flex-layout="row top-stretch">
-
-                  <div id="bibitem_broader_volume">
-                    <div class="padding-5">
-                      <semantic-form-text-input  label="Volume" placeholder="Enter volume ..." for="bibitem_broader_volume"></semantic-form-text-input> 
-                    </div>
-                  </div>
-
-
-                  <div id="bibitem_broader_page">
-                    <div class="padding-5">
-                      <semantic-form-text-input  label="Page(s)" placeholder="Enter page(s) ..." for="bibitem_broader_page"></semantic-form-text-input> 
-                    </div>
-                  </div>
-
-                </div>
-
-                <div data-flex-layout="row top-stretch">
-
-                 <div id="bibitem_broader_serie_title">
-                    <div class="padding-5">
-                      <semantic-form-text-input  label="Serie title" placeholder="Enter serie title ..." for="bibitem_broader_serie_title"></semantic-form-text-input> 
-                    </div>
-                  </div>
-
-                  <div id="bibitem_broader_serie_number">
-                    <div class="padding-5">
-                      <semantic-form-text-input  label="Serie number" placeholder="Enter serie number ..." for="bibitem_broader_serie_number"></semantic-form-text-input> 
-                    </div>
-                  </div>
-
-                </div>
-
-              </semantic-form-composite-input>
-            </semantic-form-switch-case>
-
-            <semantic-form-switch-case label="Catalogue">
-              <semantic-form-composite-input 
-                for="bibitem_broader" 
-                new-subject-template='/broader' 
-                fields='[[ fieldDefinitions 
-                  type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                  bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
-                  bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
-                  bibitem_broader_typology            = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader_typology"
-                ]]'
-              >
-                <semantic-form-hidden-input for="bibitem_broader_typology" default-value='https://veniss.net/resource/type/catalogue'></semantic-form-hidden-input>
-                <semantic-form-hidden-input for="type" default-values='["http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression"]'></semantic-form-hidden-input>
-
-                <div data-flex-layout="row top-stretch">
-
-                  <div id="bibitem_title">
-                    <div class="padding-5">
-                      <semantic-form-text-input  label="Catalogue title" placeholder="Enter catalogue title ..." for="bibitem_title"></semantic-form-text-input> 
-                    </div>
-                  </div>
-
-                </div>
-
               </semantic-form-composite-input>
             </semantic-form-switch-case>
 

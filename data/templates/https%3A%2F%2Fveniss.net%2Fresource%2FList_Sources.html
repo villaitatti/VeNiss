@@ -143,10 +143,9 @@
                       <semantic-table 
                         id='table-result'
                         query='
-                        SELECT ?subject ?filename ?label (GROUP_CONCAT(DISTINCT ?island_lbl; SEPARATOR=" ;") as ?islands) (GROUP_CONCAT(DISTINCT ?author_lbl; SEPARATOR=" ;") as ?authors) ?year_lbl ?location WHERE {
+                        SELECT ?subject ?filename (GROUP_CONCAT(DISTINCT ?island_lbl; SEPARATOR=" ;") as ?islands) (GROUP_CONCAT(DISTINCT ?author_lbl; SEPARATOR=" ;") as ?authors) ?year_lbl ?location WHERE {
   
-                          ?subject A veniss_ontology:Source_Primary;
-                                  rdfs:label ?label.
+                          ?subject A veniss_ontology:Source_Primary
 
                           OPTIONAL {
                             ?subject rso:PX_has_main_representation ?representation.
@@ -250,7 +249,7 @@
                             {{#if filename}}
                               <img src="https://veniss.net/proxy/IIIF/{{filename.value}}/full/!400,400/0/default.jpg" alt="{{subject.value}}" class='detail-img'>
                             {{else}}
-                              <img src="../../assets/images/placeholderx80.png" alt="placeholder" class='detail-img'>
+                              <img src="../../assets/icons/sources.png" alt="placeholder" class='detail-img'>
                             {{/if}}
                             
                           </semantic-context>
@@ -258,7 +257,7 @@
                         </template>
 
                         <template id="name">
-                          <h3 class="align-text">{{label.value}}</h3>
+                          <h3 class="align-text"><mp-label iri='{{subject.value}}'></mp-label> </h3>
                           <p><em>{{authors.value}}</em></p>
                           
                         </template>

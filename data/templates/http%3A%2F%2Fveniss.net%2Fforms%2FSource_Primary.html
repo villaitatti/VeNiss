@@ -23,6 +23,8 @@
     source_location_type                    = "https://veniss.net/container/fieldDefinitionContainer/source_location_type"
     source_location_name                    = "https://veniss.net/container/fieldDefinitionContainer/source_location_name"
 
+    source_archival_location                = "https://veniss.net/container/fieldDefinitionContainer/source_archival_location"
+    source_current_location                 = "https://veniss.net/container/fieldDefinitionContainer/source_current_location"
     source_information_carrier_location     = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_location"
     source_information_carrier_type         = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_type"
     source_information_carrier_name         = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_name"
@@ -280,24 +282,19 @@
               <bs-col lg="12">
 
                 <bs-tabs>
-                  <bs-tab event-key="1" title="Archival">
+                  <bs-tab event-key="1" title="Archival location">
                     <bs-row>
                       <bs-col lg="12" sm="12">
-                        <div id="source_information_carrier_location" >
+                        <div id="source_archival_location" >
                           <semantic-form-tree-picker-input 
                             open-dropdown-on-focus="false"
                             label="Archival Location" 
-                            for='source_information_carrier_location'
+                            for='source_archival_location'
                             placeholder="Drop here the archival unit containing this source ... "
                             custom-button='{
                               "iri": "http://www.researchspace.org/resource/ThinkingFrames",
                               "view": "authority-content",
                               "resource": "http://www.researchspace.org/resource/vocab/archives"
-                            }'
-                            
-                            tree-patterns='{
-                              "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-                              "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
                             }'>
                           </semantic-form-tree-picker-input>
                         </div>
@@ -324,7 +321,27 @@
                     </bs-row>
                   </bs-tab>
 
-                  <bs-tab event-key="2" title="Secondary source">
+                  <bs-tab event-key="2" title="Current place">
+                    <bs-row>
+                      <bs-col lg="12" sm="12">
+                        <div id="source_current_location" >
+                          <semantic-form-tree-picker-input 
+                            open-dropdown-on-focus="false"
+                            label="Current Place" 
+                            for='source_current_location'
+                            placeholder="Drop here the archival unit containing this source ... "
+                            custom-button='{
+                              "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                              "view": "authority-content",
+                              "resource": "http://www.researchspace.org/resource/vocab/archives"
+                            }'>
+                          </semantic-form-tree-picker-input>
+                        </div>
+                      </bs-col>
+                    </bs-row>
+                  </bs-tab>
+
+                  <bs-tab event-key="3" title="Secondary source">
                     <div>
                       <bs-row>
                         <bs-col lg="12">
@@ -468,11 +485,11 @@
     margin-right: 10px;
   }
 
-  #source_information_carrier_location .RemovableBadge {
+  #source_archival_location .RemovableBadge {
     background-color: white!important;
   }
 
-  #source_information_carrier_location .RemovableBadge__content, #source_information_carrier_location .RemovableBadge__remove {
+  #source_archival_location .RemovableBadge__content, #source_archival_location .RemovableBadge__remove {
     max-width: none!important;
     text-transform: none!important;
     color: black!important;

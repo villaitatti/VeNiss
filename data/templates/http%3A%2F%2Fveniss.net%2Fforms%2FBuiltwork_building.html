@@ -4,6 +4,7 @@
           id='{{viewId}}-vocab-form' post-action="event" subject='{{node}}' fields="[[fieldDefinitions
           type = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
           label='http://www.w3.org/2000/01/rdf-schema#label'
+          builtwork_identifier='http://localhost:10214/container/fieldDefinitionContainer/builtwork_identifier'
           building_island = 'https://veniss.net/container/fieldDefinitionContainer/building_island'
           functional-change = 'https://veniss.net/container/fieldDefinitionContainer/building_functional_change'
           physical-changes = 'https://veniss.net/container/fieldDefinitionContainer/building_physical_changes'
@@ -46,6 +47,9 @@
                                   </semantic-form-select-input>
           
                                   <semantic-form-text-input for="label"></semantic-form-text-input>
+                                  <semantic-context repository="ephedra">
+                                    <semantic-form-autocomplete-input for="builtwork_identifier"></semantic-form-autocomplete-input>
+                                  </semantic-context>
                                 </bs-tab-pane>
                                 <bs-tab-pane event-key="second">
                                   <div class="row">

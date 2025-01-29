@@ -7,6 +7,9 @@
           builtwork_identifier='http://localhost:10214/container/fieldDefinitionContainer/builtwork_identifier'
           building_island = 'https://veniss.net/container/fieldDefinitionContainer/building_island'
           functional-change = 'https://veniss.net/container/fieldDefinitionContainer/building_functional_change'
+          functional-change-typology = 'https://veniss.net/container/fieldDefinitionContainer/building_functional_change_typology'
+          functional-change-use = 'https://veniss.net/container/fieldDefinitionContainer/building_functional_change_use'
+          functional-change-function = 'https://veniss.net/container/fieldDefinitionContainer/building_functional_change_function'
           physical-changes = 'https://veniss.net/container/fieldDefinitionContainer/building_physical_changes'
           ]]">
           <bs-panel>
@@ -52,26 +55,30 @@
                                   </semantic-context>
                                 </bs-tab-pane>
                                 <bs-tab-pane event-key="second">
+                                  <!-- Functional Change Type: Typology -->
                                   <div class="row">
-                                  <div class="col-md-6 inline-composite-2">
-                                      <semantic-form-composite-input for="functional-change" render-header="false"
-                                          new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' fields='[[fieldDefinitions
-                                  functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
-                                  functional_change_type="https://veniss.net/container/fieldDefinitionContainer/functional_change_type"
-                              ]]'>
-                                          <semantic-form-tree-picker-input for="functional_change_type"
-                                              label="Functional change type">
+                                    <div class="col-md-6 inline-composite-2">
+                                      <h2>Typology</h2>
+                                      <semantic-form-composite-input for="functional-change-typology" render-header="false"
+                                          new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
+                                          fields='[[fieldDefinitions
+                                              functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
+                                              functional_change_type_typology="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_typology"
+                                          ]]'>
+                                          <semantic-form-tree-picker-input for="functional_change_type_typology"
+                                              label="Functional Change Type: Typology">
                                           </semantic-form-tree-picker-input>
                                           <semantic-form-composite-input for="functional_change_has_time-span"
-                                              new-subject-template="/time-span" render-header="false" fields='[[ fieldDefinitions    
-                                      bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
-                                      eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
-                                  ]]'>
-                                                <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
-                                                <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
-                                            </semantic-form-composite-input>
+                                              new-subject-template="/time-span" render-header="false" 
+                                              fields='[[ fieldDefinitions    
+                                                  bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                                  eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                                              ]]'>
+                                              <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
+                                              <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                          </semantic-form-composite-input>
                                       </semantic-form-composite-input>
-                                  </div>
+                                  </div>                                  
                                   <div class="col-md-6">
                                       {{#if node}}
                                       <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -82,10 +89,12 @@
                                               <{{node}}> crm:P16i_was_used_for ?function.
                                             ?function crm:P4_has_time-span ?timespan.
                                             ?timespan crm:P82a_begin_of_the_begin ?start.
-                                            ?timespan crm:P82b_end_of_the_end ?end.
+                                            OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end. }
+                                            BIND(COALESCE(?end, xsd:date(NOW())) AS ?end)
                                             ?function crm:P2_has_type ?type_node.
+                                            ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb8226a4-4e40-11ee-ae1e-3a5becfe4abc>.
                                             ?type_node rdfs:label ?functional_type.
-                                            FILTER(langMatches(lang(?functional_type), "en"))
+                                            FILTER(lang(?functional_type) = "en" || lang(?functional_type) = "")
                                           }
                                         ' tuple-template="{{> template}}" tuple-template-height="42">
                                                     <template id="template">
@@ -96,6 +105,106 @@
                                                   {{/if}}
                                       </div>
                               </div>
+                              <!-- Functional Change Type: Use -->
+                              <div class="row">
+                                <div class="col-md-6 inline-composite-2">
+                                  <h2>Use</h2>
+                                  <semantic-form-composite-input for="functional-change-use" render-header="false"
+                                      new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
+                                      fields='[[fieldDefinitions
+                                          functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
+                                          functional_change_type_use="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_use"
+                                      ]]'>
+                                      <semantic-form-tree-picker-input for="functional_change_type_use"
+                                          label="Functional Change Type: Use">
+                                      </semantic-form-tree-picker-input>
+                                      <semantic-form-composite-input for="functional_change_has_time-span"
+                                          new-subject-template="/time-span" render-header="false" 
+                                          fields='[[ fieldDefinitions    
+                                              bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                              eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                                          ]]'>
+                                          <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
+                                          <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                      </semantic-form-composite-input>
+                                  </semantic-form-composite-input>
+                              </div>                                  
+                              <div class="col-md-6">
+                                  {{#if node}}
+                                  <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                      PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                                      SELECT ?label ?function ?start ?end ?functional_type WHERE {
+                                          <{{node}}> a <https://veniss.net/ontology#Building>.
+                                          <{{node}}> rdfs:label ?label.
+                                          <{{node}}> crm:P16i_was_used_for ?function.
+                                        ?function crm:P4_has_time-span ?timespan.
+                                        ?timespan crm:P82a_begin_of_the_begin ?start.
+                                        OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end. }
+                                        BIND(COALESCE(?end, xsd:date(NOW())) AS ?end)
+                                        ?function crm:P2_has_type ?type_node.
+                                        ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb812510-4e40-11ee-ae1e-3a5becfe4abc>.
+                                        ?type_node rdfs:label ?functional_type.
+                                        FILTER(lang(?functional_type) = "en" || lang(?functional_type) = "")
+                                      }
+                                    ' tuple-template="{{> template}}" tuple-template-height="42">
+                                                <template id="template">
+                                                    <b>{{functional_type.value}}</b>
+                                                    <div>{{start.value}} - {{end.value}}</div>
+                                                </template>
+                                              </semantic-timeline>
+                                              {{/if}}
+                                  </div>
+                          </div>
+                              <!-- Functional Change Type: Function -->
+                              <div class="row">
+                                <div class="col-md-6 inline-composite-2">
+                                  <h2>Function</h2>
+                                  <semantic-form-composite-input for="functional-change-function" render-header="false"
+                                      new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
+                                      fields='[[fieldDefinitions
+                                          functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
+                                          functional_change_type_function="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_function"
+                                      ]]'>
+                                      <semantic-form-tree-picker-input for="functional_change_type_function"
+                                          label="Functional Change Type: Function">
+                                      </semantic-form-tree-picker-input>
+                                      <semantic-form-composite-input for="functional_change_has_time-span"
+                                          new-subject-template="/time-span" render-header="false" 
+                                          fields='[[ fieldDefinitions    
+                                              bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                              eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                                          ]]'>
+                                          <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
+                                          <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                      </semantic-form-composite-input>
+                                  </semantic-form-composite-input>
+                              </div>                                  
+                              <div class="col-md-6">
+                                  {{#if node}}
+                                  <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                                    SELECT ?label ?function ?start ?end ?functional_type WHERE {
+                                        <{{node}}> a <https://veniss.net/ontology#Building>.
+                                        <{{node}}> rdfs:label ?label.
+                                        <{{node}}> crm:P16i_was_used_for ?function.
+                                      ?function crm:P4_has_time-span ?timespan.
+                                      ?timespan crm:P82a_begin_of_the_begin ?start.
+                                      OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end. }
+                                      BIND(COALESCE(?end, xsd:date(NOW())) AS ?end)
+                                      ?function crm:P2_has_type ?type_node.
+                                      ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb85831c-4e40-11ee-ae1e-3a5becfe4abc>.
+                                      ?type_node rdfs:label ?functional_type.
+                                      FILTER(lang(?functional_type) = "en" || lang(?functional_type) = "")
+                                    }
+                                    ' tuple-template="{{> template}}" tuple-template-height="42">
+                                                <template id="template">
+                                                    <b>{{functional_type.value}}</b>
+                                                    <div>{{start.value}} - {{end.value}}</div>
+                                                </template>
+                                              </semantic-timeline>
+                                              {{/if}}
+                                  </div>
+                          </div>
                           </bs-tab-pane>
                           <bs-tab-pane event-key="third">
                               <h1>Physical Forms</h1>

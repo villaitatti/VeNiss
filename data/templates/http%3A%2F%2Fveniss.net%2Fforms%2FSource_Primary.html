@@ -291,11 +291,36 @@
                             label="Archival Location" 
                             for='source_archival_location'
                             placeholder="Drop here the archival unit containing this source ... "
-                            custom-button='{
+                            close-dropdown-on-selection='false'
+                            scheme-page-button-config='{
                               "iri": "http://www.researchspace.org/resource/ThinkingFrames",
                               "view": "authority-content",
-                              "resource": "http://www.researchspace.org/resource/vocab/archives"
-                            }'>
+                              "scheme": "http://www.researchspace.org/resource/vocab/archives",
+                              "tooltip": "Open list of terms"
+                            }'
+                            query-item-label='
+                              SELECT (group_concat(distinct ?lbl; separator=", ") as ?label) where {
+                                {
+                                  select ?class ?lbl
+                                  where {
+                                    ?item crm:P46i_forms_part_of* ?mid.
+                                    ?mid crm:P46i_forms_part_of* ?class.
+                                    ?class rdfs:label ?class_label
+                                    
+                                    optional {
+                                      ?class crm:P1_is_identified_by ?acronym.
+                                      ?acronym a crm:E41_Appellation;
+                                        crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                                        rdfs:label ?acronym_lbl 
+                                    }
+
+                                    BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                                  }
+                                  group by ?class ?lbl
+                                  order by desc(count(?mid))
+                                }
+                              }'
+                            >
                           </semantic-form-tree-picker-input>
                         </div>
                       </bs-col>
@@ -325,6 +350,7 @@
                     <bs-row>
                       <bs-col lg="12" sm="12">
                         <div id="source_current_location" >
+                          <!--
                           <semantic-form-tree-picker-input 
                             open-dropdown-on-focus="false"
                             label="Current Place" 
@@ -335,7 +361,7 @@
                               "view": "authority-content",
                               "resource": "http://www.researchspace.org/resource/vocab/archives"
                             }'>
-                          </semantic-form-tree-picker-input>
+                          </semantic-form-tree-picker-input>-->
                         </div>
                       </bs-col>
                     </bs-row>
@@ -484,7 +510,6 @@
   .SemanticTreeInput--browseButton{
     margin-right: 10px;
   }
-
   #source_archival_location .RemovableBadge {
     background-color: white!important;
   }

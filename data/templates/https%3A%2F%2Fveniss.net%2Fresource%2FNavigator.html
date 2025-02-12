@@ -33,8 +33,8 @@
             <semantic-map-controls
               id="search-map-control"
               target-map-id="search-map"
-              features-taxonomies="use,name"
-              features-color-taxonomies="use, funzione"
+              features-taxonomies="name,use"
+              features-color-taxonomies="use,function"
               features-colors-palette='{
                 "military":"rgba(245,185,153,0.6)",
                 "service":"rgba(124,164,204,0.6)",
@@ -42,7 +42,8 @@
                 "religious":"rgba(0,63,114,0.6)",
                 "water supply":"rgba(154,207,237)",
                 "accomodation":"rgba(214,223,218,0.6)",
-                "unknown":"rgba(173,195,165,0.6)"
+                "unknown":"rgba(173,195,165,0.6)",
+                "kennel":"rgba(100,195,165,0.6)"
               }'
               features-options-enabled="true"
               filters-initialization='{"basemap":true,"overlay":true,"feature":true}'
@@ -50,9 +51,9 @@
               show-filters="true"
               timeline='{
                 "min":1500,
-                "max":2023,
+                "max":2025,
                 "mode":"normal",
-                "default":1600
+                "default":2025
               }'
               >
             </semantic-map-controls>

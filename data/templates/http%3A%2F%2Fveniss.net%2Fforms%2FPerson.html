@@ -1,10 +1,11 @@
-<semantic-form 
-  id='{{viewId}}-vocab-form' 
-  post-action="event"
-  subject='{{node}}'
-  new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+<semantic-form
+  persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
+  new-subject-template='{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
+
+
     entity_event                        = "https://veniss.net/container/fieldDefinitionContainer/entity_event"
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
@@ -23,11 +24,13 @@
     person_birth_date                   = "https://veniss.net/container/fieldDefinitionContainer/person_birth_date"
     person_death_date                   = "https://veniss.net/container/fieldDefinitionContainer/person_death_date"
   ]]'
+  [[> rsp:FormDefaults]] 
 >
   <div class="form-scroll-area">
     <semantic-form-errors></semantic-form-errors>
 
     <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor","https://veniss.net/ontology#Person", "https://veniss.net/ontology#Actor"]'></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="has_type" default-value="http://www.researchspace.org/resource/system/vocab/resource_type/Person"></semantic-form-hidden-input>
 
     <div class="container-fluid">
 

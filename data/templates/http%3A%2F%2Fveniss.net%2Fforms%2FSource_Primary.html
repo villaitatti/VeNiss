@@ -1,6 +1,6 @@
 <semantic-form
   persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
-  new-subject-template="{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/Source_Primary/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}"
+  new-subject-template="http://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
@@ -57,7 +57,7 @@
         <div id="source_attributed_title">
           <semantic-form-drag-and-drop-input  
             for='entity_image_main_representation' 
-            label="Main" 
+            label="Image" 
             placeholder-item-template="
               <div class='image-uploader'>
                 <div><rs-icon icon-type='rounded' icon-name='upload' class='upload_icon' symbol='true'></rs-icon></div>
@@ -242,13 +242,15 @@
                         label="Archival Location" 
                         for='source_archival_location'
                         placeholder="Drop here the archival unit containing this source ... "
-                        close-dropdown-on-selection='false'
+                        close-dropdown-on-selection='true'
                         scheme-page-button-config='{
                           "iri": "http://www.researchspace.org/resource/ThinkingFrames",
-                          "view": "authority-content",
-                          "scheme": "http://www.researchspace.org/resource/vocab/archives",
+                          "view": "authority-list",
+                          "scheme": "http://www.researchspace.org/resource/vocab/archival_units",
                           "tooltip": "Open list of terms"
                         }'
+                        nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Archival_unit nested=true editable=true mode="new" scheme="http://www.researchspace.org/resource/vocab/mode_of_representation"
+                                                                                                                            entityType="mode of representation"}}{{{{/raw}}}}'
                         query-item-label='
                           SELECT (group_concat(distinct ?lbl; separator=", ") as ?label) where {
                             {
@@ -323,10 +325,14 @@
                   <bs-row>
                     <bs-col lg="12">
                       <!-- Secondary source -->
-                      <semantic-form-drag-and-drop-input 
+                      <semantic-form-autocomplete-input
                         label="Secondary Source in which this source appears"
-                        for='source_forms_part_of_secondary_source'>
-                      </semantic-form-drag-and-drop-input>
+                        for='source_forms_part_of_secondary_source'
+
+                        nested-form-template='{{{{raw}}}}{{> veniss_forms:Source_Secondary nested=true editable=true mode="new" scheme="http://veniss.net/resource/source"
+                                                                                                                            entityType="Secondary source"}}{{{{/raw}}}}'
+                        >
+                      </semantic-form-autocomplete-input>
                     </bs-col>
                   </bs-row>
                 </div>

@@ -1,10 +1,12 @@
 
 
 <semantic-form
-  id='{{viewId}}-vocab-form' 
-  new-subject-template='https://veniss.net/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
+  new-subject-template="{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}"
   fields='[[ fieldDefinitions
     type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+     
     is_listed_in                            = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
 
     vocab_entry_label                       = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
@@ -15,40 +17,31 @@
     vocab_entry_archival_unit_prefix        = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_archival_unit_prefix"
 
   ]]'
-  post-action="event"
-  subject='{{node}}'
+  [[> rsp:FormDefaults]]
   >
 
-
-      <mp-event-proxy 
-        id='some-refresh' 
-        on-event-source='vocab_entry_partof' 
-        proxy-event-type='Component.TemplateUpdate' 
-        proxy-targets='["some-element"]'
-      ></mp-event-proxy>
-
   <semantic-form-errors></semantic-form-errors>
-  <div id="archival_unit" class="form-scroll-area">
+  <div class="form-scroll-area">
 
     <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E78_Collection'></semantic-form-hidden-input>
-    <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archives"></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="has_type" default-value="http://www.researchspace.org/resource/system/vocab/resource_type/Archival_Unit"></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="is_listed_in" default-value="http://www.researchspace.org/resource/vocab/archival_units"></semantic-form-hidden-input>
 
     <div data-flex-layout="column stretch-stretch">
-
-      <!-- Unit name -->
       <div id="vocab_entry_label" class="padding-5">
         <semantic-form-text-input languages='["it", "en"]' label="Unit appellation" placeholder="Enter unit appellation ..." for="vocab_entry_label"></semantic-form-text-input>
       </div>
-
     </div>
-    
+   
     <div data-flex-layout="column stretch-stretch">
 
       <div data-flex-layout="row stretch-stretch">
 
+        <!--
         <div id="vocab_entry_archival_unit_typology" class="padding-5">
           <semantic-form-select-input label="Typology", placeholder="Select unit typology ..." for="vocab_entry_archival_unit_typology"></semantic-form-select-input>
         </div>
+        -->
 
         <!-- Unit Acronym -->
         <div id="vocab_entry_archival_unit_acronym" class="padding-5">
@@ -71,13 +64,6 @@
       <bs-alert bs-style="danger">
         <p><strong>Danger zone!</strong> Changing the parent archival unit may change the entire structure.</p>
       </bs-alert>
-
-      <mp-event-target-template-render id='some-element' template='{{> xy}}'>
-        <template id='xy'>
-          <div>Look for {{iri.value}}</div>
-        </template>
-      </mp-event-target-template-render>
-
 
       <!-- add broader if there is one -->
       <div id="vocab_entry_partof" class="padding-5">
@@ -111,30 +97,14 @@
           '
           tree-patterns='{
             "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-            "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
+            "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archival_units>"
           }'>
         </semantic-form-tree-picker-input>
       </div>
 
-    </div>
+    </div> 
 
   </div>
 
-[[> rsp:FormDefaultActions]]
-</semantic-form>
-
-<style>
-  #archival_unit .RemovableBadge {
-    background-color: white!important;
-  }
-
-  #archival_unit .RemovableBadge__content, #archival_unit .RemovableBadge__remove {
-    max-width: none!important;
-    text-transform: none!important;
-    color: black!important;
-  }
-
-</style>
-
-
-      
+[[> rsp:FormDefaultActions formEntity='{{#if entityType}}{{entityType}}{{else}}Archival Unit{{/if}}']]
+</semantic-form>      

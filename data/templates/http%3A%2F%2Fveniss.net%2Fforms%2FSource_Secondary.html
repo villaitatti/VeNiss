@@ -1,8 +1,5 @@
-<semantic-form 
-  id='{{viewId}}-vocab-form' 
-  post-action="event"
-  subject='{{node}}'
-  browser-persistence="true"
+<semantic-form
+  persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
   new-subject-template='https://veniss.net/resource/bibitem/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
@@ -19,86 +16,76 @@
     bibitem_date                        = "https://veniss.net/container/fieldDefinitionContainer/bibitem_date"
     bibitem_broader                     = "https://veniss.net/container/fieldDefinitionContainer/bibitem_broader"
   ]]'
+  [[> rsp:FormDefaults]]
 >
+  <semantic-form-hidden-input 
+    for="type" 
+    default-values='[
+      "http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object",
+      "http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression", 
+      "https://veniss.net/ontology#Source_Secondary",
+      "https://veniss.net/ontology#Source"
+    ]'
+  ></semantic-form-hidden-input>   
+
   <div class="form-scroll-area">
-      
-    <semantic-form-errors></semantic-form-errors>
-
-    <semantic-form-hidden-input 
-      for="type" 
-      default-values='[
-        "http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object",
-        "http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression", 
-        "https://veniss.net/ontology#Source_Secondary",
-        "https://veniss.net/ontology#Source"
-      ]'
-    ></semantic-form-hidden-input>      
-
     <div class="container-fluid">
       <bs-tabs class="source_tabs" id="tabs" >
+
         <bs-tab event-key="1" title="Metadata">
           <div data-flex-layout="column stretch-stretch">
 
             <!-- ID, Authors -->
-            <div data-flex-layout="row top-stretch">
-
-              <div id="bibitem_id">
-                <div class="padding-5">
+            <bs-row>
+              <bs-col md="6" sm="12">
+                <div id="bibitem_id">
                   <semantic-form-text-input label="Identifier" placeholder="Enter DOI, ISBN, ..." for="bibitem_id"></semantic-form-text-input>
                 </div>
-              </div>
-
-              <div id="bibitem_author">
-                <div class="padding-5">
+              </bs-col>
+              <bs-col md="6" sm="12">
+                <div id="bibitem_author">
                   <semantic-form-text-input label="Author(s)" placeholder="Surname, Name; Surname, Name; ..." for="bibitem_author"></semantic-form-text-input>
                 </div>
-              </div>
-
-            </div>
+              </bs-col>
+            </bs-row>
 
             <!-- Title -->
-            <div data-flex-layout="row top-stretch">
-
-              <div id="bibitem_title">
-                <div class="padding-5">
+            <bs-row>
+              <bs-col md="12" sm="12">
+                <div id="bibitem_title">
                   <semantic-form-text-input label="Title" placeholder="Enter title ..." for="bibitem_title"></semantic-form-text-input>
                 </div>
-              </div>
-
-            </div>
+              </bs-col>
+            </bs-row>
 
             <!-- City, Date -->
-            <div data-flex-layout="row top-stretch">
-
-              <div id="bibitem_place">
-                <div class="padding-5">
+            <bs-row>
+              <bs-col md="6" sm="12">
+                <div id="bibitem_place">
                   <semantic-form-text-input label="Publication city" placeholder="Enter publication city ..." for="bibitem_place"></semantic-form-text-input>
                 </div>
-              </div>
+              </bs-col>
 
-              <div id="bibitem_date">
-                <div class="padding-5">
+              <bs-col md="6" sm="12">
+                <div id="bibitem_date">
                   <semantic-form-text-input label="Publication date" placeholder="Enter publication date ..." for="bibitem_date"></semantic-form-text-input>
                 </div>
-              </div>
+              </bs-col>
+            </bs-row>
 
-            </div>
-
-            <div data-flex-layout="row top-stretch">
-
-              <div id="bibitem_curator">
-                <div class="padding-5">
+            <bs-row>
+              <bs-col md="6" sm="12">
+                <div id="bibitem_curator">
                   <semantic-form-text-input label="Curator" placeholder="Enter Curator ..." for="bibitem_curator"></semantic-form-text-input>
                 </div>
-              </div>
+              </bs-col>
 
-              <div id="bibitem_publisher">
-                <div class="padding-5">
+              <bs-col md="6" sm="12">
+                <div id="bibitem_publisher">
                   <semantic-form-text-input label="Publisher" placeholder="Enter Publisher ..." for="bibitem_publisher"></semantic-form-text-input>
                 </div>
-              </div>
-
-            </div>
+              </bs-col>
+            </bs-row>
 
             <!-- Typology, broader title and number -->
             <div data-flex-layout="row top-stretch">
@@ -315,13 +302,7 @@
           </div>
         </bs-tab>
         <bs-tab event-key="2" title="Related entities">
-          <div id="source_location_type" class="padding-5">
-            <semantic-form-select-input 
-              for='source_island' 
-              label="Island"
-              placeholder="Select the island">
-            </semantic-form-select-input>
-          </div>
+          
         </bs-tab>
       </bs-tabs>
       
@@ -329,5 +310,8 @@
     </div>
   
   </div>
-  [[> rsp:FormDefaultActions]]
+
+  <semantic-form-errors></semantic-form-errors>
+
+  [[> rsp:FormDefaultActions formEntity='{{#if entityType}}{{entityType}}{{else}}Secondary Source{{/if}}']]
 </semantic-form>

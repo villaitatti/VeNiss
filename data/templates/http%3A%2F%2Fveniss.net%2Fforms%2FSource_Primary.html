@@ -1,6 +1,6 @@
 <semantic-form
   persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
-  new-subject-template="http://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+  new-subject-template="https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 

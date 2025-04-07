@@ -62,60 +62,34 @@
 
         <semantic-search-result-holder>
           <div id="mapNavigatorRow">
+            <semantic-map-controls
+            id="search-map-control"
+            target-map-id="search-map"
+            features-taxonomies="name,use"
+            features-color-taxonomies="use,function"
+            features-colors-palette='{
+              "military":"rgba(245,185,153,0.6)",
+              "service":"rgba(124,164,204,0.6)",
+              "abandoned":"rgba(183,161,209,0.6)",
+              "religious":"rgba(0,63,114,0.6)",
+              "water supply":"rgba(154,207,237)",
+              "accomodation":"rgba(214,223,218,0.6)",
+              "unknown":"rgba(173,195,165,0.6)",
+              "kennel":"rgba(100,195,165,0.6)"
+            }'
+            features-options-enabled="true"
+            filters-initialization='{"basemap":true,"overlay":true,"feature":true}'
+            vector-levels='["Island","Buildings"]'
+            show-filters="true"
+            timeline='{
+              "min":1500,
+              "max":2025,
+              "mode":"normal",
+              "default":2025
+            }'
+            >
+          </semantic-map-controls>
             <div id="mapContainer">[[> veniss:Map ]]</div>
-            <div id="sidebarContainer">
-              <div class="maptoolbar flexrows">
-                <div id="maptoolbarFirst">
-                    <mp-event-trigger
-                      id="event-trigger2"
-                      type="Component.TemplateUpdate"
-                      data='{"showbasemaps": true}'
-                      targets='["sidebar"]'
-                    >
-                    <div class="toolbarIconContainer">
-                      <em id="basemapsBtn" class="fa fa-globe toolbarIcon"></em>
-                      <label>Basemaps</label>
-                    </div>
-                    </mp-event-trigger>
-                    <mp-event-trigger
-                      id="event-trigger3"
-                      type="Component.TemplateUpdate"
-                      data='{"showhistoricalmaps": true}'
-                      targets='["sidebar"]'
-                    >
-                    <div class="toolbarIconContainer">
-                      <em id="historicalmapsBtn" class="fa fa-map toolbarIcon"></em>
-                      <label>Historical Maps</label>
-                    </div>
-                    </mp-event-trigger>
-                    <mp-event-trigger
-                      id="event-trigger4"
-                      type="Component.TemplateUpdate"
-                      data='{"showoptions": true}'
-                      targets='["sidebar"]'
-                    >
-                    <div class="toolbarIconContainer">
-                      <em id="optionsBtn" class="fa fa-cogs toolbarIcon"></em>
-                      <label>Control Panel</label>
-                    </div>
-                    </mp-event-trigger>
-                    <mp-event-trigger
-                      id="event-trigger5"
-                      type="Component.TemplateUpdate"
-                      data='{"showentities": true}'
-                      targets='["sidebar"]'
-                    >
-                    <div class="toolbarIconContainer">
-                      <em id="entitiesBtn" class="fa fa-id-card toolbarIcon"></em>
-                      <label>Entities</label>
-                    </div>
-                    </mp-event-trigger>
-                </div>
-              </div>
-            <div id="navigatorContainer">
-              [[> veniss:Navigator ]]
-            </div>
-            </div>
           </div>
         </semantic-search-result-holder>
       </semantic-search>
@@ -136,7 +110,7 @@
   .colorsLegend {
     position: fixed;
     right: calc(var(--sidebar-width) + 20px) !important;
-    top: 20px;
+    top: 120px;
     left: auto !important;
     background-color: white;
     border-radius: 5px;
@@ -145,7 +119,7 @@
 }
 
   #veniss_navbar {
-  width: var(--sidebar-width) !important;
+  width: 100%;
   min-height: var(--nav-height, 58px);
     height: var(--nav-height, 58px);
     border: none;
@@ -155,7 +129,6 @@
    z-index: 1030;
    right: 0;
    color: white !important;
-   position: absolute;
    -webkit-box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15); 
    box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.15);
 }
@@ -172,5 +145,9 @@
   font-size: 13.5px;
   background-color: transparent;
   font-weight: 300;
+}
+
+.btn.btn-default.component-page-toolbar__btn_edit {
+  display: none !important;
 }
 </style>

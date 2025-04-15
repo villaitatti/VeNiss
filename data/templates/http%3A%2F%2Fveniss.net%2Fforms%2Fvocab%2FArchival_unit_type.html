@@ -7,16 +7,19 @@
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     is_listed_in                        = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+    has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
 
     vocab_entry_abbreviation            = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_abbreviation"
     vocab_entry_broader                 = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_broader"
     vocab_entry_label                   = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
     vocab_entry_equivalent              = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_equivalent"
   ]]'
+  [[> rsp:FormDefaults]]
 >
 <semantic-form-errors></semantic-form-errors>
 <div class="form-scroll-area">
   <semantic-form-hidden-input for="type" default-value='http://www.w3.org/2004/02/skos/core#Concept'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="has_type" default-value='http://www.researchspace.org/resource/system/vocab/resource_type/Archival_Unit_Type'></semantic-form-hidden-input>
   <semantic-form-hidden-input for="is_listed_in" default-value="https://veniss.net/resource/vocab/archival_unit_types"></semantic-form-hidden-input>
 
   <!-- Source name-->

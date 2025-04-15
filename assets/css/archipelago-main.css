@@ -27,10 +27,10 @@ body {
   height: 100%;
 }
 
-#mapNavigatorContainer {
+/* #mapNavigatorContainer {
   flex: 1;
   position: relative;
-}
+} */
 
 #mapNavigatorRow {
   display: flex;
@@ -44,12 +44,17 @@ body {
   background: rgba(0, 141, 237, 0);
 }
 
-#navigatorContainer {
+#venissLogoNavbar {
+  height:auto;
+  vertical-align: baseline !important;
+}
+
+/* #navigatorContainer {
   padding: 25px;
   text-wrap: normal;
   overflow-wrap: break-word;
   background-color: white;
-}
+} */
 
 .system-spinner:nth-of-type(n + 2) {
   display: none !important;
@@ -124,7 +129,7 @@ body {
   border-radius: 125px / 12px;
   box-shadow: 0 0 8px black;
 }
-
+/* 
 #sidebarContainer {
   width: var(--sidebar-width);
   height: calc(100vh - var(--nav-height));
@@ -142,7 +147,7 @@ body {
   width: 100% !important;
   padding-left: 20px;
   padding-right: 20px;
-}
+} */
 
 .toggle3dBtn {
   position: fixed;
@@ -166,7 +171,7 @@ body {
 .colorsLegend {
   position: fixed;
   right: calc(var(--sidebar-width) + 20px);
-  top: 20px;
+  top: 120px;
   background-color: white;
   border-radius: 5px;
   z-index: 100000000;

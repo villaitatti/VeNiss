@@ -1,10 +1,10 @@
 <semantic-form 
-  id='{{viewId}}-vocab-form' 
-  post-action="event"
-  subject='{{node}}'
-  new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
+  new-subject-template='{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}'
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
+
     entity_event                        = "https://veniss.net/container/fieldDefinitionContainer/entity_event"
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
@@ -17,21 +17,17 @@
     group_formation_date                = "https://veniss.net/container/fieldDefinitionContainer/group_formation_date"
     group_dissolution_date              = "https://veniss.net/container/fieldDefinitionContainer/group_dissolution_date"
   ]]'
+  [[> rsp:FormDefaults]] 
 >
+  <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor","https://veniss.net/ontology#Group", "https://veniss.net/ontology#Actor"]'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="has_type" default-value="http://www.researchspace.org/resource/system/vocab/resource_type/Group"></semantic-form-hidden-input>
+
   <div class="form-scroll-area">
     <div class="container-fluid">
 
-      <semantic-form-errors></semantic-form-errors>
-
-      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E39_Actor","https://veniss.net/ontology#Group", "https://veniss.net/ontology#Actor"]'></semantic-form-hidden-input>
-
-      <div data-flex-layout="row stretch-stretch">
-
-        <!-- LEFT: General data -->
-        <div data-flex-layout="column top-stretch" class="left-column">
-
+      <bs-row>
+        <bs-col md="6" sm="12">
           <div id="source_visual_representation" class="padding-5" class="left-column">
-
             <div id="actor_representation">
               <semantic-form-file-input 
                 label="Visual representation"
@@ -57,149 +53,139 @@
                 '
               ></semantic-form-file-input>
             </div>
-
-            <hr>
-
-            <div id="entity_publication_notes" class="padding-5">
-              <semantic-form-text-input placeholder="Enter a note for the editor ..." multiline="true" label="Notes" for="entity_publication_notes"></semantic-form-text-input>
-            </div>
-
-            <div id="entity_published" class="padding-5">
-              <semantic-form-checkbox-input label="Record completed?" for='entity_published'></semantic-form-checkbox-input>
-            </div>
-
           </div>
+        </bs-col>
+
+        <bs-col md="6" sm="12">
+          <div id="group_appellation">
+            <semantic-form-text-input label="Name" placeholder="Enter Group name ..." for="group_appellation" languages='["en","it"]'></semantic-form-text-input>
+          </div>
+        </bs-col>
+      </bs-row>
 
 
 
-        </div>
+      <div data-flex-layout="row stretch-stretch">
 
-        <!-- Right -->
-        <div data-flex-self="size-x3">
-          <bs-tabs id="tabs">
-            <!-- Metadata -->
-            <bs-tab event-key="1" title="Metadata">
+        <bs-tabs id="tabs">
+          
+          <bs-tab event-key="1" title="Details">
 
-              <bs-row>
-                <bs-col lg="6" md="12" sm="12">
-                  <div id="group_appellation">
-                    <semantic-form-text-input label="Name" placeholder="Enter Group name ..." for="group_appellation" languages='["en","it"]'></semantic-form-text-input>
-                  </div>
-                </bs-col>
+            <bs-row>
 
-                <bs-col lg="6" md="12" sm="12">
-                  <div id="group_type">
-                    <semantic-form-tree-picker-input 
-                      label="Type" 
-                      for='group_type'
-                      placeholder="Click the + button and drag and drop"
-                      custom-button='{
-                        "iri": "http://www.researchspace.org/resource/ThinkingFrames",
-                        "view": "authority-content",
-                        "resource": "https://veniss.net/resource/vocab/actor_types"
-                      }'
-                      tree-patterns='{
-                        "relationPattern": "?item skos:broader ?parent", 
-                        "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types>"
-                      }'>
-                    </semantic-form-tree-picker-input>
-                  </div>
-                </bs-col>
-              </bs-row>
 
-              <bs-row>
-                <bs-col lg="12" md="12" sm="12">
-                <div id="group_formation_date">
-                  <semantic-form-composite-input 
-                    label="Formation date"
-                    for='group_formation_date' 
-                    new-subject-template="/formation/date" 
-                    fields='[[fieldDefinitions
-                      type                        = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                      time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
-                      time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
-                      time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
-                    ]]'>
-                    
-                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
-                    
-                    <bs-row>
-                      <bs-col sm="4">
-                        <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
-                      </bs-col>
-
-                      <bs-col sm="4">
-                        <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
-                      </bs-col>
-
-                      <bs-col sm="4">
-                        <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
-                      </bs-col>
-                    </bs-row>
-
-                  </semantic-form-composite-input>
+              <bs-col lg="6" md="12" sm="12">
+                <div id="group_type">
+                  <semantic-form-tree-picker-input 
+                    label="Type" 
+                    for='group_type'
+                    placeholder="Click the + button and drag and drop"
+                    custom-button='{
+                      "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                      "view": "authority-content",
+                      "resource": "https://veniss.net/resource/vocab/actor_types"
+                    }'
+                    tree-patterns='{
+                      "relationPattern": "?item skos:broader ?parent", 
+                      "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types>"
+                    }'>
+                  </semantic-form-tree-picker-input>
                 </div>
               </bs-col>
-              </bs-row>
+            </bs-row>
 
-              <bs-row>
-                <bs-col lg="12" md="12" sm="12">
-                <div id="group_dissolution_date">
-                  <semantic-form-composite-input 
-                    label="Dissolution date"
-                    for='group_dissolution_date' 
-                    new-subject-template="/dissolution/date" 
-                    fields='[[fieldDefinitions
-                      type                        = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                      time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
-                      time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
-                      time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
-                    ]]'>
-                    
-                    <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
-                    
-                    <bs-row>
-                      <bs-col sm="4">
-                        <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
-                      </bs-col>
-
-                      <bs-col sm="4">
-                        <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
-                      </bs-col>
-
-                      <bs-col sm="4">
-                        <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
-                      </bs-col>
-                    </bs-row>
-
-                  </semantic-form-composite-input>
-                </div>
-              </bs-col>
-              </bs-row>
-
-            </bs-tab>
-
-            <!-- Related entities -->
-            <bs-tab event-key="2" title="Related Events">
-              <bs-row>
-                <bs-col lg="12">
-
-                  <semantic-form-drag-and-drop-input 
-                    label="Related Events"
-                    for='entity_event'
-                    nested-form-template='{{> veniss_forms:Event nested=true editable=true}}'>
+            <bs-row>
+              <bs-col lg="12" md="12" sm="12">
+              <div id="group_formation_date">
+                <semantic-form-composite-input 
+                  label="Formation date"
+                  for='group_formation_date' 
+                  new-subject-template="/formation/date" 
+                  fields='[[fieldDefinitions
+                    type                        = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                    time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                    time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                    time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                  ]]'>
                   
-                </bs-col>
-              </bs-row>
-            </bs-tab>
+                  <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
+                  
+                  <bs-row>
+                    <bs-col sm="4">
+                      <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
+                    </bs-col>
 
-          </bs-tabs>
-        </div>
+                    <bs-col sm="4">
+                      <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
+                    </bs-col>
+
+                    <bs-col sm="4">
+                      <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
+                    </bs-col>
+                  </bs-row>
+
+                </semantic-form-composite-input>
+              </div>
+            </bs-col>
+            </bs-row>
+
+            <bs-row>
+              <bs-col lg="12" md="12" sm="12">
+              <div id="group_dissolution_date">
+                <semantic-form-composite-input 
+                  label="Dissolution date"
+                  for='group_dissolution_date' 
+                  new-subject-template="/dissolution/date" 
+                  fields='[[fieldDefinitions
+                    type                        = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                    time_primitive_day          = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+                    time_primitive_month        = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+                    time_primitive_year         = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+                  ]]'>
+                  
+                  <semantic-form-hidden-input for="type" default-value="http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span"></semantic-form-hidden-input>
+                  
+                  <bs-row>
+                    <bs-col sm="4">
+                      <semantic-form-text-input label="Day" placeholder="DD" for="time_primitive_day"></semantic-form-text-input>
+                    </bs-col>
+
+                    <bs-col sm="4">
+                      <semantic-form-text-input label="Month" placeholder="MM" for="time_primitive_month"></semantic-form-text-input>
+                    </bs-col>
+
+                    <bs-col sm="4">
+                      <semantic-form-text-input label="Year" placeholder="YYYY" for="time_primitive_year"></semantic-form-text-input>
+                    </bs-col>
+                  </bs-row>
+
+                </semantic-form-composite-input>
+              </div>
+            </bs-col>
+            </bs-row>
+
+          </bs-tab>
+
+          <!-- Related entities -->
+          <bs-tab event-key="2" title="Related Entities">
+            <bs-row>
+              <bs-col lg="12">
+
+                
+                
+              </bs-col>
+            </bs-row>
+          </bs-tab>
+
+        </bs-tabs>
 
       </div>
       
 
     </div>
   </div>
+
+  <semantic-form-errors></semantic-form-errors>
+  
   [[> rsp:FormDefaultActions]]
 </semantic-form>

@@ -66,16 +66,16 @@
       <bs-tabs class="source_tabs form-main-window" id="tabs">
 
         <!-- Metadata -->
-        <bs-tab event-key="1" title="Metadata">
+        <bs-tab event-key="1" title="Details">
 
           <bs-row>
-            <bs-col lg="6" md="6" sm="12">
-              <div id="person_givenname" class="padding-5">
+            <bs-col md="6" sm="12">
+              <div id="person_givenname">
                 <semantic-form-text-input label="Given name" placeholder="Enter given name ..." for="person_givenname"></semantic-form-text-input>
               </div>
             </bs-col>
-            <bs-col lg="6" md="6" sm="12">
-              <div id="person_familyname" class="padding-5">
+            <bs-col md="6" sm="12">
+              <div id="person_familyname">
                 <semantic-form-text-input label="Family name" placeholder="Enter family name ..." for="person_familyname"></semantic-form-text-input>
               </div>
             </bs-col>
@@ -83,14 +83,14 @@
 
           <bs-row>
 
-            <bs-col lg="6" sm="12">
-              <div id="person_alias" class="padding-5">
+            <bs-col md="6" sm="12">
+              <div id="person_alias">
                 <semantic-form-text-input label="Alias" placeholder="Enter alias ..." for="person_alias"></semantic-form-text-input>
               </div>
             </bs-col>
 
-            <bs-col lg="6" sm="12">
-              <div id="person_patronymic" class="padding-5">
+            <bs-col md="6" sm="12">
+              <div id="person_patronymic">
                 <semantic-form-text-input label="Patronymic" placeholder="Enter patronymic ..." for="person_patronymic"></semantic-form-text-input>
               </div>
             </bs-col>
@@ -208,26 +208,34 @@
 
               <bs-row>
                 <!-- Subject -->
-                <bs-col lg="6" sm="12">
+                <bs-col md="6" sm="12">
                   <div id="person_occupation_subject">
-                    <semantic-form-select-input
+                    <semantic-form-tree-picker-input
+                    scheme-page-button-config='{
+                            "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                            "view": "authority-list",
+                            "scheme": "https://veniss.net/resource/vocab/actor_types",
+                            "tooltip": "Open list of terms"
+                          }'
+                          nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Actor nested=true editable=true mode="new" broader="https://veniss.net/resource/vocab/actor_types/7a60b95e-74b2-11ee-a7ed-3a5becfe4abe" }}{{{{/raw}}}}'
                       for='person_occupation_subject'
                       label="Activity" 
                       placeholder="Choose the activity ..." 
                     >
-                    </semantic-form-select-input>
+                    </semantic-form-tree-picker-input>
                   </div> 
                 </bs-col>
 
 
-                <bs-col lg="6" sm="12">
+                <bs-col md="6" sm="12">
                   <div id="person_occupation_group" class="padding-5">
-                      <semantic-form-autocomplete-input  
+                      <semantic-form-tree-picker-input  
                         for='person_occupation_group'
                         label="Group" 
                         placeholder="Enter the group ..." 
+                        nested-form-template='{{{{raw}}}}{{> veniss_forms:Group nested=true editable=true mode="new" }}{{{{/raw}}}}'
                       >
-                      </semantic-form-autocomplete-input>
+                      </semantic-form-tree-picker-input>
                     </div> 
                 </bs-col>
               </bs-row>
@@ -310,13 +318,13 @@
 
               <bs-row>
 
-                <bs-col lg="6" sm="12">
+                <bs-col md="6" sm="12">
                   <div id="person_occupation_notes">
                     <semantic-form-text-input label="Place" placeholder="Insert place" for="person_occupation_notes"></semantic-form-text-input>
                   </div>
                 </bs-col>
 
-                <bs-col lg="6" sm="12">
+                <bs-col md="6" sm="12">
                   <div id="person_occupation_island">
                     <semantic-form-select-input label="Island" placeholder="Select Island" for="person_occupation_island"></semantic-form-select-input>
                   </div>
@@ -329,7 +337,7 @@
         </bs-tab>
 
         <!-- relations -->
-        <bs-tab event-key="3" title="Related Events">
+        <bs-tab event-key="3" title="Related Entites">
 
           
 

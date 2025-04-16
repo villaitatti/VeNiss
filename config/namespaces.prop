@@ -1,4 +1,4 @@
-Default                 = https://veniss.net/resource/
+veniss                  = https://veniss.net/resource/
 veniss_forms            = http://veniss.net/forms/
 veniss_forms_vocab      = http://veniss.net/forms/vocab/
 veniss_types            = https://veniss.net/resource/type/

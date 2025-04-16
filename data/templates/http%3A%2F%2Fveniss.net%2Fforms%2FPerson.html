@@ -211,13 +211,13 @@
                 <bs-col md="6" sm="12">
                   <div id="person_occupation_subject">
                     <semantic-form-tree-picker-input
-                    scheme-page-button-config='{
-                            "iri": "http://www.researchspace.org/resource/ThinkingFrames",
-                            "view": "authority-list",
-                            "scheme": "https://veniss.net/resource/vocab/actor_types",
-                            "tooltip": "Open list of terms"
-                          }'
-                          nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Actor nested=true editable=true mode="new" broader="https://veniss.net/resource/vocab/actor_types/7a60b95e-74b2-11ee-a7ed-3a5becfe4abe" }}{{{{/raw}}}}'
+                      scheme-page-button-config='{
+                        "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+                        "view": "authority-list",
+                        "scheme": "https://veniss.net/resource/vocab/actor_types",
+                        "tooltip": "Open list of terms"
+                      }'
+                      nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Actor nested=true editable=true mode="new" broader="https://veniss.net/resource/vocab/actor_types/7a60b95e-74b2-11ee-a7ed-3a5becfe4abe" }}{{{{/raw}}}}'
                       for='person_occupation_subject'
                       label="Activity" 
                       placeholder="Choose the activity ..." 

@@ -57,7 +57,7 @@
 
     <mp-user-language-switch></mp-user-language-switch>
     <li>
-      <mp-anonymous-hidden alt='<li><a href="/login" title="login"></a></li>'>
+      <mp-anonymous-hidden>
         <mp-event-target-template-render id='header-profile-dropdown' template='\{{> template}}'>
           <template id='template'>
             <semantic-query query='SELECT DISTINCT ?systemUser ?systemUserName ?actorFullName ?group ?groupFullName ?image ?imageType { 
@@ -164,8 +164,10 @@
       </mp-anonymous-hidden>
     </li>
 
+
+
     <li>
-      <mp-anonymous-hidden alt='<li><a href="/login" title="login"></a></li>'>
+      <mp-anonymous-hidden alt='<li><a href="/login" title="login" class="rs-body-m-M">Login</a></li>'>
         <button class="btn btn-icon">
           <semantic-link-container  uri="http://www.researchspace.org/resource/ThinkingFrames" 
                               urlqueryparam-view='homepage'>

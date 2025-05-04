@@ -16,6 +16,18 @@
     event_entity                        = "https://veniss.net/container/fieldDefinitionContainer/event_entity"
 
     event_relation                      = "https://veniss.net/container/fieldDefinitionContainer/event_relation"
+
+    entity_is_domain_of_relation_actor      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_actor"
+    entity_is_range_of_relation_actor       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_actor"
+
+    entity_is_domain_of_relation_event       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_event"
+    entity_is_range_of_relation_event      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_event"
+
+    entity_is_domain_of_relation_place      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_place"
+    entity_is_range_of_relation_place       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_place"
+
+    entity_is_domain_of_relation_source     = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_source"
+    entity_is_range_of_relation_source      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_source"
   ]]'
   [[> rsp:FormDefaults]]
 >
@@ -86,37 +98,9 @@
 
       </bs-tab>
 
-      <bs-tab event-key="2" title="Related entities">
-
-        <div id="event_entity">
-
-          <semantic-form-composite-input
-            label="Related Entity"
-            render-header="false"
-            for="event_relation"
-            new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}" 
-            fields='[[fieldDefinitions
-              relation_role                       = "https://veniss.net/container/fieldDefinitionContainer/relation_role"
-              relation_entity                     = "https://veniss.net/container/fieldDefinitionContainer/relation_entity"
-            ]]'
-          >
-
-            <bs-row>
-              <bs-col lg="3">
-                <semantic-form-drag-and-drop-input 
-                  label="Entity"
-                  for='relation_entity'>
-                </semantic-form-drag-and-drop-input>
-              </bs-col>
-              <bs-col lg="9">
-                <semantic-form-text-input placeholder="Enter note for this relation" label="Notes" for="relation_role"></semantic-form-text-input>
-              </bs-col>
-            </bs-row>
-
-          </semantic-form-composite-input>
-          
-        </div>
-
+      <!-- Related Entities -->
+      <bs-tab event-key="2" title="Related Entities" disabled="{{#if node}}false{{else}}true{{/if}}">
+        [[> veniss_forms:Relation ]]
       </bs-tab>
     </bs-tabs>
       

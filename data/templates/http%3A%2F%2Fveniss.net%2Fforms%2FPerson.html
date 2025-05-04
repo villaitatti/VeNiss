@@ -23,6 +23,18 @@
     person_occupation                   = "https://veniss.net/container/fieldDefinitionContainer/person_occupation"
     person_birth_date                   = "https://veniss.net/container/fieldDefinitionContainer/person_birth_date"
     person_death_date                   = "https://veniss.net/container/fieldDefinitionContainer/person_death_date"
+
+    entity_is_domain_of_relation_actor      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_actor"
+    entity_is_range_of_relation_actor       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_actor"
+
+    entity_is_domain_of_relation_event       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_event"
+    entity_is_range_of_relation_event      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_event"
+
+    entity_is_domain_of_relation_place      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_place"
+    entity_is_range_of_relation_place       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_place"
+
+    entity_is_domain_of_relation_source     = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_source"
+    entity_is_range_of_relation_source      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_source"
   ]]'
   [[> rsp:FormDefaults]] 
 >
@@ -336,12 +348,10 @@
           </semantic-form-composite-input>
         </bs-tab>
 
-        <!-- relations -->
-        <bs-tab event-key="3" title="Related Entites">
-
-          
-
-        </bs-tab>
+      <!-- Related Entities -->
+      <bs-tab event-key="3" title="Related Entities" disabled="{{#if node}}false{{else}}true{{/if}}">
+        [[> veniss_forms:Relation ]]
+      </bs-tab>
 
       </bs-tabs>
 
@@ -352,5 +362,5 @@
 
   <semantic-form-errors></semantic-form-errors>
 
-[[> rsp:FormDefaultActions]]
+[[> rsp:FormDefaultActions formEntity='{{#if entityType}}{{entityType}}{{else}}Person{{/if}}']]
 </semantic-form>

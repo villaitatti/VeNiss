@@ -16,6 +16,18 @@
     group_where                         = "https://veniss.net/container/fieldDefinitionContainer/group_where"
     group_formation_date                = "https://veniss.net/container/fieldDefinitionContainer/group_formation_date"
     group_dissolution_date              = "https://veniss.net/container/fieldDefinitionContainer/group_dissolution_date"
+
+    entity_is_domain_of_relation_actor      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_actor"
+    entity_is_range_of_relation_actor       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_actor"
+
+    entity_is_domain_of_relation_event       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_event"
+    entity_is_range_of_relation_event      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_event"
+
+    entity_is_domain_of_relation_place      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_place"
+    entity_is_range_of_relation_place       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_place"
+
+    entity_is_domain_of_relation_source     = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_source"
+    entity_is_range_of_relation_source      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_source"
   ]]'
   [[> rsp:FormDefaults]] 
 >
@@ -164,16 +176,11 @@
 
           </bs-tab>
 
-          <!-- Related entities -->
-          <bs-tab event-key="2" title="Related Entities">
-            <bs-row>
-              <bs-col lg="12">
-
-                
-                
-              </bs-col>
-            </bs-row>
+          <!-- Related Entities -->
+          <bs-tab event-key="2" title="Related Entities" disabled="{{#if node}}false{{else}}true{{/if}}">
+            [[> veniss_forms:Relation ]]
           </bs-tab>
+
 
         </bs-tabs>
 

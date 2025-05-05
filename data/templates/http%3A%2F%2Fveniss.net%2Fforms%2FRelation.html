@@ -328,9 +328,9 @@
               for='relation_has_range_source' 
               placeholder-item-template="
                 <div class='image-uploader'>
-                  <div><rs-icon icon-type='rounded' icon-name='person' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div><rs-icon icon-type='rounded' icon-name='Source' class='upload_icon' symbol='true'></rs-icon></div>
                   <div>Drag and Drop an actor from another frame or</div>
-                  <div><span class='text-link'>click to create a new Person.</span></div>
+                  <div><span class='text-link'>click to create a new Primary Source.</span></div>
                 </div>"
               nested-form-template='{{{{raw}}}}{{> veniss_forms:Source_Primary nested=true editable=true mode="new" }}{{{{/raw}}}}'
               label="Source">
@@ -375,7 +375,7 @@
               label="Source"
               placeholder-item-template="
                 <div class='image-uploader'>
-                  <div><rs-icon icon-type='rounded' icon-name='person' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div><rs-icon icon-type='rounded' icon-name='source' class='upload_icon' symbol='true'></rs-icon></div>
                   <div>Drag and Drop an actor from another frame or</div>
                   <div><span class='text-link'>click to create a new Person.</span></div>
                 </div>"
@@ -405,7 +405,7 @@
     justify-content: center;
   }
 
-  .incoming_relation .cardinality-support__add-value.cardinality-support__add-value--another {
-    display: none;
+  .incoming_relation .cardinality-support__add-value {
+    display: none!important;
   }
 </style>

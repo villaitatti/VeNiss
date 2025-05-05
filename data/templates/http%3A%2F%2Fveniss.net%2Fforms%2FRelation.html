@@ -32,7 +32,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg="12" md="12">
+          <bs-col lg-offset="5" lg="2">
             <semantic-form-drag-and-drop-input  
               for='relation_has_range_actor' 
               placeholder-item-template="
@@ -45,6 +45,10 @@
               label="Actor">
             </semantic-form-drag-and-drop-input> 
           </bs-col>
+
+        </bs-row>
+
+        <bs-row>
           <bs-col lg="12" md="12">
             <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
           </bs-col>

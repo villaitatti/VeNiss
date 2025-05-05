@@ -32,7 +32,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg-offset="5" lg="2">
+          <bs-col lg-offset="4" lg="4">
             <semantic-form-drag-and-drop-input  
               for='relation_has_range_actor' 
               placeholder-item-template="
@@ -79,7 +79,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg="2" md="12">
+          <bs-col lg-offset="4" lg="4">
             <semantic-form-drag-and-drop-input  
               for='relation_has_domain_actor' 
               placeholder-item-template="
@@ -92,7 +92,10 @@
               label="Actor">
             </semantic-form-drag-and-drop-input> 
           </bs-col>
-          <bs-col lg="10" md="12">
+         </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
             <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
           </bs-col>
         </bs-row>
@@ -125,7 +128,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg="12" md="12">
+<bs-col lg-offset="4" lg="4">
             <semantic-form-drag-and-drop-input  
               for='relation_has_range_event' 
               placeholder-item-template="
@@ -138,6 +141,9 @@
               label="Event">
             </semantic-form-drag-and-drop-input> 
           </bs-col>
+          </bs-row>
+
+        <bs-row>
           <bs-col lg="12" md="12">
             <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
           </bs-col>
@@ -168,7 +174,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg="2" md="12">
+          <bs-col lg-offset="4" lg="4">
             <semantic-form-drag-and-drop-input  
               for='relation_has_domain_event' 
               placeholder-item-template="
@@ -181,7 +187,10 @@
               label="Event">
             </semantic-form-drag-and-drop-input> 
           </bs-col>
-          <bs-col lg="10" md="12">
+          </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
             <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
           </bs-col>
         </bs-row>
@@ -215,7 +224,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg="12" md="12">
+          <bs-col lg-offset="4" lg="4">
             <semantic-form-drag-and-drop-input  
               for='relation_has_range_place' 
               placeholder-item-template="
@@ -228,6 +237,9 @@
               label="Builtwork">
             </semantic-form-drag-and-drop-input> 
           </bs-col>
+          </bs-row>
+
+        <bs-row>
           <bs-col lg="12" md="12">
             <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
           </bs-col>
@@ -258,7 +270,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg="2" md="12">
+          <bs-col lg-offset="4" lg="4">
             <semantic-form-drag-and-drop-input  
               for='relation_has_domain_place' 
               placeholder-item-template="
@@ -271,7 +283,10 @@
               label="Builtwork">
             </semantic-form-drag-and-drop-input> 
           </bs-col>
-          <bs-col lg="10" md="12">
+          </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
             <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
           </bs-col>
         </bs-row>
@@ -306,7 +321,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg="12" md="12">
+          <bs-col lg-offset="4" lg="4">
             <semantic-form-drag-and-drop-input  
               for='relation_has_range_source' 
               placeholder-item-template="
@@ -319,6 +334,9 @@
               label="Source">
             </semantic-form-drag-and-drop-input> 
           </bs-col>
+         </bs-row>
+
+        <bs-row>
           <bs-col lg="12" md="12">
             <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
           </bs-col>
@@ -349,7 +367,7 @@
         <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
         
         <bs-row>
-          <bs-col lg="12" md="12">
+          <bs-col lg-offset="4" lg="4">
             <semantic-form-drag-and-drop-input  
               for='relation_has_domain_source' 
               label="Source"
@@ -362,6 +380,9 @@
               nested-form-template='{{{{raw}}}}{{> veniss_forms:Source_Primar nested=true editable=true mode="new" }}{{{{/raw}}}}'>
             </semantic-form-drag-and-drop-input> 
           </bs-col>
+          </bs-row>
+
+        <bs-row>
           <bs-col lg="12" md="12">
             <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
           </bs-col>
@@ -376,3 +397,9 @@
   </bs-tab>
   
 </bs-tabs>
+
+<style>
+  .DragAndDropInput--itemArea {
+    justify-content: center;
+  }
+</style>

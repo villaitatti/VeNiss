@@ -4,6 +4,7 @@
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
+    entity_formRecord                   = "http://www.researchspace.org/pattern/system/entity/formRecord"
    
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
@@ -102,6 +103,9 @@
       <bs-tab event-key="2" title="Related Entities" disabled="{{#if node}}false{{else}}true{{/if}}">
         [[> veniss_forms:Relation ]]
       </bs-tab>
+
+      [[> rsp:FormMetadataTab]]
+
     </bs-tabs>
       
     <semantic-form-errors></semantic-form-errors>

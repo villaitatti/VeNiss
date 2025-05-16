@@ -4,6 +4,7 @@
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     source_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
+    entity_formRecord                   = "http://www.researchspace.org/pattern/system/entity/formRecord"
     
     bibitem_id                          = "https://veniss.net/container/fieldDefinitionContainer/bibitem_id"
     bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
@@ -314,9 +315,14 @@
             </div>
           </div>
         </bs-tab>
-        <bs-tab event-key="2" title="Related entities">
-          
+
+        <!-- Related Entities -->
+        <bs-tab event-key="2" title="Related Entities" disabled="{{#if node}}false{{else}}true{{/if}}">
+          [[> veniss_forms:Relation ]]
         </bs-tab>
+
+        [[> rsp:FormMetadataTab]]
+
       </bs-tabs>
       
 

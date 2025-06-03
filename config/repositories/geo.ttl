@@ -13,7 +13,7 @@ PREFIX : <http://www.researchspace.org/resource/system/repository#>
     repo:repositoryType "openrdf:SailRepository" ;
     reposail:sailImpl [
       sail:sailType "researchspace:SQLSail" ;
-      ephedra:serviceURL "jdbc:postgresql://geodb.veniss.net:5432/veniss_prod" ;
+      ephedra:serviceURL "jdbc:postgresql://10.10.1.10:5432/veniss_prod" ;
       rsrepo:username "${geo.username}" ;
       rsrepo:password "${geo.password}" ;
       ephedra:implementsService :geosql ;

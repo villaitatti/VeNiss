@@ -103,8 +103,7 @@
             ?subject rdfs:label ?name_full .
             BIND(?name_full AS ?name) .          
             }
-            ORDER BY DESC(?subject)
-            LIMIT 10"
+            ORDER BY DESC(?subject)"
             map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
             fix-zoom-level="12"
             fix-center="[1370000.000000000, 5692800.000000000]"

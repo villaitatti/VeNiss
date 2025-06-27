@@ -1,0 +1,47 @@
+name: Suggest Next Version for Branch
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  suggest-version:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install gh jq -y
+
+      - name: Determine branch and fetch last versioned PR
+        id: get_last_version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE_BRANCH: ${{ github.head_ref }}
+        run: |
+          echo "🔍 Finding last PR from '${SOURCE_BRANCH}' into 'main'..."
+
+          latest=$(gh pr list --base main --head "$SOURCE_BRANCH" --state merged --limit 100 --json title \
+            | jq -r '.[].title' \
+            | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' \
+            | sort -V \
+            | tail -n1)
+
+          if [[ -z "$latest" ]]; then
+            echo "No previous PRs from this branch. Defaulting to v0.1.0"
+            echo "latest_version=v0.1.0" >> $GITHUB_ENV
+          else
+            echo "Found latest version: $latest"
+            IFS=. read -r major minor patch <<< "${latest:1}"
+            patch=$((patch + 1))
+            echo "latest_version=v$major.$minor.$patch" >> $GITHUB_ENV
+          fi
+
+      - name: Comment on PR with suggested version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr comment "$PR_URL" --body "🔖 Suggested PR title for \`${{ github.head_ref }}\`: **${{ env.latest_version }}**"

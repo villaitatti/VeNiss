@@ -1,10 +1,11 @@
-<semantic-form 
-  id='{{viewId}}-vocab-form' 
-  post-action="event"
-  subject='{{node}}'
-  new-subject-template='https://veniss.net/resource/actor/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+<semantic-form
+  persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
+  new-subject-template="https://veniss.net/resource/event/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
+    entity_formRecord                   = "http://www.researchspace.org/pattern/system/entity/formRecord"
+   
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
     entity_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
@@ -16,135 +17,106 @@
     event_entity                        = "https://veniss.net/container/fieldDefinitionContainer/event_entity"
 
     event_relation                      = "https://veniss.net/container/fieldDefinitionContainer/event_relation"
+
+    entity_is_domain_of_relation_actor      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_actor"
+    entity_is_range_of_relation_actor       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_actor"
+
+    entity_is_domain_of_relation_event       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_event"
+    entity_is_range_of_relation_event      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_event"
+
+    entity_is_domain_of_relation_place      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_place"
+    entity_is_range_of_relation_place       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_place"
+
+    entity_is_domain_of_relation_source     = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_source"
+    entity_is_range_of_relation_source      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_source"
   ]]'
+  [[> rsp:FormDefaults]]
 >
+  <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E5_Event", "https://veniss.net/ontology#Event"]'></semantic-form-hidden-input>
+  <semantic-form-hidden-input for="has_type" default-value="http://www.researchspace.org/resource/system/vocab/resource_type/Event"></semantic-form-hidden-input>
+
   <div class="form-scroll-area">
-    <div class="container-fluid">
 
-      <semantic-form-errors></semantic-form-errors>
 
-      <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E5_Event", "https://veniss.net/ontology#Event"]'></semantic-form-hidden-input>
+    <bs-row>
+      <bs-col md="6" sm="12">
+        <div id="event_label">
+          <semantic-form-text-input label="Title" multiline="true" placeholder="Enter event title ..." for="event_label" languages='["en", "it"]'></semantic-form-text-input>
+        </div>
+      </bs-col>
+      <bs-col md="6" sm="12">
+        <semantic-form-select-input 
+          for='entity_island' 
+          label="Island"
+          placeholder="Select the island">
+        </semantic-form-select-input>
+      </bs-col>
+    </bs-row>
 
-      <div data-flex-layout="row stretch-stretch">
+    <bs-tabs>
+      <bs-tab event-key="1" title="Details">
 
-        <!-- LEFT: General data -->
-        <div  data-flex-layout="column top-stretch" class="left-column">
-
-          <div data-flex-layout="column stretch-stretch">
-
-            <div id="event_label" class="padding-5">
-              <semantic-form-text-input label="Title" multiline="true" placeholder="Enter event title ..." for="event_label" languages='["en", "it"]'></semantic-form-text-input>
-            </div>
-
-            <div id="entity_island" class="padding-5">
-              <semantic-form-select-input 
-                for='entity_island' 
-                label="Island"
-                placeholder="Select the island">
-              </semantic-form-select-input>
-            </div>
-
-            <hr>
-
-            <div id="entity_publication_notes" class="padding-5">
-              <semantic-form-text-input placeholder="Enter a note for the editor ..." multiline="true" label="Notes" for="entity_publication_notes"></semantic-form-text-input>
-            </div>
-
-            <div id="entity_published" class="padding-5">
-              <semantic-form-checkbox-input label="Record completed?" for='entity_published'></semantic-form-checkbox-input>
-            </div>
-
-          </div>
+        <div id="event_synopsis">
+          <semantic-form-text-input label="Synopsis" multiline="true" placeholder="Enter event synopsis ..." for="event_synopsis"></semantic-form-text-input>
         </div>
 
-        <!-- Right -->
-        <div data-flex-self="size-x3">
-
-          <bs-tabs>
-            <bs-tab event-key="1" title="Metadata">
-
-              <div id="event_synopsis" class="padding-5">
-                <semantic-form-text-input label="Synopsis" multiline="true" placeholder="Enter event synopsis ..." for="event_synopsis"></semantic-form-text-input>
-              </div>
-
-              <div id="event_typology" class="padding-5">
-                <semantic-form-tree-picker-input label="Typology" placeholder="Select typology ..." for="event_typology"></semantic-form-tree-picker-input>
-              </div>
-
-              <div id="event_date" class="padding-5">
-                <semantic-form-composite-input 
-                  label="Event date" 
-                  for='event_date' 
-                  new-subject-template="/date" 
-                  fields='[[fieldDefinitions
-                    time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
-                    time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
-                    time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
-                    time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
-                  ]]'>
-
-                    <div data-flex-layout="column top-stretch">
-                      <div data-flex-layout="row top-stretch">
-                        <div id="time_primitive_day" class="padding-5">
-                          <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
-                        </div>
-                        <div id="time_primitive_month" class="padding-5">
-                          <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
-                        </div> 
-                        <div id="time_primitive_year" class="padding-5">
-                          <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
-                        </div>
-                      </div>
-                      <div id="time_primitive_year" class="padding-5">
-                        <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
-                      </div>
-                    </div>
-                </semantic-form-composite-input>
-              </div>
-
-            </bs-tab>
-
-            <bs-tab event-key="2" title="Related entities">
-
-              <div id="event_entity">
-
-                <semantic-form-composite-input
-                  label="Related Entity"
-                  render-header="false"
-                  for="event_relation"
-                  new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}" 
-                  fields='[[fieldDefinitions
-                    relation_role                       = "https://veniss.net/container/fieldDefinitionContainer/relation_role"
-                    relation_entity                     = "https://veniss.net/container/fieldDefinitionContainer/relation_entity"
-                  ]]'
-                >
-
-                  <bs-row>
-                    <bs-col lg="3">
-                      <semantic-form-drag-and-drop-input 
-                        label="Entity"
-                        for='relation_entity'>
-                      </semantic-form-drag-and-drop-input>
-                    </bs-col>
-                    <bs-col lg="9">
-                      <semantic-form-text-input placeholder="Enter note for this relation" label="Notes" for="relation_role"></semantic-form-text-input>
-                    </bs-col>
-                  </bs-row>
-
-                </semantic-form-composite-input>
-                
-              </div>
-
-            </bs-tab>
-          </bs-tabs>
-
-            
+        <div id="event_typology" class="padding-5">
+          <semantic-form-tree-picker-input
+            scheme-page-button-config='{
+              "iri": "http://www.researchspace.org/resource/ThinkingFrames",
+              "view": "authority-list",
+              "scheme": "https://veniss.net/resource/vocab/event_types",
+              "tooltip": "Open list of terms"
+            }'
+            nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Event nested=true editable=true mode="new" }}{{{{/raw}}}}'
+          
+           label="Typology" placeholder="Select typology ..." for="event_typology"></semantic-form-tree-picker-input>
         </div>
 
-      </div>
+        <div id="event_date" class="padding-5">
+          <semantic-form-composite-input 
+            label="Event date" 
+            for='event_date' 
+            new-subject-template="/date" 
+            fields='[[fieldDefinitions
+              time_primitive_day = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_day"
+              time_primitive_month = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_month"
+              time_primitive_year = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_year"
+              time_primitive_note = "https://veniss.net/container/fieldDefinitionContainer/time_primitive_note"
+            ]]'>
+
+              <div data-flex-layout="column top-stretch">
+                <div data-flex-layout="row top-stretch">
+                  <div id="time_primitive_day" class="padding-5">
+                    <semantic-form-text-input label="day" placeholder="dd" for="time_primitive_day"></semantic-form-text-input>
+                  </div>
+                  <div id="time_primitive_month" class="padding-5">
+                    <semantic-form-text-input label="month" placeholder="mm" for="time_primitive_month"></semantic-form-text-input>
+                  </div> 
+                  <div id="time_primitive_year" class="padding-5">
+                    <semantic-form-text-input label="year" placeholder="yyyy" for="time_primitive_year"></semantic-form-text-input>
+                  </div>
+                </div>
+                <div id="time_primitive_year" class="padding-5">
+                  <semantic-form-text-input label="note" placeholder="Date in natural language" for="time_primitive_note"></semantic-form-text-input>
+                </div>
+              </div>
+          </semantic-form-composite-input>
+        </div>
+
+      </bs-tab>
+
+      <!-- Related Entities -->
+      <bs-tab event-key="2" title="Related Entities" disabled="{{#if node}}false{{else}}true{{/if}}">
+        [[> veniss_forms:Relation ]]
+      </bs-tab>
+
+      [[> rsp:FormMetadataTab]]
+
+    </bs-tabs>
       
+    <semantic-form-errors></semantic-form-errors>
 
-    </div>
   </div>
   [[> rsp:FormDefaultActions]]
 

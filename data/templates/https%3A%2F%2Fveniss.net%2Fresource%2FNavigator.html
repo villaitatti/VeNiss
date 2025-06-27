@@ -1,83 +1,8 @@
 <mp-event-target-template-render id='sidebar' template='{{> sidebar_tmpl}}'>
     <template id='sidebar_tmpl'>
-        {{#if showbasemaps}}
-            <!-- <h2 id="mapControlsTitle">Basemaps</h2> -->
 
-            <semantic-map-controls
-            id="basemap-control"
-            target-map-id="search-map"
-            features-taxonomies="use,name"
-            features-color-taxonomies="use"
-            features-options-enabled="false"
-            filters-initialization='{"basemap":true,"overlay":false,"feature":false}'
-            show-filters='false'
-            >
-            </semantic-map-controls>
-            
-        {{else if showhistoricalmaps}}
-            <!-- <h2 id="mapControlsTitle">Historical Maps</h2> -->
-            <semantic-map-controls
-            id="historical-map-control"
-            target-map-id="search-map"
-            features-taxonomies="use,name"
-            features-color-taxonomies="use"
-            features-options-enabled="false"
-            filters-initialization='{"basemap":false,"overlay":true,"feature":false}'
-            show-filters='false'
-            >
-            </semantic-map-controls>
-
-
-        {{else if showoptions}}
             <!-- <h2 id="mapControlsTitle">Map Control Panel</h2> -->
-            <semantic-map-controls
-              id="search-map-control"
-              target-map-id="search-map"
-              features-taxonomies="name,use"
-              features-color-taxonomies="use,function"
-              features-colors-palette='{
-                "military":"rgba(245,185,153,0.6)",
-                "service":"rgba(124,164,204,0.6)",
-                "abandoned":"rgba(183,161,209,0.6)",
-                "religious":"rgba(0,63,114,0.6)",
-                "water supply":"rgba(154,207,237)",
-                "accomodation":"rgba(214,223,218,0.6)",
-                "unknown":"rgba(173,195,165,0.6)",
-                "kennel":"rgba(100,195,165,0.6)"
-              }'
-              features-options-enabled="true"
-              filters-initialization='{"basemap":true,"overlay":true,"feature":true}'
-              vector-levels='["Island","Buildings"]'
-              show-filters="true"
-              timeline='{
-                "min":1500,
-                "max":2025,
-                "mode":"normal",
-                "default":2025
-              }'
-              >
-            </semantic-map-controls>
-        {{else}}
-        <div>
-
-          <div id="mapNavigatorContainer">
-            <semantic-search-result>
-              <semantic-table
-              id="table"
-              number-of-displayed-rows="1000"
-              query='SELECT DISTINCT ?iri WHERE 
-              { 
-                bind(?subject as ?iri)
-                ?subject a veniss_ontology:Builtwork
-            }'
-            >
-            </semantic-table>
-              
-            </semantic-search-result>
-          </div>
-
-        </div>
-        {{/if}}
+            
     </template>
 </mp-event-target-template-render>
 <style>

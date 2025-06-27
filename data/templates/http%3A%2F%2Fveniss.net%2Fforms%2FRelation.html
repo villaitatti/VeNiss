@@ -1,40 +1,411 @@
-<semantic-form 
-  id='{{viewId}}-vocab-form' 
-  post-action="event"
-  subject='{{node}}'
-  new-subject-template='https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-  fields='[[ fieldDefinitions
-    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    label                               = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"  
-    
-    
-    relation_domain                     = "https://veniss.net/container/fieldDefinitionContainer/relation_domain"
-    relation_range                      = "https://veniss.net/container/fieldDefinitionContainer/relation_range"
-  ]]'
->
-  <div class="form-scroll-area">
-    <semantic-form-errors></semantic-form-errors>
 
-    <semantic-form-hidden-input for="type" default-values='["https://veniss.net/ontology#Relation"]'></semantic-form-hidden-input>
 
-    <div class="container-fluid">
+  <strong>Outgoing relations</strong> are those that are directed away from the current entity.
 
-        <bs-col md="3">
-          <semantic-form-drag-and-drop-input label="Domain" for='relation_domain'>
-          </semantic-form-drag-and-drop-input>
-        </bs-col>
+  <br>
 
-        <bs-col md="6">
-          <semantic-form-text-input label="With Role" for='label'>
-          </semantic-form-text-input>
-        </bs-col>
+  <strong>Incoming relations</strong> are those that are directed towards the current entity.
 
-        <bs-col md="3">
-          <semantic-form-drag-and-drop-input label="Range" for='relation_range'>
-          </semantic-form-drag-and-drop-input>
-        </bs-col>
-      </bs-row>
+  <hr>
 
-    </div>
-  </div>
-  [[> rsp:FormDefaultActions]]
+<bs-tabs id="entity_relation_tabs" default-active-key="11">
+  
+  <bs-tab event-key="11" title="Actors">
+    <bs-row>
+      <bs-col lg="6">
+
+        <strong>Outgoing relations</strong>
+        <semantic-form-composite-input 
+          label="Outgoing relation"
+          render-header="false"
+          for="entity_is_domain_of_relation_actor" 
+          new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          parent-subject="{{subject}}"
+          fields='[[ fieldDefinitions 
+            type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+            label                                   = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+            relation_has_range_actor                   = "https://veniss.net/container/fieldDefinitionContainer/relation_has_range_actor"
+          ]]'
+        >
+
+        <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+        
+        <bs-row>
+          <bs-col lg-offset="4" lg="4">
+            <semantic-form-drag-and-drop-input  
+              for='relation_has_range_actor' 
+              placeholder-item-template="
+                <div class='image-uploader'>
+                  <div><rs-icon icon-type='rounded' icon-name='person' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div>Drag and Drop an actor from another frame or</div>
+                  <div><span class='text-link'>click to create a new Person.</span></div>
+                </div>"
+              nested-form-template='{{{{raw}}}}{{> veniss_forms:Person nested=true editable=true mode="new" }}{{{{/raw}}}}'
+              label="Actor">
+            </semantic-form-drag-and-drop-input> 
+          </bs-col>
+
+        </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
+            <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        
+        </semantic-form-composite-input>
+
+      </bs-col>
+
+      <bs-col lg="6" class="incoming_relation">
+
+        <strong>Incoming relations</strong>
+        <semantic-form-composite-input 
+          for="entity_is_range_of_relation_actor" 
+          enabled="false"
+          label="Incoming relation"
+          render-header="false"
+          new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          parent-subject="{{subject}}"
+          fields='[[ fieldDefinitions 
+            type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+            label                                   = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+            relation_has_domain_actor                   = "https://veniss.net/container/fieldDefinitionContainer/relation_has_domain_actor"
+          ]]'
+        >
+
+        <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+        
+        <bs-row>
+          <bs-col lg-offset="4" lg="4">
+            <semantic-form-drag-and-drop-input  
+              for='relation_has_domain_actor' 
+              enabled="false"
+              placeholder-item-template="
+                <div class='image-uploader'>
+                  <div><rs-icon icon-type='rounded' icon-name='person' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div>Drag and Drop an actor from another frame or</div>
+                  <div><span class='text-link'>click to create a new Person.</span></div>
+                </div>"
+              nested-form-template='{{{{raw}}}}{{> veniss_forms:Person nested=true editable=true mode="new" }}{{{{/raw}}}}'
+              label="Actor">
+            </semantic-form-drag-and-drop-input> 
+          </bs-col>
+         </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
+            <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        
+        </semantic-form-composite-input>
+      </bs-col>
+    </bs-row>
+  </bs-tab>
+
+  <bs-tab event-key="12" title="Events">
+    <bs-row>
+      <bs-col lg="6">
+
+        <strong>Outgoing relations</strong>
+        <semantic-form-composite-input 
+          label="Outgoing relation"
+          render-header="false"
+          for="entity_is_domain_of_relation_event" 
+          new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          parent-subject="{{subject}}"
+          fields='[[ fieldDefinitions 
+            type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+            label                                   = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+            relation_has_range_event                   = "https://veniss.net/container/fieldDefinitionContainer/relation_has_range_event"
+          ]]'
+        >
+
+        <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+        
+        <bs-row>
+          <bs-col lg-offset="4" lg="4">
+            <semantic-form-drag-and-drop-input  
+              for='relation_has_range_event' 
+              placeholder-item-template="
+                <div class='image-uploader'>
+                  <div><rs-icon icon-type='rounded' icon-name='Event' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div>Drag and Drop an actor from another frame or</div>
+                  <div><span class='text-link'>click to create a new Event.</span></div>
+                </div>"
+              nested-form-template='{{{{raw}}}}{{> veniss_forms:Event nested=true editable=true mode="new" }}{{{{/raw}}}}'
+              label="Event">
+            </semantic-form-drag-and-drop-input> 
+          </bs-col>
+          </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
+            <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        
+        </semantic-form-composite-input>
+
+      </bs-col>
+
+      <bs-col lg="6" class="incoming_relation">
+
+        <strong>Incoming relations</strong>
+        <semantic-form-composite-input 
+          for="entity_is_range_of_relation_event" 
+          label="Incoming relation"
+          render-header="false"
+          new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          parent-subject="{{subject}}"
+          fields='[[ fieldDefinitions 
+            type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+            label                                   = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+            relation_has_domain_event                   = "https://veniss.net/container/fieldDefinitionContainer/relation_has_domain_event"
+          ]]'
+        >
+
+        <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+        
+        <bs-row>
+          <bs-col lg-offset="4" lg="4">
+            <semantic-form-drag-and-drop-input  
+              for='relation_has_domain_event' 
+              placeholder-item-template="
+                <div class='image-uploader'>
+                  <div><rs-icon icon-type='rounded' icon-name='event' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div>Drag and Drop an Event from another frame or</div>
+                  <div><span class='text-link'>click to create a new Event.</span></div>
+                </div>"
+              nested-form-template='{{{{raw}}}}{{> veniss_forms:Event nested=true editable=true mode="new" }}{{{{/raw}}}}'
+              label="Event">
+            </semantic-form-drag-and-drop-input> 
+          </bs-col>
+          </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
+            <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        
+        </semantic-form-composite-input>
+      </bs-col>
+    </bs-row>
+
+  </bs-tab>
+
+  <bs-tab event-key="13" title="Places">
+    <bs-row>
+      <bs-col lg="6">
+
+        <strong>Outgoing relations</strong>
+        <semantic-form-composite-input 
+          label="Outgoing relation"
+          render-header="false"
+          for="entity_is_domain_of_relation_place" 
+          new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          parent-subject="{{subject}}"
+          fields='[[ fieldDefinitions 
+            type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+            label                                   = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+            relation_has_range_place                   = "https://veniss.net/container/fieldDefinitionContainer/relation_has_range_place"
+          ]]'
+        >
+
+        <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+        
+        <bs-row>
+          <bs-col lg-offset="4" lg="4">
+            <semantic-form-drag-and-drop-input  
+              for='relation_has_range_place' 
+              placeholder-item-template="
+                <div class='image-uploader'>
+                  <div><rs-icon icon-type='rounded' icon-name='place' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div>Drag and Drop an place from another frame or</div>
+                  <div><span class='text-link'>click to create a new place.</span></div>
+                </div>"
+              nested-form-template='{{{{raw}}}}{{> veniss_forms:Builtwork nested=true editable=true mode="new" }}{{{{/raw}}}}'
+              label="Builtwork">
+            </semantic-form-drag-and-drop-input> 
+          </bs-col>
+          </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
+            <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        
+        </semantic-form-composite-input>
+
+      </bs-col>
+
+      <bs-col lg="6" class="incoming_relation">
+
+        <strong>Incoming relations</strong>
+        <semantic-form-composite-input 
+          for="entity_is_range_of_relation_place" 
+          label="Incoming relation"
+          render-header="false"
+          new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          parent-subject="{{subject}}"
+          fields='[[ fieldDefinitions 
+            type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+            label                                   = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+            relation_has_domain_place                   = "https://veniss.net/container/fieldDefinitionContainer/relation_has_domain_place"
+          ]]'
+        >
+
+        <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+        
+        <bs-row>
+          <bs-col lg-offset="4" lg="4">
+            <semantic-form-drag-and-drop-input  
+              for='relation_has_domain_place' 
+              placeholder-item-template="
+                <div class='image-uploader'>
+                  <div><rs-icon icon-type='rounded' icon-name='place' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div>Drag and Drop a Builtwork from another frame or</div>
+                  <div><span class='text-link'>click to create a new Builtwork.</span></div>
+                </div>"
+              nested-form-template='{{{{raw}}}}{{> veniss_forms:Builtwork nested=true editable=true mode="new" }}{{{{/raw}}}}'
+              label="Builtwork">
+            </semantic-form-drag-and-drop-input> 
+          </bs-col>
+          </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
+            <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        
+        </semantic-form-composite-input>
+      </bs-col>
+    </bs-row>
+
+  </bs-tab>
+
+  <bs-tab event-key="14" title="Sources">
+    <bs-row>
+
+      <bs-col lg="6">
+
+        <strong>Outgoing relations</strong>
+        <semantic-form-composite-input 
+          for="entity_is_domain_of_relation_source"
+          label="Outgoing relation"
+          render-header="false"
+          new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          parent-subject="{{subject}}"
+          fields='[[ fieldDefinitions 
+            type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+            label                                   = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+            relation_has_range_source                   = "https://veniss.net/container/fieldDefinitionContainer/relation_has_range_source"
+          ]]'
+        >
+
+        <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+        
+        <bs-row>
+          <bs-col lg-offset="4" lg="4">
+            <semantic-form-drag-and-drop-input  
+              for='relation_has_range_source' 
+              placeholder-item-template="
+                <div class='image-uploader'>
+                  <div><rs-icon icon-type='rounded' icon-name='Source' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div>Drag and Drop an actor from another frame or</div>
+                  <div><span class='text-link'>click to create a new Primary Source.</span></div>
+                </div>"
+              nested-form-template='{{{{raw}}}}{{> veniss_forms:Source_Primary nested=true editable=true mode="new" }}{{{{/raw}}}}'
+              label="Source">
+            </semantic-form-drag-and-drop-input> 
+          </bs-col>
+         </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
+            <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        
+        </semantic-form-composite-input>
+
+      </bs-col>
+
+      <bs-col lg="6" class="incoming_relation">
+
+        <strong>Incoming relations</strong>
+        <semantic-form-composite-input
+          label="Incoming relation"
+          render-header="false"
+          for="entity_is_range_of_relation_source" 
+          new-subject-template="https://veniss.net/resource/relation/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
+          parent-subject="{{subject}}"
+          fields='[[ fieldDefinitions 
+            type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
+            label                                   = "https://veniss.net/container/fieldDefinitionContainer/archipelago_label_single"
+            relation_has_domain_source                   = "https://veniss.net/container/fieldDefinitionContainer/relation_has_domain_source"
+          ]]'
+        >
+
+        <semantic-form-hidden-input for="has_type" default-value='https://veniss.net/ontology#Relation'></semantic-form-hidden-input>
+        
+        <bs-row>
+          <bs-col lg-offset="4" lg="4">
+            <semantic-form-drag-and-drop-input  
+              for='relation_has_domain_source' 
+              label="Source"
+              placeholder-item-template="
+                <div class='image-uploader'>
+                  <div><rs-icon icon-type='rounded' icon-name='source' class='upload_icon' symbol='true'></rs-icon></div>
+                  <div>Drag and Drop an actor from another frame or</div>
+                  <div><span class='text-link'>click to create a new Person.</span></div>
+                </div>"
+              nested-form-template='{{{{raw}}}}{{> veniss_forms:Source_Primar nested=true editable=true mode="new" }}{{{{/raw}}}}'>
+            </semantic-form-drag-and-drop-input> 
+          </bs-col>
+          </bs-row>
+
+        <bs-row>
+          <bs-col lg="12" md="12">
+            <semantic-form-text-input label="Notes" for="label"></semantic-form-text-input>
+          </bs-col>
+        </bs-row>
+
+        
+        </semantic-form-composite-input>
+      </bs-col>
+      
+    </bs-row>
+
+  </bs-tab>
+  
+</bs-tabs>
+
+<style>
+  .DragAndDropInput--itemArea {
+    justify-content: center;
+  }
+
+  .incoming_relation .cardinality-support__add-value {
+    display: none!important;
+  }
+</style>

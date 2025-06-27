@@ -1,8 +1,6 @@
 <semantic-form
-  id='{{viewId}}-vocab-form' 
-  post-action="event"
-  subject='{{node}}'
-  new-subject-template='https://veniss.net/resource/vocab/actor_types/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
+  new-subject-template="{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/vocab/event_type/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}"
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     is_listed_in                        = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
@@ -11,6 +9,7 @@
     vocab_entry_broader                 = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_broader"
     vocab_entry_equivalent              = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_equivalent"
   ]]'
+  [[> rsp:FormDefaults]]
 >
 
   <div class="form-scroll-area">

@@ -4,6 +4,7 @@
 <head>
   <meta charset='utf-8'>
   <link rel="icon" href="/assets/no_auth/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/assets/no_auth/login.css">
   <title>{{deploymentTitle}}</title>
 
   {{#each assetsMap.app.css}}
@@ -14,17 +15,21 @@
 
 <body class="login-body">
 
+  <video class="login-video-bg" autoplay muted loop playsinline>
+    <source src="/assets/no_auth/venezia-acqua-isole-2.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  
+  <div class="video-overlay"></div>
+
   <div class="login-container" data-flex-layout="column center-center">
 
     <div class="login-border">
       <div class="login-title-row">
-        <div class="login-title">{{deploymentTitle}}</div>
-        <div class="powered-by">
-          <div>by</div>
-          <a href="https://www.researchspace.org/" target="_blank">
-          <img src="/assets/no_auth/researchspace_black.svg"
-          alt="Researchspace" /></a>
+        <div class="login-title">
+          <img src="/assets/no_auth/logo.png" alt="Logo">
         </div>
+
       </div>
       <div class="panel panel-default">
         <div class="panel-body">

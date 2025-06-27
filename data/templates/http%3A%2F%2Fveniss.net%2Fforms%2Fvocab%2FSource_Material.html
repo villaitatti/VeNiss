@@ -1,9 +1,10 @@
 <semantic-form
-  id='{{viewId}}-vocab-form' 
-  new-subject-template='https://veniss.net/resource/vocabulary/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+  persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
+  new-subject-template="{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/vocabulary/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}"
   fields='[[ fieldDefinitions
     type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     is_listed_in                            = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+    has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
 
     vocab_entry_label                       = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
     vocab_entry_partof                      = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_partof"
@@ -11,13 +12,13 @@
     vocab_entry_broader                     = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_broader"
     vocab_entry_equivalent                  = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_equivalent"
   ]]'
-  post-action="event"
-  subject='{{node}}'
+  [[> rsp:FormDefaults]]
 >
 <div class="form-scroll-area">
   <div class="container-fluid">
 
     <semantic-form-hidden-input for="type" default-values='["http://www.w3.org/2004/02/skos/core#Concept"]'></semantic-form-hidden-input>
+    <semantic-form-hidden-input for="has_type" default-value='http://www.researchspace.org/resource/system/vocab/resource_type/Source_Material'></semantic-form-hidden-input>
     <semantic-form-hidden-input for="is_listed_in" default-value="https://veniss.net/resource/vocab/source_materials"></semantic-form-hidden-input>
 
     <!-- Source label -->

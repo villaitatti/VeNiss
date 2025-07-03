@@ -106,7 +106,6 @@ SELECT DISTINCT * WHERE {
           veniss_sql:z    ?z .
   }
 
-  # ----- restrict to the required builtwork -----
   VALUES ?subject { <{{node}}> }
 
   ?subject            crm:P196i_is_defined_by ?physical_changes .
@@ -120,41 +119,11 @@ SELECT DISTINCT * WHERE {
   OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?phase_bob_0 . }
   OPTIONAL { ?timespan crm:P82b_end_of_the_end     ?phase_eoe_0 . }
 
-  BIND(?phase_bob_0 AS ?phase_bob)
-  BIND(IF(BOUND(?phase_eoe_0),
-          ?phase_eoe_0,
-          STRDT(STR(NOW()), xsd:date)) AS ?phase_eoe)
-
-  OPTIONAL {
-    ?subject         crm:P16i_was_used_for  ?useNode .
-    ?useNode         crm:P2_has_type        ?useType .
-    ?useType         rdfs:label             ?useTypeLabel ;
-                     skos:broader           ?parent .
-    ?parent          rdfs:label             ?parentLabel .
-    FILTER(LANG(?useTypeLabel) = "en")
-    FILTER(LCASE(STR(?parentLabel)) = "use")
-
-    OPTIONAL { ?useNode crm:P4_has_time-span ?useTimeSpan . }
-    OPTIONAL { ?useTimeSpan crm:P82a_begin_of_the_begin ?useNode_bob_0 . }
-    OPTIONAL { ?useTimeSpan crm:P82b_end_of_the_end     ?useNode_eoe_0 . }
-  }
-
-  BIND(?useNode_bob_0 AS ?useNode_bob)
-  BIND(IF(BOUND(?useNode_eoe_0),
-          ?useNode_eoe_0,
-          STRDT(STR(NOW()), xsd:date)) AS ?useNode_eoe)
-
-  BIND(IF(BOUND(?phase_bob) && BOUND(?useNode_bob),
-          IF(?phase_bob > ?useNode_bob, ?phase_bob, ?useNode_bob),
-          COALESCE(?phase_bob, ?useNode_bob)) AS ?bob)
-
-  BIND(IF(BOUND(?phase_eoe) && BOUND(?useNode_eoe),
-          IF(?phase_eoe < ?useNode_eoe, ?phase_eoe, ?useNode_eoe),
-          COALESCE(?phase_eoe, ?useNode_eoe)) AS ?eoe)
+  BIND(COALESCE(?phase_bob_0, "0001-01-01"^^xsd:date) AS ?bob)
+  BIND(IF(BOUND(?phase_eoe_0), ?phase_eoe_0, STRDT(STR(NOW()), xsd:date)) AS ?eoe)
 
   FILTER(?bob < ?eoe)
 
-  BIND(COALESCE(?useTypeLabel, "Unknown") AS ?use)
   BIND(STRBEFORE(STR(?bob), "-") AS ?label_bob)
   BIND(STRBEFORE(STR(?eoe), "-") AS ?label_eoe)
 
@@ -473,6 +442,18 @@ LIMIT 1000
     padding: 10px;
     border-radius: 2px;
     color: white;
+}
+
+
+.SemanticMapControls--timeSliderContainer {
+    width: 400px;
+    left: 100px;
+    transform: none !important;
+    position: absolute;
+}
+
+.SemanticMapControls--mapControlsSidebar {
+  display: none !important;
 }
 
 </style>

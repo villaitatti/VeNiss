@@ -211,3 +211,21 @@ body {
 .griddle-footer {
   margin-bottom: 50px!important;
 }
+
+.archival-unit .RemovableBadge__content {
+  background-color: white!important;
+  color: black!important;
+  max-width: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.archival-unit .RemovableBadge__remove {
+  background-color: white!important;
+  color: black!important;
+  border-left: none;
+}
+
+.archival-unit .RemovableBadge__remove .material-icons-round {
+  color: black!important;
+}

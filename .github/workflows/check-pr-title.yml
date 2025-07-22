@@ -8,9 +8,9 @@ jobs:
   check-title:
     runs-on: ubuntu-latest
     steps:
-      - name: Check PR title matches versioning format
+      - name: Check PR title contains versioning pattern
         run: |
-          if [[ ! "${{ github.event.pull_request.title }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Error: PR title must be in the format vX.Y.Z"
+          if [[ ! "${{ github.event.pull_request.title }}" =~ v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "Error: PR title must include a version in the format vX.Y.Z (e.g., v0.1.1)"
             exit 1
           fi

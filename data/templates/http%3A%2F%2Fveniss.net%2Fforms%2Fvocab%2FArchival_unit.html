@@ -2,7 +2,7 @@
 
 <semantic-form
   persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
-  new-subject-template="{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}"
+  new-subject-template="https://veniss.net/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
@@ -66,18 +66,18 @@
       </bs-alert>
 
       <!-- add broader if there is one -->
-      <div id="vocab_entry_partof" class="padding-5">
+      <div id="vocab_entry_partof" class="archival-unit">
         <semantic-form-tree-picker-input 
           label="Parent archival unit" 
           placeholder="Select parent archival unit ..." 
           for="vocab_entry_partof"
           default-value="{{broader}}"
           query-item-label='
-            select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
+            SELECT (group_concat(distinct ?lbl; separator=", ") as ?label) where {
               {
                 select ?class ?lbl
                 where {
-                  ?query_item_iri crm:P46i_forms_part_of* ?mid.
+                  ?item crm:P46i_forms_part_of* ?mid.
                   ?mid crm:P46i_forms_part_of* ?class.
                   ?class rdfs:label ?class_label
                   

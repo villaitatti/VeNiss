@@ -6,11 +6,11 @@ select distinct ?item ?label where {
   ?loc      crm:P53_has_former_or_current_location  ?current_location .
 
   {
-    SELECT ?current_location
+    SELECT distinct ?current_location
           (GROUP_CONCAT(?lbl ; SEPARATOR=", ") AS ?path)
     WHERE {
       {       
-        SELECT ?current_location ?ancestor ?lbl
+        SELECT distinct ?current_location ?ancestor ?lbl
               (COUNT(DISTINCT ?x) AS ?depth)
         WHERE {
           ?current_location crm:P46i_forms_part_of+ ?x .

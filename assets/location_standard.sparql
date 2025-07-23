@@ -1,0 +1,20 @@
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+?item crm:P53_has_former_or_current_location/crm:P53_has_former_or_current_location ?current_location.
+
+?current_location crm:P46i_forms_part_of* ?mid.
+?mid crm:P46i_forms_part_of* ?class.
+
+?class rdfs:label ?class_label.
+FILTER (lang(?class_label) = "it")
+
+OPTIONAL {
+  ?class crm:P1_is_identified_by ?acronym.
+  ?acronym a crm:E41_Appellation;
+            crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+            rdfs:label ?acronym_lbl.
+}
+
+BIND(COALESCE(?acronym_lbl, ?class_label) AS ?label)

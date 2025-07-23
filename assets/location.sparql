@@ -1,0 +1,52 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+?item     crm:P53_has_former_or_current_location  ?loc .
+?loc      crm:P53_has_former_or_current_location  ?current_location .
+
+
+{
+SELECT ?current_location
+      (GROUP_CONCAT(?lbl ; SEPARATOR=", ") AS ?path)
+{
+  SELECT distinct ?current_location ?lbl ?depth
+  WHERE {
+
+    {
+      SELECT ?current_location ?ancestor
+              (COUNT(DISTINCT ?step) AS ?depth)
+      WHERE {
+        ?current_location crm:P46i_forms_part_of+ ?step .
+        ?step              crm:P46i_forms_part_of* ?ancestor .
+        FILTER (?current_location != ?ancestor)
+      }
+      GROUP BY ?current_location ?ancestor
+    }
+
+    OPTIONAL {
+      ?ancestor crm:P1_is_identified_by ?app .
+      ?app      a crm:E41_Appellation ;
+                crm:P2_has_type veniss_types:acronym ;
+                rdfs:label ?acr .
+    }
+    OPTIONAL { ?ancestor rdfs:label ?it  FILTER (lang(?it) = "it") }
+    OPTIONAL { ?ancestor rdfs:label ?any FILTER (!BOUND(?it)) }
+
+    BIND( COALESCE(?acr, ?it, ?any) AS ?lbl )
+  }
+  ORDER BY DESC(?depth) ?lbl
+}
+group by ?current_location
+}
+
+OPTIONAL {
+?current_location crm:P1_is_identified_by ?selfApp .
+?selfApp          a crm:E41_Appellation ;
+                crm:P2_has_type veniss_types:acronym ;
+                rdfs:label ?curr_acr .
+}
+OPTIONAL { ?current_location rdfs:label ?curr_it  FILTER (lang(?curr_it) = "it") }
+OPTIONAL { ?current_location rdfs:label ?curr_any FILTER (!BOUND(?curr_it)) }
+
+BIND(COALESCE(?curr_acr, ?curr_it, ?curr_any) AS ?current_label)
+BIND(CONCAT(?path, ", ", ?current_label) AS ?label)

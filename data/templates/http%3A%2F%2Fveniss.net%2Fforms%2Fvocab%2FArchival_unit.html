@@ -96,26 +96,11 @@
           for="vocab_entry_partof"
           default-value="{{broader}}"
           query-item-label='
-            SELECT (group_concat(distinct ?lbl; separator=", ") as ?label) where {
-              {
-                select ?class ?lbl
-                where {
-                  ?item crm:P46i_forms_part_of* ?mid.
-                  ?mid crm:P46i_forms_part_of* ?class.
-                  ?class rdfs:label ?class_label
-                  
-                  optional {
-                    ?class crm:P1_is_identified_by ?acronym.
-                    ?acronym a crm:E41_Appellation;
-                      crm:P2_has_type <https://veniss.net/resource/type/acronym>;
-                      rdfs:label ?acronym_lbl 
-                  }
-
-                  BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
-                }
-                group by ?class ?lbl
-                order by desc(count(?mid))
-              }
+            SELECT ?label where {
+              ?item crm:P1_is_identified_by ?path_app .
+              ?path_app a crm:E41_Appellation ;
+                crm:P2_has_type veniss_types:path ;
+                rdfs:label ?label .
             }
           '
           tree-patterns='{

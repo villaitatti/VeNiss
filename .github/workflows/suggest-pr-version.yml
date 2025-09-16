@@ -1,0 +1,24 @@
+      - name: Determine PR context and fetch last versioned PR
+        id: get_last_version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE_BRANCH: ${{ github.head_ref }}
+        run: |
+          echo "🔍 Finding last versioned PR into 'main' with title containing: $SOURCE_BRANCH"
+
+          latest=$(gh pr list --base main --state merged --limit 100 --json title \
+            | jq -r '.[].title' \
+            | grep -i "$SOURCE_BRANCH" \
+            | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' \
+            | sort -V \
+            | tail -n1)
+
+          if [[ -z "$latest" ]]; then
+            echo "No previous versioned PRs found for '$SOURCE_BRANCH'. Defaulting to v0.1.0"
+            echo "latest_version=v0.1.0" >> $GITHUB_ENV
+          else
+            echo "Found latest version: $latest"
+            IFS=. read -r major minor patch <<< "${latest:1}"
+            patch=$((patch + 1))
+            echo "latest_version=v$major.$minor.$patch" >> $GITHUB_ENV
+          fi

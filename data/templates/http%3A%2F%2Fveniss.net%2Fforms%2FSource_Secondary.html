@@ -5,7 +5,12 @@
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     source_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
     entity_formRecord                   = "http://www.researchspace.org/pattern/system/entity/formRecord"
-    
+
+    entity_completed                        = "https://veniss.net/container/fieldDefinitionContainer/entity_is_complete"
+    entity_hide_image                       = "https://veniss.net/container/fieldDefinitionContainer/entity_hide_image"
+    entity_publication_notes                = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"  
+
+
     bibitem_id                          = "https://veniss.net/container/fieldDefinitionContainer/bibitem_id"
     bibitem_title                       = "https://veniss.net/container/fieldDefinitionContainer/bibitem_title"
     bibitem_typology                    = "https://veniss.net/container/fieldDefinitionContainer/bibitem_typology"
@@ -44,9 +49,23 @@
 
   <div class="form-scroll-area">
     <div class="container-fluid">
+
+    <bs-row>
+      <bs-col md="6" sm="12">
+        <div id="entity_publication_notes">
+          <semantic-form-text-input placeholder="Enter Notes, if any ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+        </div>
+      </bs-col>
+      <bs-col md="6" sm="12">
+        <div id="entity_completed">
+          <semantic-form-checkbox-input for='entity_completed' label="Is the record complete?"></semantic-form-checkbox-input>
+          </semantic-form-checkbox-input>
+      </bs-col>
+    </bs-row>
+
       <bs-tabs class="source_tabs" id="tabs" >
 
-        <bs-tab event-key="1" title="Metadata">
+        <bs-tab event-key="1" title="Details">
           <div data-flex-layout="column stretch-stretch">
 
             <!-- ID, Authors -->

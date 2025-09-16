@@ -5,7 +5,11 @@
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
     entity_formRecord                   = "http://www.researchspace.org/pattern/system/entity/formRecord"
-   
+
+    entity_completed                        = "https://veniss.net/container/fieldDefinitionContainer/entity_is_complete"
+    entity_hide_image                       = "https://veniss.net/container/fieldDefinitionContainer/entity_hide_image"
+    entity_publication_notes                = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"  
+
     entity_published                    = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
     entity_publication_notes            = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"
     entity_island                       = "https://veniss.net/container/fieldDefinitionContainer/source_island"
@@ -53,11 +57,24 @@
       </bs-col>
     </bs-row>
 
+    <bs-row>
+      <bs-col md="6" sm="12">
+        <div id="entity_publication_notes">
+          <semantic-form-text-input placeholder="Enter Notes, if any ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+        </div>
+      </bs-col>
+      <bs-col md="6" sm="12">
+        <div id="entity_completed">
+          <semantic-form-checkbox-input for='entity_completed' label="Is the record complete?"></semantic-form-checkbox-input>
+          </semantic-form-checkbox-input>
+      </bs-col>
+    </bs-row>
+
     <bs-tabs>
       <bs-tab event-key="1" title="Details">
 
         <div id="event_synopsis">
-          <semantic-form-text-input label="Synopsis" multiline="true" placeholder="Enter event synopsis ..." for="event_synopsis"></semantic-form-text-input>
+          <semantic-form-text-input label="Synopsis" multiline="true" placeholder="Enter event synopsis ..." for="event_synopsis" languages='["en", "it"]'></semantic-form-text-input>
         </div>
 
         <div id="event_typology" class="padding-5">

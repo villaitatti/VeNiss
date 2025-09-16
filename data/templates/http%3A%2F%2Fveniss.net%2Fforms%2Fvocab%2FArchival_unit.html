@@ -61,9 +61,33 @@
 
     <div data-flex-layout="column top-stretch" style="margin-top: 50px">
 
-      <bs-alert bs-style="danger">
-        <p><strong>Danger zone!</strong> Changing the parent archival unit may change the entire structure.</p>
+      <bs-alert bs-style="warning">
+        <p><strong>Danger zone!</strong> Do not change unless you know what you are doing.</p>
+
+              <!-- add broader if there is one -->
+        <div id="vocab_entry_partof" class="archival-unit">
+          <semantic-form-tree-picker-input 
+            label="Parent archival unit" 
+            placeholder="Select parent archival unit ..." 
+            for="vocab_entry_partof"
+            default-value="{{broader}}"
+            readonly="true"
+            query-item-label='
+              SELECT ?label where {
+                ?item crm:P1_is_identified_by ?path_app .
+                ?path_app a crm:E41_Appellation ;
+                  crm:P2_has_type veniss_types:path ;
+                  rdfs:label ?label .
+              }
+            '
+            tree-patterns='{
+              "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
+              "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
+            }'>
+          </semantic-form-tree-picker-input>
+        </div>
       </bs-alert>
+
 
       <!-- add broader if there is one -->
       <div id="vocab_entry_partof" class="archival-unit">

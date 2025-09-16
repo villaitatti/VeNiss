@@ -3,9 +3,9 @@
 # SPARQL Query Execution Script for Cron Job
 # Executes populate.sparql against the VeNiss SPARQL endpoint every hour
 
-# Set the base directory
-BASE_DIR="/Users/gspinaci/projects/veniss/apps/VeNiss"
-QUERY_FILE="$BASE_DIR/data/queries/location/populate.sparql"
+# Set the base directory (relative to script location)
+BASE_DIR="."
+QUERY_FILE="$BASE_DIR/populate.sparql"
 CREDENTIALS_FILE="$BASE_DIR/.env"
 SPARQL_ENDPOINT="https://veniss.net/sparql"
 LOG_FILE="$BASE_DIR/logs/sparql_cron.log"
@@ -43,13 +43,16 @@ log_message "Starting SPARQL query execution"
 
 # Execute the SPARQL query using curl
 # This uses HTTP Basic Authentication and sends the query as SPARQL Update
-response=$(curl -s -w "\n%{http_code}" \
+response=$(curl -sS --fail-with-body -w "\n%{http_code}" \
     -X POST \
     -H "Content-Type: application/sparql-update" \
     -H "Accept: application/json" \
     -u "$SPARQL_USERNAME:$SPARQL_PASSWORD" \
     --data-binary "@$QUERY_FILE" \
-    "$SPARQL_ENDPOINT" 2>&1)
+    "$SPARQL_ENDPOINT" 2>&1) || {
+    log_message "ERROR: curl failed: $response"
+    exit 1
+}
 
 # Extract HTTP status code (last line)
 http_code=$(echo "$response" | tail -n1)

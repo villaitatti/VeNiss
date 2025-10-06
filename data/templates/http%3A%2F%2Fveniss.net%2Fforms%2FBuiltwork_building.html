@@ -72,6 +72,8 @@
                                           </semantic-context>
                                       </div>
                                       <div class="col-md-6">
+                                          {{#if node}}
+                                          <!-- Map components only render when there's a builtwork identifier -->
                                           <semantic-context repository="ephedra">
                                             <semantic-query
                                               query='PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT (MIN(xsd:integer(STRBEFORE(STR(?bob_date_final), "-"))) AS ?minYear) (MAX(xsd:integer(STRBEFORE(STR(?eoe_date_final), "-"))) AS ?maxYear) WHERE { VALUES ?building { <{{node}}> } { ?building crm:P196i_is_defined_by ?physical_change . ?physical_change crm:P166i_had_presence ?presence . ?presence crm:P4_has_time-span ?ts . } ?ts crm:P82a_begin_of_the_begin ?bob_date_raw . OPTIONAL { ?ts crm:P82b_end_of_the_end ?eoe_date_raw_optional . } BIND(?bob_date_raw AS ?bob_date_final) BIND(COALESCE(?eoe_date_raw_optional, STRDT(STR(NOW()), xsd:dateTime)) AS ?eoe_date_final) FILTER (STRSTARTS(STR(?bob_date_final), "http://") = false && STRSTARTS(STR(?eoe_date_final), "http://") = false) FILTER (xsd:dateTime(?bob_date_final) <= xsd:dateTime(?eoe_date_final)) }'
@@ -90,19 +92,19 @@
                                               </template>
                                             </semantic-query>
                                             </semantic-context>
-                                            <div style="height: 500px;">,
+                                            <div style="height: 500px;">
                                             <semantic-context repository="ephedra">
                                               <semantic-map-advanced
                                                 id="builtwork-physical-phase-map"
                                                 year-filtering="true"
                                                 target-controls='["builtwork-physical-phase-map-controls"]'
-                                                feature-selection-targets='["builtwork-physical-phase-map-controls"]'
                                                 selected-feature-style='{
                                                     "color": "rgba(0, 128, 255, 0.7)",
                                                     "borderColor": "rgba(0, 128, 255, 1)",
                                                     "borderWidth": 3
                                                   }'
                                                 query='
+                                                PREFIX brando: <http://brando.com/>
                                               PREFIX crm:        <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX rdfs:       <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos:       <http://www.w3.org/2004/02/skos/core#>
@@ -124,9 +126,12 @@ SELECT DISTINCT * WHERE {
           veniss_sql:z    ?z .
   }
 
-  VALUES ?subject { <{{node}}> }
+  VALUES ?original_subject { <{{node}}> }
+  
+  # Create a unique subject by combining original subject with bw_id
+  BIND(IRI(CONCAT(STR(?original_subject), "#", STR(?bw_id))) AS ?subject)
 
-  ?subject            crm:P196i_is_defined_by ?physical_changes .
+  ?original_subject   crm:P196i_is_defined_by ?physical_changes .
   ?physical_changes   crm:P166i_had_presence  ?phase .
 
   ?phase              crm:P4_has_time-span        ?timespan ;
@@ -144,8 +149,21 @@ SELECT DISTINCT * WHERE {
 
   BIND(STRBEFORE(STR(?bob), "-") AS ?label_bob)
   BIND(STRBEFORE(STR(?eoe), "-") AS ?label_eoe)
+  
+  # Format dates as DD-MM-YYYY for display
+  BIND(CONCAT(
+    SUBSTR(STR(?bob), 9, 2), "-",
+    SUBSTR(STR(?bob), 6, 2), "-",
+    SUBSTR(STR(?bob), 1, 4)
+  ) AS ?bob_formatted)
+  
+  BIND(CONCAT(
+    SUBSTR(STR(?eoe), 9, 2), "-",
+    SUBSTR(STR(?eoe), 6, 2), "-",
+    SUBSTR(STR(?eoe), 1, 4)
+  ) AS ?eoe_formatted)
 
-  ?subject rdfs:label ?name_full .
+  ?original_subject rdfs:label ?name_full .
   BIND(?name_full AS ?name)
 }
 ORDER BY DESC (?subject)
@@ -157,8 +175,12 @@ LIMIT 1000
                                               tuple-template="{{> physicalPhaseMapDetails }}">
 
                                               <template id="physicalPhaseMapDetails">
-                                                  <h4>{{phase_label.value}}</h4>
-                                                  <p><strong>Period:</strong> {{phase_bob.value}} – {{phase_eoe.value}}</p>
+                                                  <h4>{{name.value}}</h4>
+                                                  <p>
+                                                      <strong>From:</strong> {{bob_formatted.value}}<br/>
+                                                      <strong>To:</strong> {{eoe_formatted.value}}
+                                                  </p>
+                                                  <p><strong>2D Representation ID:</strong> {{bw_id.value}}</p>
                                                   <p>
                                                       <semantic-link iri="{{phase.value}}">View Phase Details</semantic-link><br/>
                                                       <semantic-link iri="{{2drepresentation.value}}">View Representation Details</semantic-link>
@@ -187,6 +209,18 @@ LIMIT 1000
                                           </semantic-map-advanced>
                                           </semantic-context>
                                             </div>
+                                          {{else}}
+                                          <!-- Placeholder when no builtwork exists -->
+                                          <div style="height: 500px; display: flex; align-items: center; justify-content: center; background-color: #f5f5f5; border-radius: 4px;">
+                                            <div style="text-align: center; color: #666;">
+                                              <i class="fa fa-map-o" style="font-size: 48px; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                                              <p style="margin: 0; font-size: 14px;">
+                                                The map will be displayed once the builtwork is saved<br/>
+                                                and physical phases are added.
+                                              </p>
+                                            </div>
+                                          </div>
+                                          {{/if}}
                                       </div>
                                   </div>
                                 <hr class="my-3"/>

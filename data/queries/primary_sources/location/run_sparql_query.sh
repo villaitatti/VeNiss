@@ -16,7 +16,7 @@ LOG_FILE="$LOG_DIR/sparql_cron.log"
 # SPARQL_ENDPOINT="https://veniss.net/repositories/veniss-app/statements"
 # Fuseki example:
 # SPARQL_ENDPOINT="https://veniss.net/update"
-SPARQL_ENDPOINT="https://veniss.net/sparql."
+SPARQL_ENDPOINT="https://veniss.net/sparql"
 # ============================
 
 mkdir -p "$LOG_DIR"

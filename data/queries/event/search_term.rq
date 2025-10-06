@@ -1,0 +1,82 @@
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+PREFIX veniss_types: <https://veniss.net/resource/type/>
+
+INSERT {
+  ?item crm:P1_is_identified_by ?st .
+  ?st a crm:E41_Appellation ;
+      crm:P2_has_type veniss_types:search_term ;
+      rdfs:label ?label .
+}
+WHERE {
+  ?item rdf:type veniss_ontology:Event .
+
+  FILTER NOT EXISTS {
+    ?item crm:P1_is_identified_by ?existingSt .
+    ?existingSt a crm:E41_Appellation ;
+                crm:P2_has_type veniss_types:search_term .
+  }
+
+  # ---- drive languages from event labels ----
+  {
+    SELECT ?item ?lang (SAMPLE(STR(?el)) AS ?event_label)
+    WHERE {
+      ?item rdfs:label ?el .
+      BIND(LANG(?el) AS ?lang)
+      FILTER(?lang IN ("it", "en"))
+    }
+    GROUP BY ?item ?lang
+  }
+
+  # ---- island (language-neutral) ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?il)) AS ?island)
+    WHERE {
+      ?item veniss_ontology:has_island ?islandRes .
+      ?islandRes rdfs:label ?il .
+    }
+    GROUP BY ?item
+  }
+
+  # ---- typology (language-specific) ----
+  OPTIONAL {
+    SELECT ?item ?lang (SAMPLE(STR(?tl)) AS ?typology)
+    WHERE {
+      ?item crm:P2_has_type ?type_node .
+      ?type_node crm:P71i_is_listed_in <https://veniss.net/resource/vocab/event_types> ;
+                 rdfs:label ?tl .
+      BIND(LANG(?tl) AS ?lang)
+      FILTER(?lang IN ("it", "en"))
+    }
+    GROUP BY ?item ?lang
+  }
+
+  # ---- date (language-neutral) ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?dl)) AS ?date)
+    WHERE {
+      ?item crm:P4_has_time-span ?timespan .
+      ?timespan crm:P170i_time_is_defined_by ?time_primitive .
+      ?time_primitive a crm:E61_Time-Primitive ;
+                      crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ;
+                      rdfs:label ?dl .
+    }
+    GROUP BY ?item
+  }
+
+  # ---- compose the final label and tag with the current language ----
+  BIND(CONCAT(
+        COALESCE(?event_label, ""),
+        IF(BOUND(?island), CONCAT(" ", ?island), ""),
+        IF(BOUND(?typology), CONCAT(" ", ?typology), ""),
+        IF(BOUND(?date), CONCAT(" ", ?date), "")
+      ) AS ?labelStr)
+
+  BIND(STRLANG(?labelStr, ?lang) AS ?label)
+
+  # ---- mint the new search_term node IRI ----
+  BIND( IRI(CONCAT(STR(?item), "/search_term/", STRUUID())) AS ?st )
+}

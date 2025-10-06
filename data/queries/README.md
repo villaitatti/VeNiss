@@ -7,7 +7,10 @@ This directory contains SPARQL queries for data management and enrichment in the
 The VeNiss query collection is organized by entity type, with each entity having its own directory containing specialized queries for that entity's data management needs:
 
 - **Primary Sources**: Queries for managing archival primary source documents
+- **Secondary Sources**: Queries for managing secondary source documents and publications
 - **Person**: Queries for person entities and biographical data
+- **Group**: Queries for group/actor entities including formation and dissolution data
+- **Event**: Queries for event entities with multilingual support
 
 ## Directory Structure
 
@@ -28,8 +31,14 @@ data/queries/
 │   │   ├── 03_import_creation_event_from_earliest_prov_all.rq
 │   │   └── 04_verify_after_import.rq
 │   └── patterns/               # Common patterns and utilities
+├── secondary_sources/           # Secondary source entity queries
+│   └── search_term.rq          # Generate composite search terms
 ├── person/                     # Person entity queries
 │   └── search_term.rq          # Generate person search terms
+├── group/                      # Group/Actor entity queries
+│   └── search_term.rq          # Generate group search terms
+├── event/                      # Event entity queries
+│   └── search_term.rq          # Generate event search terms
 ├── merge_tables.sql            # SQL utility for table operations
 └── postgres_getall.pgsql       # PostgreSQL data retrieval query
 ```

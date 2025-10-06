@@ -25,28 +25,30 @@
     entity_is_domain_of_relation_source     = 'https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_source'
     entity_is_range_of_relation_source      = 'https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_source'
 
-          ]]">
+    entity_completed                        = 'https://veniss.net/container/fieldDefinitionContainer/entity_is_complete'
+    entity_hide_image                       = 'https://veniss.net/container/fieldDefinitionContainer/entity_hide_image'
+    entity_publication_notes                = 'https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes'
+
+          ]]"
+    [[> rsp:FormDefaults]]
+    >
           <bs-panel>
+
+          <div class="row">
+            <div class="col-md-6 col-sm-12">
+              <div id="entity_publication_notes">
+                <semantic-form-text-input placeholder="Enter Notes, if any ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <div id="entity_completed">
+                <semantic-form-checkbox-input for='entity_completed' label="Is the record complete?"></semantic-form-checkbox-input>
+              </div>
+            </div>
+          </div>
+
               <div class="row">
                   <div class="col-md-12">
-                      <bs-tab-container id="some-ide" class="bs-left-vertical-tabs" default-active-key="first">
-                          <bs-row class="clearfix">
-                            <bs-col sm="2">
-                              <bs-nav bs-style="tabs" stacked="true">
-                                <bs-nav-item event-key="first">
-                                  Identity
-                                </bs-nav-item>
-                                <bs-nav-item event-key="second">
-                                  Functional Changes
-                                </bs-nav-item>
-                                <bs-nav-item event-key="third">
-                                  Physical Forms
-                                </bs-nav-item>
-                              </bs-nav>
-                            </bs-col>
-                            <bs-col sm="10">
-                              <bs-tab-content animation="true">
-                                <bs-tab-pane event-key="first">
                                   <h3>Builtwork Data</h3>
                                   <label style="color: lightsteelblue;">Entity URI: </label>
                                   <p style="color: lightsteelblue;">{{node}}</p>
@@ -58,94 +60,299 @@
                                   <semantic-form-hidden-input for="type"
                                       default-values='["https://veniss.net/ontology#Building"]'>
                                   </semantic-form-hidden-input>
-          
-          
-                                  <semantic-form-select-input for='building_island'>
-                                  </semantic-form-select-input>
-          
-                                  <semantic-form-text-input for="label"></semantic-form-text-input>
-                                  <semantic-context repository="ephedra">
-                                    <semantic-form-autocomplete-input for="builtwork_identifier"></semantic-form-autocomplete-input>
-                                  </semantic-context>
-                                </bs-tab-pane>
-                                <bs-tab-pane event-key="second">
-                                  <!-- Functional Change Type: Typology -->
+
                                   <div class="row">
-                                    <div class="col-md-6 inline-composite-2">
-                                      <h2>Typology</h2>
-                                      <semantic-form-composite-input for="functional-change-typology" render-header="false"
-                                          new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
-                                          fields='[[fieldDefinitions
-                                              functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
-                                              functional_change_type_typology="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_typology"
-                                          ]]'>
-                                          <semantic-form-tree-picker-input for="functional_change_type_typology"
-                                              label="Functional Change Type: Typology">
-                                          </semantic-form-tree-picker-input>
-                                          <semantic-form-composite-input for="functional_change_has_time-span"
-                                              new-subject-template="/time-span" render-header="false" 
-                                              fields='[[ fieldDefinitions    
-                                                  bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
-                                                  eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
-                                              ]]'>
-                                              <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
-                                              <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
-                                          </semantic-form-composite-input>
-                                      </semantic-form-composite-input>
-                                  </div>                                  
-                                  <div class="col-md-6">
-                                      {{#if node}}
-                                      <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                                          PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                                          SELECT ?label ?function ?start ?end ?functional_type WHERE {
-                                              <{{node}}> a <https://veniss.net/ontology#Building>.
-                                              <{{node}}> rdfs:label ?label.
-                                              <{{node}}> crm:P16i_was_used_for ?function.
-                                            ?function crm:P4_has_time-span ?timespan.
-                                            ?timespan crm:P82a_begin_of_the_begin ?start.
-                                            OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end. }
-                                            BIND(COALESCE(?end, xsd:date(NOW())) AS ?end)
-                                            ?function crm:P2_has_type ?type_node.
-                                            ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb8226a4-4e40-11ee-ae1e-3a5becfe4abc>.
-                                            ?type_node rdfs:label ?functional_type.
-                                            FILTER(lang(?functional_type) = "en" || lang(?functional_type) = "")
-                                          }
-                                        ' tuple-template="{{> template}}" tuple-template-height="42">
-                                                    <template id="template">
-                                                        <b>{{functional_type.value}}</b>
-                                                        <div>{{start.value}} - {{end.value}}</div>
-                                                    </template>
-                                                  </semantic-timeline>
-                                                  {{/if}}
+                                      <div class="col-md-6">
+                                          <semantic-form-select-input for='building_island'>
+                                          </semantic-form-select-input>
+
+                                          <semantic-form-text-input for="label"></semantic-form-text-input>
+                                          <semantic-context repository="ephedra">
+                                            <semantic-form-autocomplete-input for="builtwork_identifier"></semantic-form-autocomplete-input>
+                                          </semantic-context>
                                       </div>
-                              </div>
-                              <!-- Functional Change Type: Use -->
-                              <div class="row">
-                                <div class="col-md-6 inline-composite-2">
+                                      <div class="col-md-6">
+                                          {{#if node}}
+                                          <!-- Map components only render when there's a builtwork identifier -->
+                                          <semantic-context repository="ephedra">
+                                            <semantic-query
+                                              query='PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT (MIN(xsd:integer(STRBEFORE(STR(?bob_date_final), "-"))) AS ?minYear) (MAX(xsd:integer(STRBEFORE(STR(?eoe_date_final), "-"))) AS ?maxYear) WHERE { VALUES ?building { <{{node}}> } { ?building crm:P196i_is_defined_by ?physical_change . ?physical_change crm:P166i_had_presence ?presence . ?presence crm:P4_has_time-span ?ts . } ?ts crm:P82a_begin_of_the_begin ?bob_date_raw . OPTIONAL { ?ts crm:P82b_end_of_the_end ?eoe_date_raw_optional . } BIND(?bob_date_raw AS ?bob_date_final) BIND(COALESCE(?eoe_date_raw_optional, STRDT(STR(NOW()), xsd:dateTime)) AS ?eoe_date_final) FILTER (STRSTARTS(STR(?bob_date_final), "http://") = false && STRSTARTS(STR(?eoe_date_final), "http://") = false) FILTER (xsd:dateTime(?bob_date_final) <= xsd:dateTime(?eoe_date_final)) }'
+                                              template='{{> minMaxTimelineWrapperTemplate}}'
+                                            >
+                                              <template id='minMaxTimelineWrapperTemplate'>
+                                                {{#each bindings}}
+                                                 {{log "WEWE"}}
+                                                  <semantic-map-controls 
+                                                    id="builtwork-physical-phase-map-controls" 
+                                                    target-map-id="builtwork-physical-phase-map"
+                                                    timeline='{"mode": "normal", "min": {{#if minYear.value}}{{minYear.value}}{{else}}0{{/if}}, "max": {{#if maxYear.value}}{{maxYear.value}}{{else}}2025{{/if}}, "default": {{#if maxYear.value}}{{maxYear.value}}{{else}}1800{{/if}}, "locked": false}'
+                                                    features-options-enabled="true"
+                                                  ></semantic-map-controls>
+                                                {{/each}}
+                                              </template>
+                                            </semantic-query>
+                                            </semantic-context>
+                                            <div style="height: 500px;">
+                                            <semantic-context repository="ephedra">
+                                              <semantic-map-advanced
+                                                id="builtwork-physical-phase-map"
+                                                year-filtering="true"
+                                                target-controls='["builtwork-physical-phase-map-controls"]'
+                                                selected-feature-style='{
+                                                    "color": "rgba(0, 128, 255, 0.7)",
+                                                    "borderColor": "rgba(0, 128, 255, 1)",
+                                                    "borderWidth": 3
+                                                  }'
+                                                query='
+                                                PREFIX brando: <http://brando.com/>
+                                              PREFIX crm:        <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs:       <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:       <http://www.w3.org/2004/02/skos/core#>
+PREFIX xsd:        <http://www.w3.org/2001/XMLSchema#>
+PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+PREFIX rs_sql_sail:<http://www.researchspace.org/resource/system/sql#>
+
+SELECT DISTINCT * WHERE {
+
+  SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+    ?root rs_sql_sail:hasQueryId "production" ;
+          veniss_sql:minX "1369976.3700049379840493" ;
+          veniss_sql:minY "5685579.3808039482682943" ;
+          veniss_sql:maxX "1377990.9423133304808289" ;
+          veniss_sql:maxY "5692943.0214672936126590" ;
+          veniss_sql:wkt  ?wkt ;
+          veniss_sql:bw_id ?bw_id ;
+          veniss_sql:t    ?t ;
+          veniss_sql:z    ?z .
+  }
+
+  VALUES ?original_subject { <{{node}}> }
+  
+  # Create a unique subject by combining original subject with bw_id
+  BIND(IRI(CONCAT(STR(?original_subject), "#", STR(?bw_id))) AS ?subject)
+
+  ?original_subject   crm:P196i_is_defined_by ?physical_changes .
+  ?physical_changes   crm:P166i_had_presence  ?phase .
+
+  ?phase              crm:P4_has_time-span        ?timespan ;
+                      crm:P138i_has_representation ?2drepresentation .
+
+  ?2drepresentation    rdfs:label ?bw_id .
+
+  OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?phase_bob_0 . }
+  OPTIONAL { ?timespan crm:P82b_end_of_the_end     ?phase_eoe_0 . }
+
+  BIND(COALESCE(?phase_bob_0, "0001-01-01"^^xsd:date) AS ?bob)
+  BIND(IF(BOUND(?phase_eoe_0), ?phase_eoe_0, STRDT(STR(NOW()), xsd:date)) AS ?eoe)
+
+  FILTER(?bob < ?eoe)
+
+  BIND(STRBEFORE(STR(?bob), "-") AS ?label_bob)
+  BIND(STRBEFORE(STR(?eoe), "-") AS ?label_eoe)
+  
+  # Format dates as DD-MM-YYYY for display
+  BIND(CONCAT(
+    SUBSTR(STR(?bob), 9, 2), "-",
+    SUBSTR(STR(?bob), 6, 2), "-",
+    SUBSTR(STR(?bob), 1, 4)
+  ) AS ?bob_formatted)
+  
+  BIND(CONCAT(
+    SUBSTR(STR(?eoe), 9, 2), "-",
+    SUBSTR(STR(?eoe), 6, 2), "-",
+    SUBSTR(STR(?eoe), 1, 4)
+  ) AS ?eoe_formatted)
+
+  ?original_subject rdfs:label ?name_full .
+  BIND(?name_full AS ?name)
+}
+ORDER BY DESC (?subject)
+LIMIT 1000
+                                              '
+                                              map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
+                                              fix-zoom-level="12"
+                                              fix-center="[1370000.000000000, 5692800.000000000]"
+                                              tuple-template="{{> physicalPhaseMapDetails }}">
+
+                                              <template id="physicalPhaseMapDetails">
+                                                  <h4>{{name.value}}</h4>
+                                                  <p>
+                                                      <strong>From:</strong> {{bob_formatted.value}}<br/>
+                                                      <strong>To:</strong> {{eoe_formatted.value}}
+                                                  </p>
+                                                  <p><strong>2D Representation ID:</strong> {{bw_id.value}}</p>
+                                                  <p>
+                                                      <semantic-link iri="{{phase.value}}">View Phase Details</semantic-link><br/>
+                                                      <semantic-link iri="{{2drepresentation.value}}">View Representation Details</semantic-link>
+                                                  </p>
+                                              </template>
+                                              <tiles-layer
+                                                  thumbnail='/assets/images/ghybrid.jpg'
+                                                  url='http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+                                                  identifier='GHybrid'
+                                                  name='Google Hybrid'
+                                                  level='basemap'
+                                                  author="Google"
+                                                  location=""
+                                                  year="2023">
+                                              </tiles-layer>
+                                              <tiles-layer
+                                                  thumbnail='/assets/images/basemaps_thumbnails_light.jpg'
+                                                  url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}'
+                                                  identifier='light'
+                                                  name='Light'
+                                                  level='basemap'
+                                                  author=""
+                                                  location=""
+                                                  year="">
+                                              </tiles-layer>
+                                          </semantic-map-advanced>
+                                          </semantic-context>
+                                            </div>
+                                          {{else}}
+                                          <!-- Placeholder when no builtwork exists -->
+                                          <div style="height: 500px; display: flex; align-items: center; justify-content: center; background-color: #f5f5f5; border-radius: 4px;">
+                                            <div style="text-align: center; color: #666;">
+                                              <i class="fa fa-map-o" style="font-size: 48px; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                                              <p style="margin: 0; font-size: 14px;">
+                                                The map will be displayed once the builtwork is saved<br/>
+                                                and physical phases are added.
+                                              </p>
+                                            </div>
+                                          </div>
+                                          {{/if}}
+                                      </div>
+                                  </div>
+                                <hr class="my-3"/>
+                                <bs-tabs class="source_tabs form-main-window" id="builtwork-tabs" default-active-key="functional_changes">
+                                  <bs-tab event-key="functional_changes" title="Functional Changes">
+                                    <!-- Functional Change Type: Typology -->
+                                    <div class="row">
+                                      <h2>Typology</h2>
+                                      <div class="col-md-6 inline-composite-2">
+                                        <semantic-form-composite-input for="functional-change-typology" render-header="false"
+                                            new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
+                                            fields='[[fieldDefinitions
+                                                functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
+                                                functional_change_type_typology="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_typology"
+                                            ]]'>
+                                            <semantic-form-tree-picker-input for="functional_change_type_typology"
+                                                label="Functional Change Type: Typology">
+                                            </semantic-form-tree-picker-input>
+                                            <semantic-form-composite-input for="functional_change_has_time-span"
+                                                new-subject-template="/time-span" render-header="false" 
+                                                fields='[[ fieldDefinitions    
+                                                    bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                                    eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                                                ]]'>
+                                                <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
+                                                <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                            </semantic-form-composite-input>
+                                        </semantic-form-composite-input>
+                                    </div>                                  
+                                    <div class="col-md-6">
+                                        {{#if node}}
+                                        <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                            PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                                            SELECT ?label ?function ?start ?end ?functional_type WHERE {
+                                                <{{node}}> a <https://veniss.net/ontology#Building>.
+                                                <{{node}}> rdfs:label ?label.
+                                                <{{node}}> crm:P16i_was_used_for ?function.
+                                              ?function crm:P4_has_time-span ?timespan.
+                                              ?timespan crm:P82a_begin_of_the_begin ?start.
+                                              OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end. }
+                                              BIND(COALESCE(?end, xsd:date(NOW())) AS ?end)
+                                              ?function crm:P2_has_type ?type_node.
+                                              ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb8226a4-4e40-11ee-ae1e-3a5becfe4abc>.
+                                              ?type_node rdfs:label ?functional_type.
+                                              FILTER(lang(?functional_type) = "en" || lang(?functional_type) = "")
+                                            }
+                                          ' tuple-template="{{> template}}" tuple-template-height="42">
+                                                      <template id="template">
+                                                          <b>{{functional_type.value}}</b>
+                                                          <div>{{start.value}} - {{end.value}}</div>
+                                                      </template>
+                                                    </semantic-timeline>
+                                                    {{/if}}
+                                        </div>
+                                </div>
+                                <!-- Functional Change Type: Use -->
+                                <div class="row">
                                   <h2>Use</h2>
-                                  <semantic-form-composite-input for="functional-change-use" render-header="false"
-                                      new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
-                                      fields='[[fieldDefinitions
-                                          functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
-                                          functional_change_type_use="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_use"
-                                      ]]'>
-                                      <semantic-form-tree-picker-input for="functional_change_type_use"
-                                          label="Functional Change Type: Use">
-                                      </semantic-form-tree-picker-input>
-                                      <semantic-form-composite-input for="functional_change_has_time-span"
-                                          new-subject-template="/time-span" render-header="false" 
-                                          fields='[[ fieldDefinitions    
-                                              bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
-                                              eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
-                                          ]]'>
-                                          <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
-                                          <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
-                                      </semantic-form-composite-input>
-                                  </semantic-form-composite-input>
-                              </div>                                  
-                              <div class="col-md-6">
-                                  {{#if node}}
-                                  <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                  <div class="col-md-6 inline-composite-2">
+                                    <semantic-form-composite-input for="functional-change-use" render-header="false"
+                                        new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
+                                        fields='[[fieldDefinitions
+                                            functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
+                                            functional_change_type_use="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_use"
+                                        ]]'>
+                                        <semantic-form-tree-picker-input for="functional_change_type_use"
+                                            label="Functional Change Type: Use">
+                                        </semantic-form-tree-picker-input>
+                                        <semantic-form-composite-input for="functional_change_has_time-span"
+                                            new-subject-template="/time-span" render-header="false" 
+                                            fields='[[ fieldDefinitions    
+                                                bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                                eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                                            ]]'>
+                                            <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
+                                            <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                        </semantic-form-composite-input>
+                                    </semantic-form-composite-input>
+                                </div>                                  
+                                <div class="col-md-6">
+                                    {{#if node}}
+                                    <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                        PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                                        SELECT ?label ?function ?start ?end ?functional_type WHERE {
+                                            <{{node}}> a <https://veniss.net/ontology#Building>.
+                                            <{{node}}> rdfs:label ?label.
+                                            <{{node}}> crm:P16i_was_used_for ?function.
+                                          ?function crm:P4_has_time-span ?timespan.
+                                          ?timespan crm:P82a_begin_of_the_begin ?start.
+                                          OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end. }
+                                          BIND(COALESCE(?end, xsd:date(NOW())) AS ?end)
+                                          ?function crm:P2_has_type ?type_node.
+                                          ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb812510-4e40-11ee-ae1e-3a5becfe4abc>.
+                                          ?type_node rdfs:label ?functional_type.
+                                          FILTER(lang(?functional_type) = "en" || lang(?functional_type) = "")
+                                        }
+                                      ' tuple-template="{{> template}}" tuple-template-height="42">
+                                                  <template id="template">
+                                                      <b>{{functional_type.value}}</b>
+                                                      <div>{{start.value}} - {{end.value}}</div>
+                                                  </template>
+                                                </semantic-timeline>
+                                                {{/if}}
+                                    </div>
+                            </div>
+                                <!-- Functional Change Type: Function -->
+                                <div class="row">
+                                  <h2>Function</h2>
+                                  <div class="col-md-6 inline-composite-2">
+                                    <semantic-form-composite-input for="functional-change-function" render-header="false"
+                                        new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
+                                        fields='[[fieldDefinitions
+                                            functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
+                                            functional_change_type_function="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_function"
+                                        ]]'>
+                                        <semantic-form-tree-picker-input for="functional_change_type_function"
+                                            label="Functional Change Type: Function">
+                                        </semantic-form-tree-picker-input>
+                                        <semantic-form-composite-input for="functional_change_has_time-span"
+                                            new-subject-template="/time-span" render-header="false" 
+                                            fields='[[ fieldDefinitions    
+                                                bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                                eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                                            ]]'>
+                                            <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
+                                            <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                        </semantic-form-composite-input>
+                                    </semantic-form-composite-input>
+                                </div>                                  
+                                <div class="col-md-6">
+                                    {{#if node}}
+                                    <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                                       PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
                                       SELECT ?label ?function ?start ?end ?functional_type WHERE {
                                           <{{node}}> a <https://veniss.net/ontology#Building>.
@@ -156,117 +363,64 @@
                                         OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end. }
                                         BIND(COALESCE(?end, xsd:date(NOW())) AS ?end)
                                         ?function crm:P2_has_type ?type_node.
-                                        ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb812510-4e40-11ee-ae1e-3a5becfe4abc>.
+                                        ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb85831c-4e40-11ee-ae1e-3a5becfe4abc>.
                                         ?type_node rdfs:label ?functional_type.
                                         FILTER(lang(?functional_type) = "en" || lang(?functional_type) = "")
                                       }
-                                    ' tuple-template="{{> template}}" tuple-template-height="42">
-                                                <template id="template">
-                                                    <b>{{functional_type.value}}</b>
-                                                    <div>{{start.value}} - {{end.value}}</div>
-                                                </template>
-                                              </semantic-timeline>
-                                              {{/if}}
-                                  </div>
-                          </div>
-                              <!-- Functional Change Type: Function -->
-                              <div class="row">
-                                <div class="col-md-6 inline-composite-2">
-                                  <h2>Function</h2>
-                                  <semantic-form-composite-input for="functional-change-function" render-header="false"
-                                      new-subject-template='/functional_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}' 
-                                      fields='[[fieldDefinitions
-                                          functional_change_has_time-span="https://veniss.net/container/fieldDefinitionContainer/functional_change_has_time-span"
-                                          functional_change_type_function="http://localhost:10214/container/fieldDefinitionContainer/functional_change_type_function"
-                                      ]]'>
-                                      <semantic-form-tree-picker-input for="functional_change_type_function"
-                                          label="Functional Change Type: Function">
-                                      </semantic-form-tree-picker-input>
-                                      <semantic-form-composite-input for="functional_change_has_time-span"
-                                          new-subject-template="/time-span" render-header="false" 
-                                          fields='[[ fieldDefinitions    
-                                              bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
-                                              eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
-                                          ]]'>
-                                          <semantic-form-datetime-input for="bob" visualization-mode="years" label="Begin"></semantic-form-datetime-input>
-                                          <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
-                                      </semantic-form-composite-input>
-                                  </semantic-form-composite-input>
-                              </div>                                  
-                              <div class="col-md-6">
-                                  {{#if node}}
-                                  <semantic-timeline query='PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                                    SELECT ?label ?function ?start ?end ?functional_type WHERE {
-                                        <{{node}}> a <https://veniss.net/ontology#Building>.
-                                        <{{node}}> rdfs:label ?label.
-                                        <{{node}}> crm:P16i_was_used_for ?function.
-                                      ?function crm:P4_has_time-span ?timespan.
-                                      ?timespan crm:P82a_begin_of_the_begin ?start.
-                                      OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end. }
-                                      BIND(COALESCE(?end, xsd:date(NOW())) AS ?end)
-                                      ?function crm:P2_has_type ?type_node.
-                                      ?type_node skos:broader* <https://veniss.net/resource/vocab/builtwork_types/bb85831c-4e40-11ee-ae1e-3a5becfe4abc>.
-                                      ?type_node rdfs:label ?functional_type.
-                                      FILTER(lang(?functional_type) = "en" || lang(?functional_type) = "")
-                                    }
-                                    ' tuple-template="{{> template}}" tuple-template-height="42">
-                                                <template id="template">
-                                                    <b>{{functional_type.value}}</b>
-                                                    <div>{{start.value}} - {{end.value}}</div>
-                                                </template>
-                                              </semantic-timeline>
-                                              {{/if}}
-                                  </div>
-                          </div>
-                          </bs-tab-pane>
-                          <bs-tab-pane event-key="third">
-                              <h1>Physical Forms</h1>
-                              <semantic-form-composite-input for='physical-changes'
-                              render-header="false"
-                              label="Presences"
-                              new-subject-template='/physical_changes/'
-                              fields='[[ fieldDefinitions
-                              type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                              physical-change-presence="https://veniss.net/container/fieldDefinitionContainer/physical-change-presence"
-                            ]]'
-                          >
-                            <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume'></semantic-form-hidden-input> 
-                            <semantic-form-composite-input for="physical-change-presence"
-                              label="Physical Phase"
-                              new-subject-template='/physical_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-                              fields="[[ fieldDefinitions
-                                presence_type='http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-                                physical_change_has_time-span = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_has_time-span'
-                                physical_change_2d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_2d_representation'
-                                physical_change_3d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_3d_representation'
-                              ]]"
-                              >     
-                              <div class="inline-inputs-3">
-                                <semantic-form-composite-input for="physical_change_has_time-span"
-                                      new-subject-template="/time-span" render-header="false" fields='[[ fieldDefinitions    
-                              bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
-                              eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
-                          ]]'>
-                                    <div class="inline-inputs-2">
-                                      <semantic-form-datetime-input for="bob" label="Begin"></semantic-form-datetime-input>
-                                      <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                      ' tuple-template="{{> template}}" tuple-template-height="42">
+                                                  <template id="template">
+                                                      <b>{{functional_type.value}}</b>
+                                                      <div>{{start.value}} - {{end.value}}</div>
+                                                  </template>
+                                                </semantic-timeline>
+                                                {{/if}}
+                                    </div>
+                            </div>
+                                  </bs-tab>
+                                  <bs-tab event-key="physical_forms" title="Physical Forms">
+                                    <h1>Physical Forms</h1>
+                                    <semantic-form-composite-input for='physical-changes'
+                                    render-header="false"
+                                    label="Presences"
+                                    new-subject-template='/physical_changes/'
+                                    fields='[[ fieldDefinitions
+                                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                                    physical-change-presence="https://veniss.net/container/fieldDefinitionContainer/physical-change-presence"
+                                  ]]'
+                                >
+                                  <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume'></semantic-form-hidden-input> 
+                                  <semantic-form-composite-input for="physical-change-presence"
+                                    label="Physical Phase"
+                                    new-subject-template='/physical_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+                                    fields="[[ fieldDefinitions
+                                      presence_type='http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+                                      physical_change_has_time-span = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_has_time-span'
+                                      physical_change_2d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_2d_representation'
+                                      physical_change_3d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_3d_representation'
+                                    ]]"
+                                    >     
+                                    <div class="inline-inputs-3">
+                                      <semantic-form-composite-input for="physical_change_has_time-span"
+                                            new-subject-template="/time-span" render-header="false" fields='[[ fieldDefinitions    
+                                    bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                    eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                                ]]'>
+                                          <div class="inline-inputs-2">
+                                            <semantic-form-datetime-input for="bob" label="Begin"></semantic-form-datetime-input>
+                                            <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                          </div>
+                                        </semantic-form-composite-input>
+                                      <semantic-form-hidden-input for="presence_type" default-value='http://www.cidoc-crm.org/cidoc-crm/E93_Presence'></semantic-form-hidden-input>
+                                      <semantic-context repository="ephedra">
+                                        <semantic-form-autocomplete-input for="physical_change_2d_representation" label="2D Representation"></semantic-form-autocomplete-input>
+                                      </semantic-context>
+                                      <semantic-form-text-input for="physical_change_3d_representation" label="3D Representation"></semantic-form-text-input> 
                                     </div>
                                   </semantic-form-composite-input>
-                                <semantic-form-hidden-input for="presence_type" default-value='http://www.cidoc-crm.org/cidoc-crm/E93_Presence'></semantic-form-hidden-input>
-                                <semantic-context repository="ephedra">
-                                  <semantic-form-autocomplete-input for="physical_change_2d_representation" label="2D Representation"></semantic-form-autocomplete-input>
-                                </semantic-context>
-                                <semantic-form-text-input for="physical_change_3d_representation" label="3D Representation"></semantic-form-text-input> 
-                              </div>
-                            </semantic-form-composite-input>
-                              </semantic-form-composite-input>                           
-                            </semantic-form-composite-input>                            
-                          </bs-tab-pane>
-                              </bs-tab-content>
-                            </bs-col>
-                          </bs-row>
-                        </bs-tab-container>
+                                    </semantic-form-composite-input>                           
+                                  </semantic-form-composite-input>                            
+                                </bs-tab>
+                              </bs-tabs>
                   </div>
                   <div class="col-md-3">
 
@@ -340,6 +494,18 @@
     padding: 10px;
     border-radius: 2px;
     color: white;
+}
+
+
+.SemanticMapControls--timeSliderContainer {
+    width: 400px;
+    left: 100px;
+    transform: none !important;
+    position: absolute;
+}
+
+.SemanticMapControls--mapControlsSidebar {
+  display: none !important;
 }
 
 </style>

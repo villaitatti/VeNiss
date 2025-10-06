@@ -1,0 +1,59 @@
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX crmdig: <http://www.ics.forth.gr/isl/CRMdig/>
+PREFIX crm:   <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmdig:<http://www.cidoc-crm.org/extensions/crmdig/>
+PREFIX prov:  <http://www.w3.org/ns/prov#>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+
+INSERT {
+  ?value crmdig:L11i_was_output_of ?createEv .
+
+  ?createEv a crmdig:D7_Digital_Machine_Event ;
+            crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_creation> ;
+            crm:P14_carried_out_by ?creator ;
+            crm:P4_has_time-span ?createTS ;
+            crmdig:L11_had_output ?value .
+
+  ?createTS a crm:E52_Time-Span ;
+            crm:P82_at_some_time_within ?tmin .
+}
+WHERE {
+  ?subject a veniss_ontology:Source_Primary .
+  BIND( IRI(CONCAT(STR(?subject), "/entity_form_record")) AS ?value )
+  BIND( IRI(CONCAT(STR(?subject), "/container/context")) AS ?g )
+
+  # Proper form record present
+  ?subject crm:P129i_is_subject_of ?value .
+  ?value a crmdig:D1_Digital_Object ;
+         crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> .
+
+  # Find earliest timestamp per subject/value (tmin)
+  {
+    SELECT ?subject ?value (MIN(?t0) AS ?tmin)
+    WHERE {
+      BIND( IRI(CONCAT(STR(?subject), "/container/context")) AS ?gInner )
+      GRAPH ?gInner {
+        ?x a prov:Entity ; prov:generatedAtTime ?t0 .
+      }
+    }
+    GROUP BY ?subject ?value
+  }
+
+  # Bind the creator for that earliest timestamp (may yield >1 if several at same tmin)
+  GRAPH ?g {
+    ?y a prov:Entity ;
+       prov:generatedAtTime ?tmin ;
+       prov:wasAttributedTo ?creator .
+  }
+
+  # Forced IRI patterns
+  BIND( IRI(CONCAT(STR(?value), "/entity_formRecord_creation/", STRUUID())) AS ?createEv )
+  BIND( IRI(CONCAT(STR(?createEv), "/at_some_time_within/", STRUUID())) AS ?createTS )
+
+  # Avoid if a creation already exists
+  FILTER NOT EXISTS {
+    ?value crmdig:L11i_was_output_of ?ev2 .
+    ?ev2 crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_creation> .
+  }
+}

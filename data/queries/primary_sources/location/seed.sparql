@@ -1,0 +1,58 @@
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX veniss_types: <https://veniss.net/resource/type/>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+INSERT {
+  $subject crm:P1_is_identified_by ?path_app .
+  ?path_app a crm:E41_Appellation ;
+            crm:P2_has_type veniss_types:path ;
+            rdfs:label ?path .
+}
+WHERE {
+  # ROOT subjects (no parent), listed in archives
+  $subject a crm:E78_Collection ;
+           crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives> .
+  FILTER NOT EXISTS { $subject crm:P46i_forms_part_of ?anyParent . }
+
+  # Skip if a 'path' appellation already exists
+  FILTER NOT EXISTS {
+    $subject crm:P1_is_identified_by ?existingPath .
+    ?existingPath a crm:E41_Appellation ;
+                  crm:P2_has_type veniss_types:path .
+  }
+
+  # --- ranked candidate labels for the SUBJECT: 0=acronym, 1=it, 2=untagged/en ---
+  {
+    SELECT $subject
+           (MIN(?cand) AS ?winner)   # lexicographically smallest => best rank
+    WHERE {
+      {  # 0: acronym
+        $subject crm:P1_is_identified_by ?subAcrApp .
+        ?subAcrApp a crm:E41_Appellation ;
+                   crm:P2_has_type veniss_types:acronym ;
+                   rdfs:label ?lbl0 .
+        BIND(CONCAT("0§", STR(?lbl0)) AS ?cand)
+      }
+      UNION
+      {  # 1: Italian rdfs:label
+        $subject rdfs:label ?lbl1 .
+        FILTER(lang(?lbl1) = "it")
+        BIND(CONCAT("1§", STR(?lbl1)) AS ?cand)
+      }
+      UNION
+      {  # 2: untagged or English rdfs:label
+        $subject rdfs:label ?lbl2 .
+        FILTER(lang(?lbl2) = "" || lang(?lbl2) = "en")
+        BIND(CONCAT("2§", STR(?lbl2)) AS ?cand)
+      }
+    }
+    GROUP BY $subject
+  }
+
+  # Extract the label part after the rank marker
+  BIND(STRAFTER(?winner, "§") AS ?path)
+
+  # Stable IRI for the new appellation
+  BIND(IRI(CONCAT(STR($subject), "/path")) AS ?path_app)
+}

@@ -2,7 +2,7 @@
 
 <semantic-form
   persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
-  new-subject-template="{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}"
+  new-subject-template="https://veniss.net/resource/archival_entity/{{{{raw}}}}{{UUID}}{{{{/raw}}}}"
   fields='[[ fieldDefinitions
     type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type"
@@ -36,19 +36,20 @@
 
       <div data-flex-layout="row stretch-stretch">
 
-        <!--
-        <div id="vocab_entry_archival_unit_typology" class="padding-5">
+        <!-- Unit typology -->
+        <div id="vocab_entry_archival_unit_typology">
           <semantic-form-select-input label="Typology", placeholder="Select unit typology ..." for="vocab_entry_archival_unit_typology"></semantic-form-select-input>
         </div>
-        -->
+      </div>
 
-        <!-- Unit Acronym -->
-        <div id="vocab_entry_archival_unit_acronym" class="padding-5">
+      <div data-flex-layout="row stretch-stretch">
+
+        <div id="vocab_entry_archival_unit_acronym">
           <semantic-form-text-input label="Displayed name" placeholder="Enter unit Unit acronym ..." for="vocab_entry_archival_unit_acronym"></semantic-form-text-input>
         </div>
 
         <!-- Unit suffix -->
-        <div id="vocab_entry_archival_unit_prefix" class="padding-5">
+        <div id="vocab_entry_archival_unit_prefix">
           <semantic-form-text-input label="Prefix" placeholder="Enter unit Unit prefix ..." for="vocab_entry_archival_unit_prefix"></semantic-form-text-input>
         </div>
 
@@ -60,46 +61,33 @@
 
     <div data-flex-layout="column top-stretch" style="margin-top: 50px">
 
-      <bs-alert bs-style="danger">
-        <p><strong>Danger zone!</strong> Changing the parent archival unit may change the entire structure.</p>
+      <bs-alert bs-style="warning">
+        <p><strong>Danger zone!</strong> Do not change unless you know what you are doing.</p>
+
+              <!-- add broader if there is one -->
+        <div id="vocab_entry_partof" class="archival-unit">
+          <semantic-form-tree-picker-input 
+            label="Parent archival unit" 
+            placeholder="Select parent archival unit ..." 
+            for="vocab_entry_partof"
+            default-value="{{broader}}"
+            readonly="true"
+            query-item-label='
+              SELECT ?label where {
+                ?item crm:P1_is_identified_by ?path_app .
+                ?path_app a crm:E41_Appellation ;
+                  crm:P2_has_type veniss_types:path ;
+                  rdfs:label ?label .
+              }
+            '
+            tree-patterns='{
+              "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
+              "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
+            }'>
+          </semantic-form-tree-picker-input>
+        </div>
       </bs-alert>
 
-      <!-- add broader if there is one -->
-      <div id="vocab_entry_partof" class="padding-5">
-        <semantic-form-tree-picker-input 
-          label="Parent archival unit" 
-          placeholder="Select parent archival unit ..." 
-          for="vocab_entry_partof"
-          default-value="{{broader}}"
-          query-item-label='
-            select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
-              {
-                select ?class ?lbl
-                where {
-                  ?query_item_iri crm:P46i_forms_part_of* ?mid.
-                  ?mid crm:P46i_forms_part_of* ?class.
-                  ?class rdfs:label ?class_label
-                  
-                  optional {
-                    ?class crm:P1_is_identified_by ?acronym.
-                    ?acronym a crm:E41_Appellation;
-                      crm:P2_has_type <https://veniss.net/resource/type/acronym>;
-                      rdfs:label ?acronym_lbl 
-                  }
-
-                  BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
-                }
-                group by ?class ?lbl
-                order by desc(count(?mid))
-              }
-            }
-          '
-          tree-patterns='{
-            "relationPattern": "?item crm:P46i_forms_part_of ?parent", 
-            "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
-          }'>
-        </semantic-form-tree-picker-input>
-      </div>
 
     </div> 
 

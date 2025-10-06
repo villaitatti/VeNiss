@@ -7,6 +7,10 @@
     entity_image_main_representation        = "http://www.researchspace.org/pattern/system/entity/main_image"
     entity_formRecord                       = "http://www.researchspace.org/pattern/system/entity/formRecord"
 
+    entity_completed                        = "https://veniss.net/container/fieldDefinitionContainer/entity_is_complete"
+    entity_hide_image                       = "https://veniss.net/container/fieldDefinitionContainer/entity_hide_image"
+    entity_publication_notes                = "https://veniss.net/container/fieldDefinitionContainer/entity_publication_notes"  
+
     entity_event                            = "https://veniss.net/container/fieldDefinitionContainer/entity_event"   
     source_person                           = "https://veniss.net/container/fieldDefinitionContainer/source_person"
     entity_published                        = "https://veniss.net/container/fieldDefinitionContainer/entity_published"
@@ -68,6 +72,9 @@
 
   <div class="form-scroll-area">
 
+
+    
+
     <bs-row>
       <bs-col md="6" sm="12">
         <div id="entity_image_main_representation">
@@ -115,6 +122,27 @@
       </bs-col>
     </bs-row>
 
+    <bs-row>
+      <bs-col md="6" sm="12">
+        <div id="entity_hide_image">
+          <semantic-form-checkbox-input label="Is the image to be hidden?" for='entity_hide_image'>
+          </semantic-form-checkbox-input>
+        </div>
+      </bs-col>
+    </bs-row>
+
+    <bs-row>
+      <bs-col md="6" sm="12">
+        <div id="entity_publication_notes">
+          <semantic-form-text-input placeholder="Enter Notes, if any ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+        </div>
+      </bs-col>
+      <bs-col md="6" sm="12">
+        <div id="entity_completed">
+          <semantic-form-checkbox-input for='entity_completed' label="Is the record complete?"></semantic-form-checkbox-input>
+          </semantic-form-checkbox-input>
+      </bs-col>
+    </bs-row>
 
     <!-- Main Window -->
     <bs-tabs class="source_tabs form-main-window" id="tabs">
@@ -258,7 +286,7 @@
         <bs-row>
           <bs-col lg="12">
             <div id="source_synopsis" class="padding-5">
-              <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="5" for='source_synopsis'>
+              <semantic-form-text-input placeholder="Enter Synopsis ..." languages='["en", "it"]' multiline="true" label="Synopsis" rows="10" for='source_synopsis'>
               </semantic-form-text-input> 
             </div>
           </bs-col>
@@ -269,7 +297,7 @@
         <bs-row>
           <bs-col lg="12">
             <div id="source_transcription" class="padding-5">
-              <semantic-form-text-input placeholder="Enter transcription ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcription" rows="5" for='source_transcription'>
+              <semantic-form-text-input placeholder="Enter transcription ..." languages='["en", "it", "de-at", "fr", "la"]' multiline="true" label="Transcription" rows="10" for='source_transcription'>
               </semantic-form-text-input> 
             </div>
           </bs-col>
@@ -301,7 +329,7 @@
 
                   <bs-row>
                     <bs-col lg="12" sm="12">
-                      <div id="source_location_archival" >
+                      <div class="archival-unit" id="source_location_archival" >
                         <semantic-form-tree-picker-input 
                           open-dropdown-on-focus="false"
                           label="Archival Location" 

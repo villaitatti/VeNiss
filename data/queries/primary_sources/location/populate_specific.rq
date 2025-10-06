@@ -1,0 +1,42 @@
+PREFIX label: <http://purl.org/net/vocab/2004/03/label#>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX veniss_types: <https://veniss.net/resource/type/>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+INSERT {
+  ?subject crm:P1_is_identified_by ?parent_path .
+  ?parent_path a crm:E41_Appellation ;
+               crm:P2_has_type veniss_types:path ;
+               rdfs:label ?path .
+}
+WHERE {
+  # Lock to one subject while testing (remove VALUES for batch runs)
+
+  ?subject a crm:E78_Collection ;
+           crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives> ;
+           crm:P46i_forms_part_of ?parent .
+
+  ?parent crm:P1_is_identified_by ?ppathApp .
+  ?ppathApp a crm:E41_Appellation ;
+            crm:P2_has_type veniss_types:path ;
+            rdfs:label ?parent_path_sofar .
+
+  # Preferred label: acronym → it → ""/en → fallback to last IRI segment
+  OPTIONAL {
+    ?subject crm:P1_is_identified_by ?subAcrApp .
+    ?subAcrApp a crm:E41_Appellation ;
+               crm:P2_has_type veniss_types:acronym ;
+               rdfs:label ?sub_acr .
+  }
+  OPTIONAL { ?subject rdfs:label ?sub_it  FILTER(LANGMATCHES(LANG(?sub_it), "it")) }
+  OPTIONAL { ?subject rdfs:label ?sub_en  FILTER(LANG(?sub_en) = "" || LANGMATCHES(LANG(?sub_en), "en")) }
+
+  BIND( COALESCE(?sub_acr, ?sub_it, ?sub_en,
+                  REPLACE(STR(?subject), "^.*/", "")) AS ?subject_pref)
+
+  BIND(CONCAT(?parent_path_sofar, ", ", ?subject_pref) AS ?path)
+  BIND(IRI(CONCAT(STR(?subject), "/path")) AS ?parent_path)
+
+  BIND(<> as ?subject) 
+}

@@ -1,0 +1,147 @@
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+PREFIX veniss_types: <https://veniss.net/resource/type/>
+PREFIX frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/>
+
+INSERT {
+  ?item crm:P1_is_identified_by ?st .
+  ?st a crm:E41_Appellation ;
+      crm:P2_has_type veniss_types:search_term ;
+      rdfs:label ?label .
+}
+WHERE {
+  ?item rdf:type veniss_ontology:Source_Secondary .
+
+  FILTER NOT EXISTS {
+    ?item crm:P1_is_identified_by ?existingSt .
+    ?existingSt a crm:E41_Appellation ;
+                crm:P2_has_type veniss_types:search_term .
+  }
+
+  # ---- Title concatenation query ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(?value) AS ?title)
+    WHERE {
+      ?item a veniss_ontology:Source_Secondary.
+
+      optional {
+        ?item frbroo:R24i_was_created_through ?publication_event.
+        optional {
+          ?publication_event crm:P01i_is_domain_of ?carried_out_by_curator.
+          ?carried_out_by_curator crm:P14.1_in_the_role_of <http://veniss.net/resource/type/curator>.
+          ?carried_out_by_curator crm:P02_has_range ?curator.
+          ?curator rdfs:label ?curator_label
+          bind(concat(", a cura di ", ?curator_label) as ?curator_label_final)
+        }
+        optional {
+          ?publication_event crm:P01i_is_domain_of ?carried_out_by_publisher.
+          ?carried_out_by_publisher crm:P14.1_in_the_role_of <http://veniss.net/resource/type/publisher>.
+          ?carried_out_by_publisher crm:P02_has_range ?publisher.
+          ?publisher rdfs:label ?publisher_label
+          bind(concat(", ", ?publisher_label) as ?publisher_final)
+        }
+        optional {
+          ?publication_event crm:P4_has_time-span ?timespan.
+          ?timespan crm:P82a_begin_of_the_begin ?year
+          bind(concat(", ", ?year) as ?year_final)
+        }
+        optional {
+          ?publication_event crm:P7_took_place_at ?place.
+          ?place rdfs:label ?place_label
+          bind(concat(", ", ?place_label) as ?place_final)
+        }
+      }
+
+      optional {
+        ?item crm:P129i_is_subject_of ?linguistic_object.
+        ?linguistic_object crm:P94i_was_created_by ?creation.
+        ?creation crm:P14_carried_out_by ?actor.
+        ?actor rdfs:label ?author_final.
+      }
+
+      optional {
+        ?item crm:P1_is_identified_by ?bibitem_identifier.
+        ?bibitem_identifier crm:P2_has_type <https://veniss.net/resource/type/title>;
+            rdfs:label ?title
+        bind(concat(?title) as ?title_final)
+      }
+
+      optional {
+        ?item veniss_ontology:has_broader ?broader.
+        ?broader crm:P1_is_identified_by ?broader_title.
+        ?broader_title 	crm:P2_has_type <https://veniss.net/resource/type/title>;
+        rdfs:label ?broader_title_label
+        bind(concat(", ", ?broader_title_label) as ?broader_title_final)
+      }
+
+      bind(coalesce(?curator_label_final, "") as ?curator_lbl)
+      bind(coalesce(CONCAT(?author_final, ", "), "") as ?author_lbl)
+      bind(coalesce(?title_final, "") as ?title_lbl)
+      bind(coalesce(?place_final, "") as ?place_lbl)
+      bind(coalesce(?publisher_final, "") as ?publisher_lbl)
+      bind(coalesce(?year_final, "") as ?year_lbl)
+      bind(coalesce(?broader_title_final, "") as ?broader_title_lbl)
+
+      bind(concat(?author_lbl, ?title_lbl, ?broader_title_lbl, ?curator_lbl, ?place_lbl, ?publisher_lbl, ?year_lbl) as ?value)
+    }
+    GROUP BY ?item
+  }
+
+  # ---- Authors ----
+  OPTIONAL {
+    SELECT ?item (GROUP_CONCAT(DISTINCT ?author_label; SEPARATOR=", ") AS ?authors)
+    WHERE {
+      ?item crm:P129i_is_subject_of ?linguistic_object.
+      ?linguistic_object a crm:E33_Linguistic_Object;
+          crm:P94i_was_created_by ?creation.
+      ?creation a crm:E65_Creation;
+          crm:P14_carried_out_by ?actor.
+      ?actor a crm:E39_Actor;
+          rdfs:label ?author_label
+    }
+    GROUP BY ?item
+  }
+
+  # ---- Typology ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?typology_label)) AS ?typology)
+    WHERE {
+      ?item veniss_ontology:has_broader ?broader.
+      ?broader veniss_ontology:has_broader_typology ?bt.
+      ?bt rdfs:label ?typology_label
+    }
+    GROUP BY ?item
+  }
+
+  # ---- Publication date ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?pub_date)) AS ?publication_date)
+    WHERE {
+      ?item frbroo:R24i_was_created_through ?publication_event.
+      ?publication_event a frbroo:F30_Publication_Event;
+          crm:P4_has_time-span ?timespan.
+      ?timespan a crm:E52_Time-Span;
+          crm:P82a_begin_of_the_begin ?pub_date.
+    }
+    GROUP BY ?item
+  }
+
+  # ---- compose the final label ----
+  BIND(CONCAT(
+        COALESCE(?title, ""),
+        IF(BOUND(?authors) || BOUND(?typology) || BOUND(?publication_date), " ", ""),
+        COALESCE(?authors, ""),
+        IF(BOUND(?authors) && (BOUND(?typology) || BOUND(?publication_date)), " ", ""),
+        COALESCE(?typology, ""),
+        IF(BOUND(?typology) && BOUND(?publication_date), " ", ""),
+        COALESCE(?publication_date, "")
+      ) AS ?labelStr)
+
+  BIND(?labelStr AS ?label)
+
+  # ---- mint the new search_term node IRI ----
+  BIND( IRI(CONCAT(STR(?item), "/search_term/", STRUUID())) AS ?st )
+}

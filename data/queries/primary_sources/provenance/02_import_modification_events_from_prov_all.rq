@@ -1,0 +1,49 @@
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX crmdig: <http://www.ics.forth.gr/isl/CRMdig/>
+PREFIX crm:   <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmdig:<http://www.cidoc-crm.org/extensions/crmdig/>
+PREFIX prov:  <http://www.w3.org/ns/prov#>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+
+INSERT {
+  ?value crmdig:L11i_was_output_of ?entityFormRecordModification .
+
+  ?entityFormRecordModification a crmdig:D7_Digital_Machine_Event ;
+                                crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_modification> ;
+                                crm:P14_carried_out_by ?user ;
+                                crm:P4_has_time-span ?modificationDate ;
+                                crmdig:L11_had_output ?value .
+
+  ?modificationDate a crm:E52_Time-Span ;
+                    crm:P82_at_some_time_within ?t .
+}
+WHERE {
+  ?subject a veniss_ontology:Source_Primary .
+  BIND( IRI(CONCAT(STR(?subject), "/entity_form_record")) AS ?value )
+  BIND( IRI(CONCAT(STR(?subject), "/container/context")) AS ?g )
+
+  # Must be a proper form record
+  ?subject crm:P129i_is_subject_of ?value .
+  ?value a crmdig:D1_Digital_Object ;
+         crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> .
+
+  # Old PROV facts per subject (actor + timestamp)
+  GRAPH ?g {
+    ?provEntity a prov:Entity ;
+                prov:generatedAtTime ?t ;
+                prov:wasAttributedTo ?user .
+  }
+
+  # Forced IRI pattern for the event/timespan
+  BIND( IRI(CONCAT(STR(?value), "/entity_formRecord_modification/", STRUUID())) AS ?entityFormRecordModification )
+  BIND( IRI(CONCAT(STR(?entityFormRecordModification), "/at_some_time_within/", STRUUID())) AS ?modificationDate )
+
+  # Idempotency: skip if an equivalent (actor,timestamp) mod event already exists
+  FILTER NOT EXISTS {
+    ?value crmdig:L11i_was_output_of ?ev2 .
+    ?ev2  crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_modification> ;
+          crm:P14_carried_out_by ?user ;
+          crm:P4_has_time-span ?ts2 .
+    ?ts2  crm:P82_at_some_time_within ?t .
+  }
+}

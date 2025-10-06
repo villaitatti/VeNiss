@@ -14,14 +14,13 @@ INSERT {
 WHERE {
   ?item rdf:type veniss_ontology:Source_Primary .
 
-  # Exclude items that already have a search_term appellation
   FILTER NOT EXISTS {
     ?item crm:P1_is_identified_by ?existingSt .
     ?existingSt a crm:E41_Appellation ;
                 crm:P2_has_type veniss_types:search_term .
   }
 
-  # ---- one attributed-title per (item, language) ----
+  # ---- drive languages from attributed titles (you can UNION locations if needed) ----
   {
     SELECT ?item ?lang (SAMPLE(STR(?al)) AS ?title)
     WHERE {
@@ -34,7 +33,21 @@ WHERE {
     GROUP BY ?item ?lang
   }
 
-  # ---- collapse island to a single value (language-neutral) ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?locLabel)) AS ?location)
+    WHERE {
+      ?item crm:P53_has_former_or_current_location ?locationNode .
+      ?locationNode crm:P53_has_former_or_current_location ?loc .
+      ?loc a crm:E78_Collection ;
+           crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives> ;
+           crm:P1_is_identified_by ?value .
+      ?value crm:P2_has_type <https://veniss.net/resource/type/path> ;
+             rdfs:label ?locLabel .
+    }
+    GROUP BY ?item
+  }
+
+  # ---- island (language-neutral) ----
   OPTIONAL {
     SELECT ?item (SAMPLE(STR(?il)) AS ?island)
     WHERE {
@@ -45,7 +58,7 @@ WHERE {
     GROUP BY ?item
   }
 
-  # ---- collapse year/time to a single value (language-neutral) ----
+  # ---- year/time (language-neutral) ----
   OPTIONAL {
     SELECT ?item (SAMPLE(STR(?tl)) AS ?year)
     WHERE {
@@ -58,10 +71,12 @@ WHERE {
     GROUP BY ?item
   }
 
-  # Build the label string and tag it with the title's language
+  # ---- compose the final label and tag with the current language ----
   BIND(CONCAT(
-        ?title,
-        IF(BOUND(?island) || BOUND(?year), " ", ""),
+        COALESCE(?title, ""),
+        IF(BOUND(?location) || BOUND(?island) || BOUND(?year), " ", ""),
+        COALESCE(?location, ""),
+        IF(BOUND(?location) && (BOUND(?island) || BOUND(?year)), " ", ""),
         COALESCE(?island, ""),
         IF(BOUND(?island) && BOUND(?year), " ", ""),
         COALESCE(?year, "")
@@ -69,6 +84,6 @@ WHERE {
 
   BIND(STRLANG(?labelStr, ?lang) AS ?label)
 
-  # Create a fresh IRI for the new search-term node (note: use ?item, not $item)
+  # ---- mint the new search_term node IRI ----
   BIND( IRI(CONCAT(STR(?item), "/search_term/", STRUUID())) AS ?st )
 }

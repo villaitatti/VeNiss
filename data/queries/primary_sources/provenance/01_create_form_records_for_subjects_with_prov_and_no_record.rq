@@ -1,0 +1,30 @@
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX crmdig: <http://www.ics.forth.gr/isl/CRMdig/>
+PREFIX crm:   <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmdig:<http://www.cidoc-crm.org/extensions/crmdig/>
+PREFIX prov:  <http://www.w3.org/ns/prov#>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+
+INSERT {
+  ?subject crm:P129i_is_subject_of ?value .
+  ?value   a crmdig:D1_Digital_Machine ;
+           a crmdig:D1_Digital_Object ;
+           crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> ;
+           crm:P129_is_about ?subject .
+}
+WHERE {
+  ?subject a veniss_ontology:Source_Primary .
+  BIND( IRI(CONCAT(STR(?subject), "/entity_form_record")) AS ?value )
+  BIND( IRI(CONCAT(STR(?subject), "/container/context")) AS ?g )
+
+  # Must have at least one PROV row in its container graph
+  GRAPH ?g {
+    ?provEntity a prov:Entity .
+  }
+
+  # No form record yet
+  FILTER NOT EXISTS {
+    ?subject crm:P129i_is_subject_of ?any .
+    ?any crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> .
+  }
+}

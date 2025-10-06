@@ -7,7 +7,10 @@ This directory contains SPARQL queries for data management and enrichment in the
 The VeNiss query collection is organized by entity type, with each entity having its own directory containing specialized queries for that entity's data management needs:
 
 - **Primary Sources**: Queries for managing archival primary source documents
+- **Secondary Sources**: Queries for managing secondary source documents and publications
 - **Person**: Queries for person entities and biographical data
+- **Group**: Queries for group/actor entities including formation and dissolution data
+- **Event**: Queries for event entities with multilingual support
 
 ## Directory Structure
 
@@ -28,8 +31,14 @@ data/queries/
 │   │   ├── 03_import_creation_event_from_earliest_prov_all.rq
 │   │   └── 04_verify_after_import.rq
 │   └── patterns/               # Common patterns and utilities
+├── secondary_sources/           # Secondary source entity queries
+│   └── search_term.rq          # Generate composite search terms
 ├── person/                     # Person entity queries
 │   └── search_term.rq          # Generate person search terms
+├── group/                      # Group/Actor entity queries
+│   └── search_term.rq          # Generate group search terms
+├── event/                      # Event entity queries
+│   └── search_term.rq          # Generate event search terms
 ├── merge_tables.sql            # SQL utility for table operations
 └── postgres_getall.pgsql       # PostgreSQL data retrieval query
 ```
@@ -67,3 +76,49 @@ data/queries/
 
 **Main Queries**:
 - [`search_term.rq`](person/search_term.rq) - Generate searchable appellations for persons
+
+### 📚 Secondary Sources ([`secondary_sources/`](secondary_sources/))
+
+**Entity Type**: `veniss_ontology:Source_Secondary`
+
+**Purpose**: Manage secondary source documents including books, articles, and other published materials that reference or analyze primary sources.
+
+**Key Capabilities**:
+- **Search Term Generation**: Create composite search terms combining titles, authors, publication details, and typology
+- **Publication Metadata**: Handle complex publication information including curators, publishers, places, and dates
+- **Author Management**: Support for multiple authors and their roles
+- **Typological Classification**: Manage broader typological categories for secondary sources
+
+**Main Queries**:
+- [`search_term.rq`](secondary_sources/search_term.rq) - Generate searchable appellations for secondary sources
+
+### 👥 Group ([`group/`](group/))
+
+**Entity Type**: `veniss_ontology:Actor`
+
+**Purpose**: Manage group entities and collective actors including organizations, institutions, and other collective bodies with formation and dissolution information.
+
+**Key Capabilities**:
+- **Search Term Generation**: Create composite search terms combining group names, person names, and temporal information
+- **Name Authority Control**: Handle complex naming patterns for both individual and group appellations
+- **Temporal Data**: Manage formation and dissolution dates with time primitives
+- **Identity Management**: Support for aliases, appellations, and multiple name forms
+
+**Main Queries**:
+- [`search_term.rq`](group/search_term.rq) - Generate searchable appellations for groups/actors
+
+### 📅 Event ([`event/`](event/))
+
+**Entity Type**: `veniss_ontology:Event`
+
+**Purpose**: Manage historical events with multilingual support, including temporal, geographical, and typological information.
+
+**Key Capabilities**:
+- **Multilingual Search Terms**: Generate separate search terms for Italian ("it") and English ("en") languages
+- **Temporal Data**: Extract and include event dates using time primitives
+- **Geographical Context**: Include island location information
+- **Typological Classification**: Support for event type vocabularies in multiple languages
+- **Language-Aware Processing**: Handle language-specific labels and typologies while maintaining language-neutral data
+
+**Main Queries**:
+- [`search_term.rq`](event/search_term.rq) - Generate language-specific searchable appellations for events

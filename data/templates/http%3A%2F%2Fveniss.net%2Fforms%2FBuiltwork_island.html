@@ -90,44 +90,88 @@
                                 {{#each bindings}}
                                 <p></p>
 
-                                <div style='height: 20vw;'>
-                                    <h3>Phases</h3>
+                                <div style='height: 500px;'>
+                                    <h3>Island Phases</h3>
+                                    <semantic-map-controls 
+                                        id="island-phases-map-controls" 
+                                        target-map-id="island-phases-map"
+                                        timeline='{"mode": "normal", "min": 1500, "max": 2025, "default": 2023, "locked": false}'
+                                        features-options-enabled="true"
+                                    ></semantic-map-controls>
                                     <semantic-context repository="ephedra">
-                                        <semantic-map
-                                        id='phasesMap'
-                                        fix-zoom-level="12"
-                                        year-filtering="true"
-                                        target-controls='["phases-map-control"]'
-                                        map-options='{"crs":"EPSG:4326"}'
+                                        <semantic-map-advanced
+                                            id="island-phases-map"
+                                            year-filtering="true"
+                                            target-controls='["island-phases-map-controls"]'
+                                            selected-feature-style='{
+                                                "color": "rgba(0, 128, 255, 0.7)",
+                                                "borderColor": "rgba(0, 128, 255, 1)",
+                                                "borderWidth": 3
+                                            }'
                                             query='
-                                    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-                                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                                    SELECT DISTINCT ?wkt ?bw_id ?bob ?eoe WHERE {
-                                      SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                        ?root rs_sql_sail:hasQueryId "{{label.value}}_island_shapes";
-                                        veniss_sql:wkt ?wkt;
-                                        veniss_sql:bw_id ?bw_id;
-                                        veniss_sql:bob ?bob;
-                                        veniss_sql:eoe ?eoe;
-                                      }
-                                    }'>
-                                        </semantic-map>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+
+SELECT DISTINCT ?subject ?wkt ?bw_id ?bob ?eoe ?bob_formatted ?eoe_formatted ?name WHERE {
+  
+  SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+    ?root rs_sql_sail:hasQueryId "{{label.value}}_island_shapes_temporal" ;
+          veniss_sql:wkt ?wkt ;
+          veniss_sql:bw_id ?bw_id ;
+          veniss_sql:bob ?bob ;
+          veniss_sql:eoe ?eoe .
+  }
+  
+  # Create a unique subject for each island phase
+  BIND(IRI(CONCAT("https://veniss.net/resource/island/{{label.value}}/phase/", ?bw_id)) AS ?subject)
+  
+  # Format dates for display
+  BIND(CONCAT("01-01-", ?bob) AS ?bob_formatted)
+  BIND(CONCAT("31-12-", ?eoe) AS ?eoe_formatted)
+  
+  # Create a descriptive name
+  BIND(CONCAT("{{label.value}} - Phase ", ?bw_id, " (", ?bob, "-", ?eoe, ")") AS ?name)
+}
+ORDER BY ?bw_id
+                                            '
+                                            map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
+                                            fix-zoom-level="12"
+                                            tuple-template="{{> islandPhaseMapDetails }}">
+                                            
+                                            <template id="islandPhaseMapDetails">
+                                                <h4>{{name.value}}</h4>
+                                                <p>
+                                                    <strong>From:</strong> {{bob_formatted.value}}<br/>
+                                                    <strong>To:</strong> {{eoe_formatted.value}}
+                                                </p>
+                                                <p><strong>Phase ID:</strong> {{bw_id.value}}</p>
+                                            </template>
+                                            
+                                            <tiles-layer
+                                                thumbnail='/assets/images/ghybrid.jpg'
+                                                url='http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+                                                identifier='GHybrid'
+                                                name='Google Hybrid'
+                                                level='basemap'
+                                                author="Google"
+                                                location=""
+                                                year="2023">
+                                            </tiles-layer>
+                                            <tiles-layer
+                                                thumbnail='/assets/images/basemaps_thumbnails_light.jpg'
+                                                url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}'
+                                                identifier='light'
+                                                name='Light'
+                                                level='basemap'
+                                                author=""
+                                                location=""
+                                                year="">
+                                            </tiles-layer>
+                                        </semantic-map-advanced>
                                     </semantic-context>
-                                    <semantic-map-controls
-                                    id="phases-map-control"
-                                    target-map-id="phasesMap"
-                                    features-options-enabled="false"
-                                    filters-initialization='{"basemap":true,"overlay":false,"feature":true}'
-                                    show-filters="false"
-                                    timeline='{
-                                        "min":1500,
-                                        "max":2023,
-                                        "mode":"marked",
-                                        "default":2023
-                                      }'
-                                      >
-                                    </semantic-map-controls>
                                 </div>
                                 {{/each}}
                             </template>
@@ -135,7 +179,7 @@
                         {{/if}}
                     </div>
                     <div class="col-md-6">
-                        <h3>Island Location</h3>
+                        <h3>Island LocationS</h3>
                         {{#if node}}
                         <semantic-query query='
                             SELECT ?item ?label ?longitude_label ?latitude_label ?geonames_label ?node {
@@ -161,7 +205,7 @@
                                 {{#each bindings}}
                                 <p></p>
                                 <div style="height:400px; width: 100%;">
-                                    <semantic-map id='location_map' fix-zoom-level="13" query='SELECT ?lat ?lng ?description ?link ?node WHERE {
+                                    <semantic-map id='location_map' query='SELECT ?lat ?lng ?description ?link ?node WHERE {
                                         VALUES(?lat ?lng ?description ?link) {
                                         ("{{latitude_label.value}}" "{{longitude_label.value}}" "{{node.value}}" <http://www.wikidata.org/entity/Q22132500>)
                                   }

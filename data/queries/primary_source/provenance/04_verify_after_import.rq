@@ -1,0 +1,23 @@
+PREFIX crmdig: <http://www.ics.forth.gr/isl/CRMdig/>
+PREFIX crmdig: <http://www.ics.forth.gr/isl/CRMdig/>
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX crm:   <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmdig:<http://www.cidoc-crm.org/extensions/crmdig/>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+
+SELECT ?subject ?value ?evType ?actor ?when
+WHERE {
+  ?subject a veniss_ontology:Source_Primary ;
+           crm:P129i_is_subject_of ?value .
+  ?value a crmdig:D1_Digital_Object ;
+         crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> ;
+         crmdig:L11i_was_output_of ?ev .
+
+  ?ev a crmdig:D7_Digital_Machine_Event ;
+      crm:P2_has_type ?evType ;
+      crm:P14_carried_out_by ?actor ;
+      crm:P4_has_time-span ?ts .
+
+  ?ts crm:P82_at_some_time_within ?when .
+}
+ORDER BY ?subject DESC(?when)

@@ -1,0 +1,110 @@
+PREFIX label: <http://purl.org/net/vocab/2004/03/label#>
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+PREFIX veniss_types: <https://veniss.net/resource/type/>
+
+DELETE {
+  ?item crm:P1_is_identified_by ?existingSt .
+  ?existingSt ?p ?o .
+}
+INSERT {
+  ?item crm:P1_is_identified_by ?st .
+  ?st a crm:E41_Appellation ;
+      crm:P2_has_type veniss_types:search_term ;
+      rdfs:label ?label .
+}
+WHERE {
+  ?item rdf:type veniss_ontology:Event .
+
+  # remove any existing search_term node and all its triples
+  OPTIONAL {
+    ?item crm:P1_is_identified_by ?existingSt .
+    ?existingSt a crm:E41_Appellation ;
+                crm:P2_has_type veniss_types:search_term .
+    ?existingSt ?p ?o .
+  }
+
+  # We want to (re)create labels for these two languages
+  VALUES ?lang { "it" "en" }
+
+  # ---- event label: prefer ?lang, else fall back to unlanguaged ----
+  OPTIONAL {
+    SELECT ?item ?lang (SAMPLE(STR(?el)) AS ?event_label_lang)
+    WHERE {
+      ?item rdfs:label ?el .
+      FILTER(LANG(?el) = ?lang)
+    }
+    GROUP BY ?item ?lang
+  }
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?el0)) AS ?event_label_nolang)
+    WHERE {
+      ?item rdfs:label ?el0 .
+      FILTER(LANG(?el0) = "")   # unlanguaged literal
+    }
+    GROUP BY ?item
+  }
+  BIND(COALESCE(?event_label_lang, ?event_label_nolang) AS ?event_label)
+
+  # ---- island (language-neutral) ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?il)) AS ?island)
+    WHERE {
+      ?item veniss_ontology:has_island ?islandRes .
+      ?islandRes rdfs:label ?il .
+    }
+    GROUP BY ?item
+  }
+
+  # ---- typology: prefer ?lang, else fall back to unlanguaged ----
+  OPTIONAL {
+    SELECT ?item ?lang (SAMPLE(STR(?tl)) AS ?typology_lang)
+    WHERE {
+      ?item crm:P2_has_type ?type_node .
+      ?type_node crm:P71i_is_listed_in <https://veniss.net/resource/vocab/event_types> ;
+                 rdfs:label ?tl .
+      FILTER(LANG(?tl) = ?lang)
+    }
+    GROUP BY ?item ?lang
+  }
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?tl0)) AS ?typology_nolang)
+    WHERE {
+      ?item crm:P2_has_type ?type_node0 .
+      ?type_node0 crm:P71i_is_listed_in <https://veniss.net/resource/vocab/event_types> ;
+                  rdfs:label ?tl0 .
+      FILTER(LANG(?tl0) = "")
+    }
+    GROUP BY ?item
+  }
+  BIND(COALESCE(?typology_lang, ?typology_nolang) AS ?typology)
+
+  # ---- date (language-neutral) ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?dl)) AS ?date)
+    WHERE {
+      ?item crm:P4_has_time-span ?timespan .
+      ?timespan crm:P170i_time_is_defined_by ?time_primitive .
+      ?time_primitive a crm:E61_Time-Primitive ;
+                      crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ;
+                      rdfs:label ?dl .
+    }
+    GROUP BY ?item
+  }
+
+  # ---- compose final label and tag with the current language ----
+  BIND(CONCAT(
+        COALESCE(?event_label, ""),
+        IF(BOUND(?island),   CONCAT(" ", ?island),   ""),
+        IF(BOUND(?typology), CONCAT(" ", ?typology), ""),
+        IF(BOUND(?date),     CONCAT(" ", ?date),     "")
+      ) AS ?labelStr)
+
+  BIND(STRLANG(?labelStr, ?lang) AS ?label)
+
+  # ---- mint the new search_term node IRI ----
+  BIND( IRI(CONCAT(STR(?item), "/search_term/", STRUUID())) AS ?st )
+}

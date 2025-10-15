@@ -1,0 +1,128 @@
+PREFIX ontology: <http://dbpedia.org/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+PREFIX veniss_types: <https://veniss.net/resource/type/>
+
+DELETE {
+  ?item crm:P1_is_identified_by ?existingSt .
+  ?existingSt ?p ?o .
+}
+INSERT {
+  ?item crm:P1_is_identified_by ?st .
+  ?st a crm:E41_Appellation ;
+      crm:P2_has_type veniss_types:search_term ;
+      rdfs:label ?label .
+}
+WHERE {
+  ?item rdf:type veniss_ontology:Person .
+
+  OPTIONAL {
+    ?item crm:P1_is_identified_by ?existingSt .
+    ?existingSt a crm:E41_Appellation ;
+                crm:P2_has_type veniss_types:search_term .
+    ?existingSt ?p ?o .
+  }
+
+  # ---- construct person name ----
+  {
+    SELECT ?item ?value
+    WHERE {
+      ?item a veniss_ontology:Actor .
+      
+      OPTIONAL {
+        ?item crm:P1_is_identified_by ?given_name_node.
+        ?given_name_node crm:P2_has_type <https://veniss.net/resource/type/given_name>;
+          rdfs:label ?given_name_label.
+        BIND(?given_name_label AS ?given_name)
+      }
+      OPTIONAL {
+        ?item crm:P1_is_identified_by ?family_name_node.
+        ?family_name_node crm:P2_has_type <https://veniss.net/resource/type/family_name>;
+          rdfs:label ?family_name_label.
+        BIND(?family_name_label AS ?family_name)
+      }
+      OPTIONAL {
+        ?item crm:P1_is_identified_by ?alias_node.
+        ?alias_node crm:P2_has_type <https://veniss.net/resource/type/alias>;
+          rdfs:label ?alias_label.
+      }
+
+      OPTIONAL {
+        ?item crm:P1_is_identified_by ?appellation.
+        ?appellation crm:P2_has_type <https://veniss.net/resource/type/appellation>;
+          rdfs:label ?group_label
+      }
+      BIND(COALESCE(?given_name, "") AS ?given_name_final)
+      BIND(COALESCE(CONCAT(?family_name, ", "), "") AS ?family_name_final)
+      BIND(CONCAT(?family_name_final, ?given_name_final) as ?fullname_final)
+      BIND(COALESCE(CONCAT(?alias_label, " (", ?fullname_final, ")"), ?fullname_final) AS ?person_name)
+      BIND(COALESCE(?group_label, "") as ?group_name)
+      
+      BIND(CONCAT(?group_name, ?person_name) as ?value)
+    }
+  }
+
+  # ---- alias ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?al)) AS ?alias)
+    WHERE {
+      ?item crm:P1_is_identified_by ?person_alias.
+      ?person_alias crm:P2_has_type <https://veniss.net/resource/type/alias>;
+        rdfs:label ?al
+    }
+    GROUP BY ?item
+  }
+
+  # ---- patronymic ----
+  OPTIONAL {
+    SELECT ?item (SAMPLE(STR(?pl)) AS ?patronymic)
+    WHERE {
+      ?item crm:P1_is_identified_by ?person_patronymic.
+      ?person_patronymic crm:P2_has_type <https://veniss.net/resource/type/patronymic>;
+        rdfs:label ?pl
+    }
+    GROUP BY ?item
+  }
+
+  # ---- dates (birth and death years) ----
+  OPTIONAL {
+    SELECT ?item ?dates
+    WHERE {
+      OPTIONAL {
+        ?item crm:P98i_was_born ?birth.
+        ?birth a crm:E67_Birth;
+          crm:P4_has_time-span ?birth_timespan.
+        ?birth_timespan crm:P170i_time_is_defined_by ?birth_time_primitive.
+        ?birth_time_primitive a crm:E61_Time-Primitive;
+                             crm:P2_has_type veniss_types:time_primitive_year;
+                             rdfs:label ?birth_year_label.
+      }
+      OPTIONAL {
+        ?item crm:P100i_died_in ?death.
+        ?death a crm:E69_Death;
+          crm:P4_has_time-span ?death_timespan.
+        ?death_timespan crm:P170i_time_is_defined_by ?death_timespan_primitive.
+        ?death_timespan_primitive a crm:E61_Time-Primitive;
+                             crm:P2_has_type veniss_types:time_primitive_year;
+                             rdfs:label ?death_label.
+        BIND(CONCAT(" - ", ?death_label) AS ?death_year_label)
+      }
+      BIND(COALESCE(?birth_year_label, "") AS ?birth_year_label_final)
+      BIND(COALESCE(?death_year_label, "") AS ?death_year_label_final)
+      BIND(CONCAT(?birth_year_label_final, ?death_year_label_final) AS ?dates)
+    }
+  }
+
+  # ---- compose the final label ----
+  BIND(CONCAT(
+        COALESCE(?value, ""),
+        IF(BOUND(?alias), CONCAT(" ", ?alias), ""),
+        IF(BOUND(?patronymic), CONCAT(" ", ?patronymic), ""),
+        IF(BOUND(?dates) && ?dates != "", CONCAT(" ", ?dates), "")
+      ) AS ?label)
+
+  # ---- mint the new search_term node IRI ----
+  BIND( IRI(CONCAT(STR(?item), "/search_term/", STRUUID())) AS ?st )
+}

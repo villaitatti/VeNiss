@@ -5,10 +5,6 @@ PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX veniss_ontology: <https://veniss.net/ontology#>
 PREFIX veniss_types: <https://veniss.net/resource/type/>
 
-DELETE {
-  ?item crm:P1_is_identified_by ?existingSt .
-  ?existingSt ?p ?o .
-}
 INSERT {
   ?item crm:P1_is_identified_by ?st .
   ?st a crm:E41_Appellation ;
@@ -16,13 +12,18 @@ INSERT {
       rdfs:label ?label .
 }
 WHERE {
-  ?item rdf:type veniss_ontology:Source_Primary .
-
-  OPTIONAL {
-    ?item crm:P1_is_identified_by ?existingSt .
-    ?existingSt a crm:E41_Appellation ;
-                crm:P2_has_type veniss_types:search_term .
-    ?existingSt ?p ?o .
+  # First, get only primary sources that don't have search terms
+  {
+    SELECT ?item WHERE {
+      ?item rdf:type veniss_ontology:Source_Primary .
+      FILTER NOT EXISTS {
+        ?item crm:P1_is_identified_by ?existingSt .
+        ?existingSt a crm:E41_Appellation ;
+                    crm:P2_has_type veniss_types:search_term .
+      }
+    }
+    # Uncomment to process in batches:
+    # LIMIT 100
   }
 
   # ---- drive languages from attributed titles (you can UNION locations if needed) ----

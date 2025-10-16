@@ -1,0 +1,19 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX veniss_ontology: <https://veniss.net/ontology#>
+PREFIX veniss_types: <https://veniss.net/resource/type/>
+
+DELETE {
+  ?item crm:P1_is_identified_by ?st .
+  ?st a crm:E41_Appellation ;
+      crm:P2_has_type veniss_types:search_term ;
+      rdfs:label ?label .
+}
+WHERE {
+  ?item a veniss_ontology:Source_Secondary .
+  ?item crm:P1_is_identified_by ?st .
+  ?st a crm:E41_Appellation ;
+      crm:P2_has_type veniss_types:search_term ;
+      rdfs:label ?label .
+}

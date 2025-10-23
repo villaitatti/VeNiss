@@ -1019,7 +1019,7 @@
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Knowledge_map')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_chart')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline'))}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
-                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value WHERE {
+                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value ?author WHERE {
                                                     BIND(?subject as ?iri) .
                                                     BIND(?subject as ?item) .
 
@@ -1029,6 +1029,14 @@
                                                       ?information_object crm:P1_is_identified_by ?descriptionAppellation .
                                                       ?descriptionAppellation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/primary_appellation> .
                                                       ?descriptionAppellation crm:P190_has_symbolic_content ?description .
+                                                    }
+
+                                                    OPTIONAL {
+                                                      ?subject a veniss_ontology:Source_Primary .
+                                                      ?subject crm:P108i_was_produced_by ?production .
+                                                      ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> .
+                                                      ?actor_role crmpc:P01_has_domain ?production ;
+                                                          crmpc:P02_has_range ?author .
                                                     }
 
                                                     {{#if bindings.0.columnContentSparqlPattern2.value}}
@@ -1218,7 +1226,28 @@
                                           </template>
                                         </semantic-query>
                                       {{else}}
-                                        <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">[[urlParam "resourcelabel" escape=false]]</div>
+                                        {{#if author.value}}
+                                          <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">
+                                            <mp-label iri='{{author.value}}'></mp-label>
+                                          </div>
+                                        {{else}}
+                                          <semantic-query query='SELECT ?isPrimarySource WHERE {
+                                                                  BIND(<{{iri.value}}> AS ?subject)
+                                                                  ?subject a veniss_ontology:Source_Primary .
+                                                                  BIND(true as ?isPrimarySource)
+                                                                } LIMIT 1'>
+                                            <template id='template'>
+                                              {{#if bindings.0.isPrimarySource.value}}
+                                                <div class="color-secondary-light text-font-size__xsmall text-truncate-line1"></div>
+                                              {{else}}
+                                                <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">[[urlParam "resourcelabel" escape=false]]</div>
+                                              {{/if}}
+                                            </template>
+                                            <template id='no-result-template'>
+                                              <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">[[urlParam "resourcelabel" escape=false]]</div>
+                                            </template>
+                                          </semantic-query>
+                                        {{/if}}
                                       {{/if}}
                                     </div>
                                   </div>
@@ -1442,16 +1471,24 @@
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_chart')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline')
                                             )}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
-                                            query='SELECT DISTINCT ?subject ?iri ?description ?resourceConfig WHERE {
+                                            query='SELECT DISTINCT ?subject ?iri ?description ?resourceConfig ?author WHERE {
                                                     BIND(?subject as ?iri) .
                                                     BIND(<[[urlParam "resourceconfig" escape=false]]> as ?resourceConfig) .
                                                     
                                                     OPTIONAL {
                                                       ?subject crm:P67i_is_referred_to_by ?information_object  .
                                                       ?information_object crm:P2_has_type <http://www.researchspace.org/resource/vocab/text_type/description> .
-                                                      ?information_object crm:P1_is_identified_by ?descriptionAppellation . 
-                                                      ?descriptionAppellation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/primary_appellation> . 
+                                                      ?information_object crm:P1_is_identified_by ?descriptionAppellation .
+                                                      ?descriptionAppellation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/primary_appellation> .
                                                       ?descriptionAppellation crm:P190_has_symbolic_content ?description .
+                                                    }
+
+                                                    OPTIONAL {
+                                                      ?subject a veniss_ontology:Source_Primary .
+                                                      ?subject crm:P108i_was_produced_by ?production .
+                                                      ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> .
+                                                      ?actor_role crmpc:P01_has_domain ?production ;
+                                                          crmpc:P02_has_range ?author .
                                                     }
                                                   } '
     
@@ -1590,7 +1627,28 @@
                                           </template>
                                         </semantic-query>
                                       {{else}}
-                                        <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">[[urlParam "resourcelabel" escape=false]]</div>
+                                        {{#if author.value}}
+                                          <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">
+                                            <mp-label iri='{{author.value}}'></mp-label>
+                                          </div>
+                                        {{else}}
+                                          <semantic-query query='SELECT ?isPrimarySource WHERE {
+                                                                  BIND(<{{iri.value}}> AS ?subject)
+                                                                  ?subject a veniss_ontology:Source_Primary .
+                                                                  BIND(true as ?isPrimarySource)
+                                                                } LIMIT 1'>
+                                            <template id='template'>
+                                              {{#if bindings.0.isPrimarySource.value}}
+                                                <div class="color-secondary-light text-font-size__xsmall text-truncate-line1"></div>
+                                              {{else}}
+                                                <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">[[urlParam "resourcelabel" escape=false]]</div>
+                                              {{/if}}
+                                            </template>
+                                            <template id='no-result-template'>
+                                              <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">[[urlParam "resourcelabel" escape=false]]</div>
+                                            </template>
+                                          </semantic-query>
+                                        {{/if}}
                                       {{/if}}
                                     </div>
                                   </div>

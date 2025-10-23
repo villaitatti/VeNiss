@@ -91,7 +91,7 @@
                                               urlqueryparam-custom-label='New [[urlParam "resourcelabel" escape=false]]'>
                       <button id="create-new-btn" class="btn btn-action btn-textAndIcon">
                         <rs-icon icon-type="round" icon-name="add_box"></rs-icon>
-                        <span>New [[urlParam "resourcelabel" escape=false]]</span>
+                        <span>New [[urlParam "resourcelabel" escape=false]] </span>
                       </button>
                     </semantic-link-container>
                     <semantic-link-container  uri='http://www.researchspace.org/resource/ThinkingFrames'
@@ -1002,38 +1002,96 @@
                       
                         <template id='custom-list-view'>
                           <semantic-search-result>
+                            <mp-sparql-result-counts id='list-search-result-count' query="SELECT DISTINCT ?subject {} LIMIT 100"
+                                                        template='{{> template}}'
+                            >
+                                <template id='template'>
+                                  {{#if hasLimit}}
+                                    <bs-alert bs-style="warning">
+                                      <span class="num-results"><strong>Warning!</strong> The sorting functionality works correctly with less than <strong>100 entries.</strong><br>Please use filters to reduce the result set for optimal performance!</span>
+                                    </bs-alert>
+                                  {{/if}}
+                                </template>
+                            </mp-sparql-result-counts>
                             <semantic-table id='semantic-search-result-list'
-                                            class-name="table-fixed-header table-scrollable-content table-expanded search-table-container 
+                                            class-name="table-fixed-header table-scrollable-content table-expanded search-table-container
                                             {{#if (or (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Set')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Knowledge_map')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_chart')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline'))}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
-                                            query='SELECT DISTINCT ?subject ?iri ?description WHERE {
+                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value WHERE {
                                                     BIND(?subject as ?iri) .
-                                                    #?subject a ?type .
-                                                    #?type rdfs:label ?typeLabel .
-                                                    #FILTER (lang(?typeLabel) = "en")
+                                                    BIND(?subject as ?item) .
 
                                                     OPTIONAL {
                                                       ?subject crm:P67i_is_referred_to_by ?information_object  .
                                                       ?information_object crm:P2_has_type <http://www.researchspace.org/resource/vocab/text_type/description> .
-                                                      ?information_object crm:P1_is_identified_by ?descriptionAppellation . 
-                                                      ?descriptionAppellation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/primary_appellation> . 
+                                                      ?information_object crm:P1_is_identified_by ?descriptionAppellation .
+                                                      ?descriptionAppellation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/primary_appellation> .
                                                       ?descriptionAppellation crm:P190_has_symbolic_content ?description .
                                                     }
+
+                                                    {{#if bindings.0.columnContentSparqlPattern2.value}}
+                                                    # Column 2: Subquery with datatype-aware binding
+                                                    OPTIONAL {
+                                                      {
+                                                        SELECT ?item ?column2Value WHERE {
+                                                          {{bindings.0.columnContentSparqlPattern2.value}}
+                                                          {{#if (eq bindings.0.columnContentType2.value "number")}}
+                                                            BIND(xsd:integer(?label) as ?column2Value)
+                                                          {{else}}
+                                                            BIND(?label as ?column2Value)
+                                                          {{/if}}
+                                                        }
+                                                      }
+                                                    }
+                                                    {{/if}}
+
+                                                    {{#if bindings.0.columnContentSparqlPattern3.value}}
+                                                    # Column 3: Subquery with datatype-aware binding
+                                                    OPTIONAL {
+                                                      {
+                                                        SELECT ?item ?column3Value WHERE {
+                                                          {{bindings.0.columnContentSparqlPattern3.value}}
+                                                          {{#if (eq bindings.0.columnContentType3.value "number")}}
+                                                            BIND(xsd:integer(?label) as ?column3Value)
+                                                          {{else}}
+                                                            BIND(?label as ?column3Value)
+                                                          {{/if}}
+                                                        }
+                                                      }
+                                                    }
+                                                    {{/if}}
+
+                                                    {{#if bindings.0.columnContentSparqlPattern4.value}}
+                                                    # Column 4: Subquery with datatype-aware binding
+                                                    OPTIONAL {
+                                                      {
+                                                        SELECT ?item ?column4Value WHERE {
+                                                          {{bindings.0.columnContentSparqlPattern4.value}}
+                                                          {{#if (eq bindings.0.columnContentType4.value "number")}}
+                                                            BIND(xsd:integer(?label) as ?column4Value)
+                                                          {{else}}
+                                                            BIND(?label as ?column4Value)
+                                                          {{/if}}
+                                                        }
+                                                      }
+                                                    }
+                                                    {{/if}}
                                                   } '
     
                                             options='{"showFilter":false, 
                                                       "resultsPerPage":30,
-                                                      "useFixedHeader":true
+                                                      "useFixedHeader":true,
+                                                      "enableSort": true
                                                      }' 
 
                                             column-configuration='[
                                                                     {"variableName": "subject", "displayName": "", "cellTemplate": "{{> selectionCheckbox}}" },
                                                                     {"variableName": "subject", "displayName": "{{#if bindings.0.columnTitle1.value}}{{bindings.0.columnTitle1.value}}{{else}}[[urlParam "resourcelabel" escape=false]] name{{/if}}", "cellTemplate": "{{> column1}}" },
-                                                                    {{#if bindings.0.columnTitle2.value}} {"variableName": "", "displayName": "{{bindings.0.columnTitle2.value}}", "cellTemplate": "{{> column2}}" },{{/if}}
-                                                                    {{#if bindings.0.columnTitle3.value}} {"variableName": "", "displayName": "{{bindings.0.columnTitle3.value}}", "cellTemplate": "{{> column3}}" },{{/if}}
-                                                                    {{#if bindings.0.columnTitle4.value}} {"variableName": "", "displayName": "{{bindings.0.columnTitle4.value}}", "cellTemplate": "{{> column4}}" },{{/if}}
+                                                                    {{#if bindings.0.columnTitle2.value}} {"variableName": "column2Value", "displayName": "{{bindings.0.columnTitle2.value}}", "cellTemplate": "{{> column2}}" },{{/if}}
+                                                                    {{#if bindings.0.columnTitle3.value}} {"variableName": "column3Value", "displayName": "{{bindings.0.columnTitle3.value}}", "cellTemplate": "{{> column3}}" },{{/if}}
+                                                                    {{#if bindings.0.columnTitle4.value}} {"variableName": "column4Value", "displayName": "{{bindings.0.columnTitle4.value}}", "cellTemplate": "{{> column4}}" },{{/if}}
                                                                     {"variableName": "", "displayName": "", "cellTemplate": "{{> actions}}" }
                                                                   ]'   
                             >
@@ -1363,6 +1421,18 @@
 
                         <template id='default-list-view'>
                           <semantic-search-result>
+                            <mp-sparql-result-counts id='default-list-search-result-count' query="SELECT DISTINCT ?subject {} LIMIT 100"
+                                                        template='{{> template}}'
+                            >
+                                <template id='template'>
+                                  {{#if hasLimit}}
+                                    <bs-alert bs-style="warning" class="search-results__alert">
+                                      <rs-icon icon-type="rounded" icon-name="report_problem" symbol="true"></rs-icon>
+                                      <span class="num-results">There were {{totalNumberOfResults}} results. Sorting works correctly only with less than 100 entries. Please use filters to reduce the result set for optimal performance!</span>
+                                    </bs-alert>
+                                  {{/if}}
+                                </template>
+                            </mp-sparql-result-counts>
                             <semantic-table id='semantic-search-result-list'
                                             class-name="table-fixed-header table-scrollable-content table-expanded search-table-container 
                                             {{#if (or (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Set')

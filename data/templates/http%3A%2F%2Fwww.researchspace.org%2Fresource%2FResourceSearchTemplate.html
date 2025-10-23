@@ -1035,14 +1035,14 @@
                                                     # Column 2: Subquery with datatype-aware binding
                                                     OPTIONAL {
                                                       {
-                                                        SELECT ?item ?column2Value WHERE {
+                                                        SELECT ?item (MIN(?column2Value) as ?column2Value) WHERE {
                                                           {{bindings.0.columnContentSparqlPattern2.value}}
                                                           {{#if (eq bindings.0.columnContentType2.value "number")}}
                                                             BIND(xsd:integer(?label) as ?column2Value)
                                                           {{else}}
                                                             BIND(?label as ?column2Value)
                                                           {{/if}}
-                                                        }
+                                                        } GROUP BY ?item
                                                       }
                                                     }
                                                     {{/if}}
@@ -1051,14 +1051,14 @@
                                                     # Column 3: Subquery with datatype-aware binding
                                                     OPTIONAL {
                                                       {
-                                                        SELECT ?item ?column3Value WHERE {
+                                                        SELECT ?item (MIN(?column3Value) as ?column3Value) WHERE {
                                                           {{bindings.0.columnContentSparqlPattern3.value}}
                                                           {{#if (eq bindings.0.columnContentType3.value "number")}}
                                                             BIND(xsd:integer(?label) as ?column3Value)
                                                           {{else}}
                                                             BIND(?label as ?column3Value)
                                                           {{/if}}
-                                                        }
+                                                        } GROUP BY ?item
                                                       }
                                                     }
                                                     {{/if}}
@@ -1067,14 +1067,14 @@
                                                     # Column 4: Subquery with datatype-aware binding
                                                     OPTIONAL {
                                                       {
-                                                        SELECT ?item ?column4Value WHERE {
+                                                        SELECT ?item (MIN(?column4Value) as ?column4Value) WHERE {
                                                           {{bindings.0.columnContentSparqlPattern4.value}}
                                                           {{#if (eq bindings.0.columnContentType4.value "number")}}
                                                             BIND(xsd:integer(?label) as ?column4Value)
                                                           {{else}}
                                                             BIND(?label as ?column4Value)
                                                           {{/if}}
-                                                        }
+                                                        } GROUP BY ?item
                                                       }
                                                     }
                                                     {{/if}}
@@ -1421,18 +1421,20 @@
 
                         <template id='default-list-view'>
                           <semantic-search-result>
-                            <mp-sparql-result-counts id='default-list-search-result-count' query="SELECT DISTINCT ?subject {} LIMIT 100"
-                                                        template='{{> template}}'
-                            >
-                                <template id='template'>
-                                  {{#if hasLimit}}
-                                    <bs-alert bs-style="warning" class="search-results__alert">
-                                      <rs-icon icon-type="rounded" icon-name="report_problem" symbol="true"></rs-icon>
-                                      <span class="num-results">There were {{totalNumberOfResults}} results. Sorting works correctly only with less than 100 entries. Please use filters to reduce the result set for optimal performance!</span>
-                                    </bs-alert>
-                                  {{/if}}
-                                </template>
-                            </mp-sparql-result-counts>
+                            <semantic-search-result>
+                              <mp-sparql-result-counts id='default-list-search-result-count' query="SELECT DISTINCT ?subject {} LIMIT 100"
+                                                          template='{{> defaultSortingWarningTemplate}}'
+                              >
+                                  <template id='defaultSortingWarningTemplate'>
+                                    {{#if hasLimit}}
+                                      <bs-alert bs-style="warning" class="search-results__alert">
+                                        <rs-icon icon-type="rounded" icon-name="report_problem" symbol="true"></rs-icon>
+                                        <span class="num-results">There were {{totalNumberOfResults}} results. Sorting works correctly only with less than 100 entries. Please use filters to reduce the result set for optimal performance!</span>
+                                      </bs-alert>
+                                    {{/if}}
+                                  </template>
+                              </mp-sparql-result-counts>
+                            </semantic-search-result>
                             <semantic-table id='semantic-search-result-list'
                                             class-name="table-fixed-header table-scrollable-content table-expanded search-table-container 
                                             {{#if (or (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Set')

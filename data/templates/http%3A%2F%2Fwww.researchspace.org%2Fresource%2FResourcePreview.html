@@ -321,7 +321,7 @@
                           style='height: 100%; width: auto; object-fit: contain;'
                           image-or-region='{{bindings.0.image.value}}'    
                           image-id-pattern='OPTIONAL { ?imageIRI crm:P1_is_identified_by/rso:PX_has_file_name ?carrierImageIRI. } BIND(COALESCE(?carrierImageIRI, REPLACE(STR(?imageIRI), "^.*/(.*)$", "$1")) AS ?imageID) .'
-                          iiif-server-url='/proxy/IIIF/'
+                          iiif-server-url='/proxy/IIIF'
                                                   >
                         </rs-iiif-image-thumbnail>
                       </div>

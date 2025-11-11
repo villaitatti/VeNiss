@@ -4,6 +4,8 @@
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
+    entity_image_main_representation        = "https://veniss.net/container/fieldDefinitionContainer/main_image"
+    entity_image                            = "http://www.researchspace.org/pattern/system/entity/images"
     entity_formRecord                   = "http://www.researchspace.org/pattern/system/entity/formRecord"
 
     entity_completed                        = "https://veniss.net/container/fieldDefinitionContainer/entity_is_complete"
@@ -45,39 +47,13 @@
 
       <bs-row>
         <bs-col md="6" sm="12">
-          <div id="source_visual_representation" class="padding-5" class="left-column">
-            <div id="actor_representation">
-              <semantic-form-file-input 
-                label="Visual representation"
-                for="actor_representation"
-                storage='images'
-                temp-storage='tmp'
-                placeholder='Add file here'
-                name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
-                media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
-                resource-query='
-                  PREFIX rso: <http://www.researchspace.org/ontology/>
-                  CONSTRUCT {
-                    ?__resourceIri__ a rso:EX_File.
-                    ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
-                    ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
-                    ?__resourceIri__ rdfs:label ?__filename__.
-                  } WHERE {}
-                '
-                generate-iri-query='
-                  SELECT ?resourceIri {
-                    BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
-                  }
-                '
-              ></semantic-form-file-input>
-            </div>
+          <div id="group_appellation">
+            <semantic-form-text-input label="Name" placeholder="Enter Group name ..." for="group_appellation" languages='["en","it"]'></semantic-form-text-input>
           </div>
         </bs-col>
 
         <bs-col md="6" sm="12">
-          <div id="group_appellation">
-            <semantic-form-text-input label="Name" placeholder="Enter Group name ..." for="group_appellation" languages='["en","it"]'></semantic-form-text-input>
-          </div>
+          [[> rsp:FormAssetSidebar imagesOnly=true]]
         </bs-col>
       </bs-row>
 

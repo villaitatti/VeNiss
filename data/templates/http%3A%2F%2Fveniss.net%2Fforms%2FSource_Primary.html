@@ -5,6 +5,7 @@
     type                                    = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                                = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
     entity_image_main_representation        = "http://www.researchspace.org/pattern/system/entity/main_image"
+    entity_image                            = "http://www.researchspace.org/pattern/system/entity/images"
     entity_formRecord                       = "http://www.researchspace.org/pattern/system/entity/formRecord"
 
     entity_completed                        = "https://veniss.net/container/fieldDefinitionContainer/entity_is_complete"
@@ -101,139 +102,7 @@
 
         <!-- Right Half: Visual representation -->
         <bs-col md="6" sm="12">
-          <div id="entity_image_main_representation">
-            <bs-tab-container id="{{viewId}}-source-representation-tabs" default-active-key="{{viewId}}-images-thumbnailView" class="form-assetView-tabs">
-              <div>
-                <div class="page__section-container form-tabs-subtabs-content" style="padding: 12px 20px; margin: 0; display: flex; flex-direction: column;">
-                  <div class="form-tabs-subtabs-content--title">
-                    <h4 style="margin-top: 0;">Visual representation</h4>
-                    <div style="display: flex;align-items: center;gap: 20px;">
-                      {{#if node}}
-                      <semantic-if query='ASK { <{{node}}> rso:PX_has_main_representation ?representation .
-                                                  ?representation a rso:EX_Digital_Image .
-                                                  ?representation crm:P1_is_identified_by ?image .
-                                                  ?image a rso:EX_File .
-                                              }'
-                                   then='{{> then}}'>
-
-                        <template id='then'>
-                          <div class="form-tabs-subtabs-content--title-actions">
-                            <mp-overlay-dialog id="[[urlParam 'viewid' escape=false]]-resource-imagePreview-dialog"
-                                               type="modal"
-                                               class="modal-xlSize preview_modal"
-                                               title="Image preview">
-                              <mp-overlay-dialog-trigger>
-                                <button class="btn btn-icon" title="Image preview">
-                                  <rs-icon icon-type="rounded" icon-name="fullscreen" symbol="true"></rs-icon>
-                                </button>
-                              </mp-overlay-dialog-trigger>
-
-                              <mp-overlay-dialog-content>
-                                <inline-template template-iri='[[resolvePrefix "rsp:ResourceImagesPreview"]]'
-                                                 options='{  "resource": "{{node}}"  }'>
-                                </inline-template>
-                              </mp-overlay-dialog-content>
-                            </mp-overlay-dialog>
-
-                            <mp-event-trigger id='{{viewId}}-image-annotation-add-frame-trigger'
-                                              type='Dashboard.AddFrame'
-                                              data='{"resourceIri": "{{node}}",
-                                                        "viewId": "image-annotation",
-                                                        "frameId": "{{viewId}}"}'
-                                              targets='["thinking-frames"]'>
-                              <button class="btn btn-icon" title="Image view / annotations">
-                                <rs-icon icon-type="rounded" icon-name="photo_size_select_large" symbol="true"></rs-icon>
-                              </button>
-                            </mp-event-trigger>
-                          </div>
-                        </template>
-                      </semantic-if>
-                      {{/if}}
-
-                      <bs-nav class="icon-tabs">
-                        <bs-nav-item event-key="{{viewId}}-images-thumbnailView" title="thumbnail view">
-                          <rs-icon icon-type="sharp" icon-name="view_module"></rs-icon>
-                        </bs-nav-item>
-                        <bs-nav-item event-key="{{viewId}}-images-listView" title="list view">
-                          <rs-icon icon-type="sharp" icon-name="view_list"></rs-icon>
-                        </bs-nav-item>
-                      </bs-nav>
-                    </div>
-                  </div>
-                  <bs-tab-content animation="true">
-                    <bs-tab-pane event-key="{{viewId}}-images-thumbnailView">
-                      <div class="tab-pane-content" style="padding-top: 0;">
-                        <div class="dragAndDrop-input-container">
-
-                          <semantic-form-file-input 
-                            label="Visual representation"
-                            for="source_representation"
-                            storage='images'
-                            temp-storage='tmp'
-                            accept-pattern='image/jpg,image/jpeg,image/png,image/tiff,image/gif'
-                            placeholder='Add file here'
-                            name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
-                            media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
-                            resource-query='
-                              PREFIX rso: <http://www.researchspace.org/ontology/>
-                              CONSTRUCT {
-                                ?__resourceIri__ a rso:EX_Digital_Image.
-                                ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
-                                ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
-                                ?__resourceIri__ rdfs:label ?__filename__.
-                              } WHERE {}
-                            '
-                            generate-iri-query='
-                              SELECT ?resourceIri {
-                                BIND(IRI(CONCAT(STR(Default:), "EX_Digital_Image/", ?__fileName__)) AS ?resourceIri) .
-                              }
-                            '
-                          >
-                            <div className='placeholder-item'>
-                              <rs-icon icon-type='rounded' icon-name='upload' class='upload_icon' symbol='true'></rs-icon>
-                              <p>{{#if onlyUpload}}Click to upload{{else}}Drag image <span>or </span><span class='text-link'>click to upload</span>{{/if}}</p>
-                              <div>Supported image format: .jpg .jpeg .png .tiff .gif</div>
-                            </div>
-                        </semantic-form-file-input>
-
-                        </div>
-
-                      </div>
-                    </bs-tab-pane>
-
-                    <bs-tab-pane event-key="{{viewId}}-images-listView">
-                      <div class="tab-pane-content" style="padding-top: 0;">
-
-                        <semantic-form-autocomplete-input for='source_representation'
-                                                          label="Main image"
-                                                          placeholder="Select image"
-                                                          nested-form-templates='[
-                                                              {
-                                                                  "label": "Image",
-                                                                  "nestedForm": "{{{{raw}}}}{{> rsp:Image nested=true editable=true mode=\"new\"}}{{{{/raw}}}}"
-                                                              }
-                                                          ]'>
-                        </semantic-form-autocomplete-input>
-
-                        <semantic-form-autocomplete-input for='source_representation_additional'
-                                                          label="More images"
-                                                          placeholder="Select image"
-                                                          nested-form-templates='[
-                                                              {
-                                                                  "label": "Image",
-                                                                  "nestedForm": "{{{{raw}}}}{{> rsp:Image nested=true editable=true mode=\"new\"}}{{{{/raw}}}}"
-                                                              }
-                                                          
-                                                          ]'>
-                        </semantic-form-autocomplete-input>
-                      </div>
-                    </bs-tab-pane>
-
-                  </bs-tab-content>
-                </div>
-              </div>
-            </bs-tab-container>
-          </div>
+          [[> rsp:FormAssetSidebar imagesOnly=true]]
         </bs-col>
       </bs-row>
 

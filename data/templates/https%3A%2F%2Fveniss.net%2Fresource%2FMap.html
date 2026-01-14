@@ -4,6 +4,45 @@
             id="search-map"
             year-filtering="true"
             target-controls='["search-map-control"]'
+            tiles-layers-query='
+                PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                
+                SELECT ?url ?identifier ?name ?level ?author ?location ?year ?thumbnail
+                WHERE {
+                    VALUES (?url ?identifier ?name ?level ?author ?location ?year ?thumbnail) {
+                        (
+                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/{z}/{x}/{y}.png"
+                            "SSC_1696_DYNAMIC"
+                            "Ortofoto su pellicola (Dynamic)"
+                            "overlay"
+                            "Vincenzo Maria Coronelli"
+                            ""
+                            "1696"
+                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/img.jpg"
+                        )
+                        (
+                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/{z}/{x}/{y}.png"
+                            "SSC_1801_DYNAMIC"
+                            "Plans of the island of San Secondo (Dynamic)"
+                            "overlay"
+                            "K.K. Fortifications Local Direction zu Venedig"
+                            ""
+                            "1801"
+                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/img.png"
+                        )
+                        (
+                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/{z}/{x}/{y}.png"
+                            "SSC_1809_DYNAMIC"
+                            "Dipartimento dell adriatico (Dynamic)"
+                            "overlay"
+                            "Gaspare Strada"
+                            ""
+                            "1809"
+                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/img.png"
+                        )
+                    }
+                }
+            '
             query="
             PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -29,7 +68,7 @@
             OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?phase_bob_0 }
             OPTIONAL { ?timespan crm:P82b_end_of_the_end   ?phase_eoe_0 }
 
-            # If building’s end is not known, default to 'now'
+            # If building's end is not known, default to 'now'
             BIND(?phase_bob_0 AS ?phase_bob)
             BIND(
                 IF(BOUND(?phase_eoe_0), 
@@ -103,7 +142,8 @@
             ?subject rdfs:label ?name_full .
             BIND(?name_full AS ?name) .          
             }
-            ORDER BY DESC(?subject)"
+            ORDER BY DESC(?subject)
+            LIMIT 1000"
             map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
             fix-zoom-level="12"
             fix-center="[1370000.000000000, 5692800.000000000]"
@@ -119,94 +159,7 @@
                 </p>
             </template>
 
-            <tiles-layer
-                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/img.jpg'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/{z}/{x}/{y}.png'
-                identifier='SSC_1696'
-                name='Ortofoto su pellicola'
-                level='overlay'
-                author="Vincenzo Maria Coronelli"
-                location=""
-                year="1696">
-            </tiles-layer>
-
-            <tiles-layer
-                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/img.png'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/{z}/{x}/{y}.png'
-                identifier='SSC_1801'
-                name='Plans of the island of San Secondo'
-                level='overlay'
-                author="K.K. Fortifications Local Direction zu Venedig"
-                location=""
-                year="1801">
-            </tiles-layer>
-
-            <tiles-layer
-                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/img.png'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/{z}/{x}/{y}.png'
-                identifier='SSC_1809'
-                name="Dipartimento dell'adriatico"
-                level='overlay'
-                author="Gaspare Strada"
-                location=""
-                year="1809">
-            </tiles-layer>
-
-            <tiles-layer
-                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1839/img.png'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1839/{z}/{x}/{y}.png'
-                identifier='SSC_1839'
-                name=""
-                level='overlay'
-                author="Austrian Cadaster"
-                location=""
-                year="1839">
-            </tiles-layer>
-
-            <tiles-layer
-                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1850/img.jpg'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1850/{z}/{x}/{y}.png'
-                identifier='SSC_1850'
-                name=""
-                level='overlay'
-                author="Dipartimento Genio Militare Venezia"
-                location=""
-                year="1850">
-            </tiles-layer>
-
-            <tiles-layer
-                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1859/img.png'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1859/{z}/{x}/{y}.png'
-                identifier='SSC_1859'
-                name=""
-                level='overlay'
-                author="Ausland III"
-                location=""
-                year="1859">
-            </tiles-layer>
-
-            <tiles-layer
-                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1945/img.png'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1945/{z}/{x}/{y}.png'
-                identifier='SSC_1945'
-                name="Aereal View of the Island of San Secondo"
-                level='overlay'
-                author="Royal Air Force"
-                location=""
-                year="1945">
-            </tiles-layer>
-        
-            <tiles-layer
-                thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1982/img.jpg'
-                url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1982/{z}/{x}/{y}.png'
-                identifier='SSC_1982'
-                name=""
-                level='overlay'
-                author="Ortofoto"
-                location=""
-                year="1982">
-            </tiles-layer>
-            
+            <!-- BASEMAP TILES LAYERS (static) -->
             <tiles-layer
                 thumbnail='/assets/images/basemaps_thumbnails_light.jpg'
                 url='/proxy/mapbox/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}'
@@ -276,59 +229,39 @@
     </semantic-search-result>
 </div>
 
-<!--
+<!-- COMMENTED OUT: Original static overlay layers for reference
 
 <tiles-layer
-                         thumbnail='/assets/images/SS_IGM_1945.jpg'
-                         url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1945/{z}/{x}/{y}.png'
-                         identifier='SS_1945'
-                         name='Aerial view of the island of San Secondo'
-                         level='overlay'
-                         author="Royal Air Force"
-                         location=""
-                         year="1945">
-            </tiles-layer>
+    thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/img.jpg'
+    url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/{z}/{x}/{y}.png'
+    identifier='SSC_1696'
+    name='Ortofoto su pellicola'
+    level='overlay'
+    author="Vincenzo Maria Coronelli"
+    location=""
+    year="1696">
+</tiles-layer>
 
-            <tiles-layer
-                         thumbnail='/assets/images/SS_Ausland_III_thumbnail.jpg'
-                         url='/proxy/mapbox/v4/gspinaci.6k8e0eiv/{z}/{x}/{y}@2x.png'
-                         identifier='SS_1866'
-                         name='Map of San Secondo'
-                         level='overlay'
-                         author=""
-                         location=""
-                         year="1866"></tiles-layer>
+<tiles-layer
+    thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/img.png'
+    url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/{z}/{x}/{y}.png'
+    identifier='SSC_1801'
+    name='Plans of the island of San Secondo'
+    level='overlay'
+    author="K.K. Fortifications Local Direction zu Venedig"
+    location=""
+    year="1801">
+</tiles-layer>
 
-            <tiles-layer
-                         thumbnail='/assets/images/SS_diapositiva.jpg'
-                         url='/proxy/mapbox/v4/gspinaci.ssdiapositiva/{z}/{x}/{y}@2x.png'
-                         identifier='SS_diapositiva'
-                         name='Diapositiva San Secondo'
-                         level='overlay'
-                         author=""
-                         location=""
-                         year=""></tiles-layer>
-
-
-            <tiles-layer
-                         thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1801/img.jpg'
-                         url='https://d309ui6x6ebg9v.cloudfront.net/maps/SS/1801/{z}/{x}/{y}.png'
-                         identifier='SS_1801'
-                         name='Plan of the island of San Secondo'
-                         level='overlay'
-                         author="K.K. Fortifications Local Direction zu Venedig"
-                         location=""
-                         year="1801">
-            </tiles-layer>
-
-            <tiles-layer
-                         thumbnail='/assets/images/1763_Polynomial2_NN.jpg'
-                         url='/proxy/mapbox/v4/gspinaci.cxuajku9/{z}/{x}/{y}@2x.png'
-                         identifier='1763_Polynomial2_NN'
-                         name='Map of the Venetian Lagoon'
-                         level='overlay'
-                         author="Angelo Emo"
-                         location="Venice, Archivio di Stato di Venezia, Savi ed esecutori alle acque, Disegni, Laguna, dis. 167"
-                         year="1763"></tiles-layer>
+<tiles-layer
+    thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/img.png'
+    url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/{z}/{x}/{y}.png'
+    identifier='SSC_1809'
+    name="Dipartimento dell'adriatico"
+    level='overlay'
+    author="Gaspare Strada"
+    location=""
+    year="1809">
+</tiles-layer>
 
 -->

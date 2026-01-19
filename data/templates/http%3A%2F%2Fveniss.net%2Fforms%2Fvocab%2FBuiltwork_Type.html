@@ -1,36 +1,45 @@
 <semantic-form
-    new-subject-template='https://veniss.net/resource/source/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-    fields='[[ fieldDefinitions
-        type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-        is_listed_in                        = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+  persistence='{"type": "sparql", "targetInsertGraphIri": "{{#if scheme}}{{scheme}}{{else}}http://www.researchspace.org/resource/g/data{{/if}}", "repository":"{{#if scheme}}authorities{{else}}default{{/if}}"}'
+  new-subject-template="{{#if scheme}}{{scheme}}/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{else}}/vocab/builtwork_types/{{{{raw}}}}{{UUID}}{{{{/raw}}}}{{/if}}"
+  fields='[[ fieldDefinitions
+    type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    is_listed_in                        = "http://www.cidoc-crm.org/cidoc-crm/P71i_is_listed_in"
+    has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
 
-        vocab_entry_label                   = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
-        vocab_entry_broader                 = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_broader"
-    ]]'
-    [[>rsp:FormDefaults]]>
+    vocab_entry_label                   = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_label"
+    vocab_entry_broader                 = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_broader"
+    vocab_entry_equivalent              = "https://veniss.net/container/fieldDefinitionContainer/vocab_entry_equivalent"
+  ]]'
+  [[> rsp:FormDefaults]]
+>
 
     <div class="form-scroll-area">
 
-        <semantic-form-hidden-input for="type" default-values='["http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object","http://www.w3.org/2004/02/skos/core#Concept"]'></semantic-form-hidden-input>
+      <semantic-form-hidden-input for="type" default-values='["http://www.w3.org/2004/02/skos/core#Concept","https://veniss.net/ontology#Entry", "http://www.cidoc-crm.org/cidoc-crm/E55_Type"]'></semantic-form-hidden-input>
+        <semantic-form-hidden-input for="has_type" default-value='http://www.researchspace.org/resource/system/vocab/resource_type/Builtwork_Type'></semantic-form-hidden-input>
         <semantic-form-hidden-input for="is_listed_in" default-value='https://veniss.net/resource/vocab/builtwork_types'></semantic-form-hidden-input>
 
         <!-- Source name-->
         <semantic-form-text-input languages='["en", "it"]' label="Title" for="vocab_entry_label"></semantic-form-text-input>
 
-        <bs-alert bs-style="danger">
-            <p><strong>Danger zone!</strong> Changing the parent archival unit may change the entire structure.</p>
-        </bs-alert>
+        <div id="vocab_entry_broader" class="padding-5">
 
-        <semantic-form-tree-picker-input
-            label="Broader"
-            placeholder="Select broader entry ..."
-            default-value="{{broader}}"
-            for="vocab_entry_broader"
-            tree-patterns='{
-                "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/builtwork_types>"
-            }'>
-        </semantic-form-tree-picker-input>
+          <bs-alert bs-style="warning">
+            <p><strong>Attention!</strong> Changing the parent may change the entire vocabulary structure.</p>
+          </bs-alert>
+
+          <semantic-form-tree-picker-input
+              label="Broader"
+              placeholder="Select broader entry ..."
+              default-value="{{broader}}"
+              for="vocab_entry_broader"
+              tree-patterns='{
+                  "relationPattern": "?item skos:broader ?parent", 
+                  "schemePattern": "?item crm:P71i_is_listed_in <https://veniss.net/resource/vocab/builtwork_types>"
+              }'>
+          </semantic-form-tree-picker-input>
+        </div>
     </div>
 
-    [[> rsp:FormDefaultActions]]
+[[> http://veniss.net/forms/Buttons]]
 </semantic-form>

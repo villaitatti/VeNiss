@@ -205,6 +205,11 @@ PREFIX : <http://www.researchspace.org/resource/system/repository#>
 		rs_sql_sail:hasQueryId "production" ;
 		rs_sql_sail:text "SELECT DISTINCT identifier as bw_id, ST_AsText(geometry) as wkt, t, z FROM PRODUCTION.veniss_data WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857))" ;
 	] ;
+  rs_sql_sail:includesSQLQuery
+	[
+		rs_sql_sail:hasQueryId "production_all" ;
+		rs_sql_sail:text "SELECT DISTINCT identifier as bw_id, ST_AsText(geometry) as wkt, t, z FROM PRODUCTION.veniss_data" ;
+	] ;
 	rs_sql_sail:includesSQLQuery
 	[
 		rs_sql_sail:hasQueryId "test" ;
@@ -271,6 +276,12 @@ rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "poveglia_island_shapes" ;
     rs_sql_sail:text "select distinct \"BW_ID\" as bw_id, ST_AsText(geometry) as wkt from qgis_poveglia_islands"
+] ;
+
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "poveglia_buildings" ;
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from qgis_poveglia_buildings"
 ] ;
 
 rs_sql_sail:includesSQLQuery

@@ -4,6 +4,8 @@
   fields='[[ fieldDefinitions
     type                                = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     has_type                            = "http://www.cidoc-crm.org/cidoc-crm/P2_has_type" 
+    entity_image_main_representation        = "https://veniss.net/container/fieldDefinitionContainer/main_image"
+    entity_image                            = "http://www.researchspace.org/pattern/system/entity/images"
     entity_formRecord                   = "http://www.researchspace.org/pattern/system/entity/formRecord"
 
     entity_completed                        = "https://veniss.net/container/fieldDefinitionContainer/entity_is_complete"
@@ -51,56 +53,43 @@
     <div class="container-fluid">
 
       <bs-row>
+
         <bs-col md="6" sm="12">
-          <div id="actor_representation">
-            <semantic-form-file-input 
-              label="Visual representation"
-              for="actor_representation"
-              storage='images'
-              temp-storage='tmp'
-              placeholder='Add file here'
-              name-predicate-iri='http://www.researchspace.org/ontology/PX_has_file_name'
-              media-type-predicate-iri='http://www.researchspace.org/ontology/PX_has_media_type'
-              resource-query='
-                PREFIX rso: <http://www.researchspace.org/ontology/>
-                CONSTRUCT {
-                  ?__resourceIri__ a rso:EX_File.
-                  ?__resourceIri__ rso:PX_has_file_name ?__fileName__.
-                  ?__resourceIri__ rso:PX_has_media_type ?__mediaType__.
-                  ?__resourceIri__ rdfs:label ?__filename__.
-                } WHERE {}
-              '
-              generate-iri-query='
-                SELECT ?resourceIri {
-                  BIND(IRI(CONCAT(STR(Default:), "EX_File/", ?__fileName__)) AS ?resourceIri) .
-                }
-              '
-            ></semantic-form-file-input>
-          </div>
+          <bs-row>
+
+            <bs-col md="6" sm="12">
+              <div id="entity_hide_image">
+                <semantic-form-checkbox-input label="Is the image to be hidden?" for='entity_hide_image'>
+                </semantic-form-checkbox-input>
+              </div>
+            </bs-col>
+
+            <bs-col md="6" sm="12">
+              <div id="entity_completed">
+                <semantic-form-checkbox-input for='entity_completed' label="Is the record complete?"></semantic-form-checkbox-input>
+                </semantic-form-checkbox-input>
+              </div>
+            </bs-col>
+
+          </bs-row>
+
+          <bs-row>
+            <bs-col md="12" sm="12">
+              <div id="entity_publication_notes">
+                <semantic-form-text-input placeholder="Enter Notes, if any ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
+              </div>
+            </bs-col>
+          </bs-row>
+
+        </bs-col>
+
+
+        <bs-col md="6" sm="12">
+          [[> rsp:FormAssetSidebar imagesOnly=true]]
         </bs-col>
       </bs-row>
 
-      <bs-row>
-        <bs-col md="6" sm="12">
-          <div id="entity_hide_image">
-            <semantic-form-checkbox-input label="Is the image to be hidden?" for='entity_hide_image'>
-            </semantic-form-checkbox-input>
-          </div>
-        </bs-col>
-      </bs-row>
 
-      <bs-row>
-        <bs-col md="6" sm="12">
-          <div id="entity_publication_notes">
-            <semantic-form-text-input placeholder="Enter Notes, if any ..." label="Notes" for="entity_publication_notes"></semantic-form-text-input>
-          </div>
-        </bs-col>
-        <bs-col md="6" sm="12">
-          <div id="entity_completed">
-            <semantic-form-checkbox-input for='entity_completed' label="Is the record complete?"></semantic-form-checkbox-input>
-            </semantic-form-checkbox-input>
-        </bs-col>
-      </bs-row>
 
       <bs-tabs class="source_tabs form-main-window" id="tabs">
 

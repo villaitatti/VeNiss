@@ -13,6 +13,6 @@ div.left-column {
   margin: 20px 0;
 }
 
-.tab-content {
+#tabs .tab-content {
   min-height: 500px;
 }

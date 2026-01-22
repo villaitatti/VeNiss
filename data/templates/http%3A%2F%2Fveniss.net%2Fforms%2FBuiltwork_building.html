@@ -222,6 +222,49 @@ LIMIT 1000
                                   </div>
                                 <hr class="my-3"/>
                                 <bs-tabs class="source_tabs form-main-window" id="builtwork-tabs" default-active-key="functional_changes">
+                                                                    <bs-tab event-key="physical_forms" title="Physical Forms">
+                                    <h1>Physical Forms</h1>
+                                    <semantic-form-composite-input for='physical-changes'
+                                    render-header="false"
+                                    label="Presences"
+                                    new-subject-template='/physical_changes/'
+                                    fields='[[ fieldDefinitions
+                                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                                    physical-change-presence="https://veniss.net/container/fieldDefinitionContainer/physical-change-presence"
+                                  ]]'
+                                >
+                                  <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume'></semantic-form-hidden-input> 
+                                  <semantic-form-composite-input for="physical-change-presence"
+                                    label="Physical Phase"
+                                    new-subject-template='/physical_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+                                    fields="[[ fieldDefinitions
+                                      presence_type='http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+                                      physical_change_has_time-span = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_has_time-span'
+                                      physical_change_2d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_2d_representation'
+                                      physical_change_3d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_3d_representation'
+                                    ]]"
+                                    >     
+                                    <div class="inline-inputs-3">
+                                      <semantic-form-composite-input for="physical_change_has_time-span"
+                                            new-subject-template="/time-span" render-header="false" fields='[[ fieldDefinitions    
+                                    bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
+                                    eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
+                                ]]'>
+                                          <div class="inline-inputs-2">
+                                            <semantic-form-datetime-input for="bob" label="Begin"></semantic-form-datetime-input>
+                                            <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
+                                          </div>
+                                        </semantic-form-composite-input>
+                                      <semantic-form-hidden-input for="presence_type" default-value='http://www.cidoc-crm.org/cidoc-crm/E93_Presence'></semantic-form-hidden-input>
+                                      <semantic-context repository="ephedra">
+                                        <semantic-form-autocomplete-input for="physical_change_2d_representation" label="2D Representation"></semantic-form-autocomplete-input>
+                                      </semantic-context>
+                                      <semantic-form-text-input for="physical_change_3d_representation" label="3D Representation"></semantic-form-text-input> 
+                                    </div>
+                                  </semantic-form-composite-input>
+                                    </semantic-form-composite-input>                           
+                                  </semantic-form-composite-input>                            
+                                </bs-tab>
                                   <bs-tab event-key="functional_changes" title="Functional Changes">
                                     <!-- Functional Change Type: Typology -->
                                     <div class="row">
@@ -374,49 +417,6 @@ LIMIT 1000
                                     </div>
                             </div>
                                   </bs-tab>
-                                  <bs-tab event-key="physical_forms" title="Physical Forms">
-                                    <h1>Physical Forms</h1>
-                                    <semantic-form-composite-input for='physical-changes'
-                                    render-header="false"
-                                    label="Presences"
-                                    new-subject-template='/physical_changes/'
-                                    fields='[[ fieldDefinitions
-                                    type="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                                    physical-change-presence="https://veniss.net/container/fieldDefinitionContainer/physical-change-presence"
-                                  ]]'
-                                >
-                                  <semantic-form-hidden-input for="type" default-value='http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume'></semantic-form-hidden-input> 
-                                  <semantic-form-composite-input for="physical-change-presence"
-                                    label="Physical Phase"
-                                    new-subject-template='/physical_change/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
-                                    fields="[[ fieldDefinitions
-                                      presence_type='http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-                                      physical_change_has_time-span = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_has_time-span'
-                                      physical_change_2d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_2d_representation'
-                                      physical_change_3d_representation = 'https://veniss.net/container/fieldDefinitionContainer/physical_change_3d_representation'
-                                    ]]"
-                                    >     
-                                    <div class="inline-inputs-3">
-                                      <semantic-form-composite-input for="physical_change_has_time-span"
-                                            new-subject-template="/time-span" render-header="false" fields='[[ fieldDefinitions    
-                                    bob="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_bob"
-                                    eoe="https://veniss.net/container/fieldDefinitionContainer/builtwork_date_eoe"
-                                ]]'>
-                                          <div class="inline-inputs-2">
-                                            <semantic-form-datetime-input for="bob" label="Begin"></semantic-form-datetime-input>
-                                            <semantic-form-datetime-input for="eoe" end="true" label="End"></semantic-form-datetime-input>
-                                          </div>
-                                        </semantic-form-composite-input>
-                                      <semantic-form-hidden-input for="presence_type" default-value='http://www.cidoc-crm.org/cidoc-crm/E93_Presence'></semantic-form-hidden-input>
-                                      <semantic-context repository="ephedra">
-                                        <semantic-form-autocomplete-input for="physical_change_2d_representation" label="2D Representation"></semantic-form-autocomplete-input>
-                                      </semantic-context>
-                                      <semantic-form-text-input for="physical_change_3d_representation" label="3D Representation"></semantic-form-text-input> 
-                                    </div>
-                                  </semantic-form-composite-input>
-                                    </semantic-form-composite-input>                           
-                                  </semantic-form-composite-input>                            
-                                </bs-tab>
                               </bs-tabs>
                   </div>
                   <div class="col-md-3">

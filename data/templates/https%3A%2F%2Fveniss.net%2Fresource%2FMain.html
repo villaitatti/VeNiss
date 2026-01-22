@@ -80,7 +80,7 @@
             features-options-enabled="true"
             filters-initialization='{"basemap":true,"overlay":true,"feature":true}'
             vector-levels='["Island","Buildings"]'
-            show-filters="true"
+            show-filters="false"
             timeline='{
               "min":1500,
               "max":2025,
@@ -99,6 +99,34 @@
 
 
 <style>
+  /* Fix scroll issue - ensure map fits viewport */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  #mainContainer {
+    height: calc(100vh - var(--nav-height, 58px));
+    overflow: hidden;
+  }
+  
+  #mapNavigatorContainer {
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  #mapNavigatorRow {
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  #mapContainer {
+    height: 100%;
+    overflow: hidden;
+  }
+
   #sideNavbar {
     display: block !important;
   }

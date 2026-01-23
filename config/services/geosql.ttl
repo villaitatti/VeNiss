@@ -210,11 +210,26 @@ PREFIX : <http://www.researchspace.org/resource/system/repository#>
 		rs_sql_sail:hasQueryId "production_all" ;
 		rs_sql_sail:text "SELECT DISTINCT identifier as bw_id, ST_AsText(geometry) as wkt, t, z FROM PRODUCTION.veniss_data" ;
 	] ;
-	rs_sql_sail:includesSQLQuery
+  rs_sql_sail:includesSQLQuery
 	[
-		rs_sql_sail:hasQueryId "test" ;
-		rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(c.start) as \"bob\", MAX(c.end) as \"eoe\", t, z, ST_AsText(geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_sources AS b ON a.identifier = b.identifier JOIN PRODUCTION.sources_years AS c ON b.source = c.source WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857)) GROUP BY a.identifier, a.t, a.z, a.geometry"
+		rs_sql_sail:hasQueryId "production_all_temporal" ;
+		rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(c.start) as bob, MAX(c.end) as eoe, a.t, a.z, ST_AsText(a.geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_sources AS b ON a.identifier = b.identifier JOIN PRODUCTION.sources_years AS c ON b.source = c.source GROUP BY a.identifier, a.t, a.z, a.geometry" ;
 	] ;
+rs_sql_sail:includesSQLQuery
+	[
+		rs_sql_sail:hasQueryId "islands_all_temporal" ;
+		rs_sql_sail:text "SELECT bw_id, bob, COALESCE(LEAD(bob) OVER (PARTITION BY base_id ORDER BY bob) - 1, eoe) as eoe, t, z, wkt FROM (SELECT DISTINCT a.identifier as bw_id, REGEXP_REPLACE(a.identifier, '\\.[0-9]+$', '') as base_id, MIN(c.start) as bob, MAX(c.end) as eoe, a.t, a.z, ST_AsText(a.geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_sources AS b ON a.identifier = b.identifier JOIN PRODUCTION.sources_years AS c ON b.source = c.source WHERE a.t = 'Island' GROUP BY a.identifier, a.t, a.z, a.geometry) sub" ;
+	] ;
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "test" ;
+    rs_sql_sail:text "SELECT DISTINCT a.identifier as bw_id, MIN(c.start) as \"bob\", MAX(c.end) as \"eoe\", t, z, ST_AsText(geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_sources AS b ON a.identifier = b.identifier JOIN PRODUCTION.sources_years AS c ON b.source = c.source WHERE ST_WITHIN(geometry, ST_MakeEnvelope(?MinX, ?MinY, ?MaxX, ?MaxY, 3857)) GROUP BY a.identifier, a.t, a.z, a.geometry"
+] ;
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "sansecondo_island_with_phases" ;
+    rs_sql_sail:text "SELECT DISTINCT data.identifier::text as bw_id, ST_AsText(ST_Transform(data.geometry, 3857))::text as wkt, 'Island' as t, '1' as z, COALESCE(sy.start::text, '1000') as bob, COALESCE(sy.end::text, '2025') as eoe FROM public.qgis_sansecondo_islands data, LATERAL jsonb_each_text(to_jsonb(data) - 'identifier' - 'geometry' - 'identifier_short' - 'name') as col_data LEFT JOIN production.sources_years sy ON sy.source = col_data.key WHERE col_data.value::boolean = true"
+] ;
 	rs_sql_sail:includesSQLQuery
 	[
 		rs_sql_sail:hasQueryId "island_form" ;
@@ -589,7 +604,7 @@ rs_sql_sail:includesSQLQuery
 rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "sansecondo_island_shapes_temporal" ;
-    rs_sql_sail:text "SELECT DISTINCT          data.identifier::text as bw_id,         ST_AsText(ST_Transform(data.geometry, 3857))::text as wkt,         COALESCE(sy.start::text,              CASE                  WHEN col_data.key = 'today' THEN '2023'                 ELSE SUBSTRING(col_data.key FROM '^(\\d{4})')             END         )::text as bob,         COALESCE(sy.end::text,             CASE                  WHEN col_data.key = 'today' THEN '2025'                 ELSE SUBSTRING(col_data.key FROM '^(\\d{4})')             END         )::text as eoe     FROM public.qgis_sansecondo_islands data,     LATERAL jsonb_each_text(         to_jsonb(data) - 'identifier' - 'geometry' - 'identifier_short' - 'name'     ) as col_data     LEFT JOIN production.sources_years sy ON sy.source = col_data.key     WHERE col_data.value::boolean = true"
+    rs_sql_sail:text "SELECT bw_id, wkt, bob::text, COALESCE(LEAD(bob) OVER (PARTITION BY SUBSTRING(bw_id FROM '^[A-Z]+_ISL') ORDER BY bob) - 1, eoe)::text as eoe FROM (SELECT DISTINCT data.identifier::text as bw_id, ST_AsText(ST_Transform(data.geometry, 3857))::text as wkt, COALESCE(sy.start, CASE WHEN col_data.key = 'today' THEN 2023 ELSE SUBSTRING(col_data.key FROM '^(\\d{4})')::int END) as bob, COALESCE(sy.end, CASE WHEN col_data.key = 'today' THEN 40000 ELSE SUBSTRING(col_data.key FROM '^(\\d{4})')::int END) as eoe FROM public.qgis_sansecondo_islands data, LATERAL jsonb_each_text(to_jsonb(data) - 'identifier' - 'geometry' - 'identifier_short' - 'name') as col_data LEFT JOIN production.sources_years sy ON sy.source = col_data.key WHERE col_data.value::boolean = true) subq"
 ] ;
 
 rs_sql_sail:includesSQLQuery

@@ -1,6 +1,5 @@
 <div id="mapContainer">
-    <semantic-search-result>
-        <semantic-map-advanced
+    <semantic-map-advanced
             id="search-map"
             year-filtering="true"
             target-controls='["search-map-control"]'
@@ -53,107 +52,6 @@
                     }
                 }
             '
-            query="
-            PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-            PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
-
-            SELECT DISTINCT *
-            WHERE {
-            ##################################################################
-            # 1) Building phase & 2D representation
-            ##################################################################
-            ?phase crm:P4_has_time-span ?timespan ;
-                    crm:P138i_has_representation ?2drepresentation .
-            ?2drepresentation rdfs:label ?bw_id .
-
-            # Connect the building entity
-            ?physical_changes crm:P166i_had_presence ?phase .
-            ?subject crm:P196i_is_defined_by ?physical_changes .
-            
-            ##################################################################
-            # 2) Extract the building's physical time span (phase_bob, phase_eoe)
-            ##################################################################
-            OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?phase_bob_0 }
-            OPTIONAL { ?timespan crm:P82b_end_of_the_end   ?phase_eoe_0 }
-
-            # If building's end is not known, default to 'now'
-            BIND(?phase_bob_0 AS ?phase_bob)
-            BIND(
-                IF(BOUND(?phase_eoe_0), 
-                ?phase_eoe_0, 
-                STRDT(STR(NOW()), xsd:date)  # fallback if no building end date
-                ) 
-                AS ?phase_eoe
-            )
-
-            ##################################################################
-            # 3) Extract usage info & usage time span (useNode_bob, useNode_eoe)
-            ##################################################################
-            OPTIONAL {
-                ?subject crm:P16i_was_used_for ?useNode .
-                ?useNode crm:P2_has_type ?useType .
-                ?useType rdfs:label ?useTypeLabel .
-                ?useType skos:broader ?parent .
-                ?parent rdfs:label ?parentLabel .
-                
-                FILTER(LANG(?useTypeLabel) = 'en')
-                FILTER(LCASE(STR(?parentLabel)) = 'use')
-
-                # Usage time span
-                OPTIONAL { ?useNode crm:P4_has_time-span ?useTimeSpan }
-                OPTIONAL { ?useTimeSpan crm:P82a_begin_of_the_begin ?useNode_bob_0 }
-                OPTIONAL { ?useTimeSpan crm:P82b_end_of_the_end     ?useNode_eoe_0 }
-            }
-
-            BIND(?useNode_bob_0 AS ?useNode_bob)
-            BIND(
-                IF(BOUND(?useNode_eoe_0),
-                ?useNode_eoe_0,
-                STRDT(STR(NOW()), xsd:date)  # fallback if no usage end
-                ) 
-                AS ?useNode_eoe
-            )
-
-            ##################################################################
-            # 4) Compute final intersection: ?bob, ?eoe
-            ##################################################################
-            BIND(
-                IF(
-                BOUND(?phase_bob) && BOUND(?useNode_bob),
-                IF(?phase_bob > ?useNode_bob, ?phase_bob, ?useNode_bob),
-                COALESCE(?phase_bob, ?useNode_bob)
-                )
-                AS ?bob
-            )
-
-            BIND(
-                IF(
-                BOUND(?phase_eoe) && BOUND(?useNode_eoe),
-                IF(?phase_eoe < ?useNode_eoe, ?phase_eoe, ?useNode_eoe),
-                COALESCE(?phase_eoe, ?useNode_eoe)
-                )
-                AS ?eoe
-            )
-
-            # Filter out invalid or zero-length intervals
-            FILTER(?bob < ?eoe)
-
-            ##################################################################
-            # 5) Labeling & fallback for unknown use
-            ##################################################################
-            BIND(COALESCE(?useTypeLabel, 'Unknown') AS ?use)
-
-            BIND(STRBEFORE(STR(?bob), '-') AS ?label_bob)
-            BIND(STRBEFORE(STR(?eoe), '-') AS ?label_eoe)
-
-            # Extract building name (short form)
-            ?subject rdfs:label ?name_full .
-            BIND(?name_full AS ?name) .          
-            }
-            ORDER BY DESC(?subject)
-            LIMIT 1000"
             map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
             fix-zoom-level="12"
             fix-center="[1370000.000000000, 5692800.000000000]"
@@ -168,6 +66,120 @@
                     <semantic-link iri="{{subject.value}}">See details</semantic-link>
                 </p>
             </template>
+
+            <!-- FEATURES LAYERS (vector data from SPARQL queries) -->
+            
+            <!-- Buildings Layer - Federated query: SQL geosql for geometry + triplestore for temporal data -->
+            <features-layer
+                identifier="buildings"
+                name="Buildings"
+                type="geometry"
+                z-index="3"
+                query="
+                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                    PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                    PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+
+                    SELECT DISTINCT * WHERE {
+                        # Get geometry from SQL service
+                        SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                            ?root rs_sql_sail:hasQueryId 'production';
+                                veniss_sql:minX '1358358';
+                                veniss_sql:minY '5681238';
+                                veniss_sql:maxX '1385414';
+                                veniss_sql:maxY '5705635';
+                                veniss_sql:wkt ?wkt;
+                                veniss_sql:bw_id ?bw_id;
+                                veniss_sql:t ?t;
+                                veniss_sql:z ?z.
+                        }
+                        
+                        # Join with triplestore for temporal data
+                        ?phase crm:P4_has_time-span ?timespan;
+                            crm:P138i_has_representation ?2drepresentation.
+                        ?2drepresentation rdfs:label ?bw_id.
+                        ?physical_changes crm:P166i_had_presence ?phase.
+                        ?subject crm:P196i_is_defined_by ?physical_changes.
+                        
+                        # Extract building time span
+                        OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?phase_bob_0. }
+                        OPTIONAL { ?timespan crm:P82b_end_of_the_end ?phase_eoe_0. }
+                        BIND(?phase_bob_0 AS ?phase_bob)
+                        BIND(IF(BOUND(?phase_eoe_0), ?phase_eoe_0, STRDT(STR(NOW()), xsd:date)) AS ?phase_eoe)
+                        
+                        # Extract usage info and time span
+                        OPTIONAL {
+                            ?subject crm:P16i_was_used_for ?useNode.
+                            ?useNode crm:P2_has_type ?useType.
+                            ?useType rdfs:label ?useTypeLabel;
+                                skos:broader ?parent.
+                            ?parent rdfs:label ?parentLabel.
+                            FILTER((LANG(?useTypeLabel)) = 'en')
+                            FILTER((LCASE(STR(?parentLabel))) = 'use')
+                            OPTIONAL { ?useNode crm:P4_has_time-span ?useTimeSpan. }
+                            OPTIONAL { ?useTimeSpan crm:P82a_begin_of_the_begin ?useNode_bob_0. }
+                            OPTIONAL { ?useTimeSpan crm:P82b_end_of_the_end ?useNode_eoe_0. }
+                        }
+                        BIND(?useNode_bob_0 AS ?useNode_bob)
+                        BIND(IF(BOUND(?useNode_eoe_0), ?useNode_eoe_0, STRDT(STR(NOW()), xsd:date)) AS ?useNode_eoe)
+                        
+                        # Compute final intersection: bob, eoe
+                        BIND(IF((BOUND(?phase_bob)) && (BOUND(?useNode_bob)), IF(?phase_bob > ?useNode_bob, ?phase_bob, ?useNode_bob), COALESCE(?phase_bob, ?useNode_bob)) AS ?bob)
+                        BIND(IF((BOUND(?phase_eoe)) && (BOUND(?useNode_eoe)), IF(?phase_eoe < ?useNode_eoe, ?phase_eoe, ?useNode_eoe), COALESCE(?phase_eoe, ?useNode_eoe)) AS ?eoe)
+                        
+                        # Filter out invalid intervals
+                        FILTER(?bob < ?eoe)
+                        
+                        # Labeling
+                        BIND(COALESCE(?useTypeLabel, 'Unknown') AS ?use)
+                        BIND(STRBEFORE(STR(?bob), '-') AS ?label_bob)
+                        BIND(STRBEFORE(STR(?eoe), '-') AS ?label_eoe)
+                        ?subject rdfs:label ?name_full.
+                        BIND(?name_full AS ?name)
+                    }
+                    ORDER BY DESC(?subject)
+                    LIMIT 1000"
+                visible="true"
+                opacity="1">
+            </features-layer>
+
+            <!-- Islands Layer - UNIFIED query with proper phase duration calculation -->
+            <!-- Uses islands_all_temporal with LEAD() window function for eoe = next_bob - 1 -->
+            <!-- Returns 26 island records from 5 locations: CRT, LZV, MDM, SSC, SSV -->
+            <features-layer
+                identifier="islands"
+                name="Islands"
+                type="geometry"
+                z-index="2"
+                query="
+                    PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                    PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+
+                    SELECT ?bw_id ?wkt ?bob ?eoe 
+                           (IRI(CONCAT('http://veniss.net/resource/', ?bw_id)) AS ?subject)
+                           (?t AS ?type)
+                           (?z AS ?zIndex)
+                           (?bob AS ?label_bob)
+                           (?eoe AS ?label_eoe)
+                           ('Island' AS ?name)
+                           ('Unknown' AS ?use)
+                    WHERE {
+                        SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                            ?r rs_sql_sail:hasQueryId 'islands_all_temporal' .
+                            ?r veniss_sql:bw_id ?bw_id .
+                            ?r veniss_sql:wkt ?wkt .
+                            ?r veniss_sql:t ?t .
+                            ?r veniss_sql:z ?z .
+                            ?r veniss_sql:bob ?bob .
+                            ?r veniss_sql:eoe ?eoe .
+                        }
+                    }"
+                visible="true"
+                opacity="1">
+            </features-layer>
 
             <!-- BASEMAP TILES LAYERS (static) -->
             <tiles-layer
@@ -194,7 +206,7 @@
 
             <tiles-layer
                 thumbnail='/assets/images/groad.jpg'
-                url='http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}'
+                url='https://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}'
                 identifier='GRoadmap'
                 name='Google Roadmap'
                 level='basemap'
@@ -205,7 +217,7 @@
 
             <tiles-layer
                 thumbnail='/assets/images/gsatellite.jpg'
-                url='http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
+                url='https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
                 identifier='GSatellite'
                 name='Google Satellite'
                 level='basemap'
@@ -216,7 +228,7 @@
 
             <tiles-layer
                 thumbnail='/assets/images/ghybrid.jpg'
-                url='http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+                url='https://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
                 identifier='GHybrid'
                 name='Google Hybrid'
                 level='basemap'
@@ -227,7 +239,7 @@
 
             <tiles-layer
                 thumbnail='/assets/images/basemaps_thumbnails_ortofoto.jpg'
-                url='http://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}'
+                url='https://geoportale.comune.venezia.it/Geocortex/Essentials/REST/local-proxy/GeoPortale/11/RasterDataset_2014_2/MapServer/tile/{z}/{y}/{x}'
                 identifier='ortofoto_geoportale'
                 name='Ortofoto Geoportale'
                 level='basemap'
@@ -235,43 +247,11 @@
                 location=""
                 year="2022">
             </tiles-layer>
-        </semantic-map-advanced>
-    </semantic-search-result>
+    </semantic-map-advanced>
 </div>
 
-<!-- COMMENTED OUT: Original static overlay layers for reference
-
-<tiles-layer
-    thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/img.jpg'
-    url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/{z}/{x}/{y}.png'
-    identifier='SSC_1696'
-    name='Ortofoto su pellicola'
-    level='overlay'
-    author="Vincenzo Maria Coronelli"
-    location=""
-    year="1696">
-</tiles-layer>
-
-<tiles-layer
-    thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/img.png'
-    url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/{z}/{x}/{y}.png'
-    identifier='SSC_1801'
-    name='Plans of the island of San Secondo'
-    level='overlay'
-    author="K.K. Fortifications Local Direction zu Venedig"
-    location=""
-    year="1801">
-</tiles-layer>
-
-<tiles-layer
-    thumbnail='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/img.png'
-    url='https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/{z}/{x}/{y}.png'
-    identifier='SSC_1809'
-    name="Dipartimento dell'adriatico"
-    level='overlay'
-    author="Gaspare Strada"
-    location=""
-    year="1809">
-</tiles-layer>
-
+<!-- NOTE: Buildings query uses federated approach:
+     1. SQL geosql service for WKT geometry via 'production' queryId
+     2. Triplestore join via bw_id for CIDOC-CRM temporal data
+     3. Computes temporal intersection of building phase and usage
 -->

@@ -1,3 +1,8 @@
 config.proxy.mapbox.targetUri=https://api.mapbox.com
 config.proxy.mapbox.preserveHost=false
 config.proxy.mapbox.tokenQueryName=access_token
+
+# Cesium Ion API proxy - proxies requests to Cesium Ion with the access token appended server-side
+config.proxy.cesium.targetUri=https://api.cesium.com
+config.proxy.cesium.preserveHost=false
+config.proxy.cesium.tokenQueryName=access_token

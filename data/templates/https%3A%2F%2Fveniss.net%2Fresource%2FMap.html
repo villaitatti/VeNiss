@@ -2,7 +2,7 @@
     <semantic-map-advanced
             id="search-map"
             year-filtering="true"
-            cesium-asset-ids="4422272"
+            cesium-asset-ids='4422272,4215173'
             target-controls='["search-map-control"]'
             tiles-layers-query='
                 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -41,6 +41,16 @@
                             "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/img.png"
                         )
                         (
+                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1859/{z}/{x}/{y}.png"
+                            "SSC_1859_DYNAMIC"
+                            "Ausland III"
+                            "overlay"
+                            "Ausland III"
+                            ""
+                            "1859"
+                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1859/img.png"
+                        )
+                        (
                             "https://d309ui6x6ebg9v.cloudfront.net/maps/LZV/1813/{z}/{x}/{y}.png"
                             "LZV_1813_DYNAMIC"
                             "Lazzaretto Vecchio Historical Map"
@@ -64,7 +74,7 @@
                 <div>Construction: {{label_bob.value}}</div>
                 <div>Demolition: {{label_eoe.value}}</div>
                 <p>
-                    <semantic-link iri="{{subject.value}}">See details</semantic-link>
+                    <semantic-link iri="{{#if building_iri.value}}{{building_iri.value}}{{else}}{{subject.value}}{{/if}}">See details</semantic-link>
                 </p>
             </template>
 
@@ -84,7 +94,7 @@
                     PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
                     PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
 
-                    SELECT DISTINCT * WHERE {
+                    SELECT DISTINCT ?subject ?wkt ?bw_id ?t ?z ?bob ?eoe ?use ?name ?label_bob ?label_eoe ?building_iri WHERE {
                         # Get geometry from SQL service
                         SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                             ?root rs_sql_sail:hasQueryId 'production';
@@ -103,17 +113,17 @@
                             crm:P138i_has_representation ?2drepresentation.
                         ?2drepresentation rdfs:label ?bw_id.
                         ?physical_changes crm:P166i_had_presence ?phase.
-                        ?subject crm:P196i_is_defined_by ?physical_changes.
+                        ?building_iri crm:P196i_is_defined_by ?physical_changes.
                         
-                        # Extract building time span
+                        # Extract building time span (with fallbacks for missing dates)
                         OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?phase_bob_0. }
                         OPTIONAL { ?timespan crm:P82b_end_of_the_end ?phase_eoe_0. }
-                        BIND(?phase_bob_0 AS ?phase_bob)
+                        BIND(COALESCE(?phase_bob_0, '0001-01-01'^^xsd:date) AS ?phase_bob)
                         BIND(IF(BOUND(?phase_eoe_0), ?phase_eoe_0, STRDT(STR(NOW()), xsd:date)) AS ?phase_eoe)
                         
                         # Extract usage info and time span
                         OPTIONAL {
-                            ?subject crm:P16i_was_used_for ?useNode.
+                            ?building_iri crm:P16i_was_used_for ?useNode.
                             ?useNode crm:P2_has_type ?useType.
                             ?useType rdfs:label ?useTypeLabel;
                                 skos:broader ?parent.
@@ -138,11 +148,15 @@
                         BIND(COALESCE(?useTypeLabel, 'Unknown') AS ?use)
                         BIND(STRBEFORE(STR(?bob), '-') AS ?label_bob)
                         BIND(STRBEFORE(STR(?eoe), '-') AS ?label_eoe)
-                        ?subject rdfs:label ?name_full.
+                        ?building_iri rdfs:label ?name_full.
                         BIND(?name_full AS ?name)
+                        
+                        # Create unique subject per phase x use combination
+                        # Each temporal slice needs its own feature ID for OpenLayers
+                        BIND(IRI(CONCAT(STR(?building_iri), '#', STR(?bw_id), '_', ENCODE_FOR_URI(COALESCE(?useTypeLabel, 'Unknown')))) AS ?subject)
                     }
                     ORDER BY DESC(?subject)
-                    LIMIT 1000"
+                    LIMIT 2000"
                 visible="true"
                 opacity="1">
             </features-layer>

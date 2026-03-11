@@ -69,13 +69,40 @@
             tuple-template="{{> details }}">
 
             <template id="details">
-                <h3>{{name.value}}</h3>
-                <div>Use: {{use.value}}</div>
-                <div>Construction: {{label_bob.value}}</div>
-                <div>Demolition: {{label_eoe.value}}</div>
-                <p>
-                    <semantic-link iri="{{#if building_iri.value}}{{building_iri.value}}{{else}}{{subject.value}}{{/if}}">See details</semantic-link>
-                </p>
+                <div style="font-family: 'Source Sans Pro', 'Lato', sans-serif; min-width: 180px; max-width: 240px;">
+                    <div style="font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: #222; margin: 0 0 6px 0; padding-bottom: 5px; border-bottom: 2px solid var(--archipelago-gold, #d4b87a); line-height: 1.2;">
+                        {{name.value}}
+                    </div>
+                    <table style="width: 100%; font-size: 12px; line-height: 1.3; border-collapse: collapse;">
+                        {{#if label_construction.value}}
+                        <tr>
+                            <td style="color: #999; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 2px 8px 2px 0; vertical-align: top; white-space: nowrap;">Built</td>
+                            <td style="color: #333; padding: 2px 0;">{{label_construction.value}}</td>
+                        </tr>
+                        {{/if}}
+                        {{#if label_demolition.value}}
+                        <tr>
+                            <td style="color: #999; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 2px 8px 2px 0; vertical-align: top; white-space: nowrap;">Demolished</td>
+                            <td style="color: #333; padding: 2px 0;">{{label_demolition.value}}</td>
+                        </tr>
+                        {{/if}}
+                        {{#if has_use.value}}
+                        <tr>
+                            <td style="color: #999; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 2px 8px 2px 0; vertical-align: top; white-space: nowrap;">Use</td>
+                            <td style="color: #333; padding: 2px 0;">{{use.value}} {{#if label_use_bob.value}}<span style="color: #aaa; font-size: 11px;">({{label_use_bob.value}}–{{label_use_eoe.value}})</span>{{/if}}</td>
+                        </tr>
+                        {{/if}}
+                        <tr>
+                            <td style="color: #999; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 2px 8px 2px 0; vertical-align: top; white-space: nowrap;">Phase</td>
+                            <td style="color: #333; padding: 2px 0; font-weight: 500;">{{label_bob.value}}–{{label_eoe.value}}</td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 6px; padding-top: 5px; border-top: 1px solid #eee;">
+                        <semantic-link iri="{{#if building_iri.value}}{{building_iri.value}}{{else}}{{subject.value}}{{/if}}" style="font-size: 12px; color: var(--archipelago-gold, #d4b87a); text-decoration: none; font-weight: 500;">
+                            See details →
+                        </semantic-link>
+                    </div>
+                </div>
             </template>
 
             <!-- FEATURES LAYERS (vector data from SPARQL queries) -->
@@ -94,7 +121,7 @@
                     PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
                     PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
 
-                    SELECT DISTINCT ?subject ?wkt ?bw_id ?t ?z ?bob ?eoe ?use ?name ?label_bob ?label_eoe ?building_iri WHERE {
+                    SELECT DISTINCT ?subject ?wkt ?bw_id ?t ?z ?bob ?eoe ?use ?name ?label_bob ?label_eoe ?building_iri ?label_construction ?label_demolition ?label_use_bob ?label_use_eoe ?has_use WHERE {
                         # Get geometry from SQL service
                         SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                             ?root rs_sql_sail:hasQueryId 'production';
@@ -150,6 +177,17 @@
                         BIND(STRBEFORE(STR(?eoe), '-') AS ?label_eoe)
                         ?building_iri rdfs:label ?name_full.
                         BIND(?name_full AS ?name)
+                        
+                        # Physical phase dates (construction / demolition)
+                        BIND(IF(BOUND(?phase_bob_0), STRBEFORE(STR(?phase_bob_0), '-'), '') AS ?label_construction)
+                        BIND(IF(BOUND(?phase_eoe_0), STRBEFORE(STR(?phase_eoe_0), '-'), '') AS ?label_demolition)
+                        
+                        # Use dates
+                        BIND(IF(BOUND(?useNode_bob_0), STRBEFORE(STR(?useNode_bob_0), '-'), '') AS ?label_use_bob)
+                        BIND(IF(BOUND(?useNode_eoe_0), STRBEFORE(STR(?useNode_eoe_0), '-'), '') AS ?label_use_eoe)
+                        
+                        # Flag: is there a known use?
+                        BIND(IF(BOUND(?useTypeLabel), 'true', '') AS ?has_use)
                         
                         # Create unique subject per phase x use combination
                         # Each temporal slice needs its own feature ID for OpenLayers

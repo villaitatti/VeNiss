@@ -1,0 +1,99 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sp: <http://spinrdf.org/sp#> .
+@prefix User: <http://www.researchspace.org/resource/user/> .
+@prefix veniss: <https://veniss.net/ontology#> .
+
+<https://veniss.net/container/fieldDefinitionContainer/building_import_gis_phases/context> {
+  <https://veniss.net/container/fieldDefinitionContainer/building_import_gis_phases> a <http://www.researchspace.org/resource/system/fields/Field>,
+      prov:Entity, <http://www.w3.org/ns/ldp#Resource>;
+    rdfs:label "building_import_gis_phases"@en;
+    <http://www.researchspace.org/resource/system/fields/insertPattern> _:insert;
+    <http://www.researchspace.org/resource/system/fields/selectPattern> _:select;
+    <http://www.researchspace.org/resource/system/fields/deletePattern> _:delete;
+    prov:wasAttributedTo User:admin;
+    <http://www.researchspace.org/resource/system/fields/xsdDatatype> xsd:string;
+    <http://www.researchspace.org/resource/system/fields/domain> veniss:Building;
+    prov:generatedAtTime "2026-04-22T00:00:00.000Z"^^xsd:dateTime;
+    <http://www.researchspace.org/resource/system/fields/maxOccurs> "unbounded";
+    <http://www.researchspace.org/resource/system/fields/minOccurs> "0" .
+
+  _:insert a sp:Query;
+    sp:text """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX veniss: <https://veniss.net/ontology#>
+INSERT {
+  GRAPH <http://www.researchspace.org/resource/g/data> {
+    ?building crm:P196i_is_defined_by ?sv .
+    ?sv a crm:E92_Spacetime_Volume ;
+        crm:P166i_had_presence ?presence .
+    ?presence a crm:E93_Presence ;
+              crm:P4_has_time-span ?ts ;
+              crm:P138i_has_representation ?2drep .
+    ?ts a crm:E52_Time-Span ;
+        crm:P82a_begin_of_the_begin ?bob_date .
+    ?2drep crm:P2_has_type veniss:2d_representation ;
+           rdfs:label ?phase_id .
+  }
+} WHERE {
+  BIND(STR($value) AS ?v)
+  FILTER(?v != "")
+  # Parse value: "SSV_BLDG_21.3|1812|1830|SSV_BLDG_21"
+  BIND(STRBEFORE(?v, "|") AS ?phase_id)
+  BIND(STRAFTER(?v, "|") AS ?rest1)
+  BIND(STRBEFORE(?rest1, "|") AS ?bob_str)
+  BIND(STRAFTER(?rest1, "|") AS ?rest2)
+  BIND(STRBEFORE(?rest2, "|") AS ?eoe_str)
+  BIND(STRAFTER(?rest2, "|") AS ?bldg_identifier)
+  FILTER(?phase_id != "" && ?bob_str != "" && ?bldg_identifier != "")
+
+  # Reverse lookup: identifier string -> building IRI
+  ?building crm:P1_is_identified_by ?idNode .
+  ?idNode rdfs:value ?bldg_identifier .
+
+  # Build sub-resource IRIs from the real building IRI
+  BIND(IRI(CONCAT(STR(?building), "/physical_changes/")) AS ?sv)
+  BIND(IRI(CONCAT(STR(?building), "/presence/", ?phase_id)) AS ?presence)
+  BIND(IRI(CONCAT(STR(?building), "/timespan/", ?phase_id)) AS ?ts)
+  BIND(IRI(CONCAT("https://veniss.net/2drep/", ?phase_id)) AS ?2drep)
+  BIND(STRDT(CONCAT(?bob_str, "-01-01"), xsd:date) AS ?bob_date)
+}""" .
+
+  _:select a sp:Query;
+    sp:text """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+SELECT ?value WHERE {
+  $subject crm:P196i_is_defined_by ?sv .
+  ?sv crm:P166i_had_presence ?presence .
+  ?presence crm:P4_has_time-span ?ts .
+  ?ts crm:P82a_begin_of_the_begin ?bob .
+  BIND(STR(?bob) AS ?value)
+}
+LIMIT 1""" .
+
+  _:delete a sp:Query;
+    sp:text """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+DELETE {
+  GRAPH <http://www.researchspace.org/resource/g/data> {
+    $subject crm:P196i_is_defined_by ?sv .
+    ?sv ?svp ?svo .
+    ?presence ?pp ?po .
+    ?ts ?tp ?to .
+    ?rep ?rp ?ro .
+  }
+} WHERE {
+  $subject crm:P196i_is_defined_by ?sv .
+  OPTIONAL { ?sv ?svp ?svo . }
+  OPTIONAL { ?sv crm:P166i_had_presence ?presence . ?presence ?pp ?po . }
+  OPTIONAL { ?sv crm:P166i_had_presence ?p2 . ?p2 crm:P4_has_time-span ?ts . ?ts ?tp ?to . }
+  OPTIONAL { ?sv crm:P166i_had_presence ?p3 . ?p3 crm:P138i_has_representation ?rep . ?rep ?rp ?ro . }
+}""" .
+
+  _:container <http://www.w3.org/ns/ldp#contains> <https://veniss.net/container/fieldDefinitionContainer/building_import_gis_phases> .
+}
+
+{
+  _:container a <http://www.w3.org/ns/ldp#Container>, <http://www.w3.org/ns/ldp#Resource>,
+      prov:Entity .
+}

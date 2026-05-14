@@ -892,6 +892,16 @@ WHERE {
 
 **Note:** These 70 items are actually configuration objects, not archival locations. If they should remain in the system, they should be left unlinked from any authority.
 
+To fix
+```sparql
+INSERT {
+  ?s crm:P71i_is_listed_in <http://www.researchspace.org/resource/system/resource_configurations_container> .
+}
+WHERE {
+  ?s a Platform:resource_configuration
+}
+```
+
 ---
 
 #### Query P0-3: VERIFY - Check remaining P71i_is_listed_in inconsistencies

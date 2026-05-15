@@ -598,6 +598,16 @@ rs_sql_sail:includesSQLQuery
     rs_sql_sail:hasQueryId "veniss_buildings_4326" ;
     rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt from PRODUCTION.veniss_data"
 ] ;
+
+# Returns only buildings (t = 'Buildings') from QGIS-backed PostgreSQL.
+# Used by the "New buildings" thinking-frame to list candidate identifiers
+# that are still missing from the knowledge graph.
+rs_sql_sail:includesSQLQuery
+[
+    rs_sql_sail:hasQueryId "veniss_buildings_only" ;
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(geometry) as wkt, t, z from PRODUCTION.veniss_data where t = 'Buildings'"
+] ;
+
 # Temporal island data queries using the get_island_temporal_data function
 # Generated automatically for use in geosql.ttl
 

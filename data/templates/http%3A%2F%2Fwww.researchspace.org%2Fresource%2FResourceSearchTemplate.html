@@ -1,7 +1,112 @@
 <mp-event-target-template-render id="[[urlParam 'resourceconfig' escape=false]]-resourceSearch-frame" template='{{> template}}'>
   <template id='template'>
-    [[!-- WARNING: any KPs used for search has to have a domain matching the resource ontology class --]]
+
+    [[!-- ========================================================================
+         New Buildings (custom view): list of building identifiers drawn in the
+         federated PostgreSQL/QGIS database that are NOT yet ingested in the
+         knowledge graph. Click on a row to open the Builtwork form pre-filled
+         with the bw_id, so the user can promote the QGIS feature to a graph
+         entity (workflow A: "Promote to Builtwork").
+
+         Activation: this branch is selected when the resourceconfig URL param
+         points to the New_Buildings resource configuration (LDP trig in
+         runtime-data/ldp/configurations/...New_Buildings.trig).
+         ======================================================================== --]]
+    {{#ifCond "[[urlParam "resourceconfig" escape=false]]" "==" "http://www.researchspace.org/resource/system/resource_configurations_container/data/New_Buildings"}}
+
+      <div class="semantic-search-content">
+        <div class="semantic-search-header-content">
+          <h3 class="semantic-search-header-title text-truncate-line1" title="New buildings">New buildings</h3>
+        </div>
+
+        <div class="documentation-section documentation-section-withIcon" style="margin: 10px 20px;">
+          <div class="documentation-section-icon-container">
+            <i class="fa fa-info"></i>
+          </div>
+          <div style="flex: 1;">
+            <div class="documentation-section-title">Buildings drawn in QGIS but not yet ingested in the knowledge graph</div>
+            <div class="documentation-section-content">
+              These identifiers come from the federated <code>PRODUCTION.veniss_data</code> table (filtered on <code>t = 'Buildings'</code>) and have <strong>no matching <code>veniss:Builtwork</code> resource</strong> in the graph yet. Click on an entry to create the corresponding Builtwork, the row will disappear once it is created.
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 0 20px 20px;">
+          <semantic-context repository="ephedra">
+            <semantic-table id='new-buildings-result-list'
+                            class-name="table-fixed-header table-scrollable-content table-expanded search-table-container table-without-checkbox"
+                            query='PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                                   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                   PREFIX veniss_ontology: <https://veniss.net/ontology#>
+                                   PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+                                   PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                                   SELECT DISTINCT ?bw_id ?wkt WHERE {
+                                     SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                       ?root rs_sql_sail:hasQueryId "veniss_buildings_only" ;
+                                             veniss_sql:bw_id ?bw_id ;
+                                             veniss_sql:wkt   ?wkt .
+                                     }
+                                     FILTER NOT EXISTS {
+                                       ?bw a veniss_ontology:Building .
+                                       {
+                                         ?bw crm:P196i_is_defined_by/crm:P166i_had_presence/crm:P138i_has_representation/rdfs:label ?lab_b .
+                                         FILTER(STR(?lab_b) = STR(?bw_id))
+                                       } UNION {
+                                         ?bw crm:P1_is_identified_by ?id_a .
+                                         ?id_a a crm:E42_Identifier .
+                                         { ?id_a rdfs:value ?lab_a . } UNION { ?id_a rdfs:label ?lab_a . }
+                                         FILTER(STR(?lab_a) = STR(?bw_id))
+                                       }
+                                     }
+                                   } ORDER BY ?bw_id'
+                            tuple-template='{{> newBuildingRow}}'
+                            no-result-template='{{> newBuildingsNoResults}}'
+                            number-of-displayed-rows=20
+                            column-configuration='[
+                              {"variableName":"bw_id","displayName":"Building identifier"},
+                              {"variableName":"wkt","displayName":"Geometry preview","showLabel":false}
+                            ]'>
+
+              <template id='newBuildingRow'>
+                <div style="display:flex; align-items:center; gap:12px; padding: 6px 0;">
+                  <rs-icon icon-type="rounded" icon-name="domain_add" symbol="true" style="color:#1d0a6e; font-size:22px;"></rs-icon>
+                  <div style="flex:1;">
+                    <div style="font-weight:600;">{{bw_id.value}}</div>
+                    <div style="color:#888; font-size:11px;" title="{{wkt.value}}">{{#if wkt.value}}<em>geometry available in PostGIS</em>{{/if}}</div>
+                  </div>
+                  <mp-event-trigger id='new-building-{{bw_id.value}}-promote-trigger'
+                                    type='Dashboard.AddFrame'
+                                    targets='["thinking-frames"]'
+                                    data='{ "viewId": "resource-editor",
+                                            "view": "resource-editor",
+                                            "entityTypeConfig": "http://www.researchspace.org/resource/system/resource_configurations_container/data/Builtwork",
+                                            "mode": "new",
+                                            "customLabel": "Promote {{bw_id.value}}",
+                                            "prefillBwId": "{{bw_id.value}}"
+                                          }'>
+                    <button class="btn btn-action btn-textAndIcon">
+                      <rs-icon icon-type="round" icon-name="add_box"></rs-icon>
+                      <span>Create Builtwork</span>
+                    </button>
+                  </mp-event-trigger>
+                </div>
+              </template>
+
+              <template id='newBuildingsNoResults'>
+                <div style="padding: 30px; text-align: center; color: #555;">
+                  <rs-icon icon-type="rounded" icon-name="check_circle" symbol="true" style="font-size:32px; color:#4caf50;"></rs-icon>
+                  <div style="margin-top: 8px;">All QGIS-drawn buildings have already been ingested in the graph.</div>
+                </div>
+              </template>
+            </semantic-table>
+          </semantic-context>
+        </div>
+      </div>
+
+    {{else}}
+    [[!-- ========== Default ResearchSpace resource-search rendering ========== --]]
     [[#if (urlParam "searchkpcategory")]]
+
       <semantic-search config='[[searchConfigForFieldsFromQuery (setQueryBindings "SELECT DISTINCT ?field WHERE { ?field a <http://www.researchspace.org/resource/system/fields/Field> . ?field <http://www.researchspace.org/resource/system/fields/category> ?category . }" category=(urlParam "searchkpcategory" escape=false))]]'>
     [[else]]    
       <semantic-search config='[[searchConfigForFieldsFromQuery (setQueryBindings "SELECT DISTINCT ?field WHERE { ?field a <http://www.researchspace.org/resource/system/fields/Field> .  ?field <http://www.researchspace.org/resource/system/fields/domain> ?domain . ?field <http://www.researchspace.org/resource/system/fields/range> ?range . }" domain=(urlParam "resourceontologyclass" escape=false))]]'>      
@@ -1752,9 +1857,11 @@
 
         </mp-splitpane>
       </div>
-    </semantic-search> 
+    </semantic-search>
+    {{/ifCond}}
   </template>
 </mp-event-target-template-render>
+
 
 [[#*inline "numberOfResults"]]
   <div class="semantic-search-num-results">

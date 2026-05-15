@@ -1,0 +1,52 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix sp: <http://spinrdf.org/sp#> .
+@prefix User: <http://www.researchspace.org/resource/user/> .
+@prefix veniss_ontology: <https://veniss.net/ontology#> .
+
+<https://veniss.net/container/fieldDefinitionContainer/source_historical_map_location/context> {
+  _:autosuggestion a sp:Query;
+    sp:text """SELECT ?value ?label WHERE {
+  ?value a veniss_ontology:Island;
+         crm:P1_is_identified_by ?identifier.
+  ?identifier rdfs:label ?label
+  FILTER REGEX(STR(?label), \"?token\", \"i\")
+} LIMIT 10""" .
+
+  <https://veniss.net/container/fieldDefinitionContainer/source_historical_map_location> a <http://www.researchspace.org/resource/system/fields/Field>,
+      prov:Entity, <http://www.w3.org/ns/ldp#Resource>;
+    rdfs:label "source_historical_map_location"@en;
+    <http://www.researchspace.org/resource/system/fields/deletePattern> _:delete;
+    <http://www.researchspace.org/resource/system/fields/insertPattern> _:insert;
+    <http://www.researchspace.org/resource/system/fields/selectPattern> _:select;
+    <http://www.researchspace.org/resource/system/fields/autosuggestionPattern> _:autosuggestion;
+    prov:wasAttributedTo User:admin;
+    <http://www.researchspace.org/resource/system/fields/xsdDatatype> xsd:anyURI;
+    <http://www.researchspace.org/resource/system/fields/domain> veniss_ontology:Source;
+    <http://www.researchspace.org/resource/system/fields/range> veniss_ontology:Island;
+    prov:generatedAtTime "2026-04-01T00:00:00.000Z"^^xsd:dateTime;
+    <http://www.researchspace.org/resource/system/fields/maxOccurs> "1";
+    <http://www.researchspace.org/resource/system/fields/minOccurs> "0" .
+
+  _:insert a sp:Query;
+    sp:text """INSERT {
+  $subject veniss_ontology:has_historical_map_location $value
+} WHERE {}""" .
+
+  _:select a sp:Query;
+    sp:text """SELECT ?value WHERE {
+  $subject veniss_ontology:has_historical_map_location ?value.
+}""" .
+
+  _:delete a sp:Query;
+    sp:text "DELETE { $subject veniss_ontology:has_historical_map_location $value } WHERE { $subject veniss_ontology:has_historical_map_location $value }" .
+
+  _:container <http://www.w3.org/ns/ldp#contains> <https://veniss.net/container/fieldDefinitionContainer/source_historical_map_location> .
+}
+
+{
+  _:container a <http://www.w3.org/ns/ldp#Container>, <http://www.w3.org/ns/ldp#Resource>,
+      prov:Entity .
+}

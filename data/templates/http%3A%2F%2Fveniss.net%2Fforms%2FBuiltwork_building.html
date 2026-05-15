@@ -224,6 +224,33 @@ LIMIT 1000
                                 <bs-tabs class="source_tabs form-main-window" id="builtwork-tabs" default-active-key="functional_changes">
                                                                     <bs-tab event-key="physical_forms" title="Physical Forms">
                                     <h1>Physical Forms</h1>
+
+                                    {{#if node}}
+                                    <div style="margin-bottom: 16px;">
+                                      <!-- Warning if physical phases already exist.
+                                           The GIS-import section below the main form handles the
+                                           "no phases yet" case with its own preview + button. -->
+                                      <semantic-query
+                                        query='PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> SELECT ?sv WHERE { <{{node}}> crm:P196i_is_defined_by ?sv . ?sv crm:P166i_had_presence ?p . ?p crm:P4_has_time-span ?ts . ?ts crm:P82a_begin_of_the_begin ?bob . } LIMIT 1'
+                                        template='{{> gisImportHasPhases}}'
+                                      >
+                                        <template id="gisImportHasPhases">
+                                          {{#each bindings}}
+                                          <div class="alert alert-info">
+                                            <strong>Fasi fisiche già presenti.</strong>
+                                            Per rigenerarle da GIS, eliminare prima quelle esistenti
+                                            (cancellando manualmente il valore di
+                                            <em>physical_changes_from_gis</em> oppure ogni singola
+                                            <em>Physical Form</em> qui sotto).
+                                          </div>
+                                          {{/each}}
+                                        </template>
+                                      </semantic-query>
+                                    </div>
+                                    <hr style="margin-bottom: 16px;"/>
+                                    {{/if}}
+
+
                                     <semantic-form-composite-input for='physical-changes'
                                     render-header="false"
                                     label="Presences"
@@ -432,6 +459,117 @@ LIMIT 1000
 
           </bs-panel>
       </semantic-form>
+
+
+      {{#if node}}
+      <!-- ============================================================ -->
+      <!-- GIS import: generate physical phases from PostgreSQL         -->
+      <!-- ============================================================ -->
+      <!-- v10: Reverse-lookup approach.                                -->
+      <!-- The INSERT pattern in the field definition resolves the      -->
+      <!-- building IRI from the identifier (4th field in value).       -->
+      <!-- The form subject doesn't matter — the INSERT ignores it     -->
+      <!-- and uses the building found via reverse lookup.              -->
+      <!-- ============================================================ -->
+      <div style="margin-top: 24px; padding: 16px; border: 1px solid #e0e0e0; border-radius: 4px; background-color: #fafafa;">
+        <h3 style="margin-top: 0;">Genera fasi fisiche da GIS</h3>
+
+        <semantic-query
+          query='PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT ?identifier ?building WHERE {
+                   BIND(<{{node}}> AS ?building)
+                   ?building crm:P1_is_identified_by ?id .
+                   ?id rdfs:value ?identifier .
+                   FILTER NOT EXISTS {
+                     ?building crm:P196i_is_defined_by ?_sv .
+                     ?_sv crm:P166i_had_presence ?_pr .
+                     ?_pr crm:P4_has_time-span ?_ts .
+                     ?_ts crm:P82a_begin_of_the_begin ?_bob .
+                   }
+                 } LIMIT 1'
+          template='{{> gisOuterWrapper}}'>
+
+          <template id="gisOuterWrapper">
+            {{#if bindings.length}}
+              {{#each bindings}}
+                <semantic-context repository="ephedra">
+                  <semantic-query
+                    query='PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                           PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+                           SELECT ?bw_id ?bob ?eoe
+                                  (CONCAT(STR(?bw_id), "|", STR(?bob), "|", STR(?eoe), "|", "{{identifier.value}}") AS ?value)
+                           WHERE {
+                             SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                               ?r rs_sql_sail:hasQueryId "building_phases" ;
+                                  veniss_sql:bw_id_filter "{{identifier.value}}" ;
+                                  veniss_sql:bw_id ?bw_id ;
+                                  veniss_sql:bob ?bob ;
+                                  veniss_sql:eoe ?eoe .
+                             }
+                           }
+                           ORDER BY ?bob'
+                    template='{{> gisImportFormWithPreview}}'>
+
+                    <template id="gisImportFormWithPreview">
+                      {{#if bindings.length}}
+                        <p>
+                          Sono state rilevate <strong>{{bindings.length}}</strong> fase/fasi
+                          per il building <code>{{../identifier.value}}</code>:
+                        </p>
+                        <ul style="margin-bottom: 16px;">
+                          {{#each bindings}}
+                            <li>
+                              <code>{{bw_id.value}}</code>:
+                              {{bob.value}} &mdash;
+                              {{#if eoe.value}}{{eoe.value}}{{else}}<em>in corso</em>{{/if}}
+                            </li>
+                          {{/each}}
+                        </ul>
+
+                        <semantic-form
+                          post-action="reload"
+                          browser-persistence="false"
+                          persistence='{"type":"sparql","targetInsertGraphIri":"http://www.researchspace.org/resource/g/data","repository":"default"}'
+                          fields='[[fieldDefinitions
+                            gis_phases = "http://localhost:10214/container/fieldDefinitionContainer/building_import_gis_phases"
+                          ]]'>
+
+                          <semantic-form-hidden-input for="gis_phases"
+                            default-values='[{{#each bindings}}"{{value.value}}"{{#unless @last}},{{/unless}}{{/each}}]'>
+                          </semantic-form-hidden-input>
+
+                          <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <button name="submit" class="btn btn-primary">
+                              Genera fasi fisiche da GIS
+                            </button>
+                            <button name="reset" class="btn btn-default">Annulla</button>
+                          </div>
+                        </semantic-form>
+                      {{else}}
+                        <div class="alert alert-warning" style="margin-bottom: 0;">
+                          Nessuna fase rilevata da GIS per
+                          <code>{{../identifier.value}}</code>.
+                          Verifica che l'identifier del building corrisponda a un record
+                          presente in <code>production.get_building_phases(...)</code>.
+                        </div>
+                      {{/if}}
+                    </template>
+                  </semantic-query>
+                </semantic-context>
+              {{/each}}
+            {{else}}
+              <p style="margin-bottom: 0; color: #666;">
+                <em>Nessun import disponibile.</em>
+                Il building non ha un identifier oppure ha già delle fasi fisiche associate.
+                Per rigenerarle, eliminare prima quelle esistenti.
+              </p>
+            {{/if}}
+          </template>
+        </semantic-query>
+      </div>
+      {{/if}}
+
   </bs-col>
 </bs-row>
 

@@ -1019,7 +1019,7 @@
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Knowledge_map')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_chart')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline'))}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
-                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value ?author WHERE {
+                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value ?author ?bw_id WHERE {
                                                     BIND(?subject as ?iri) .
                                                     BIND(?subject as ?item) .
 
@@ -1037,6 +1037,36 @@
                                                       ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> .
                                                       ?actor_role crmpc:P01_has_domain ?production ;
                                                           crmpc:P02_has_range ?author .
+                                                    }
+
+                                                    # Builtwork cfg: pick the base bw_id without phase suffix.
+                                                    # Filter on Building (cfg ontology class) UNION superclass Builtwork.
+                                                    # Two paths: B = P196i.../P138i_has_representation/rdfs:label,
+                                                    # A = P1_is_identified_by/E42_Identifier rdfs:value (KP builtwork_identifier).
+                                                    OPTIONAL {
+                                                      { ?subject a veniss_ontology:Building . }
+                                                      UNION
+                                                      { ?subject a veniss_ontology:Builtwork . }
+                                                      {
+                                                        SELECT ?subject (MIN(?bw_id_raw) AS ?bw_id) WHERE {
+                                                          {
+                                                            ?subject crm:P196i_is_defined_by ?bw_stv .
+                                                            ?bw_stv crm:P166i_had_presence ?bw_phase .
+                                                            ?bw_phase crm:P138i_has_representation ?bw_repr .
+                                                            ?bw_repr rdfs:label ?bw_id_raw .
+                                                            FILTER(!CONTAINS(STR(?bw_id_raw), "."))
+                                                          }
+                                                          UNION
+                                                          {
+                                                            ?subject crm:P1_is_identified_by ?bw_ident .
+                                                            ?bw_ident a crm:E42_Identifier .
+                                                            { ?bw_ident rdfs:value ?bw_id_raw . }
+                                                            UNION
+                                                            { ?bw_ident rdfs:label ?bw_id_raw . }
+                                                            FILTER(!CONTAINS(STR(?bw_id_raw), "."))
+                                                          }
+                                                        } GROUP BY ?subject
+                                                      }
                                                     }
 
                                                     {{#if bindings.0.columnContentSparqlPattern2.value}}
@@ -1227,8 +1257,12 @@
                                         </semantic-query>
                                       {{else}}
                                         {{#if author.value}}
-                                          <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">
+                                          <div class="color-secondary-light text-font-size__xsmall text-truncate-line1" style="font-style: italic;">
                                             <mp-label iri='{{author.value}}'></mp-label>
+                                          </div>
+                                        {{else if bw_id.value}}
+                                          <div class="color-secondary-light text-font-size__xsmall text-truncate-line1" style="font-style: italic;">
+                                            {{bw_id.value}}
                                           </div>
                                         {{else}}
                                           <semantic-query query='SELECT ?isPrimarySource WHERE {

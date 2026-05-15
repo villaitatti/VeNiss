@@ -57,7 +57,7 @@
           .nb-table thead th { background:#eef0f8; color:#1d0a6e; font-weight:600;
                                 text-align:left; padding:8px 10px;
                                 border-bottom:1px solid #d8d8e6; }
-          .nb-table tbody td { padding:6px 10px; vertical-align:middle;
+          .nb-table tbody td { padding:8px 10px; vertical-align:middle;
                                 border-bottom:1px solid #ececf3; }
           .nb-table tbody tr:hover { background:#f7f7fb; }
           .nb-table .btn-action { padding:4px 12px; font-size:12px; white-space:nowrap;
@@ -68,10 +68,23 @@
                             font-family:monospace; vertical-align:middle; }
           .nb-bwid-cell { font-family:monospace; font-weight:600; color:#1d0a6e;
                           white-space:nowrap; }
-          .nb-phases-cell { font-family:monospace; font-size:11px; color:#555;
-                            max-width:480px; overflow:hidden; text-overflow:ellipsis;
-                            white-space:nowrap; }
-          .nb-phases-cell em { font-style:normal; color:#888; margin-right:4px; }
+          [[!-- Each row's "Phases" cell hosts a small horizontal gallery of
+               <semantic-map> previews (one per phase WKT) populated by a
+               nested <semantic-query> against the geosql SERVICE. --]]
+          .nb-phases-row { display:flex; flex-wrap:wrap; gap:6px; min-height:100px;
+                           align-items:flex-start; }
+          .nb-phase-mini { width:260px; height:150px; }
+          .nb-phase-mini semantic-map { width:260px; height:120px; display:block;
+                                        border:1px solid #ddd; border-radius:3px;
+                                        overflow:hidden; }
+          [[!-- Hide the OL attribution badge inside the mini-map previews; the
+                space is too tight (260x120) for it to be useful and it covers
+                the geometry on small features. --]]
+          .nb-phase-mini .ol-attribution { display:none !important; }
+
+          .nb-phase-mini-label { font-family:monospace; font-size:10px;
+                                 text-align:center; padding-top:2px; color:#666;
+                                 word-break:break-all; line-height:1.2; }
         </style>
 
         <div style="padding: 0 20px 20px;">
@@ -206,7 +219,58 @@
                 </template>
 
                 <template id='phasesCell'>
-                  <span class="nb-phases-cell" title="{{phases.value}}">{{phases.value}}</span>
+                  [[!-- Per-row mini-gallery of <semantic-map> previews.
+                       A nested <semantic-query> hits the federated geosql
+                       SERVICE filtered to the current row's base_bw_id
+                       (anchored regex matches both the base and ".N"
+                       phases). With the table paginating to 20 rows we
+                       mount at most ~30-60 maps at once, which the page
+                       can absorb (vs. the ~200 we tried up-front earlier). --]]
+                  <semantic-query query='PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+                                          PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                                          SELECT ?bw_id ?wkt WHERE {
+                                            SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                              ?r rs_sql_sail:hasQueryId "veniss_buildings_only" ;
+                                                 veniss_sql:bw_id ?bw_id ;
+                                                 veniss_sql:wkt   ?wkt .
+                                            }
+                                            [[!-- Match the base bw_id exactly, OR any "base.N" phase.
+                                                 We avoid REGEX (and its escape issues through
+                                                 handlebars + SPARQL). The base_bw_id literal is
+                                                 captured into a VAR via BIND first — this
+                                                 isolates whatever stray whitespace / non-printable
+                                                 chars some Postgres identifiers may carry from
+                                                 the SPARQL FILTER clause (which is strict about
+                                                 literals and would throw "INVALID token"). --]]
+                                            BIND("{{base_bw_id.value}}" AS ?nbBaseId)
+                                            FILTER(STR(?bw_id) = ?nbBaseId
+                                                   || STRSTARTS(STR(?bw_id), CONCAT(?nbBaseId, ".")))
+                                          } ORDER BY ?bw_id'
+                                  template='{{> phaseMapsTpl}}'>
+                    <template id='phaseMapsTpl'>
+                      <div class="nb-phases-row">
+                        {{#each bindings}}
+                          <div class="nb-phase-mini">
+                            [[!-- IMPORTANT: the prop name on <semantic-map> (the
+                                 non-"advanced" variant in src/.../components/semantic/map/SemanticMap.ts)
+                                 is `fixZoomLevel` (kebab-case → `fix-zoom-level`).
+                                 The previous attribute `fixed-zoom` was silently
+                                 ignored by the component, so the map fell back to
+                                 the default `view.fit(extent, { maxZoom: 10 })`,
+                                 which on a small building polygon meant a very
+                                 zoomed-out view. The component clamps the value
+                                 to 0-18 (per its TSDoc), so 18 is the closest
+                                 we can get. --]]
+                            <semantic-map fix-zoom-level='18'
+                                          query='SELECT ?wkt WHERE { BIND("{{wkt.value}}"^^<http://www.opengis.net/ont/geosparql#wktLiteral> AS ?wkt) }'
+                                          no-result-template='<div style="padding:8px;font-size:10px;color:#999;">no geometry</div>'>
+                            </semantic-map>
+                            <div class="nb-phase-mini-label" title="{{wkt.value}}">{{bw_id.value}}</div>
+                          </div>
+                        {{/each}}
+                      </div>
+                    </template>
+                  </semantic-query>
                 </template>
 
                 <template id='actionsCell'>

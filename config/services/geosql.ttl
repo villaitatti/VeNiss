@@ -602,10 +602,20 @@ rs_sql_sail:includesSQLQuery
 # Returns only buildings (t = 'Buildings') from QGIS-backed PostgreSQL.
 # Used by the "New buildings" thinking-frame to list candidate identifiers
 # that are still missing from the knowledge graph.
+#
+# Notes (added 2026-05-15):
+#  - Geometry is stored in EPSG:3857 (Web Mercator). The mini <semantic-map>
+#    previews in the New_Buildings template need WGS84 wktLiteral, otherwise
+#    OpenLayers fails with AssertionError #25. So we ST_Transform to 4326.
+#  - Some rows have a stray newline embedded inside the identifier
+#    (e.g. 'PVG_BLDG_\n31'). Those break the per-row sub-<semantic-query>
+#    in `phasesCell` ("Expecting '...', got 'INVALID'"). We exclude them
+#    with a regex filter; once the source data is cleaned in QGIS they will
+#    automatically reappear in the view.
 rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "veniss_buildings_only" ;
-    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(geometry) as wkt, t, z from PRODUCTION.veniss_data where t = 'Buildings'"
+    rs_sql_sail:text "select distinct \"identifier\" as bw_id, ST_AsText(ST_Transform(geometry, 4326)) as wkt, t, z from PRODUCTION.veniss_data where t = 'Buildings' and identifier ~ '^[A-Z0-9_.]+$'"
 ] ;
 
 # Temporal island data queries using the get_island_temporal_data function

@@ -31,74 +31,215 @@
           </div>
         </div>
 
+        [[!-- Inline CSS for the New Buildings view. Kept inline to avoid
+              touching the global stylesheet for a single Thinking-Frames page. --]]
+        <style>
+          .nb-prefix-summary { background:#f7f7fb; border:1px solid #d8d8e6; border-radius:6px;
+                               padding:8px 12px; margin:14px 0 12px; display:flex; flex-wrap:wrap;
+                               gap:8px; align-items:center; }
+          .nb-prefix-summary-label { font-size:11px; color:#666; margin-right:6px; }
+          .nb-prefix-pill { display:inline-flex; align-items:center; gap:6px;
+                            background:#1d0a6e; color:white; padding:3px 10px; border-radius:12px;
+                            font-size:12px; font-weight:600; cursor:pointer; user-select:none;
+                            text-decoration:none; }
+          .nb-prefix-pill:hover { opacity:.85; text-decoration:none; color:white; }
+          .nb-prefix-pill em { font-style:normal; opacity:.75; font-weight:400; }
+          .nb-prefix-clear { display:inline-flex; align-items:center; gap:4px; cursor:pointer;
+                              font-size:11px; color:#666; padding:2px 8px; border-radius:10px;
+                              border:1px solid #d8d8e6; background:white; }
+          .nb-prefix-clear:hover { background:#f7f7fb; }
+
+          [[!-- Compact table styling: avoids the wide spacing imposed by
+               the default `table-fixed-header table-scrollable-content
+               table-expanded` classes (which are designed for full-page
+               result lists, not for our 5-column compact view). --]]
+          .nb-table { width:100%; border-collapse:collapse; font-size:13px; background:white; }
+          .nb-table thead th { background:#eef0f8; color:#1d0a6e; font-weight:600;
+                                text-align:left; padding:8px 10px;
+                                border-bottom:1px solid #d8d8e6; }
+          .nb-table tbody td { padding:6px 10px; vertical-align:middle;
+                                border-bottom:1px solid #ececf3; }
+          .nb-table tbody tr:hover { background:#f7f7fb; }
+          .nb-table .btn-action { padding:4px 12px; font-size:12px; white-space:nowrap;
+                                  display:inline-flex; align-items:center; gap:4px; }
+          .nb-actions-td { text-align:right; white-space:nowrap; }
+          .nb-prefix-cell { display:inline-block; background:#1d0a6e; color:white;
+                            padding:2px 10px; border-radius:10px; font-size:11px; font-weight:600;
+                            font-family:monospace; vertical-align:middle; }
+          .nb-bwid-cell { font-family:monospace; font-weight:600; color:#1d0a6e;
+                          white-space:nowrap; }
+          .nb-phases-cell { font-family:monospace; font-size:11px; color:#555;
+                            max-width:480px; overflow:hidden; text-overflow:ellipsis;
+                            white-space:nowrap; }
+          .nb-phases-cell em { font-style:normal; color:#888; margin-right:4px; }
+        </style>
+
         <div style="padding: 0 20px 20px;">
           <semantic-context repository="ephedra">
-            <semantic-table id='new-buildings-result-list'
-                            class-name="table-fixed-header table-scrollable-content table-expanded search-table-container table-without-checkbox"
-                            query='PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-                                   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                                   PREFIX veniss_ontology: <https://veniss.net/ontology#>
-                                   PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
-                                   PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
-                                   SELECT DISTINCT ?bw_id ?wkt WHERE {
-                                     SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                       ?root rs_sql_sail:hasQueryId "veniss_buildings_only" ;
-                                             veniss_sql:bw_id ?bw_id ;
-                                             veniss_sql:wkt   ?wkt .
-                                     }
-                                     FILTER NOT EXISTS {
-                                       ?bw a veniss_ontology:Building .
-                                       {
-                                         ?bw crm:P196i_is_defined_by/crm:P166i_had_presence/crm:P138i_has_representation/rdfs:label ?lab_b .
-                                         FILTER(STR(?lab_b) = STR(?bw_id))
-                                       } UNION {
-                                         ?bw crm:P1_is_identified_by ?id_a .
-                                         ?id_a a crm:E42_Identifier .
-                                         { ?id_a rdfs:value ?lab_a . } UNION { ?id_a rdfs:label ?lab_a . }
-                                         FILTER(STR(?lab_a) = STR(?bw_id))
+            [[!-- semantic-context expects a SINGLE React child: wrap the two
+                 semantic-query blocks (overview + table) in this <div>. --]]
+            <div>
+
+              [[!-- ============================================================
+                   Quick-glance overview: one pill per island prefix with count.
+                   Single small query, very fast (6 rows).
+                   ============================================================ --]]
+              <semantic-query query='PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                     PREFIX veniss_ontology: <https://veniss.net/ontology#>
+                                     PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+                                     PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                                     SELECT ?island_prefix
+                                            (COUNT(DISTINCT ?base_bw_id) AS ?n_buildings)
+                                     WHERE {
+                                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                         ?root rs_sql_sail:hasQueryId "veniss_buildings_only" ;
+                                               veniss_sql:bw_id ?bw_id .
+                                       }
+                                       BIND(IF(CONTAINS(?bw_id, "_"), STRBEFORE(?bw_id, "_"), "(no prefix)") AS ?island_prefix)
+                                       BIND(REPLACE(?bw_id, "\\.[0-9]+$", "") AS ?base_bw_id)
+                                       FILTER NOT EXISTS {
+                                         ?bw a veniss_ontology:Building .
+                                         {
+                                           ?bw crm:P196i_is_defined_by/crm:P166i_had_presence/crm:P138i_has_representation/rdfs:label ?lab_b .
+                                           FILTER(STR(?lab_b) = STR(?base_bw_id))
+                                         } UNION {
+                                           ?bw crm:P1_is_identified_by ?id_a .
+                                           ?id_a a crm:E42_Identifier .
+                                           { ?id_a rdfs:value ?lab_a . } UNION { ?id_a rdfs:label ?lab_a . }
+                                           FILTER(STR(?lab_a) = STR(?base_bw_id))
+                                         }
+                                       }
+                                     } GROUP BY ?island_prefix ORDER BY DESC(?n_buildings)'
+                              template='{{> nbPrefixOverview}}'>
+                <template id='nbPrefixOverview'>
+                  {{#if bindings.length}}
+                    <div class="nb-prefix-summary">
+                      <span class="nb-prefix-summary-label">Filter by island:</span>
+                      {{#each bindings}}
+                        [[!-- Click → fires a Component.TemplateUpdate event
+                             carrying the selected prefix to the
+                             #nb-table-target template renderer below.
+                             That re-renders the <semantic-table> with an
+                             additional SPARQL FILTER on ?island_prefix. --]]
+                        <mp-event-trigger id='nb-pill-{{island_prefix.value}}-trigger'
+                                          type='Component.TemplateUpdate'
+                                          targets='["nb-table-target"]'
+                                          data='{"selectedPrefix":"{{island_prefix.value}}"}'>
+                          <a href="#" class="nb-prefix-pill" title="Show only {{island_prefix.value}} buildings">{{island_prefix.value}}<em>·{{n_buildings.value}}</em></a>
+                        </mp-event-trigger>
+                      {{/each}}
+                      <mp-event-trigger id='nb-pill-clear-trigger'
+                                        type='Component.TemplateUpdate'
+                                        targets='["nb-table-target"]'
+                                        data='{"selectedPrefix":""}'>
+                        <a href="#" class="nb-prefix-clear" title="Show all islands">✕ clear</a>
+                      </mp-event-trigger>
+                    </div>
+                  {{/if}}
+                </template>
+              </semantic-query>
+
+              [[!-- ============================================================
+                   Main paginated table.
+                   One row per base_bw_id (the building, regardless of phases).
+                   Phases (.1, .2, ...) are aggregated server-side via
+                   GROUP_CONCAT and shown inline in the row.
+                   `<semantic-table>` paginates by default (~20 rows / page),
+                   so even with 158 base_bw_id we only mount a few mp-event-trigger
+                   widgets at a time. This is what keeps the page responsive.
+
+                   Wrapped in `<mp-event-target-template-render>` so that
+                   clicking on an island pill above can push a
+                   `selectedPrefix` value here. The SPARQL query then adds
+                   `FILTER(?island_prefix = "{{selectedPrefix}}")` to limit
+                   the rows server-side. RS-native, no JS required.
+                   ============================================================ --]]
+              <mp-event-target-template-render id='nb-table-target'
+                                               template='{{> nbTableTpl}}'>
+                <template id='nbTableTpl'>
+              <semantic-table id='new-buildings-result-list'
+                              class-name="nb-table table-without-checkbox"
+                              query='PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                                     PREFIX veniss_ontology: <https://veniss.net/ontology#>
+                                     PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+                                     PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                                     SELECT ?island_prefix ?base_bw_id
+                                            (COUNT(?bw_id) AS ?n_phases)
+                                            (GROUP_CONCAT(?bw_id ; separator=", ") AS ?phases)
+                                     WHERE {
+                                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                         ?root rs_sql_sail:hasQueryId "veniss_buildings_only" ;
+                                               veniss_sql:bw_id ?bw_id .
+                                       }
+                                       BIND(IF(CONTAINS(?bw_id, "_"), STRBEFORE(?bw_id, "_"), "(no prefix)") AS ?island_prefix)
+                                       BIND(REPLACE(?bw_id, "\\.[0-9]+$", "") AS ?base_bw_id)
+                                       {{#if selectedPrefix}}FILTER(?island_prefix = "{{selectedPrefix}}"){{/if}}
+                                       FILTER NOT EXISTS {
+                                         ?bw a veniss_ontology:Building .
+                                         {
+                                           ?bw crm:P196i_is_defined_by/crm:P166i_had_presence/crm:P138i_has_representation/rdfs:label ?lab_b .
+                                           FILTER(STR(?lab_b) = STR(?base_bw_id))
+                                         } UNION {
+                                           ?bw crm:P1_is_identified_by ?id_a .
+                                           ?id_a a crm:E42_Identifier .
+                                           { ?id_a rdfs:value ?lab_a . } UNION { ?id_a rdfs:label ?lab_a . }
+                                           FILTER(STR(?lab_a) = STR(?base_bw_id))
+                                         }
                                        }
                                      }
-                                   } ORDER BY ?bw_id'
-                            tuple-template='{{> newBuildingRow}}'
-                            no-result-template='{{> newBuildingsNoResults}}'
-                            number-of-displayed-rows=20
-                            column-configuration='[
-                              {"variableName":"bw_id","displayName":"Building identifier"},
-                              {"variableName":"wkt","displayName":"Geometry preview","showLabel":false}
-                            ]'>
+                                     GROUP BY ?island_prefix ?base_bw_id
+                                     ORDER BY ?island_prefix ?base_bw_id'
+                              no-result-template='{{> newBuildingsNoResults}}'
+                              number-of-displayed-rows=20
+                              column-configuration='[
+                                {"variableName":"island_prefix","displayName":"Island","cellTemplate":"{{> islandCell}}"},
+                                {"variableName":"base_bw_id","displayName":"Building"},
+                                {"variableName":"n_phases","displayName":"# phases"},
+                                {"variableName":"phases","displayName":"Phases","cellTemplate":"{{> phasesCell}}"},
+                                {"variableName":"base_bw_id","displayName":"","cellTemplate":"{{> actionsCell}}"}
+                              ]'>
 
-              <template id='newBuildingRow'>
-                <div style="display:flex; align-items:center; gap:12px; padding: 6px 0;">
-                  <rs-icon icon-type="rounded" icon-name="domain_add" symbol="true" style="color:#1d0a6e; font-size:22px;"></rs-icon>
-                  <div style="flex:1;">
-                    <div style="font-weight:600;">{{bw_id.value}}</div>
-                    <div style="color:#888; font-size:11px;" title="{{wkt.value}}">{{#if wkt.value}}<em>geometry available in PostGIS</em>{{/if}}</div>
-                  </div>
-                  <mp-event-trigger id='new-building-{{bw_id.value}}-promote-trigger'
+                <template id='islandCell'>
+                  <span class="nb-prefix-cell">{{island_prefix.value}}</span>
+                </template>
+
+                <template id='phasesCell'>
+                  <span class="nb-phases-cell" title="{{phases.value}}">{{phases.value}}</span>
+                </template>
+
+                <template id='actionsCell'>
+                  <div class="nb-actions-td">
+                  <mp-event-trigger id='nb-promote-{{base_bw_id.value}}-trigger'
                                     type='Dashboard.AddFrame'
                                     targets='["thinking-frames"]'
                                     data='{ "viewId": "resource-editor",
                                             "view": "resource-editor",
                                             "entityTypeConfig": "http://www.researchspace.org/resource/system/resource_configurations_container/data/Builtwork",
                                             "mode": "new",
-                                            "customLabel": "Promote {{bw_id.value}}",
-                                            "prefillBwId": "{{bw_id.value}}"
+                                            "customLabel": "Promote {{base_bw_id.value}}",
+                                            "prefillBwId": "{{base_bw_id.value}}"
                                           }'>
                     <button class="btn btn-action btn-textAndIcon">
                       <rs-icon icon-type="round" icon-name="add_box"></rs-icon>
                       <span>Create Builtwork</span>
                     </button>
                   </mp-event-trigger>
-                </div>
-              </template>
+                  </div>
+                </template>
 
-              <template id='newBuildingsNoResults'>
-                <div style="padding: 30px; text-align: center; color: #555;">
-                  <rs-icon icon-type="rounded" icon-name="check_circle" symbol="true" style="font-size:32px; color:#4caf50;"></rs-icon>
-                  <div style="margin-top: 8px;">All QGIS-drawn buildings have already been ingested in the graph.</div>
-                </div>
-              </template>
-            </semantic-table>
+                <template id='newBuildingsNoResults'>
+                  <div style="padding: 30px; text-align: center; color: #555;">
+                    <rs-icon icon-type="rounded" icon-name="check_circle" symbol="true" style="font-size:32px; color:#4caf50;"></rs-icon>
+                    <div style="margin-top: 8px;">No buildings match the current filter.</div>
+                  </div>
+                </template>
+              </semantic-table>
+                </template>
+              </mp-event-target-template-render>
+
+            </div>
           </semantic-context>
         </div>
       </div>

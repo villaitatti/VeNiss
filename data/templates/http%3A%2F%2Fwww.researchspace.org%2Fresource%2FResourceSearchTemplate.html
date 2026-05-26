@@ -1329,7 +1329,7 @@
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Knowledge_map')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_chart')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline'))}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
-                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value ?author ?bw_id WHERE {
+                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value ?authorDisplay WHERE {
                                                     BIND(?subject as ?iri) .
                                                     BIND(?subject as ?item) .
 
@@ -1342,11 +1342,21 @@
                                                     }
 
                                                     OPTIONAL {
-                                                      ?subject a veniss_ontology:Source_Primary .
-                                                      ?subject crm:P108i_was_produced_by ?production .
-                                                      ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> .
-                                                      ?actor_role crmpc:P01_has_domain ?production ;
-                                                          crmpc:P02_has_range ?author .
+                                                      {
+                                                        SELECT ?subject ?authorDisplay WHERE {
+                                                          {
+                                                            SELECT ?subject (MIN(?author_label) AS ?firstAuthor) (COUNT(DISTINCT ?author) AS ?authorCount) WHERE {
+                                                              ?subject a veniss_ontology:Source_Primary .
+                                                              ?subject crm:P108i_was_produced_by ?production .
+                                                              ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> .
+                                                              ?actor_role crmpc:P01_has_domain ?production ;
+                                                                  crmpc:P02_has_range ?author .
+                                                              ?author rdfs:label ?author_label .
+                                                            } GROUP BY ?subject
+                                                          }
+                                                          BIND(IF(?authorCount > 1, CONCAT(STR(?firstAuthor), ", ..."), STR(?firstAuthor)) AS ?authorDisplay)
+                                                        }
+                                                      }
                                                     }
 
                                                     # Builtwork cfg: pick the base bw_id without phase suffix.
@@ -1566,9 +1576,9 @@
                                           </template>
                                         </semantic-query>
                                       {{else}}
-                                        {{#if author.value}}
-                                          <div class="color-secondary-light text-font-size__xsmall text-truncate-line1" style="font-style: italic;">
-                                            <mp-label iri='{{author.value}}'></mp-label>
+                                        {{#if authorDisplay.value}}
+                                          <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">
+                                            {{authorDisplay.value}}
                                           </div>
                                         {{else if bw_id.value}}
                                           <div class="color-secondary-light text-font-size__xsmall text-truncate-line1" style="font-style: italic;">
@@ -1815,10 +1825,10 @@
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_chart')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline')
                                             )}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
-                                            query='SELECT DISTINCT ?subject ?iri ?description ?resourceConfig ?author WHERE {
+                                            query='SELECT DISTINCT ?subject ?iri ?description ?resourceConfig ?authorDisplay WHERE {
                                                     BIND(?subject as ?iri) .
                                                     BIND(<[[urlParam "resourceconfig" escape=false]]> as ?resourceConfig) .
-                                                    
+
                                                     OPTIONAL {
                                                       ?subject crm:P67i_is_referred_to_by ?information_object  .
                                                       ?information_object crm:P2_has_type <http://www.researchspace.org/resource/vocab/text_type/description> .
@@ -1828,11 +1838,21 @@
                                                     }
 
                                                     OPTIONAL {
-                                                      ?subject a veniss_ontology:Source_Primary .
-                                                      ?subject crm:P108i_was_produced_by ?production .
-                                                      ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> .
-                                                      ?actor_role crmpc:P01_has_domain ?production ;
-                                                          crmpc:P02_has_range ?author .
+                                                      {
+                                                        SELECT ?subject ?authorDisplay WHERE {
+                                                          {
+                                                            SELECT ?subject (MIN(?author_label) AS ?firstAuthor) (COUNT(DISTINCT ?author) AS ?authorCount) WHERE {
+                                                              ?subject a veniss_ontology:Source_Primary .
+                                                              ?subject crm:P108i_was_produced_by ?production .
+                                                              ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> .
+                                                              ?actor_role crmpc:P01_has_domain ?production ;
+                                                                  crmpc:P02_has_range ?author .
+                                                              ?author rdfs:label ?author_label .
+                                                            } GROUP BY ?subject
+                                                          }
+                                                          BIND(IF(?authorCount > 1, CONCAT(STR(?firstAuthor), ", ..."), STR(?firstAuthor)) AS ?authorDisplay)
+                                                        }
+                                                      }
                                                     }
                                                   } '
     
@@ -1971,9 +1991,9 @@
                                           </template>
                                         </semantic-query>
                                       {{else}}
-                                        {{#if author.value}}
+                                        {{#if authorDisplay.value}}
                                           <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">
-                                            <mp-label iri='{{author.value}}'></mp-label>
+                                            {{authorDisplay.value}}
                                           </div>
                                         {{else}}
                                           <semantic-query query='SELECT ?isPrimarySource WHERE {

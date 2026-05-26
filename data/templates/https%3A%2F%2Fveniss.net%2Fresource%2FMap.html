@@ -2,70 +2,81 @@
     <semantic-map-advanced
             id="search-map"
             year-filtering="true"
-            cesium-asset-urls='http://92.223.159.139:9000/tiles/ifc/LZV/manifest.json'
-            cesium-asset-temporal='{
-                "5": {"bob": 1737, "eoe": 2026},
-                "5.2": {"bob": 1737, "eoe": 1869}
-            }'
+            cesium-asset-urls='http://92.223.159.139:8443/tiles/ifc/LZV/manifest.json'
+            cesium-asset-temporal='{}'
             target-controls='["search-map-control"]'
             tiles-layers-query='
                 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-                
-                SELECT ?url ?identifier ?name ?level ?author ?location ?year ?thumbnail
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                PREFIX crmpc: <http://www.cidoc-crm.org/crmpc/>
+                PREFIX veniss_ontology: <https://veniss.net/ontology#>
+
+                SELECT ?url
+                       (SAMPLE(COALESCE(STR(?source), "")) AS ?identifier)
+                       (SAMPLE(COALESCE(?_name, "")) AS ?name)
+                       (SAMPLE(COALESCE(?_level, "overlay")) AS ?level)
+                       (SAMPLE(COALESCE(?_author, "")) AS ?author)
+                       (SAMPLE(COALESCE(?_location, "")) AS ?location)
+                       (SAMPLE(COALESCE(?_year, "")) AS ?year)
+                       (SAMPLE(COALESCE(?_thumbnail, "")) AS ?thumbnail)
                 WHERE {
-                    VALUES (?url ?identifier ?name ?level ?author ?location ?year ?thumbnail) {
-                        (
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/{z}/{x}/{y}.png"
-                            "SSC_1696_DYNAMIC"
-                            "Ortofoto su pellicola (Dynamic)"
-                            "overlay"
-                            "Vincenzo Maria Coronelli"
-                            ""
-                            "1696"
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1696/img.jpg"
-                        )
-                        (
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/{z}/{x}/{y}.png"
-                            "SSC_1801_DYNAMIC"
-                            "Plans of the island of San Secondo (Dynamic)"
-                            "overlay"
-                            "K.K. Fortifications Local Direction zu Venedig"
-                            ""
-                            "1801"
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1801/img.png"
-                        )
-                        (
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/{z}/{x}/{y}.png"
-                            "SSC_1809_DYNAMIC"
-                            "Dipartimento dell adriatico (Dynamic)"
-                            "overlay"
-                            "Gaspare Strada"
-                            ""
-                            "1809"
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1809/img.png"
-                        )
-                        (
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1859/{z}/{x}/{y}.png"
-                            "SSC_1859_DYNAMIC"
-                            "Ausland III"
-                            "overlay"
-                            "Ausland III"
-                            ""
-                            "1859"
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/SSC/1859/img.png"
-                        )
-                        (
-                            "https://d309ui6x6ebg9v.cloudfront.net/maps/LZV/1813/{z}/{x}/{y}.png"
-                            "LZV_1813_DYNAMIC"
-                            "Lazzaretto Vecchio Historical Map"
-                            "overlay"
-                            "Austrian Military Survey"
-                            "Lazzaretto Vecchio"
-                            "1813"
-                            "/assets/images/austrian_survey.png"
-                        )
+                    ?source a veniss_ontology:Source ;
+                            veniss_ontology:is_historical_map "true"^^xsd:boolean ;
+                            veniss_ontology:historical_map_url ?url .
+
+                    # Name from attributed title (English preferred)
+                    OPTIONAL {
+                      ?source crm:P1_is_identified_by ?appellation .
+                      ?appellation a crm:E41_Appellation ;
+                                   crm:P2_has_type <https://veniss.net/resource/type/attributed_title> ;
+                                   rdfs:label ?_name .
+                      FILTER(LANG(?_name) = "en" || LANG(?_name) = "")
                     }
+
+                    # Author from production via PC14 role -> appellation label (Person or Group)
+                    OPTIONAL {
+                      ?source crm:P108i_was_produced_by ?production .
+                      ?actorRole crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> ;
+                                 crmpc:P01_has_domain ?production ;
+                                 crmpc:P02_has_range ?authorEntity .
+                      ?authorEntity crm:P1_is_identified_by ?authorApp .
+                      ?authorApp a crm:E41_Appellation ;
+                                 crm:P2_has_type <https://veniss.net/resource/type/appellation> ;
+                                 rdfs:label ?_author .
+                      FILTER(STR(?_author) != "")
+                    }
+
+                    # Location from island appellation
+                    OPTIONAL {
+                      ?source veniss_ontology:has_island ?islandEntity .
+                      ?islandEntity crm:P1_is_identified_by ?islandApp .
+                      ?islandApp a crm:E41_Appellation ;
+                                 rdfs:label ?_location .
+                      FILTER(STR(?_location) != "")
+                    }
+
+                    # Year from production time-span
+                    OPTIONAL {
+                      ?source crm:P108i_was_produced_by ?prod2 .
+                      ?prod2 crm:P4_has_time-span ?timeSpan .
+                      ?timeSpan crm:P170i_time_is_defined_by ?yearPrimitive .
+                      ?yearPrimitive crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ;
+                                     rdfs:label ?_year .
+                    }
+
+                    # Thumbnail from main representation via IIIF
+                    OPTIONAL {
+                      ?source <http://www.researchspace.org/ontology/PX_has_main_representation> ?imgEntity .
+                      ?imgEntity crm:P1_is_identified_by ?imgFile .
+                      ?imgFile <http://www.researchspace.org/ontology/PX_has_file_name> ?fileName .
+                      BIND(CONCAT("/proxy/IIIF/", ?fileName, "/full/!200,200/0/default.jpg") AS ?_thumbnail)
+                    }
+
+                    # Level from historical map tab
+                    OPTIONAL { ?source veniss_ontology:has_historical_map_level ?_level }
                 }
+                GROUP BY ?url
             '
             map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
             fix-zoom-level="12"

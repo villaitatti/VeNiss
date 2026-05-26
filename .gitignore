@@ -4,3 +4,4 @@ config/repositories/default.ttl
 # SPARQL Cron Job Files
 .env
 logs/
+.claude

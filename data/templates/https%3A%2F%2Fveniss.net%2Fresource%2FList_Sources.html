@@ -143,48 +143,64 @@
                       <semantic-table 
                         id='table-result'
                         query='
-                        SELECT ?subject ?filename (GROUP_CONCAT(DISTINCT ?island_lbl; SEPARATOR=" ;") as ?islands) (GROUP_CONCAT(DISTINCT ?author_lbl; SEPARATOR=" ;") as ?authors) ?year_lbl ?location WHERE {
-  
-                          ?subject A veniss_ontology:Source_Primary
+                        SELECT ?subject ?filename ?islands ?authors ?year_lbl ?location WHERE {
+                          {
+                            SELECT ?subject
+                                   (SAMPLE(?filename_val) as ?filename)
+                                   (GROUP_CONCAT(DISTINCT ?island_lbl; SEPARATOR=", ") as ?islands)
+                                   (GROUP_CONCAT(DISTINCT ?author_lbl; SEPARATOR=", ") as ?authors)
+                                   (SAMPLE(?year_lbl_val) as ?year_lbl)
+                                   (SAMPLE(?location_val) as ?location)
+                            WHERE {
+                              ?subject a veniss_ontology:Source_Primary
 
-                          OPTIONAL {
-                            ?subject rso:PX_has_main_representation ?representation.
-                            ?representation a rso:EX_Digital_Image;
-  	                          crm:P1_is_identified_by ?image.
-                            ?image <http://www.researchspace.org/ontology/PX_has_file_name> ?filename
+                              OPTIONAL {
+                                ?subject rso:PX_has_main_representation ?representation.
+                                ?representation a rso:EX_Digital_Image.
+                                {
+                                  ?representation crm:P1_is_identified_by ?image.
+                                  ?image rso:PX_has_file_name ?filename_val.
+                                }
+                                UNION
+                                {
+                                  ?representation crmdig:L60i_is_documented_by/crmdig:L11_had_output ?file.
+                                  ?file rso:PX_has_file_name ?filename_val.
+                                }
+                              }
+                              
+                              OPTIONAL {
+                                ?subject veniss_ontology:has_island ?island.
+                                ?island crm:P1_is_identified_by ?island_id.
+                                ?island_id rdfs:label ?island_lbl
+                              }
+                            
+                              OPTIONAL {
+                                ?subject crm:P108i_was_produced_by ?production.
+                                ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author>.
+                                ?actor_role crmpc:P01_has_domain ?production;
+                                            crmpc:P02_has_range ?author.
+                                ?author rdfs:label ?author_lbl
+                              }
+                            
+                              OPTIONAL {
+                                ?subject crm:P108i_was_produced_by ?production2.
+                                ?production2 a crm:E12_Production;
+                                            crm:P4_has_time-span ?timespan.
+                                ?timespan a crm:E4_Time-span;
+                                          crm:P170i_time_is_defined_by ?year_time_primitive.
+                                ?year_time_primitive a crm:E61_Time-Primitive;
+                                                    crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
+                                                    rdfs:label ?year_lbl_val
+                              }
+                            
+                              OPTIONAL {
+                                ?subject crm:P53_has_former_or_current_location ?location_val .
+                                ?location_val a crm:E78_Collection
+                              }
+                            }
+                            GROUP BY ?subject
                           }
-                          
-                          OPTIONAL {
-                            ?subject veniss_ontology:has_island ?island.
-                            ?island crm:P1_is_identified_by ?island_id.
-                            ?island_id rdfs:label ?island_lbl
-                          }
-                        
-                          OPTIONAL {
-                            ?subject crm:P108i_was_produced_by ?production.
-                            ?actor_role crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author>.
-                            ?actor_role crmpc:P01_has_domain ?production;
-                                        crmpc:P02_has_range ?author.
-                            ?author rdfs:label ?author_lbl
-                          }
-                        
-                          OPTIONAL {
-                            ?subject crm:P108i_was_produced_by ?production2.
-                            ?production2 a crm:E12_Production;
-                                        crm:P4_has_time-span ?timespan.
-                            ?timespan a crm:E4_Time-span;
-                                      crm:P170i_time_is_defined_by ?year_time_primitive.
-                            ?year_time_primitive a crm:E61_Time-Primitive;
-                                                crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year>;
-                                                rdfs:label ?year_lbl
-                          }
-                        
-                          OPTIONAL {
-                            ?subject crm:P198i_is_held_or_supported_by ?location.
-                            ?location crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/location> 
-                          }
-                        } 
-                        GROUP BY ?subject ?filename ?label ?year_lbl ?location
+                        }
                         ORDER BY ASC(?year_lbl)
                         '
 
@@ -247,7 +263,11 @@
 
                           <semantic-context storage="images">
                             {{#if filename}}
-                              <img src="https://veniss.net/proxy/IIIF/{{filename.value}}/full/!400,400/0/default.jpg" alt="{{subject.value}}" class='detail-img'>
+                              <img src="https://veniss.net/proxy/IIIF/{{filename.value}}/full/!400,400/0/default.jpg"
+                                   alt="{{subject.value}}"
+                                   class='detail-img'
+                                   onerror="this.onerror=null; this.src='../../assets/icons/sources.png';"
+                                   loading="lazy">
                             {{else}}
                               <img src="../../assets/icons/sources.png" alt="placeholder" class='detail-img'>
                             {{/if}}
@@ -282,54 +302,69 @@
                                 <semantic-query
                                   query='
                                     select ?full_path where {
-
-                                      BIND(<{{subject.value}}> as ?subject)
+                                      BIND(<{{location.value}}> as ?loc)
 
                                       {
-                                        select (group_concat(distinct ?lbl; separator=", ") as ?item_label) where {
-                                          {
-                                            select ?class ?lbl
-                                            where {
-                                              ?item crm:P46i_forms_part_of* ?mid.
-                                              ?mid crm:P46i_forms_part_of* ?class.
-                                              ?class rdfs:label ?class_label
+                                        # Archival/Current: referenced entity via P53
+                                        ?loc crm:P53_has_former_or_current_location ?ref .
+                                        {
+                                          select ?ref (group_concat(distinct ?lbl; separator=", ") as ?hierarchy_path) where {
+                                            {
+                                              select ?ref ?class ?lbl where {
+                                                ?ref crm:P46i_forms_part_of* ?mid .
+                                                ?mid crm:P46i_forms_part_of* ?class .
+                                                ?class rdfs:label ?class_label
 
-                                              optional {
-                                                ?class crm:P1_is_identified_by ?acronym.
-                                                ?acronym a crm:E41_Appellation;
-                                                  crm:P2_has_type <https://veniss.net/resource/type/acronym>;
-                                                  rdfs:label ?acronym_lbl 
+                                                optional {
+                                                  ?class crm:P1_is_identified_by ?acronym .
+                                                  ?acronym a crm:E41_Appellation ;
+                                                    crm:P2_has_type <https://veniss.net/resource/type/acronym> ;
+                                                    rdfs:label ?acronym_lbl .
+                                                }
+
+                                                BIND(COALESCE(?acronym_lbl, ?class_label) as ?lbl)
                                               }
-
-                                              BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
-                                              BIND(<{{location.value}}> as ?item)
+                                              group by ?ref ?class ?lbl
+                                              order by desc(count(?mid))
                                             }
-                                            group by ?class ?lbl
-                                            order by desc(count(?mid))
                                           }
+                                          group by ?ref
                                         }
+                                        BIND(?hierarchy_path as ?base)
+                                      }
+                                      UNION
+                                      {
+                                        # Secondary source: bibitem reference
+                                        ?loc crm:P46i_forms_part_of ?bibitem .
+                                        ?bibitem rdfs:label ?bib_label .
+                                        BIND(?bib_label as ?base)
                                       }
 
+                                      # Carrier type (e.g., Disegno, Foglio)
                                       OPTIONAL {
-                                        ?subject crm:P53_has_former_or_current_location ?information_carrier_type.
-                                        ?information_carrier_type crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/type>;
-                                          crm:P1_is_identified_by ?abbreviation.
-
-                                        ?abbreviation crm:P2_has_type <https://veniss.net/resource/type/abbreviation>;
-                                          rdfs:label ?type_label
+                                        ?loc crm:P2_has_type ?ct .
+                                        ?ct rdfs:label ?ct_label .
+                                        FILTER(lang(?ct_label) = "it" || lang(?ct_label) = "")
+                                        FILTER(?ct NOT IN (
+                                          <https://veniss.net/resource/type/archival_location>,
+                                          <https://veniss.net/resource/type/current_location>,
+                                          <https://veniss.net/resource/type/secondary_source>
+                                        ))
                                       }
-                                      BIND(COALESCE(CONCAT(", ", ?type_label, " "), " ") as ?information_carrier_type_label)
-                                      
+
+                                      # Carrier name (e.g., "3", "566")
                                       OPTIONAL {
-                                        ?subject crm:P53_has_former_or_current_location ?information_carrier_name.
-                                        ?information_carrier_name crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/name>;
-                                          rdfs:label ?name_label
+                                        ?loc crm:P1_is_identified_by ?cn .
+                                        ?cn crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/name> ;
+                                           rdfs:label ?cn_label .
                                       }
-                                      BIND(COALESCE(?name_label, "") as ?information_carrier_name_label)
-                                      
-                                      BIND(CONCAT(?item_label, ?information_carrier_type_label, ?information_carrier_name_label) AS ?full_path)
 
-                                    }'
+                                      BIND(COALESCE(?base, "") as ?base_path)
+                                      BIND(IF(BOUND(?ct_label), CONCAT(", ", ?ct_label, " "), IF(BOUND(?cn_label), ", ", "")) as ?type_suffix)
+                                      BIND(COALESCE(?cn_label, "") as ?name_suffix)
+                                      BIND(CONCAT(?base_path, ?type_suffix, ?name_suffix) AS ?full_path)
+                                    }
+                                    LIMIT 1'
                                 ></semantic-query>
                               </p>
                             {{/if}}

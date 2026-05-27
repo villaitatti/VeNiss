@@ -28,16 +28,6 @@
     source_date_composite                   = "https://veniss.net/container/fieldDefinitionContainer/source_date_composite"
 
     source_location_switch                  = "https://veniss.net/container/fieldDefinitionContainer/source_location_switch"
-    source_location_switch_type             = "https://veniss.net/container/fieldDefinitionContainer/source_location_switch_type"
-
-    source_location                         = "https://veniss.net/container/fieldDefinitionContainer/source_location"
-    source_location_type                    = "https://veniss.net/container/fieldDefinitionContainer/source_location_type"
-    source_location_name                    = "https://veniss.net/container/fieldDefinitionContainer/source_location_name"
-    source_location_current                 = "https://veniss.net/container/fieldDefinitionContainer/source_location_current"
-
-    source_archival_location                = "https://veniss.net/container/fieldDefinitionContainer/source_archival_location"
-    source_current_location                 = "https://veniss.net/container/fieldDefinitionContainer/source_current_location"
-    source_information_carrier_location     = "https://veniss.net/container/fieldDefinitionContainer/source_information_carrier_location"
 
     source_technique                        = "https://veniss.net/container/fieldDefinitionContainer/source_technique"
     source_dimension                        = "https://veniss.net/container/fieldDefinitionContainer/source_dimension"
@@ -50,8 +40,9 @@
 
     source_forms_part_of_secondary_source   = "https://veniss.net/container/fieldDefinitionContainer/source_forms_part_of_secondary_source"
     source_builtwork                        = "https://veniss.net/container/fieldDefinitionContainer/source_builtwork"   
-    source_historical_map                   = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map"     
+    source_historical_map                   = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map"
     source_historical_map_url               = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map_url"
+    source_historical_map_level             = "https://veniss.net/container/fieldDefinitionContainer/source_historical_map_level"
 
 
     entity_is_domain_of_relation_actor      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_actor"
@@ -82,15 +73,21 @@
           </div>
 
           <bs-row>
-            <bs-col md="6" sm="12">
+            <bs-col md="4" sm="12">
               <div id="entity_hide_image" style="margin-bottom: 20px;">
                 <semantic-form-checkbox-input label="Is the image to be hidden?" for='entity_hide_image'>
                 </semantic-form-checkbox-input>
               </div>
             </bs-col>
-            <bs-col md="6" sm="12">
+            <bs-col md="4" sm="12">
               <div id="entity_completed" style="margin-bottom: 20px;">
                 <semantic-form-checkbox-input for='entity_completed' label="Is the record complete?"></semantic-form-checkbox-input>
+              </div>
+            </bs-col>
+            <bs-col md="4" sm="12">
+              <div id="source_historical_map" style="margin-bottom: 20px;">
+                <semantic-form-checkbox-input for='source_historical_map' label="Is this a historical map?">
+                </semantic-form-checkbox-input>
               </div>
             </bs-col>
           </bs-row>
@@ -141,7 +138,7 @@
               </div>
             </bs-col>
             <bs-col lg="6" md="12" sm="12">
-              <div id="source_location_type">
+              <div id="source_typology">
                 <semantic-form-tree-picker-input
                                                  for='source_typology'
                                                  label="Source typology"
@@ -335,6 +332,9 @@
                                                       label="Describe the object where this source is stored"
                                                       placeholder="Choose the Information Carrier type">
                           </semantic-form-select-input>
+                          <small class="text-muted">
+                            Don't see the type you need? <a href="/resource/https%3A%2F%2Fveniss.net%2Fresource%2Fvocab%2Farchival_unit_types%2F360fd62e-4cb5-11ee-9292-3a5becfe4abd" target="_blank">Browse Archival Item types</a> — new types must be created with <strong>Broader = Archival item</strong> and an Italian (<code>it</code>) label to appear in this list.
+                          </small>
                         </div>
                       </bs-col>
 
@@ -372,10 +372,39 @@
                                                            label="Current Place"
                                                            for='source_location_current'
                                                            placeholder="Drop here the archival unit containing this source ... "
-                                                           custom-button='{
+                                                           close-dropdown-on-selection='true'
+                                                           scheme-page-button-config='{
                                 "iri": "http://www.researchspace.org/resource/ThinkingFrames",
-                                "view": "authority-content",
-                                "resource": "http://www.researchspace.org/resource/vocab/archives"
+                                "view": "authority-list",
+                                "scheme": "http://www.researchspace.org/resource/vocab/archives",
+                                "tooltip": "Open list of terms"
+                              }'
+                                                           nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Archival_unit nested=true editable=true mode="new" }}{{{{/raw}}}}'
+                                                           query-item-label='
+                                SELECT (group_concat(distinct ?lbl; separator=", ") as ?label) where {
+                                  {
+                                    select ?class ?lbl
+                                    where {
+                                      ?item crm:P46i_forms_part_of* ?mid.
+                                      ?mid crm:P46i_forms_part_of* ?class.
+                                      ?class rdfs:label ?class_label
+
+                                      optional {
+                                        ?class crm:P1_is_identified_by ?acronym.
+                                        ?acronym a crm:E41_Appellation;
+                                          crm:P2_has_type <https://veniss.net/resource/type/acronym>;
+                                          rdfs:label ?acronym_lbl
+                                      }
+
+                                      BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
+                                    }
+                                    group by ?class ?lbl
+                                    order by desc(count(?mid))
+                                  }
+                                }'
+                                                           tree-patterns='{
+                                "relationPattern": "?item crm:P46i_forms_part_of ?parent",
+                                "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
                               }'>
                           </semantic-form-tree-picker-input>
                         </div>
@@ -390,6 +419,9 @@
                                                       label="Describe the object where this source is stored"
                                                       placeholder="Choose the Information Carrier type">
                           </semantic-form-select-input>
+                          <small class="text-muted">
+                            Don't see the type you need? <a href="/resource/https%3A%2F%2Fveniss.net%2Fresource%2Fvocab%2Farchival_unit_types%2F360fd62e-4cb5-11ee-9292-3a5becfe4abd" target="_blank">Browse Archival Item types</a> — new types must be created with <strong>Broader = Archival item</strong> and an Italian (<code>it</code>) label to appear in this list.
+                          </small>
                         </div>
                       </bs-col>
 
@@ -438,8 +470,23 @@
 
         </bs-tab>
 
+        <!-- Historical Map -->
+        <bs-tab event-key="4" title="Historical Map" disabled="{{#if node}}false{{else}}true{{/if}}">
+          <bs-row>
+            <bs-col lg="12" md="12" sm="12">
+              <div id="source_historical_map_url" class="padding-5">
+                <semantic-form-text-input label="Tile URL" placeholder="Enter the tile URL (e.g. https://.../{z}/{x}/{y}.png)" for="source_historical_map_url">
+                </semantic-form-text-input>
+              </div>
+            </bs-col>
+          </bs-row>
+
+          <semantic-form-hidden-input for="source_historical_map_level" default-value="overlay">
+          </semantic-form-hidden-input>
+        </bs-tab>
+
         <!-- Related Entities -->
-        <bs-tab event-key="4" title="Related Entities" disabled="{{#if node}}false{{else}}true{{/if}}">
+        <bs-tab event-key="5" title="Related Entities" disabled="{{#if node}}false{{else}}true{{/if}}">
           [[> veniss_forms:Relation ]]
         </bs-tab>
 

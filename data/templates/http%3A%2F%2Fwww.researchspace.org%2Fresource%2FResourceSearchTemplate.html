@@ -26,7 +26,7 @@
           <div style="flex: 1;">
             <div class="documentation-section-title">Buildings drawn in QGIS but not yet ingested in the knowledge graph</div>
             <div class="documentation-section-content">
-              These identifiers come from the federated <code>PRODUCTION.veniss_data</code> table (filtered on <code>t = 'Buildings'</code>) and have <strong>no matching <code>veniss:Builtwork</code> resource</strong> in the graph yet. Click on an entry to create the corresponding Builtwork, the row will disappear once it is created.
+              These geometries come from QGIS. Click on an entry to create the corresponding Builtwork, the row will disappear after refresh once it is created.
             </div>
           </div>
         </div>
@@ -105,24 +105,35 @@
                                      SELECT ?island_prefix
                                             (COUNT(DISTINCT ?base_bw_id) AS ?n_buildings)
                                      WHERE {
-                                       SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                                         ?root rs_sql_sail:hasQueryId "veniss_buildings_only" ;
-                                               veniss_sql:bw_id ?bw_id .
+                                       # See the main table query below for why we use a positive
+                                       # OPTIONAL + (MAX(...)=0) instead of FILTER NOT EXISTS: the
+                                       # Ephedra federation does not apply negation against its
+                                       # `default` member. We compute an ?inGraph flag per base in
+                                       # an inner sub-select, then keep only the unmatched bases.
+                                       {
+                                         SELECT ?island_prefix ?base_bw_id
+                                                (MAX(IF(BOUND(?present), 1, 0)) AS ?inGraph)
+                                         WHERE {
+                                           SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                             ?root rs_sql_sail:hasQueryId "veniss_buildings_only" ;
+                                                   veniss_sql:bw_id ?bw_id .
+                                           }
+                                           BIND(IF(CONTAINS(?bw_id, "_"), STRBEFORE(?bw_id, "_"), "(no prefix)") AS ?island_prefix)
+                                           BIND(REPLACE(?bw_id, "\\.[0-9]+$", "") AS ?base_bw_id)
+                                           OPTIONAL {
+                                             ?bw a veniss_ontology:Building .
+                                             {
+                                               ?bw crm:P196i_is_defined_by/crm:P166i_had_presence/crm:P138i_has_representation/rdfs:label ?present .
+                                             } UNION {
+                                               ?bw crm:P1_is_identified_by ?id_a .
+                                               ?id_a a crm:E42_Identifier .
+                                               { ?id_a rdfs:value ?present . } UNION { ?id_a rdfs:label ?present . }
+                                             }
+                                             FILTER(STR(?present) = ?base_bw_id || STRSTARTS(STR(?present), CONCAT(?base_bw_id, ".")))
+                                           }
+                                         } GROUP BY ?island_prefix ?base_bw_id
                                        }
-                                       BIND(IF(CONTAINS(?bw_id, "_"), STRBEFORE(?bw_id, "_"), "(no prefix)") AS ?island_prefix)
-                                       BIND(REPLACE(?bw_id, "\\.[0-9]+$", "") AS ?base_bw_id)
-                                       FILTER NOT EXISTS {
-                                         ?bw a veniss_ontology:Building .
-                                         {
-                                           ?bw crm:P196i_is_defined_by/crm:P166i_had_presence/crm:P138i_has_representation/rdfs:label ?lab_b .
-                                           FILTER(STR(?lab_b) = STR(?base_bw_id))
-                                         } UNION {
-                                           ?bw crm:P1_is_identified_by ?id_a .
-                                           ?id_a a crm:E42_Identifier .
-                                           { ?id_a rdfs:value ?lab_a . } UNION { ?id_a rdfs:label ?lab_a . }
-                                           FILTER(STR(?lab_a) = STR(?base_bw_id))
-                                         }
-                                       }
+                                       FILTER(?inGraph = 0)
                                      } GROUP BY ?island_prefix ORDER BY DESC(?n_buildings)'
                               template='{{> nbPrefixOverview}}'>
                 <template id='nbPrefixOverview'>
@@ -179,8 +190,8 @@
                                      PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
                                      PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
                                      SELECT ?island_prefix ?base_bw_id
-                                            (COUNT(?bw_id) AS ?n_phases)
-                                            (GROUP_CONCAT(?bw_id ; separator=", ") AS ?phases)
+                                            (COUNT(DISTINCT ?bw_id) AS ?n_phases)
+                                            (GROUP_CONCAT(DISTINCT ?bw_id ; separator=", ") AS ?phases)
                                      WHERE {
                                        SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
                                          ?root rs_sql_sail:hasQueryId "veniss_buildings_only" ;
@@ -189,20 +200,31 @@
                                        BIND(IF(CONTAINS(?bw_id, "_"), STRBEFORE(?bw_id, "_"), "(no prefix)") AS ?island_prefix)
                                        BIND(REPLACE(?bw_id, "\\.[0-9]+$", "") AS ?base_bw_id)
                                        {{#if selectedPrefix}}FILTER(?island_prefix = "{{selectedPrefix}}"){{/if}}
-                                       FILTER NOT EXISTS {
+                                       # Exclude buildings already ingested in the graph.
+                                       # NB: evaluated via a POSITIVE OPTIONAL + HAVING, NOT
+                                       # FILTER NOT EXISTS. This query runs through the Ephedra
+                                       # federation (it needs the geosql SERVICE), and the
+                                       # federation SAIL does NOT evaluate negation
+                                       # (NOT EXISTS / MINUS) against its `default` member, so the
+                                       # old NOT EXISTS excluded nothing (158 rows). Positive
+                                       # patterns DO resolve against the default member, so the
+                                       # OPTIONAL below binds ?present whenever a matching
+                                       # veniss:Building already exists, and HAVING drops those
+                                       # bases (77 rows). Match is permissive: base id OR "base.N".
+                                       OPTIONAL {
                                          ?bw a veniss_ontology:Building .
                                          {
-                                           ?bw crm:P196i_is_defined_by/crm:P166i_had_presence/crm:P138i_has_representation/rdfs:label ?lab_b .
-                                           FILTER(STR(?lab_b) = STR(?base_bw_id))
+                                           ?bw crm:P196i_is_defined_by/crm:P166i_had_presence/crm:P138i_has_representation/rdfs:label ?present .
                                          } UNION {
                                            ?bw crm:P1_is_identified_by ?id_a .
                                            ?id_a a crm:E42_Identifier .
-                                           { ?id_a rdfs:value ?lab_a . } UNION { ?id_a rdfs:label ?lab_a . }
-                                           FILTER(STR(?lab_a) = STR(?base_bw_id))
+                                           { ?id_a rdfs:value ?present . } UNION { ?id_a rdfs:label ?present . }
                                          }
+                                         FILTER(STR(?present) = ?base_bw_id || STRSTARTS(STR(?present), CONCAT(?base_bw_id, ".")))
                                        }
                                      }
                                      GROUP BY ?island_prefix ?base_bw_id
+                                     HAVING (MAX(IF(BOUND(?present), 1, 0)) = 0)
                                      ORDER BY ?island_prefix ?base_bw_id'
                               no-result-template='{{> newBuildingsNoResults}}'
                               number-of-displayed-rows=20
@@ -274,24 +296,219 @@
                 </template>
 
                 <template id='actionsCell'>
+                  [[!-- "Create Builtwork" — full 1-click workflow.
+
+                       Per-row mini-form. The form uses a single multi-valued
+                       field `building_create_from_gis` whose insertPattern
+                       parses the pipe-encoded $value
+                         "phase_id|bob|eoe|base_bw_id"
+                       and emits one E93_Presence per phase plus the
+                       skeleton (Building, identifier, sv) — with RDF set
+                       semantics deduplicating the skeleton across rows.
+
+                       The phase data is pre-fetched OUTSIDE the form via a
+                       <semantic-query repository="ephedra"> against the
+                       SQL-backed `building_phases` query. This keeps the
+                       federated SERVICE call out of the form's INSERT path
+                       (which goes to ?repository=default and there cannot
+                       resolve the federation; verified empirically by
+                       VeNiss_queries/test_field_insert_directly.py). The
+                       multi-valued <semantic-form-hidden-input> then carries
+                       the pre-resolved phases into the form submission.
+
+                       After save, post-action="event" fires
+                       Form.ResourceCreated; the <mp-event-proxy> re-emits
+                       Dashboard.AddFrame opening the resource-editor on the
+                       new IRI. data-mapping copies {iri} → {resourceIri}
+                       (key rename required: see EventProxy.ts). --]]
                   <div class="nb-actions-td">
-                  <mp-event-trigger id='nb-promote-{{base_bw_id.value}}-trigger'
-                                    type='Dashboard.AddFrame'
-                                    targets='["thinking-frames"]'
-                                    data='{ "viewId": "resource-editor",
-                                            "view": "resource-editor",
-                                            "entityTypeConfig": "http://www.researchspace.org/resource/system/resource_configurations_container/data/Builtwork",
-                                            "mode": "new",
-                                            "customLabel": "Promote {{base_bw_id.value}}",
-                                            "prefillBwId": "{{base_bw_id.value}}"
-                                          }'>
-                    <button class="btn btn-action btn-textAndIcon">
-                      <rs-icon icon-type="round" icon-name="add_box"></rs-icon>
-                      <span>Create Builtwork</span>
-                    </button>
-                  </mp-event-trigger>
+                    [[!-- Pre-fetch phases for THIS row's bw_id via the
+                          ephedra federation.
+
+                          We use `veniss_buildings_only` (the same query
+                          that powers the New_Buildings table itself) to
+                          enumerate the GIS phases of this base bw_id and
+                          (separately) `production_all_temporal` to get
+                          their bob/eoe when available.
+
+                          Why two queries via OPTIONAL: phase rows in
+                          `veniss_data` always exist, but `feature_sources`
+                          (which JOINs into `production_all_temporal` to
+                          compute bob/eoe) is currently populated only
+                          for islands, not for buildings. So for buildings
+                          the temporal join returns 0 rows, and we fall
+                          back to "0001" placeholders that the user
+                          refines later via the form's GIS panel. --]]
+                    [[!-- Pre-fetch phases for THIS row's bw_id.
+
+                          IMPORTANT (2026-05-18 fix): we previously joined
+                          two SERVICE blocks via `OPTIONAL { SERVICE … }`
+                          (veniss_buildings_only + production_all_temporal).
+                          Empirically the ephedra federation engine returns
+                          HTTP 500 for any query that combines two SERVICE
+                          calls inside an OPTIONAL — single SERVICE calls
+                          work fine, but the OPTIONAL{SERVICE…} pattern
+                          crashes the engine before any solution is built.
+                          Verified by bisection (curl, see chat log).
+
+                          Therefore we use a SINGLE SERVICE call against
+                          `production_all_temporal`, which already returns
+                          one row per phase (.1, .2, …) with bob/eoe pulled
+                          from feature_sources/sources_years. If the row's
+                          base_bw_id has matching feature_sources entries
+                          (true for all PVG buildings since update.py was
+                          run), this returns 1+ rows and the nbCreateBtn
+                          template fires. If feature_sources is empty (e.g.
+                          a brand-new prefix), no rows come back and the
+                          nbCreateBtnNoPhases fallback fires, persisting a
+                          skeleton with a placeholder phase that the user
+                          refines later via the Builtwork form. --]]
+                    [[!-- Switched (2026-05-21) from `production_all_temporal`
+                          to `buildings_all_temporal`. The new query (defined
+                          in geosql.ttl) is a clone of `islands_all_temporal`
+                          with `WHERE a.t = 'Buildings'` and a LEAD-1 window
+                          function so each phase's eoe = (next phase's bob - 1).
+                          Example: PVG_BLDG_2 has GIS phases:
+                            base "1841" sources [1841 only]   → eoe = 1841
+                            ".1"  "2024" sources [today]      → eoe = today's date
+                          With the new query:
+                            base "1841" → LEAD picks .1 bob 2024, returns 2023
+                            ".1"  "2024" → no next phase → fallback to MAX(end)
+                          Without this, both phases would persist with
+                          eoe == bob, which is the bug the user reported. --]]
+                    <semantic-context repository="ephedra">
+                      <semantic-query
+                        query='PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+                               PREFIX veniss_sql:  <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                               SELECT ?bw_id ?bob ?eoe
+                                      (CONCAT(
+                                         STR(?bw_id), "|",
+                                         STR(?bob),   "|",
+                                         STR(?eoe),   "|",
+                                         "{{base_bw_id.value}}"
+                                       ) AS ?value)
+                               WHERE {
+                                 SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                   ?r rs_sql_sail:hasQueryId "buildings_all_temporal" ;
+                                      veniss_sql:bw_id ?bw_id ;
+                                      veniss_sql:bob   ?bob ;
+                                      veniss_sql:eoe   ?eoe .
+                                 }
+                                 FILTER(STR(?bw_id) = "{{base_bw_id.value}}"
+                                        || STRSTARTS(STR(?bw_id), CONCAT("{{base_bw_id.value}}", ".")))
+                               }
+                               ORDER BY ?bw_id'
+                        template='{{> nbCreateBtn}}'
+                        no-result-template='{{> nbCreateBtnNoPhases}}'>
+
+
+                        <template id='nbCreateBtn'>
+                          [[!-- IMPORTANT: the field IRI below is the
+                                LDP-registered auto-id (Hcn...) — RS only
+                                resolves field IRIs that exist as LDP
+                                records. The .trig at
+                                data/field-definitions/building_create_from_gis.trig
+                                is canonical; the LDP body is kept in sync
+                                via VeNiss_queries/patch_skeleton_field.py. --]]
+                          <semantic-form id='nb-create-form-{{../base_bw_id.value}}'
+                                         new-subject-template='/builtwork/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+                                         persistence='{"type":"sparql",
+                                                       "targetInsertGraphIri":"http://www.researchspace.org/resource/g/data",
+                                                       "repository":"default"}'
+                                         post-action="event"
+                                         browser-persistence="false"
+                                         fields='[[ fieldDefinitions
+                                           create_from_gis = "https://veniss.net/container/fieldDefinitionContainer/HcnDpEgFpiZaWTeMGLRkXqizqySUHOASTbQJJXru"
+                                         ]]'>
+                            [[!-- Multi-value: one entry per phase. Each
+                                  entry encodes "phase_id|bob|eoe|base_bw_id"
+                                  and the field's WHERE parses it. --]]
+                            <semantic-form-hidden-input for='create_from_gis'
+                              default-values='[{{#each bindings}}"{{value.value}}"{{#unless @last}},{{/unless}}{{/each}}]'>
+                            </semantic-form-hidden-input>
+
+                            <button name='submit' class="btn btn-action btn-textAndIcon"
+                                    title='Persist {{bindings.length}} phase(s) and open the new Builtwork'>
+                              <rs-icon icon-type="round" icon-name="add_box"></rs-icon>
+                              <span>Create Builtwork</span>
+                            </button>
+                          </semantic-form>
+
+                          [[!-- Listen for Form.ResourceCreated from THIS
+                               form, re-emit Dashboard.AddFrame with the
+                               new IRI.
+
+                               Payload contract:
+                                 Form.ResourceCreated → { iri: <new-iri> }
+                                 Dashboard.AddFrame    → { iri, viewId, customLabel }
+                               We forward the event's { iri } untouched and add
+                               viewId + customLabel via additional-data. The
+                               DashboardComponent AddFrame listener normalises
+                               `iri` → `resourceIri`, then ResourceEditor
+                               auto-detects the Builtwork form via the
+                               resource's `a veniss:Building` triple.
+
+                               NB: do NOT use `data-mapping` here — the RS
+                               attribute parser strips the leading `data-`, so
+                               the attribute lands on the wrong prop (`mapping`)
+                               and the rename never runs. The dashboard-side
+                               normalisation replaces it. Also do NOT pass
+                               entityTypeConfig/mode (that branches
+                               ResourceEditor into the "new resource" path and
+                               fails to resolve the not-yet-created IRI). --]]
+                          <mp-event-proxy id='nb-create-proxy-{{../base_bw_id.value}}'
+                                          on-event-type='Form.ResourceCreated'
+                                          on-event-source='nb-create-form-{{../base_bw_id.value}}'
+                                          proxy-event-type='Dashboard.AddFrame'
+                                          proxy-targets='["thinking-frames"]'
+                                          additional-data='{"viewId":"resource-editor",
+                                                            "customLabel":"{{../base_bw_id.value}}"}'>
+                          </mp-event-proxy>
+                        </template>
+
+                        <template id='nbCreateBtnNoPhases'>
+                          [[!-- Defensive fallback: if SQL returns no phases
+                               (shouldn't happen since this row is in the
+                               table), still let the user create a SKELETON
+                               by submitting a single dummy "phase_id|||..."
+                               value where phase_id == base_bw_id. --]]
+                          <semantic-form id='nb-create-form-{{base_bw_id.value}}'
+                                         new-subject-template='/builtwork/{{{{raw}}}}{{UUID}}{{{{/raw}}}}'
+                                         persistence='{"type":"sparql",
+                                                       "targetInsertGraphIri":"http://www.researchspace.org/resource/g/data",
+                                                       "repository":"default"}'
+                                         post-action="event"
+                                         browser-persistence="false"
+                                         fields='[[ fieldDefinitions
+                                           create_from_gis = "https://veniss.net/container/fieldDefinitionContainer/HcnDpEgFpiZaWTeMGLRkXqizqySUHOASTbQJJXru"
+                                         ]]'>
+                            <semantic-form-hidden-input for='create_from_gis'
+                              default-value='{{base_bw_id.value}}|||{{base_bw_id.value}}'>
+                            </semantic-form-hidden-input>
+                            <button name='submit' class="btn btn-action btn-textAndIcon"
+                                    title='No GIS phases — create skeleton'>
+                              <rs-icon icon-type="round" icon-name="add_box"></rs-icon>
+                              <span>Create (skeleton)</span>
+                            </button>
+                          </semantic-form>
+                          [[!-- See nbCreateBtn above: forward { iri } as-is; the
+                               DashboardComponent normalises iri → resourceIri.
+                               No data-mapping (RS strips the `data-` prefix). --]]
+                          <mp-event-proxy id='nb-create-proxy-{{base_bw_id.value}}'
+                                          on-event-type='Form.ResourceCreated'
+                                          on-event-source='nb-create-form-{{base_bw_id.value}}'
+                                          proxy-event-type='Dashboard.AddFrame'
+                                          proxy-targets='["thinking-frames"]'
+                                          additional-data='{"viewId":"resource-editor",
+                                                            "customLabel":"{{base_bw_id.value}}"}'>
+                          </mp-event-proxy>
+                        </template>
+                      </semantic-query>
+                    </semantic-context>
                   </div>
                 </template>
+
+
 
                 <template id='newBuildingsNoResults'>
                   <div style="padding: 30px; text-align: center; color: #555;">

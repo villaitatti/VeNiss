@@ -220,6 +220,17 @@ rs_sql_sail:includesSQLQuery
 		rs_sql_sail:hasQueryId "islands_all_temporal" ;
 		rs_sql_sail:text "SELECT bw_id, bob, COALESCE(LEAD(bob) OVER (PARTITION BY base_id ORDER BY bob) - 1, eoe) as eoe, t, z, wkt FROM (SELECT DISTINCT a.identifier as bw_id, REGEXP_REPLACE(a.identifier, '\\.[0-9]+$', '') as base_id, MIN(c.start) as bob, MAX(c.end) as eoe, a.t, a.z, ST_AsText(a.geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_sources AS b ON a.identifier = b.identifier JOIN PRODUCTION.sources_years AS c ON b.source = c.source WHERE a.t = 'Island' GROUP BY a.identifier, a.t, a.z, a.geometry) sub" ;
 	] ;
+# buildings_all_temporal: same logic as islands_all_temporal but for Buildings.
+# The LEAD-1 window function computes each phase's eoe as (next phase's bob - 1)
+# so e.g. PVG_BLDG_2 base "1841" gets eoe = (PVG_BLDG_2.1 bob 2024) - 1 = 2023.
+# The fallback (no next phase) is the row's natural MAX(end) from sources_years.
+# Used by the New Buildings actionsCell pre-fetch query — see
+# veniss_app/data/templates/.../ResourceSearchTemplate.html nbCreateBtn cell.
+rs_sql_sail:includesSQLQuery
+	[
+		rs_sql_sail:hasQueryId "buildings_all_temporal" ;
+		rs_sql_sail:text "SELECT bw_id, bob, COALESCE(LEAD(bob) OVER (PARTITION BY base_id ORDER BY bob) - 1, eoe) as eoe, t, z, wkt FROM (SELECT DISTINCT a.identifier as bw_id, REGEXP_REPLACE(a.identifier, '\\.[0-9]+$', '') as base_id, MIN(c.start) as bob, MAX(c.end) as eoe, a.t, a.z, ST_AsText(a.geometry) as wkt FROM PRODUCTION.veniss_data AS a JOIN PRODUCTION.feature_sources AS b ON a.identifier = b.identifier JOIN PRODUCTION.sources_years AS c ON b.source = c.source WHERE a.t = 'Buildings' GROUP BY a.identifier, a.t, a.z, a.geometry) sub" ;
+	] ;
 rs_sql_sail:includesSQLQuery
 [
     rs_sql_sail:hasQueryId "test" ;

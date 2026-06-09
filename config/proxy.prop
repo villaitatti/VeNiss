@@ -6,3 +6,11 @@ config.proxy.mapbox.tokenQueryName=access_token
 config.proxy.cesium.targetUri=https://api.cesium.com
 config.proxy.cesium.preserveHost=false
 config.proxy.cesium.tokenQueryName=access_token
+
+# metapolis-xdtiler: 2D raster map tiles (MinIO, port 9000)
+config.proxy.xdtiler.targetUri=http://host.docker.internal:9000
+config.proxy.xdtiler.preserveHost=false
+
+# metapolis-xdtiler: 3D Cesium IFC tileset (API, port 8443)
+config.proxy.xdtiler3d.targetUri=http://host.docker.internal:8443
+config.proxy.xdtiler3d.preserveHost=false

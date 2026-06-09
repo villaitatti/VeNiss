@@ -2,7 +2,7 @@
     <semantic-map-advanced
             id="search-map"
             year-filtering="true"
-            cesium-asset-urls='http://92.223.159.139:8443/tiles/ifc/LZV/manifest.json'
+            cesium-asset-urls='/proxy/xdtiler3d/tiles/ifc/LZV/manifest.json'
             cesium-asset-temporal='{}'
             target-controls='["search-map-control"]'
             tiles-layers-query='
@@ -14,16 +14,27 @@
 
                 SELECT ?url
                        (SAMPLE(COALESCE(STR(?source), "")) AS ?identifier)
-                       (SAMPLE(COALESCE(?_name, "")) AS ?name)
+                       (SAMPLE(COALESCE(?_composed_name, ?_name, "")) AS ?name)
                        (SAMPLE(COALESCE(?_level, "overlay")) AS ?level)
                        (SAMPLE(COALESCE(?_author, "")) AS ?author)
-                       (SAMPLE(COALESCE(?_location, "")) AS ?location)
-                       (SAMPLE(COALESCE(?_year, "")) AS ?year)
+                       (SAMPLE(COALESCE(?_location, ?_island_full_name, "")) AS ?location)
+                       (SAMPLE(COALESCE(?_year, ?_year_from_url, "")) AS ?year)
                        (SAMPLE(COALESCE(?_thumbnail, "")) AS ?thumbnail)
                 WHERE {
                     ?source a veniss_ontology:Source ;
                             veniss_ontology:is_historical_map "true"^^xsd:boolean ;
-                            veniss_ontology:historical_map_url ?url .
+                            veniss_ontology:historical_map_url ?raw_url .
+                    BIND(REPLACE(REPLACE(STR(?raw_url), "http://92.223.159.139:9000", "/proxy/xdtiler"), "http://92.223.159.139:8443/tiles/maps", "/proxy/xdtiler3d/tiles/maps") AS ?url)
+
+                    # Island code and year extracted from tile URL as fallbacks
+                    BIND(REPLACE(STR(?raw_url), "^.*[/]maps[/]([A-Z]+)[/][0-9]{4}[/].*$", "$1") AS ?_island_from_url)
+                    BIND(REPLACE(STR(?raw_url), "^.*[/]maps[/][A-Z]+[/]([0-9]{4})[/].*$", "$1") AS ?_year_from_url)
+                    BIND(
+                      IF(?_island_from_url = "LZV", "Lazzaretto Vecchio",
+                      IF(?_island_from_url = "PVG", "Poveglia",
+                      IF(?_island_from_url = "SSP", "Santo Spirito",
+                      IF(?_island_from_url = "SSC", "San Secondo",
+                      ?_island_from_url)))) AS ?_island_full_name)
 
                     # Name from attributed title (English preferred)
                     OPTIONAL {
@@ -75,6 +86,15 @@
 
                     # Level from historical map tab
                     OPTIONAL { ?source veniss_ontology:has_historical_map_level ?_level }
+
+                    # Composed display name: "[Island] Year — Title" using best available values
+                    BIND(COALESCE(?_location, ?_island_full_name) AS ?_island_label)
+                    BIND(COALESCE(?_year, ?_year_from_url) AS ?_year_label)
+                    BIND(CONCAT(
+                      IF(BOUND(?_island_label), CONCAT("[", STR(?_island_label), "]  "), ""),
+                      IF(BOUND(?_year_label), CONCAT(STR(?_year_label), "  —  "), ""),
+                      COALESCE(?_name, "")
+                    ) AS ?_composed_name)
                 }
                 GROUP BY ?url
             '

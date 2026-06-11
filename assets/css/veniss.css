@@ -16,3 +16,19 @@ div.left-column {
 #tabs .tab-content {
   min-height: 500px;
 }
+/* Island tag chip in the map layers list (see html-head.hbs decorator) */
+.veniss-island-tag {
+  display: block;
+  width: fit-content;
+  background: #c0392b;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  padding: 1px 6px;
+  margin-bottom: 3px;
+  line-height: 1.6;
+  white-space: nowrap;
+}

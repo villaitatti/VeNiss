@@ -17,7 +17,9 @@
                        (SAMPLE(COALESCE(STR(?source), "")) AS ?identifier)
                        (SAMPLE(COALESCE(?_composed_name, ?_name, "")) AS ?name)
                        (SAMPLE(COALESCE(?_level, "overlay")) AS ?level)
-                       (SAMPLE(COALESCE(?_author, ?_author_search, "")) AS ?author)
+                       (SAMPLE(COALESCE(
+                           CONCAT("[", STR(?_island_label), "] ", COALESCE(?_author, ?_author_search, "")),
+                           ?_author, ?_author_search, "")) AS ?author)
                        (SAMPLE(COALESCE(?_location, ?_island_full_name, "")) AS ?location)
                        (SAMPLE(COALESCE(?_year, ?_year_from_url, "")) AS ?year)
                        (SAMPLE(COALESCE(?_thumbnail, "")) AS ?thumbnail)
@@ -117,6 +119,7 @@
                     ) AS ?_composed_name)
                 }
                 GROUP BY ?url
+                ORDER BY DESC(?location) ?year
             '
             map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
             fix-zoom-level="12"

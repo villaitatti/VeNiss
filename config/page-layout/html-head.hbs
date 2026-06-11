@@ -3,3 +3,50 @@
 <link rel="stylesheet" href="../../assets/css/archipelago-main.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+<script>
+/* Turns a leading "[Island]" prefix in map layer-card titles into a styled
+   chip (.veniss-island-tag). The layers panel component only renders the
+   author field as the card title, so the island name travels in that string
+   (set by the tiles-layers-query in the Map template) and is restyled here. */
+(function () {
+  var TAG_RE = /^\[([^\]]{1,60})\]\s*/;
+  function decorate() {
+    var labels = document.querySelectorAll('.SemanticMapControls--layerTitle');
+    for (var i = 0; i < labels.length; i++) {
+      var label = labels[i];
+      var textNode = null;
+      for (var j = 0; j < label.childNodes.length; j++) {
+        var n = label.childNodes[j];
+        if (n.nodeType === 3 && TAG_RE.test(n.nodeValue)) { textNode = n; break; }
+      }
+      if (!textNode) continue;
+      var m = textNode.nodeValue.match(TAG_RE);
+      textNode.nodeValue = textNode.nodeValue.replace(TAG_RE, '');
+      var tag = label.querySelector('.veniss-island-tag');
+      if (!tag) {
+        tag = document.createElement('span');
+        tag.className = 'veniss-island-tag';
+        label.insertBefore(tag, label.firstChild);
+      }
+      tag.textContent = m[1];
+    }
+  }
+  var scheduled = false;
+  function schedule() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () { scheduled = false; decorate(); });
+  }
+  function start() {
+    schedule();
+    new MutationObserver(schedule).observe(document.body, {
+      childList: true, subtree: true, characterData: true
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>

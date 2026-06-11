@@ -2,7 +2,7 @@
     <semantic-map-advanced
             id="search-map"
             year-filtering="true"
-            cesium-asset-urls='/proxy/xdtiler3d/tiles/ifc/LZV/manifest.json'
+            cesium-asset-urls='https://veniss.net/proxy/xdtiler3d/tiles/ifc/LZV/manifest_compat.json'
             cesium-asset-temporal='{}'
             target-controls='["search-map-control"]'
             tiles-layers-query='
@@ -10,13 +10,16 @@
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
                 PREFIX crmpc: <http://www.cidoc-crm.org/crmpc/>
+                PREFIX crmdig: <http://www.cidoc-crm.org/extensions/crmdig/>
                 PREFIX veniss_ontology: <https://veniss.net/ontology#>
 
                 SELECT ?url
                        (SAMPLE(COALESCE(STR(?source), "")) AS ?identifier)
                        (SAMPLE(COALESCE(?_composed_name, ?_name, "")) AS ?name)
                        (SAMPLE(COALESCE(?_level, "overlay")) AS ?level)
-                       (SAMPLE(COALESCE(?_author, "")) AS ?author)
+                       (SAMPLE(COALESCE(
+                           CONCAT("[", STR(?_island_label), "] ", COALESCE(?_author, ?_author_search, "")),
+                           ?_author, ?_author_search, "")) AS ?author)
                        (SAMPLE(COALESCE(?_location, ?_island_full_name, "")) AS ?location)
                        (SAMPLE(COALESCE(?_year, ?_year_from_url, "")) AS ?year)
                        (SAMPLE(COALESCE(?_thumbnail, "")) AS ?thumbnail)
@@ -58,6 +61,19 @@
                       FILTER(STR(?_author) != "")
                     }
 
+                    # Author fallback: search-term appellation (Person actors lack type/appellation)
+                    OPTIONAL {
+                      ?source crm:P108i_was_produced_by ?production2 .
+                      ?actorRole2 crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> ;
+                                 crmpc:P01_has_domain ?production2 ;
+                                 crmpc:P02_has_range ?authorEntity2 .
+                      ?authorEntity2 crm:P1_is_identified_by ?authorApp2 .
+                      ?authorApp2 a crm:E41_Appellation ;
+                                 crm:P2_has_type <https://veniss.net/resource/type/search_term> ;
+                                 rdfs:label ?_author_search .
+                      FILTER(STR(?_author_search) != "")
+                    }
+
                     # Location from island appellation
                     OPTIONAL {
                       ?source veniss_ontology:has_island ?islandEntity .
@@ -79,8 +95,14 @@
                     # Thumbnail from main representation via IIIF
                     OPTIONAL {
                       ?source <http://www.researchspace.org/ontology/PX_has_main_representation> ?imgEntity .
-                      ?imgEntity crm:P1_is_identified_by ?imgFile .
-                      ?imgFile <http://www.researchspace.org/ontology/PX_has_file_name> ?fileName .
+                      {
+                        ?imgEntity crm:P1_is_identified_by ?imgFile .
+                        ?imgFile <http://www.researchspace.org/ontology/PX_has_file_name> ?fileName .
+                      } UNION {
+                        ?imgEntity crmdig:L60i_is_documented_by ?digitization .
+                        ?digitization crmdig:L11_had_output ?imgFile2 .
+                        ?imgFile2 <http://www.researchspace.org/ontology/PX_has_file_name> ?fileName .
+                      }
                       BIND(CONCAT("/proxy/IIIF/", ?fileName, "/full/!200,200/0/default.jpg") AS ?_thumbnail)
                     }
 
@@ -97,6 +119,7 @@
                     ) AS ?_composed_name)
                 }
                 GROUP BY ?url
+                ORDER BY DESC(?location) ?year
             '
             map-options='{"crs":"EPSG:3857", "extent": [1358358.959761288, 5681238.026850056, 1385414.0522355612, 5705635.9345880805]}'
             fix-zoom-level="12"

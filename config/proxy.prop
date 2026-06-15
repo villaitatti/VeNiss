@@ -6,3 +6,12 @@ config.proxy.mapbox.tokenQueryName=access_token
 config.proxy.cesium.targetUri=https://api.cesium.com
 config.proxy.cesium.preserveHost=false
 config.proxy.cesium.tokenQueryName=access_token
+
+# --- IIIF: Cantaloupe migration (minimal repoint) ---
+# Overrides the platform default target (http://digilib:8080/digilib/Scaler/IIIF).
+# Keeps all /proxy/IIIF/{id}/... frontend URLs unchanged; only the backend changes.
+# ACTIVATE (uncomment) ONLY once the cantaloupe service is reachable on the platform
+# network — otherwise image serving breaks. See deploy/cantaloupe/README.md.
+# Rollback = re-comment these two lines and reload (falls back to digilib).
+#config.proxy.IIIF.targetUri=http://cantaloupe:8182/iiif/2
+#config.proxy.IIIF.preserveHost=true

@@ -1,2 +1,2 @@
-      image-id-pattern='OPTIONAL { ?imageIRI crm:P1_is_identified_by/rso:PX_has_file_name ?carrierImageID. } BIND(COALESCE(?carrierImageID, REPLACE(STR(?imageIRI), "^.*/(.*)$", "$1")) AS ?imageID) .'
+      image-id-pattern='OPTIONAL { ?imageIRI crm:P1_is_identified_by/rso:PX_has_file_name ?fileNameA. FILTER(isLiteral(?fileNameA)) } OPTIONAL { ?imageIRI crmdig:L60i_is_documented_by/crmdig:L11_had_output/rso:PX_has_file_name ?fileNameB. FILTER(isLiteral(?fileNameB)) } BIND(COALESCE(?fileNameA, ?fileNameB, REPLACE(STR(?imageIRI), "^.*/(.*)$", "$1")) AS ?imageID) .'
       iiif-server-url='/proxy/IIIF'

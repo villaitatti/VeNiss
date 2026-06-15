@@ -1,0 +1,34 @@
+# Snippet to add to the production docker-compose that runs the RS platform.
+# Add `cantaloupe` to the SAME network as the platform, and (eventually) remove the
+# `digilib` service. The platform reaches it at http://cantaloupe:8182 (see proxy.prop).
+#
+# NOTE: pin a specific Cantaloupe 5.x image. Community images (verify + pin a digest):
+#   - uclalibrary/cantaloupe
+#   - islandora/cantaloupe
+# The CONFIG path / env var differs per image — check the image's docs and adjust
+# the volume target + environment accordingly.
+
+services:
+  cantaloupe:
+    image: REPLACE_ME/cantaloupe:5.x            # pin an exact tag/digest
+    container_name: cantaloupe
+    restart: unless-stopped
+    expose:
+      - "8182"                                   # internal only; RS proxies to it
+    volumes:
+      # MUST be the same directory Digilib served (runtime-data/images/file).
+      - ./runtime-data/images/file:/imageroot:ro
+      - ./apps/VeNiss/deploy/cantaloupe/cantaloupe.properties:/etc/cantaloupe/cantaloupe.properties:ro
+      - cantaloupe-cache:/var/cache/cantaloupe
+    environment:
+      # image-dependent — many images read CANTALOUPE_CONFIG or -Dcantaloupe.config
+      - CANTALOUPE_CONFIG=/etc/cantaloupe/cantaloupe.properties
+    networks:
+      - REPLACE_ME_platform_network              # same network as the RS platform service
+
+volumes:
+  cantaloupe-cache:
+
+# networks:
+#   REPLACE_ME_platform_network:
+#     external: true

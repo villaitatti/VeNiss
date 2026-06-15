@@ -312,24 +312,56 @@
               <bs-tab-pane event-key="image">
                 {{#if bindings.0.image.value}}
                   <div class="modal-preview-container modal-image-container">
-                    <div class="modal-iiif-container">
-
-                      <div class="modal-resource-media modal-image-thumbnail-container">
-                        <rs-iiif-image-thumbnail  
-                          height='100%'
-                          width='auto'
-                          style='height: 100%; width: auto; object-fit: contain;'
-                          image-or-region='{{bindings.0.image.value}}'    
-                          image-id-pattern='OPTIONAL { ?imageIRI crm:P1_is_identified_by/rso:PX_has_file_name ?carrierImageIRI. } BIND(COALESCE(?carrierImageIRI, REPLACE(STR(?imageIRI), "^.*/(.*)$", "$1")) AS ?imageID) .'
-                          iiif-server-url='/proxy/IIIF'
-                                                  >
-                        </rs-iiif-image-thumbnail>
-                      </div>
-                    </div>
+                    <semantic-query query='SELECT ?image (MAX(?mainFlag) AS ?isMain) WHERE {
+                                              { <{{resource}}> a rs:EX_Digital_Image . BIND(<{{resource}}> AS ?image) BIND(1 AS ?mainFlag) }
+                                              UNION { <{{resource}}> crmdig:L49_is_primary_area_of ?image . ?image a rs:EX_Digital_Image . BIND(1 AS ?mainFlag) }
+                                              UNION { <{{resource}}> rs:PX_has_main_representation ?image . ?image a rs:EX_Digital_Image . BIND(1 AS ?mainFlag) }
+                                              UNION { <{{resource}}> rs:PX_has_main_representation ?ann . ?ann crmdig:L49_is_primary_area_of ?image . ?image a rs:EX_Digital_Image . BIND(1 AS ?mainFlag) }
+                                              UNION { <{{resource}}> crm:P138i_has_representation ?image . ?image a rs:EX_Digital_Image . BIND(0 AS ?mainFlag) }
+                                              UNION { <{{resource}}> crm:P138i_has_representation ?ann . ?ann a rs:EX_Digital_Image_Region . ?ann crmdig:L49_is_primary_area_of ?image . ?image a rs:EX_Digital_Image . BIND(0 AS ?mainFlag) }
+                                            } GROUP BY ?image ORDER BY DESC(?isMain)'
+                                    template='{{> imageGallery}}'>
+                      <template id='imageGallery'>
+                        <div class="modal-iiif-container">
+                          <div class="modal-resource-media modal-image-thumbnail-container">
+                            <rs-iiif-image-thumbnail
+                              height='100%'
+                              width='auto'
+                              style='height: 100%; width: auto; object-fit: contain;'
+                              image-or-region='{{bindings.0.image.value}}'
+                              image-id-pattern='OPTIONAL { ?imageIRI crm:P1_is_identified_by/rso:PX_has_file_name ?fileNameA. FILTER(isLiteral(?fileNameA)) } OPTIONAL { ?imageIRI crmdig:L60i_is_documented_by/crmdig:L11_had_output/rso:PX_has_file_name ?fileNameB. FILTER(isLiteral(?fileNameB)) } BIND(COALESCE(?fileNameA, ?fileNameB, REPLACE(STR(?imageIRI), "^.*/(.*)$", "$1")) AS ?imageID) .'
+                              iiif-server-url='/proxy/IIIF'>
+                            </rs-iiif-image-thumbnail>
+                          </div>
+                          {{#ifCond bindings.length ">" "1"}}
+                            <mp-collapsible-div expanded='false' class="modal-more-images">
+                              <mp-collapsible-div-trigger>
+                                <span class="text-link">More images</span>
+                              </mp-collapsible-div-trigger>
+                              <mp-collapsible-div-content>
+                                <div class="modal-image-gallery" style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: 10px;">
+                                  {{#each bindings}}
+                                    {{#unless @first}}
+                                      <rs-iiif-image-thumbnail
+                                        height='90'
+                                        width='90'
+                                        style='height: 90px; width: 90px; object-fit: cover; cursor: pointer;'
+                                        image-or-region='{{image.value}}'
+                                        image-id-pattern='OPTIONAL { ?imageIRI crm:P1_is_identified_by/rso:PX_has_file_name ?fileNameA. FILTER(isLiteral(?fileNameA)) } OPTIONAL { ?imageIRI crmdig:L60i_is_documented_by/crmdig:L11_had_output/rso:PX_has_file_name ?fileNameB. FILTER(isLiteral(?fileNameB)) } BIND(COALESCE(?fileNameA, ?fileNameB, REPLACE(STR(?imageIRI), "^.*/(.*)$", "$1")) AS ?imageID) .'
+                                        iiif-server-url='/proxy/IIIF'>
+                                      </rs-iiif-image-thumbnail>
+                                    {{/unless}}
+                                  {{/each}}
+                                </div>
+                              </mp-collapsible-div-content>
+                            </mp-collapsible-div>
+                          {{/ifCond}}
+                        </div>
+                      </template>
+                    </semantic-query>
                     [[> resourceDetails]]
                   </div>
                 {{/if}}
-                </semantic-if>
               </bs-tab-pane>
         
               {{#if (eq bindings.0.recordingType.value "http://www.researchspace.org/resource/system/vocab/resource_type/recording_video")}}

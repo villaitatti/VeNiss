@@ -1,0 +1,175 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sp: <http://spinrdf.org/sp#> .
+@prefix User: <http://www.researchspace.org/resource/user/> .
+@prefix veniss: <https://veniss.net/ontology#> .
+
+# ----------------------------------------------------------------------------
+# building_create_from_gis  —  COMBINED skeleton + phases (1-click)
+#
+# Used by the "Create Builtwork" mini-form in the New_Buildings
+# Thinking-Frame view. The form $subject is a freshly minted IRI
+# (https://veniss.net/resource/builtwork/<UUID>).
+#
+# The field is multi-valued: every $value is a pipe-separated string
+#   "phase_id|bob|eoe|base_bw_id"
+# where:
+#   • phase_id    : full GIS phase id (e.g. "PVG_BLDG_35" or "PVG_BLDG_35.1")
+#   • bob         : begin-of-the-begin (year, e.g. "1812")
+#   • eoe         : end-of-the-end (year, optional — empty string allowed)
+#   • base_bw_id  : the building base identifier (e.g. "PVG_BLDG_35"),
+#                   redundantly carried in every value so the skeleton
+#                   triples can be emitted independently of phase order.
+#
+# This format is intentionally compatible with the existing
+# `building_import_gis_phases` field (same 4-pipe encoding) so the
+# template uses the same "building_phases" SQL query to populate it.
+#
+# The template runs a <semantic-query> against the `ephedra` repo to
+# pre-fetch the phases (where the federated SERVICE works), then injects
+# them as default-values into a hidden multi-value input. The submit
+# performs a single SPARQL UPDATE that materialises the entire KP.
+#
+# Triples emitted (per matching value, with set-semantics dedup):
+#   $subject a veniss:Building ;
+#            rdfs:label base_bw_id ;
+#            crm:P1_is_identified_by <$subject/identifier> ;
+#            crm:P196i_is_defined_by <$subject/physical_changes/> .
+#   <$subject/identifier> a crm:E42_Identifier ;
+#                         rdfs:value base_bw_id ; rdfs:label base_bw_id .
+#   <$subject/physical_changes/> a crm:E92_Spacetime_Volume ;
+#                                crm:P166i_had_presence ?presence .
+#   ?presence a crm:E93_Presence ;
+#             crm:P4_has_time-span ?ts ;
+#             crm:P138i_has_representation ?2drep .
+#   ?ts a crm:E52_Time-Span ;
+#       crm:P82a_begin_of_the_begin "${bob}-01-01"^^xsd:date .
+#       (and crm:P82b_end_of_the_end if eoe != "")
+#   ?2drep crm:P2_has_type veniss:2d_representation ;
+#          rdfs:label phase_id .
+#
+# Why this works (and the previous attempt didn't):
+#   The previous insertPattern's WHERE called `SERVICE <federation#geosql>`
+#   to look up phases at INSERT time. The form persists via
+#   ?repository=default, where Blazegraph cannot resolve the federation
+#   SERVICE inside an UPDATE — it silently returned 0 solutions and the
+#   whole INSERT became a no-op (verified empirically with
+#   VeNiss_queries/test_field_insert_directly.py). This version moves
+#   the SERVICE call OUT of the WHERE and into the template's outer
+#   <semantic-query repository="ephedra">. The WHERE then only needs the
+#   pre-resolved phase data carried by the multi-value $value.
+# ----------------------------------------------------------------------------
+
+<https://veniss.net/container/fieldDefinitionContainer/building_create_from_gis/context> {
+  <https://veniss.net/container/fieldDefinitionContainer/building_create_from_gis> a <http://www.researchspace.org/resource/system/fields/Field>,
+      prov:Entity, <http://www.w3.org/ns/ldp#Resource>;
+    rdfs:label "building_create_from_gis"@en;
+    <http://www.researchspace.org/resource/system/fields/insertPattern> _:insert;
+    <http://www.researchspace.org/resource/system/fields/selectPattern> _:select;
+    <http://www.researchspace.org/resource/system/fields/deletePattern> _:delete;
+    prov:wasAttributedTo User:admin;
+    <http://www.researchspace.org/resource/system/fields/xsdDatatype> xsd:string;
+    <http://www.researchspace.org/resource/system/fields/domain> veniss:Building;
+    prov:generatedAtTime "2026-05-18T00:00:00.000Z"^^xsd:dateTime;
+    <http://www.researchspace.org/resource/system/fields/maxOccurs> "unbounded";
+    <http://www.researchspace.org/resource/system/fields/minOccurs> "0" .
+
+  _:insert a sp:Query;
+    sp:text """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX veniss: <https://veniss.net/ontology#>
+INSERT {
+  GRAPH <http://www.researchspace.org/resource/g/data> {
+    # Skeleton triples — emitted once per phase but RDF-set deduplication
+    # collapses them to a single occurrence in the graph.
+    $subject a veniss:Building ;
+             rdfs:label ?base_bw_id ;
+             crm:P1_is_identified_by ?idNode ;
+             crm:P196i_is_defined_by ?sv .
+    ?idNode a crm:E42_Identifier ;
+            rdfs:value ?base_bw_id ;
+            rdfs:label ?base_bw_id .
+    ?sv a crm:E92_Spacetime_Volume ;
+        crm:P166i_had_presence ?presence .
+    # Per-phase triples
+    ?presence a crm:E93_Presence ;
+              crm:P4_has_time-span ?ts ;
+              crm:P138i_has_representation ?2drep .
+    ?ts a crm:E52_Time-Span ;
+        crm:P82a_begin_of_the_begin ?bob_date ;
+        crm:P82b_end_of_the_end ?eoe_date .
+    ?2drep crm:P2_has_type veniss:2d_representation ;
+           rdfs:label ?phase_id .
+  }
+} WHERE {
+  BIND(STR($value) AS ?v)
+  FILTER(?v != \"\")
+  # Parse 4-tuple: "phase_id|bob|eoe|base_bw_id"
+  BIND(STRBEFORE(?v, \"|\") AS ?phase_id)
+  BIND(STRAFTER(?v, \"|\") AS ?rest1)
+  BIND(STRBEFORE(?rest1, \"|\") AS ?bob_str)
+  BIND(STRAFTER(?rest1, \"|\") AS ?rest2)
+  BIND(STRBEFORE(?rest2, \"|\") AS ?eoe_str)
+  BIND(STRAFTER(?rest2, \"|\") AS ?base_bw_id)
+  FILTER(?phase_id != \"\" && ?base_bw_id != \"\")
+
+  BIND(IRI(CONCAT(STR($subject), \"/identifier\")) AS ?idNode)
+  BIND(IRI(CONCAT(STR($subject), \"/physical_changes/\")) AS ?sv)
+  BIND(IRI(CONCAT(STR($subject), \"/presence/\", ?phase_id)) AS ?presence)
+  BIND(IRI(CONCAT(STR($subject), \"/timespan/\", ?phase_id)) AS ?ts)
+  BIND(IRI(CONCAT(\"https://veniss.net/2drep/\", ?phase_id)) AS ?2drep)
+
+  # bob is a 4-digit year string (template formats it that way). When the
+  # SQL returns no value, the template sends "0001" as a sentinel.
+  BIND(IF(?bob_str = \"\", \"0001\", ?bob_str) AS ?bob_year)
+  BIND(STRDT(CONCAT(?bob_year, \"-01-01\"), xsd:date) AS ?bob_date)
+
+  # eoe is a 4-digit year string (end of the end). When present we set it to
+  # the end of that year. Two cases yield NO eoe (the IF's else branch refers
+  # to an unbound variable, so ?eoe_date stays unbound and the P82b triple is
+  # not emitted): (1) empty eoe — e.g. the skeleton fallback \"base|||base\";
+  # (2) the \"40000\" sentinel that the GIS \"Today\" source uses for phases
+  # that are still active (an open-ended/ongoing presence). Leaving eoe unset
+  # is both semantically correct (no end of existence) and avoids the invalid
+  # \"40000-12-31\"^^xsd:date literal that broke form save. Refine via the form.
+  BIND(IF(?eoe_str != \"\" && ?eoe_str != \"40000\", STRDT(CONCAT(?eoe_str, \"-12-31\"), xsd:date), ?__no_eoe__) AS ?eoe_date)
+}""" .
+
+  _:select a sp:Query;
+    sp:text """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?value WHERE {
+  $subject crm:P1_is_identified_by ?id .
+  ?id rdfs:value ?value .
+} LIMIT 1""" .
+
+  _:delete a sp:Query;
+    sp:text """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+DELETE {
+  GRAPH <http://www.researchspace.org/resource/g/data> {
+    $subject ?bp ?bo .
+    ?id ?ip ?io .
+    ?sv ?svp ?svo .
+    ?presence ?pp ?po .
+    ?ts ?tp ?to .
+    ?rep ?rp ?ro .
+  }
+} WHERE {
+  $subject ?bp ?bo .
+  OPTIONAL { $subject crm:P1_is_identified_by ?id . ?id ?ip ?io . }
+  OPTIONAL { $subject crm:P196i_is_defined_by ?sv . ?sv ?svp ?svo . }
+  OPTIONAL { $subject crm:P196i_is_defined_by ?sv2 . ?sv2 crm:P166i_had_presence ?presence . ?presence ?pp ?po . }
+  OPTIONAL { $subject crm:P196i_is_defined_by ?sv3 . ?sv3 crm:P166i_had_presence ?p2 . ?p2 crm:P4_has_time-span ?ts . ?ts ?tp ?to . }
+  OPTIONAL { $subject crm:P196i_is_defined_by ?sv4 . ?sv4 crm:P166i_had_presence ?p3 . ?p3 crm:P138i_has_representation ?rep . ?rep ?rp ?ro . }
+}""" .
+
+  _:container <http://www.w3.org/ns/ldp#contains> <https://veniss.net/container/fieldDefinitionContainer/building_create_from_gis> .
+}
+
+{
+  _:container a <http://www.w3.org/ns/ldp#Container>, <http://www.w3.org/ns/ldp#Resource>,
+      prov:Entity .
+}

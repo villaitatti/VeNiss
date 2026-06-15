@@ -15,3 +15,11 @@ config.proxy.cesium.tokenQueryName=access_token
 # Rollback = re-comment these two lines and reload (falls back to digilib).
 #config.proxy.IIIF.targetUri=http://cantaloupe:8182/iiif/2
 #config.proxy.IIIF.preserveHost=true
+
+# metapolis-xdtiler: 2D raster map tiles (MinIO, port 9000)
+config.proxy.xdtiler.targetUri=http://host.docker.internal:9000
+config.proxy.xdtiler.preserveHost=false
+
+# metapolis-xdtiler: 3D Cesium IFC tileset (API, port 8443)
+config.proxy.xdtiler3d.targetUri=http://host.docker.internal:8443
+config.proxy.xdtiler3d.preserveHost=false

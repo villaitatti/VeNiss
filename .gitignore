@@ -5,3 +5,4 @@ config/repositories/default.ttl
 .env
 logs/
 .claude
+__pycache__/

@@ -1546,7 +1546,7 @@
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Knowledge_map')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_chart')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline'))}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
-                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value ?authorDisplay WHERE {
+                                            query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value ?authorDisplay ?bw_id WHERE {
                                                     BIND(?subject as ?iri) .
                                                     BIND(?subject as ?item) .
 
@@ -2042,7 +2042,7 @@
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_chart')
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline')
                                             )}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
-                                            query='SELECT DISTINCT ?subject ?iri ?description ?resourceConfig ?authorDisplay WHERE {
+                                            query='SELECT DISTINCT ?subject ?iri ?description ?resourceConfig ?authorDisplay ?bw_id WHERE {
                                                     BIND(?subject as ?iri) .
                                                     BIND(<[[urlParam "resourceconfig" escape=false]]> as ?resourceConfig) .
 
@@ -2069,6 +2069,34 @@
                                                           }
                                                           BIND(IF(?authorCount > 1, CONCAT(STR(?firstAuthor), ", ..."), STR(?firstAuthor)) AS ?authorDisplay)
                                                         }
+                                                      }
+                                                    }
+
+                                                    # Builtwork cfg: pick the base bw_id without phase suffix.
+                                                    # This provides the subtitle under builtwork names in the default list view.
+                                                    OPTIONAL {
+                                                      { ?subject a veniss_ontology:Building . }
+                                                      UNION
+                                                      { ?subject a veniss_ontology:Builtwork . }
+                                                      {
+                                                        SELECT ?subject (MIN(?bw_id_raw) AS ?bw_id) WHERE {
+                                                          {
+                                                            ?subject crm:P196i_is_defined_by ?bw_stv .
+                                                            ?bw_stv crm:P166i_had_presence ?bw_phase .
+                                                            ?bw_phase crm:P138i_has_representation ?bw_repr .
+                                                            ?bw_repr rdfs:label ?bw_id_raw .
+                                                            FILTER(!CONTAINS(STR(?bw_id_raw), "."))
+                                                          }
+                                                          UNION
+                                                          {
+                                                            ?subject crm:P1_is_identified_by ?bw_ident .
+                                                            ?bw_ident a crm:E42_Identifier .
+                                                            { ?bw_ident rdfs:value ?bw_id_raw . }
+                                                            UNION
+                                                            { ?bw_ident rdfs:label ?bw_id_raw . }
+                                                            FILTER(!CONTAINS(STR(?bw_id_raw), "."))
+                                                          }
+                                                        } GROUP BY ?subject
                                                       }
                                                     }
                                                   } '
@@ -2211,6 +2239,10 @@
                                         {{#if authorDisplay.value}}
                                           <div class="color-secondary-light text-font-size__xsmall text-truncate-line1">
                                             {{authorDisplay.value}}
+                                          </div>
+                                        {{else if bw_id.value}}
+                                          <div class="color-secondary-light text-font-size__xsmall text-truncate-line1" style="font-style: italic;">
+                                            {{bw_id.value}}
                                           </div>
                                         {{else}}
                                           <semantic-query query='SELECT ?isPrimarySource WHERE {

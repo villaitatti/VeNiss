@@ -86,15 +86,20 @@
                       FILTER(STR(?_location) != "")
                     }
 
+                    # Island IRI: the grouping key for the "Filter by time" snapshot mode and for
+                    # "Sync with time". Bound on its own, so a source still gets a stable group
+                    # when its island carries no coordinates — otherwise maps of one island fall
+                    # back to different keys and the snapshot degenerates into "show them all".
+                    OPTIONAL { ?source veniss_ontology:has_island ?islandForGeo }
+
                     # Island coordinates (point, WGS84) from the graph, used for the map
-                    # "Filter by zoom" (bounding-box) filter. The island IRI is the
-                    # "Filter by time" snapshot grouping key.
+                    # "Filter by zoom" (bounding-box) filter.
                     OPTIONAL {
-                      ?source veniss_ontology:has_island ?islandForGeo .
-                      ?islandForGeo crm:P87_is_identified_by ?_latNode .
+                      ?source veniss_ontology:has_island ?islandForCoords .
+                      ?islandForCoords crm:P87_is_identified_by ?_latNode .
                       ?_latNode crm:P2_has_type <https://veniss.net/ontology#latitude> ;
                                 rdfs:label ?_lat .
-                      ?islandForGeo crm:P87_is_identified_by ?_lngNode .
+                      ?islandForCoords crm:P87_is_identified_by ?_lngNode .
                       ?_lngNode crm:P2_has_type <https://veniss.net/ontology#longitude> ;
                                 rdfs:label ?_lng .
                     }

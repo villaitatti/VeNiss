@@ -1,0 +1,17 @@
+<!-- One row of the map's related-entities feed. Included by every <related-entities-class> in
+     veniss:Main as a page-level partial, so the markup lives in one place.
+
+     mp-label and mp-resource-thumbnail resolve through the preferredLabels / preferredThumbnails
+     rules in config/ui.prop, which already know how to name and illustrate every VeNiSS class —
+     which is why the feed queries derive neither. -->
+<div style="display:flex; align-items:center; gap:8px; width:100%;">
+  <mp-resource-thumbnail iri='{{entity.value}}'
+                         style="width:36px; height:36px; object-fit:cover; border-radius:3px; flex:0 0 auto;">
+    <mp-resource-thumbnail-fallback>
+      <i class="fa fa-file-o" style="color:#bbb; font-size:20px;"></i>
+    </mp-resource-thumbnail-fallback>
+  </mp-resource-thumbnail>
+  <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+    <mp-label iri='{{entity.value}}'></mp-label>
+  </span>
+</div>

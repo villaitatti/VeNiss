@@ -81,64 +81,184 @@
             filters-initialization='{"basemap":true,"overlay":true,"feature":true}'
             vector-levels='["Island","Buildings"]'
             show-filters="false"
+            spatial-filter-default="true"
+            temporal-filter-default="false"
+            spatial-filter-label="Filter by zoom"
+            temporal-filter-label="Filter by time"
+            sync-filter-default="false"
+            sync-filter-label="Sync with time"
+            snap-filter-default="true"
+            snap-filter-label="Snap to map years"
+            time-filter-mode="snapshot"
+            related-min-zoom="15"
             timeline='{
               "min":1500,
               "mode":"normal",
               "default":2026
             }'
-            default-details-template='{{> sources-default-template}}'
             >
-              <template id="sources-default-template">
-                <div class="details-panel sources-panel">
-                  <div class="details-header">
-                    <div class="details-title">SOURCES</div>
-                  </div>
+              <!-- Related entities. Each class carries its own query, its own spatial pattern and
+                   its own templates: the map component knows nothing about VeNiSS.
+                   Contract: project ?entity and a numeric ?year, order by ?year, and mark where
+                   the spatial restriction belongs with FILTER(?__spatial__). -->
 
-                  <div class="sources-list">
-                    <div class="source-item">
-                      <div class="source-thumb placeholder"></div>
-                      <div class="source-meta">
-                        <div class="source-type textual">TEXTUAL SOURCE</div>
-                        <div class="source-title"><strong>The Magistrate for Health is expanded with two supervisors</strong></div>
-                        <div class="source-date">1556-6-02</div>
-                        <div class="source-ref"><em>ASVe, Senato, Deliberazioni, Terra, reg. 31, c. 63r</em></div>
-                      </div>
-                    </div>
+              <related-entities-class
+                id="sources" label="Sources" icon="fa fa-file-text-o" limit="300"
+                query='
+                  PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                  PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                  PREFIX veniss_ontology: <https://veniss.net/ontology#>
 
-                    <div class="source-item">
-                      <div class="source-thumb placeholder"></div>
-                      <div class="source-meta">
-                        <div class="source-type iconographic">ICONOGRAPHIC SOURCE</div>
-                        <div class="source-author">Andrea Tirali</div>
-                        <div class="source-title"><strong>Drawing of the church of San Secondo</strong></div>
-                        <div class="source-date">1688</div>
-                        <div class="source-ref"><em>ASVe, SEA, Atti, b. 139, dis. 22</em></div>
-                      </div>
-                    </div>
+                  SELECT DISTINCT ?entity ?year WHERE {
+                    ?entity a veniss_ontology:Source ;
+                            crm:P108i_was_produced_by ?production .
+                    ?production crm:P4_has_time-span ?timespan .
+                    ?timespan crm:P170i_time_is_defined_by ?primitive .
+                    ?primitive crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ;
+                               rdfs:label ?year_label .
+                    FILTER(REGEX(STR(?year_label), "^[0-9]{3,4}$"))
+                    BIND(xsd:integer(STR(?year_label)) AS ?year)
+                    FILTER(?__spatial__)
+                  }
+                  ORDER BY ?year'
+                spatial-pattern='
+                  ?entity <https://veniss.net/ontology#has_island> ?island .
+                  ?island <http://www.cidoc-crm.org/cidoc-crm/P87_is_identified_by> ?lat_node .
+                  ?lat_node <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#latitude> ;
+                            <http://www.w3.org/2000/01/rdf-schema#label> ?lat .
+                  ?island <http://www.cidoc-crm.org/cidoc-crm/P87_is_identified_by> ?lng_node .
+                  ?lng_node <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#longitude> ;
+                            <http://www.w3.org/2000/01/rdf-schema#label> ?lng .
+                  FILTER(
+                    xsd:double(STR(?lng)) >= xsd:double(STR(?__minLon__)) &&
+                    xsd:double(STR(?lng)) <= xsd:double(STR(?__maxLon__)) &&
+                    xsd:double(STR(?lat)) >= xsd:double(STR(?__minLat__)) &&
+                    xsd:double(STR(?lat)) <= xsd:double(STR(?__maxLat__))
+                  )'>
+                <template id='row'>[[> veniss:RelatedRow]]</template>
+                <template id='detail'>[[> veniss:RelatedDetail]]</template>
+              </related-entities-class>
 
-                    <div class="source-item">
-                      <div class="source-thumb placeholder"></div>
-                      <div class="source-meta">
-                        <div class="source-type textual">TEXTUAL SOURCE</div>
-                        <div class="source-title"><strong><em>Renovation of the church&apos;s interior</em></strong></div>
-                        <div class="source-date">1672-1678</div>
-                        <div class="source-ref"><em>ASVe, San Secondo, Atti, b. 5, c. 5r</em></div>
-                      </div>
-                    </div>
+              <related-entities-class
+                id="events" label="Events" icon="fa fa-calendar" limit="300"
+                query='
+                  PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                  PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                  PREFIX veniss_ontology: <https://veniss.net/ontology#>
 
-                    <div class="source-item">
-                      <div class="source-thumb placeholder"></div>
-                      <div class="source-meta">
-                        <div class="source-type iconographic">ICONOGRAPHIC SOURCE</div>
-                        <div class="source-author">Benedetto Bordone</div>
-                        <div class="source-title"><strong><em>Vinegia</em></strong></div>
-                        <div class="source-date">1534</div>
-                        <div class="source-ref"><em>BMCVe, E 564, cc. XXIV-XXXr</em></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </template>
+                  SELECT DISTINCT ?entity ?year WHERE {
+                    ?entity a veniss_ontology:Event ;
+                            crm:P4_has_time-span ?timespan .
+                    ?timespan crm:P170i_time_is_defined_by ?primitive .
+                    ?primitive crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ;
+                               rdfs:label ?year_label .
+                    FILTER(REGEX(STR(?year_label), "^[0-9]{3,4}$"))
+                    BIND(xsd:integer(STR(?year_label)) AS ?year)
+                    FILTER(?__spatial__)
+                  }
+                  ORDER BY ?year'
+                spatial-pattern='
+                  ?entity <https://veniss.net/ontology#has_island> ?island .
+                  ?island <http://www.cidoc-crm.org/cidoc-crm/P87_is_identified_by> ?lat_node .
+                  ?lat_node <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#latitude> ;
+                            <http://www.w3.org/2000/01/rdf-schema#label> ?lat .
+                  ?island <http://www.cidoc-crm.org/cidoc-crm/P87_is_identified_by> ?lng_node .
+                  ?lng_node <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#longitude> ;
+                            <http://www.w3.org/2000/01/rdf-schema#label> ?lng .
+                  FILTER(
+                    xsd:double(STR(?lng)) >= xsd:double(STR(?__minLon__)) &&
+                    xsd:double(STR(?lng)) <= xsd:double(STR(?__maxLon__)) &&
+                    xsd:double(STR(?lat)) >= xsd:double(STR(?__minLat__)) &&
+                    xsd:double(STR(?lat)) <= xsd:double(STR(?__maxLat__))
+                  )'>
+                <template id='row'>[[> veniss:RelatedRow]]</template>
+                <template id='detail'>[[> veniss:RelatedDetail]]</template>
+              </related-entities-class>
+
+              <!-- People have no direct link to an island: they are reached through the sources
+                   they authored, and they are dated by that source's production year. Measured on
+                   the live data: 260 authors are reachable from an island, and *none* of them has
+                   a birth event — dating people by birth empties the tab entirely.
+                   ?production is bound by the spatial pattern, so the two stay in step. -->
+              <related-entities-class
+                id="people" label="People" icon="fa fa-user" limit="300"
+                query='
+                  PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                  PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                  PREFIX crmpc: <http://www.cidoc-crm.org/crmpc/>
+
+                  SELECT DISTINCT ?entity ?year WHERE {
+                    FILTER(?__spatial__)
+                    ?production crm:P4_has_time-span ?timespan .
+                    ?timespan crm:P170i_time_is_defined_by ?primitive .
+                    ?primitive crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ;
+                               rdfs:label ?year_label .
+                    FILTER(REGEX(STR(?year_label), "^[0-9]{3,4}$"))
+                    BIND(xsd:integer(STR(?year_label)) AS ?year)
+                  }
+                  ORDER BY ?year'
+                spatial-pattern='
+                  ?actor_role <http://www.cidoc-crm.org/crmpc/P02_has_range> ?entity ;
+                              <http://www.cidoc-crm.org/crmpc/P01_has_domain> ?production .
+                  ?authored <http://www.cidoc-crm.org/cidoc-crm/P108i_was_produced_by> ?production ;
+                            <https://veniss.net/ontology#has_island> ?island .
+                  ?island <http://www.cidoc-crm.org/cidoc-crm/P87_is_identified_by> ?lat_node .
+                  ?lat_node <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#latitude> ;
+                            <http://www.w3.org/2000/01/rdf-schema#label> ?lat .
+                  ?island <http://www.cidoc-crm.org/cidoc-crm/P87_is_identified_by> ?lng_node .
+                  ?lng_node <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <https://veniss.net/ontology#longitude> ;
+                            <http://www.w3.org/2000/01/rdf-schema#label> ?lng .
+                  FILTER(
+                    xsd:double(STR(?lng)) >= xsd:double(STR(?__minLon__)) &&
+                    xsd:double(STR(?lng)) <= xsd:double(STR(?__maxLon__)) &&
+                    xsd:double(STR(?lat)) >= xsd:double(STR(?__minLat__)) &&
+                    xsd:double(STR(?lat)) <= xsd:double(STR(?__maxLat__))
+                  )'>
+                <template id='row'>[[> veniss:RelatedRow]]</template>
+                <template id='detail'>[[> veniss:RelatedDetail]]</template>
+              </related-entities-class>
+
+              <!-- Builtworks are the only class that is literally in the bounding box, so this one
+                   goes through the geosql service and uses the EPSG:3857 variables. -->
+              <related-entities-class
+                id="builtworks" label="Builtworks" icon="fa fa-university" limit="300"
+                query='
+                  PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                  PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                  PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                  PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+
+                  SELECT DISTINCT ?entity ?year WHERE {
+                    FILTER(?__spatial__)
+                    ?representation crm:P2_has_type <https://veniss.net/ontology#2d_representation> ;
+                                    rdfs:label ?bw_id .
+                    ?phase crm:P138i_has_representation ?representation ;
+                           crm:P4_has_time-span ?phase_timespan .
+                    ?physical_changes crm:P166i_had_presence ?phase .
+                    ?entity crm:P196i_is_defined_by ?physical_changes .
+                    ?phase_timespan crm:P82a_begin_of_the_begin ?bob .
+                    FILTER(STRSTARTS(STR(?bob), "http://") = false)
+                    BIND(xsd:integer(STRBEFORE(STR(?bob), "-")) AS ?year)
+                    FILTER(BOUND(?year))
+                  }
+                  ORDER BY ?year'
+                spatial-pattern='
+                  SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                    ?geo <http://www.researchspace.org/resource/system/sql#hasQueryId> "production" ;
+                         <http://www.researchspace.org/resource/system/service/veniss_sql#minX> ?__minX__ ;
+                         <http://www.researchspace.org/resource/system/service/veniss_sql#minY> ?__minY__ ;
+                         <http://www.researchspace.org/resource/system/service/veniss_sql#maxX> ?__maxX__ ;
+                         <http://www.researchspace.org/resource/system/service/veniss_sql#maxY> ?__maxY__ ;
+                         <http://www.researchspace.org/resource/system/service/veniss_sql#bw_id> ?bw_id .
+                  }'>
+                <template id='row'>[[> veniss:RelatedRow]]</template>
+                <template id='detail'>[[> veniss:RelatedDetail]]</template>
+              </related-entities-class>
+
           </semantic-map-controls>
             <div id="mapContainer">[[> veniss:Map ]]</div>
           </div>

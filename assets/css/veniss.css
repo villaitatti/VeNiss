@@ -32,3 +32,61 @@ div.left-column {
   line-height: 1.6;
   white-space: nowrap;
 }
+
+/* ---------------------------------------------------------------------------
+   Detail card of the map's related-entities panel (veniss:RelatedDetail).
+   The panel itself is styled by the platform component; this is only the card
+   the template renders inside it.
+   --------------------------------------------------------------------------- */
+
+.related-card {
+  font-size: 13px;
+  color: #333;
+}
+
+.related-card__title {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.related-card__image {
+  display: block;
+  max-width: 100%;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+/* Two columns: a narrow label rail and the values, so the facts line up. */
+.related-card__facts {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 4px 10px;
+  margin: 0 0 12px;
+}
+
+.related-card__facts dt {
+  font-weight: 600;
+  color: #777;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding-top: 1px;
+}
+
+.related-card__facts dd {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.related-card__note {
+  margin: 0 0 12px;
+  line-height: 1.45;
+  color: #444;
+}
+
+.related-card__link {
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}

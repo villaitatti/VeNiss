@@ -23,6 +23,9 @@
                        (SAMPLE(COALESCE(?_location, ?_island_full_name, "")) AS ?location)
                        (SAMPLE(COALESCE(?_year, ?_year_from_url, "")) AS ?year)
                        (SAMPLE(COALESCE(?_thumbnail, "")) AS ?thumbnail)
+                       (SAMPLE(?_lat) AS ?lat)
+                       (SAMPLE(?_lng) AS ?lng)
+                       (SAMPLE(STR(?islandForGeo)) AS ?group)
                 WHERE {
                     ?source a veniss_ontology:Source ;
                             veniss_ontology:is_historical_map "true"^^xsd:boolean ;
@@ -81,6 +84,24 @@
                       ?islandApp a crm:E41_Appellation ;
                                  rdfs:label ?_location .
                       FILTER(STR(?_location) != "")
+                    }
+
+                    # Island IRI: the grouping key for the "Filter by time" snapshot mode and for
+                    # "Sync with time". Bound on its own, so a source still gets a stable group
+                    # when its island carries no coordinates — otherwise maps of one island fall
+                    # back to different keys and the snapshot degenerates into "show them all".
+                    OPTIONAL { ?source veniss_ontology:has_island ?islandForGeo }
+
+                    # Island coordinates (point, WGS84) from the graph, used for the map
+                    # "Filter by zoom" (bounding-box) filter.
+                    OPTIONAL {
+                      ?source veniss_ontology:has_island ?islandForCoords .
+                      ?islandForCoords crm:P87_is_identified_by ?_latNode .
+                      ?_latNode crm:P2_has_type <https://veniss.net/ontology#latitude> ;
+                                rdfs:label ?_lat .
+                      ?islandForCoords crm:P87_is_identified_by ?_lngNode .
+                      ?_lngNode crm:P2_has_type <https://veniss.net/ontology#longitude> ;
+                                rdfs:label ?_lng .
                     }
 
                     # Year from production time-span

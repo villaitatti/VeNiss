@@ -1,0 +1,80 @@
+<!-- Detail card opened from the map's related-entities feed, shared by all four classes.
+
+     Every field is OPTIONAL, so one card serves Sources, Events, People and Builtworks: what a
+     given entity does not have simply does not render. The predicates were picked from what the
+     data actually carries — a count of the properties on veniss_ontology:Source put
+     has_typology, has_island and P67i_is_referred_to_by near the top, while crm:P3_has_note,
+     the obvious guess for a description, appears on almost nothing.
+
+     To give one class a card of its own, replace its <template id='detail'> in veniss:Main. -->
+<div class="related-card">
+  <h4 class="related-card__title"><mp-label iri='{{entity.value}}'></mp-label></h4>
+
+  <mp-resource-thumbnail iri='{{entity.value}}' class="related-card__image">
+    <mp-resource-thumbnail-fallback><span></span></mp-resource-thumbnail-fallback>
+  </mp-resource-thumbnail>
+
+  <semantic-query query='
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+      PREFIX crmpc: <http://www.cidoc-crm.org/crmpc/>
+      PREFIX veniss_ontology: <https://veniss.net/ontology#>
+
+      SELECT ?type ?island ?year ?authors ?note ?location WHERE {
+        {
+          SELECT (SAMPLE(?_type) AS ?type) (SAMPLE(?_island) AS ?island)
+                 (SAMPLE(?_year) AS ?year)
+                 (GROUP_CONCAT(DISTINCT ?_author; separator=" · ") AS ?authors)
+                 (SAMPLE(?_note) AS ?note) (SAMPLE(?_location) AS ?location)
+          WHERE {
+            VALUES ?entity { <{{entity.value}}> }
+            OPTIONAL { ?entity veniss_ontology:has_typology ?ty . ?ty rdfs:label ?_type }
+            OPTIONAL { ?entity crm:P2_has_type ?t2 . ?t2 rdfs:label ?_type }
+            OPTIONAL {
+              ?entity veniss_ontology:has_island ?isl .
+              ?isl crm:P1_is_identified_by ?ia . ?ia rdfs:label ?_island
+            }
+            OPTIONAL {
+              ?entity crm:P67i_is_referred_to_by ?n . ?n rdfs:label ?_note .
+              FILTER(LANG(?_note) = "en" || LANG(?_note) = "")
+            }
+            OPTIONAL {
+              ?entity crm:P53_has_former_or_current_location ?loc .
+              ?loc crm:P1_is_identified_by ?la . ?la rdfs:label ?_location
+            }
+            OPTIONAL {
+              ?entity crm:P108i_was_produced_by ?prod .
+              OPTIONAL {
+                ?prod crm:P4_has_time-span ?ts .
+                ?ts crm:P170i_time_is_defined_by ?tp .
+                ?tp crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ;
+                    rdfs:label ?_year
+              }
+              OPTIONAL {
+                ?ar crmpc:P01_has_domain ?prod ; crmpc:P02_has_range ?au .
+                ?au crm:P1_is_identified_by ?aa . ?aa rdfs:label ?_author
+              }
+            }
+          }
+        }
+      }'
+    template='{{> card}}'
+    no-result-template='{{> card}}'>
+    <template id='card'>
+      {{#each bindings}}
+        <dl class="related-card__facts">
+          {{#if type.value}}<dt>Type</dt><dd>{{type.value}}</dd>{{/if}}
+          {{#if year.value}}<dt>Date</dt><dd>{{year.value}}</dd>{{/if}}
+          {{#if authors.value}}<dt>Author</dt><dd>{{authors.value}}</dd>{{/if}}
+          {{#if island.value}}<dt>Island</dt><dd>{{island.value}}</dd>{{/if}}
+          {{#if location.value}}<dt>Held at</dt><dd>{{location.value}}</dd>{{/if}}
+        </dl>
+        {{#if note.value}}<p class="related-card__note">{{note.value}}</p>{{/if}}
+      {{/each}}
+    </template>
+  </semantic-query>
+
+  <p class="related-card__link">
+    <semantic-link iri='{{entity.value}}'>Open full record</semantic-link>
+  </p>
+</div>

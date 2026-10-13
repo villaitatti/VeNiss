@@ -529,9 +529,9 @@
     [[!-- ========== Default ResearchSpace resource-search rendering ========== --]]
     [[#if (urlParam "searchkpcategory")]]
 
-      <semantic-search config='[[searchConfigForFieldsFromQuery (setQueryBindings "SELECT DISTINCT ?field WHERE { ?field a <http://www.researchspace.org/resource/system/fields/Field> . ?field <http://www.researchspace.org/resource/system/fields/category> ?category . }" category=(urlParam "searchkpcategory" escape=false))]]'>
+      <semantic-search limit='10000' config='[[searchConfigForFieldsFromQuery (setQueryBindings "SELECT DISTINCT ?field WHERE { ?field a <http://www.researchspace.org/resource/system/fields/Field> . ?field <http://www.researchspace.org/resource/system/fields/category> ?category . }" category=(urlParam "searchkpcategory" escape=false))]]'>
     [[else]]    
-      <semantic-search config='[[searchConfigForFieldsFromQuery (setQueryBindings "SELECT DISTINCT ?field WHERE { ?field a <http://www.researchspace.org/resource/system/fields/Field> .  ?field <http://www.researchspace.org/resource/system/fields/domain> ?domain . ?field <http://www.researchspace.org/resource/system/fields/range> ?range . }" domain=(urlParam "resourceontologyclass" escape=false))]]'>      
+      <semantic-search limit='10000' config='[[searchConfigForFieldsFromQuery (setQueryBindings "SELECT DISTINCT ?field WHERE { ?field a <http://www.researchspace.org/resource/system/fields/Field> .  ?field <http://www.researchspace.org/resource/system/fields/domain> ?domain . ?field <http://www.researchspace.org/resource/system/fields/range> ?range . }" domain=(urlParam "resourceontologyclass" escape=false))]]'>
     [[/if]]
 
     [[!-- Uncomment line below if you want to see all available facets --]]
@@ -1529,13 +1529,13 @@
                       
                         <template id='custom-list-view'>
                           <semantic-search-result>
-                            <mp-sparql-result-counts id='list-search-result-count' query="SELECT DISTINCT ?subject {} LIMIT 100"
+                            <mp-sparql-result-counts id='list-search-result-count' query="SELECT DISTINCT ?subject {} LIMIT 10000"
                                                         template='{{> template}}'
                             >
                                 <template id='template'>
                                   {{#if hasLimit}}
                                     <bs-alert bs-style="warning">
-                                      <span class="num-results"><strong>Warning!</strong> The sorting functionality works correctly with less than <strong>100 entries.</strong><br>Please use filters to reduce the result set for optimal performance!</span>
+                                      <span class="num-results"><strong>Warning!</strong> The sorting functionality works correctly with less than <strong>10000 entries.</strong><br>Please use filters to reduce the result set for optimal performance!</span>
                                     </bs-alert>
                                   {{/if}}
                                 </template>
@@ -1548,6 +1548,9 @@
                                                       (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_timeline'))}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
                                             query='SELECT DISTINCT ?subject ?iri ?description ?column2Value ?column3Value ?column4Value ?authorDisplay WHERE {
                                                     BIND(?subject as ?iri) .
+                                                    # Blazegraph evaluates the OPTIONAL sub-selects in chunks: with the search LIMIT only
+                                                    # the first ~100 rows get their column values, which breaks sorting past that point
+                                                    <http://www.bigdata.com/queryHints#Query> <http://www.bigdata.com/queryHints#chunkSize> "20000" .
                                                     BIND(?subject as ?item) .
 
                                                     OPTIONAL {
@@ -2022,14 +2025,14 @@
                         <template id='default-list-view'>
                           <semantic-search-result>
                             <semantic-search-result>
-                              <mp-sparql-result-counts id='default-list-search-result-count' query="SELECT DISTINCT ?subject {} LIMIT 100"
+                              <mp-sparql-result-counts id='default-list-search-result-count' query="SELECT DISTINCT ?subject {} LIMIT 10000"
                                                           template='{{> defaultSortingWarningTemplate}}'
                               >
                                   <template id='defaultSortingWarningTemplate'>
                                     {{#if hasLimit}}
                                       <bs-alert bs-style="warning" class="search-results__alert">
                                         <rs-icon icon-type="rounded" icon-name="report_problem" symbol="true"></rs-icon>
-                                        <span class="num-results">There were {{totalNumberOfResults}} results. Sorting works correctly only with less than 100 entries. Please use filters to reduce the result set for optimal performance!</span>
+                                        <span class="num-results">There were {{totalNumberOfResults}} results. Sorting works correctly only with less than 10000 entries. Please use filters to reduce the result set for optimal performance!</span>
                                       </bs-alert>
                                     {{/if}}
                                   </template>
@@ -2044,6 +2047,9 @@
                                             )}}table-without-checkbox{{else}}table-with-checkbox{{/if}}"
                                             query='SELECT DISTINCT ?subject ?iri ?description ?resourceConfig ?authorDisplay WHERE {
                                                     BIND(?subject as ?iri) .
+                                                    # Blazegraph evaluates the OPTIONAL sub-selects in chunks: with the search LIMIT only
+                                                    # the first ~100 rows get their column values, which breaks sorting past that point
+                                                    <http://www.bigdata.com/queryHints#Query> <http://www.bigdata.com/queryHints#chunkSize> "20000" .
                                                     BIND(<[[urlParam "resourceconfig" escape=false]]> as ?resourceConfig) .
 
                                                     OPTIONAL {

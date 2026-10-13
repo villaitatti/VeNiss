@@ -191,7 +191,7 @@
                                         </div>
 
                                         [[#block "imageContent"]]
-                                        <rs-object-representations query='SELECT DISTINCT ?label ?imgURL ?isMainRep
+                                        <semantic-query query='SELECT DISTINCT ?imgURL ?isMainRep
                                                                           WHERE {
                                                                           OPTIONAL { <[[this]]> rdfs:label ?label . }  
                                                                           OPTIONAL {
@@ -281,19 +281,44 @@
                                                                         }
                                                                         BIND(?imgURLx AS ?imgURL)
                                                                         BIND(COALESCE(?isMainRepx, ?isMainRepy) AS ?isMainRep)
-                                                                        } ORDER BY ?imgURL '
+                                                                        } ORDER BY DESC(?isMainRep) ?imgURL '
 
-                                                                        no-image-template = '{{> noImage}}'
+                                                                        template='{{> objGallery}}'
+                                                                        no-result-template='{{> noImage}}'
                                                                     
                                         >
+
+                                        <template id='objGallery'>
+                                          <div class="object-representations">
+                                            <div class="object-representations__image--focused" title="Full-size image">
+                                              <img class="image--focused" src='{{bindings.0.imgURL.value}}'/>
+                                            </div>
+                                            {{#ifCond bindings.length ">" "1"}}
+                                              <mp-collapsible-div expanded='false' class-name="object-representations__more">
+                                                <mp-collapsible-div-trigger>
+                                                  <span class="text-link" style="cursor: pointer;">More images</span>
+                                                </mp-collapsible-div-trigger>
+                                                <mp-collapsible-div-content>
+                                                  <div class="object-representations__images" style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: 10px;">
+                                                    {{#each bindings}}
+                                                      {{#unless @first}}
+                                                        <img class="object-representations__image" src='{{imgURL.value}}' style="height: 90px; width: 90px; object-fit: cover;"/>
+                                                      {{/unless}}
+                                                    {{/each}}
+                                                  </div>
+                                                </mp-collapsible-div-content>
+                                              </mp-collapsible-div>
+                                            {{/ifCond}}
+                                          </div>
+                                        </template>
 
                                         <template id='noImage'>
                                             <div class="object-representations__image--focused">
                                                 <span class="rs-icon {{getValueByKey typeToImage allTypes 'rs-icon-entity_no-image'}} {{getValueByKey entityIconColor allTypes 'rs-icon-entity_no-image'}}"></span>
                                             </div>
-                                        </template>>
+                                        </template>
                                             
-                                        </rs-object-representations>
+                                        </semantic-query>
                                         [[/block]]
                                     </div>
                                     <div class="col-xs-6" style="padding: 1.8% 1.5% 1.5% 5%;">

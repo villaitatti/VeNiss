@@ -1,0 +1,428 @@
+[[!-- VeNiss homepage, based on rsp:Start: the projects summary is replaced
+     by entry statistics per category; system activities are unchanged. --]]
+
+[[!-- CUSTOM HOMEPAGE --]]
+
+[[!-- Close Delete dialog window once resource delete submitted on dropdown action --]]
+<mp-event-proxy id='homepage-close-removal-dialog' 
+                on-event-types='["Form.ResourceRemoved"]'
+                proxy-event-type='OverlayDialog.Close' 
+                proxy-targets='["homepage-delete-resource-dialog"]'
+></mp-event-proxy>  
+
+[[!-- Update homepage on actions --]]
+<mp-event-proxy id='update-homepage-on-actions'
+                on-event-types='[ "Form.ResourceCreated", 
+                                  "Form.ResourceUpdated", 
+                                  "Form.ResourceRemoved",
+                                  "OverlayComparison.Created",
+                                  "Components.SetManagement.SetAdded",
+                                  "Components.SetManagement.SetRenamed",
+                                  "Components.SetManagement.SetRemoved",
+                                  "Narrative.Created", 
+                                  "Narrative.Updated",
+                                  "GraphAction.Delete",
+                                  "Ontodia.DiagramSaved",
+                                  "Ontodia.DiagramDataPersisted"
+                                ]'         
+                proxy-event-type='Component.TemplateUpdate' 
+                proxy-targets='["homepage-render-area"]'
+></mp-event-proxy> 
+
+<mp-event-target-template-render id='homepage-render-area' template='{{> template}}'>
+  <template id='template'>
+    <div class="homepage-container">
+
+        <div class="homepage-project-container">
+      
+          <div class="homepage-project-header">
+            <div class="homepage-project-header__welcome">
+              <div style="display: flex; align-items: center;"><h4>Welcome back</h4><mp-anonymous-hidden>
+                <semantic-query query='SELECT DISTINCT ?systemUser ?systemUserName ?actorFullName { 
+                                        BIND(IRI(REPLACE(STR(?__useruri__), "%40", "_")) as ?systemUser)
+                                        BIND(REPLACE(REPLACE(STR(?__useruri__), STR(User:), ""), "%40", "@") as ?systemUserName)
+
+                                        OPTIONAL {
+                                          ?systemUser crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/user> .
+                                          ?systemUser crm:P1_is_identified_by ?actorName .
+                                          ?actorName a crm:E41_Appellation .
+                                          ?actorName crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/primary_appellation> .
+                                          ?actorName crm:P190_has_symbolic_content ?actorFullName .
+                                        }
+                                      }'
+                                template='{{> template}}'>
+
+                  <template id='template'>
+                    {{#if bindings.0.actorFullName.value}}
+                      <semantic-link-container  uri="http://www.researchspace.org/resource/ThinkingFrames"
+                                                urlqueryparam-view='resource-editor' 
+                                                urlqueryparam-entity-type-config='http://www.researchspace.org/resource/system/resource_configurations_container/data/User'
+                                                urlqueryparam-resource-iri="{{bindings.0.systemUser.value}}"
+                                                urlqueryparam-mode='edit'>
+                        <div style="display: flex; align-items: baseline; gap: 5px;">
+                          <h4>, </h4><h4 style="text-decoration: underline; cursor: pointer;"> {{bindings.0.actorFullName.value}}</h4>
+                        </div>
+                      </semantic-link-container>
+                    {{else}}
+                      <semantic-link-container  uri='http://www.researchspace.org/resource/ThinkingFrames'
+                                                urlqueryparam-view='resource-editor' 
+                                                urlqueryparam-entity-type-config='http://www.researchspace.org/resource/system/resource_configurations_container/data/User'
+                                                urlqueryparam-custom-label='New profile'
+                                                urlqueryparam-mode='new'>
+                        <div style="display: flex; align-items: baseline; gap: 5px;">
+                          <h4>, </h4><h4 style="text-decoration: underline; cursor: pointer;"> {{bindings.0.systemUserName.value}}</h4><span class="text-font-size__small">(not registered user)</span>  
+                        </div>
+                      </semantic-link-container>
+                    {{/if}}
+                  </template>
+                </semantic-query>
+                </mp-anonymous-hidden>
+              </div>
+              <div class="homepage-project-header__currentDate">
+                <span class="badge badge--secondary">[[currentDateTime format="dd MMMM yyyy"]]</span>
+              </div>
+            </div>
+          </div>
+
+          [[!-- VeNiss: entries per category (replaces the platform "Projects summary") --]]
+          <div class="homepage-project-summary veniss-stats">
+            <div class="veniss-stats__header">
+              <h3>Database overview</h3>
+              <semantic-query query='SELECT ?total WHERE { [[> statsTotal]] }'
+                              template='{{> total}}'>
+                <template id="total">
+                  <span class="veniss-stats__total">{{bindings.0.total.value}} entries</span>
+                </template>
+              </semantic-query>
+              <span class="veniss-stats__subtitle">across islands, buildings, events, people, sources and images</span>
+            </div>
+
+            <bs-tabs id="statsTabs" default-active-key="table" unmount-on-exit=true>
+
+              <bs-tab event-key="table" title="Table">
+                <div class="veniss-stats__panel">
+                  <semantic-table id="veniss-stats-table"
+                                  class-name="veniss-stats__table"
+                                  query='[[> statsQuery]]'
+                                  number-of-displayed-rows=20
+                                  options='{"showFilter": false}'
+                                  column-configuration='[
+                                    {"variableName": "category", "displayName": "Category", "cellTemplate": "{{> category}}"},
+                                    {"variableName": "entries", "displayName": "Entries", "cellTemplate": "{{> entries}}"},
+                                    {"variableName": "share", "displayName": "Share", "cellTemplate": "{{> share}}"}
+                                  ]'
+                                  no-result-template='{{> noResults}}'>
+                    <template id="category">
+                      <span class="veniss-stats__category">
+                        <span class="veniss-stats__swatch" style="background: {{color.value}};"></span>{{category.value}}
+                      </span>
+                    </template>
+                    <template id="entries">
+                      <span class="veniss-stats__count">{{entries.value}}</span>
+                    </template>
+                    <template id="share">
+                      <span class="veniss-stats__share">
+                        <span class="veniss-stats__bar"><span style="width: {{share.value}}%; background: {{color.value}};"></span></span>
+                        <span class="veniss-stats__percent">{{share.value}}%</span>
+                      </span>
+                    </template>
+                    <template id="noResults">
+                      [[> statsNoResults]]
+                    </template>
+                  </semantic-table>
+                </div>
+              </bs-tab>
+
+              <bs-tab event-key="bar" title="Bar chart">
+                <div class="veniss-stats__panel veniss-stats__chart">
+                  <semantic-chart id="veniss-stats-bar"
+                                  type="bar"
+                                  query='[[> statsQuery]]'
+                                  sets='[{"dataSetName": "Entries", "category": "category", "value": "entries"}]'
+                                  [[!-- The bar renderer ignores the "color" mapping; same palette as statsCategories, in ?order. --]]
+                                  styles='[{"provider": "chartjs", "style": {
+                                    "options": {"legend": {"display": false}},
+                                    "data": {"datasets": [{
+                                      "backgroundColor": ["#0c3146", "#2e5f7a", "#b48f49", "#cfab67", "#8a6d35", "#4f8a8b", "#9bc1bc", "#6b7c93", "#c97b63", "#a3a9b3"],
+                                      "borderColor": ["#0c3146", "#2e5f7a", "#b48f49", "#cfab67", "#8a6d35", "#4f8a8b", "#9bc1bc", "#6b7c93", "#c97b63", "#a3a9b3"]
+                                    }]}
+                                  }}]'
+                                  no-result-template='{{> noResults}}'>
+                    <template id="noResults">
+                      [[> statsNoResults]]
+                    </template>
+                  </semantic-chart>
+                </div>
+              </bs-tab>
+
+              <bs-tab event-key="pie" title="Pie chart">
+                <div class="veniss-stats__panel veniss-stats__chart">
+                  <semantic-chart id="veniss-stats-pie"
+                                  type="donut"
+                                  query='[[> statsQuery]]'
+                                  sets='[{"dataSetName": "Entries", "category": "category", "value": "entries", "color": "color"}]'
+                                  styles='[{"provider": "chartjs", "style": {
+                                    "options": {"legend": {"position": "right"}}
+                                  }}]'
+                                  no-result-template='{{> noResults}}'>
+                    <template id="noResults">
+                      [[> statsNoResults]]
+                    </template>
+                  </semantic-chart>
+                </div>
+              </bs-tab>
+
+            </bs-tabs>
+          </div>
+        </div>
+      
+        <div class="homepage-activity-container">
+          <semantic-search id="homepage-activities">
+            <div class="homepage-activity-header">
+              <h3>System activities</h3>
+              <div>
+                <semantic-search-query-keyword  domain='<http://www.cidoc-crm.org/cidoc-crm/E1_CRM_Entity>'
+                                                query='SELECT DISTINCT ?subject WHERE { 
+                                                        {
+                                                          ?subject prov:generatedAtTime ?date .
+                                                          ?subject crm:P2_has_type ?type .
+                                                          FILTER(?type IN (<http://www.researchspace.org/resource/system/vocab/resource_type/knowledge_map>, 
+                                                                            <http://www.researchspace.org/resource/system/vocab/resource_type/set>,
+                                                                            <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_narrative>, 
+                                                                            <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_chart>,
+                                                                            <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_timeline>
+                                                                          ))
+                                                          ?subject crm:P190_has_symbolic_content ?label .
+                                                        } UNION {
+                                                          ?subject a rs:EX_Digital_Image .
+                                                          ?subject prov:generatedAtTime ?date .
+                                                          ?subject crm:P1_is_identified_by ?imageAppellation . 
+                                                          ?imageAppellation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/primary_appellation> . 
+                                                          ?imageAppellation crm:P190_has_symbolic_content ?label .
+                                                        } UNION {
+                                                          ?subject crm:P129i_is_subject_of ?entityFormRecord .
+                                                          ?entityFormRecord a crmdig:D1_Digital_Object .
+                                                          ?entityFormRecord crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> . 
+
+                                                          MINUS { ?subject a Platform:resource_configuration .}
+
+                                                          MINUS {
+                                                            ?subject crm:P71i_is_listed_in|skos:inScheme ?systemAuthorityDoc .
+                                                            ?systemAuthorityDoc crm:P2_has_type Platform:System_Resource .
+                                                          }
+
+                                                          ?entityFormRecord crmdig:L11i_was_output_of ?entityFormRecordOutput .
+                                                          ?entityFormRecordOutput crm:P2_has_type ?entityFormRecordOutputType .
+                                                          FILTER(?entityFormRecordOutputType IN (<http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_creation>, 
+                                                                                                  <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_modification>
+                                                                                                  ))
+                                                          ?entityFormRecordOutput crm:P4_has_time-span ?entityFormRecordOutputTimespan .
+                                                          ?entityFormRecordOutputTimespan crm:P82_at_some_time_within ?date .
+                                                          { 
+                                                            ?subject crm:P1_is_identified_by ?appellation .
+                                                            ?appellation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/primary_appellation> . 
+                                                            ?appellation crm:P190_has_symbolic_content ?label .
+                                                          } UNION {
+                                                            ?subject crm:P170i_time_is_defined_by ?label .
+                                                          } UNION {
+                                                            ?subject skos:prefLabel ?label .
+                                                          } UNION {
+                                                            ?subject crm:P190_has_symbolic_content ?label .
+                                                          }
+                                                        }
+                                                        
+                                                        FILTER (?date > "2024-10-22T00:00:00.000Z"^^xsd:dateTime)
+                                                          
+                                                        SERVICE <http://www.bigdata.com/rdf/search#search> {
+                                                                  ?label bds:search ?__token__ ;
+                                                                  bds:minRelevance "0.3" ;
+                                                                  bds:matchAllTerms "true"  .
+                                                        }
+                                                      } ORDER BY DESC(?date)'
+                                                default-query='SELECT DISTINCT ?subject WHERE {
+                                                                {
+                                                                  ?subject prov:generatedAtTime ?date1 .
+                                                                  ?subject crm:P2_has_type ?type .
+                                                                  FILTER(?type IN (<http://www.researchspace.org/resource/system/vocab/resource_type/knowledge_map>, 
+                                                                                    <http://www.researchspace.org/resource/system/vocab/resource_type/set>,
+                                                                                    <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_narrative>, 
+                                                                                    <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_chart>,
+                                                                                    <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_timeline>
+                                                                                  )
+                                                                    )
+                                                                  MINUS {?subject prov:wasAttributedTo ?__useruri__ ; rdfs:label "Uncategorized" .}
+                                                                } UNION {
+                                                                  ?subject a rs:EX_Digital_Image .
+                                                                  ?subject prov:generatedAtTime ?date2 .
+                                                                } UNION {
+                                                                  ?subject crm:P129i_is_subject_of ?entityFormRecord .
+                                                                  ?entityFormRecord a crmdig:D1_Digital_Object .
+                                                                  ?entityFormRecord crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> . 
+                                                                  ?entityFormRecord crmdig:L11i_was_output_of ?entityFormRecordCreation .
+                                                                  ?entityFormRecordCreation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_creation> .
+                                                                  ?entityFormRecordCreation crm:P4_has_time-span ?entityFormRecordCreationTimespan .
+                                                                  ?entityFormRecordCreationTimespan crm:P82_at_some_time_within ?dateCreation .
+                                                                } UNION {
+                                                                  ?subject crm:P129i_is_subject_of ?entityFormRecord .
+                                                                  ?entityFormRecord a crmdig:D1_Digital_Object .
+                                                                  ?entityFormRecord crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> . 
+                                                                  ?entityFormRecord crmdig:L11i_was_output_of ?entityFormRecordModification .
+                                                                  ?entityFormRecordModification crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_modification> .
+                                                                  ?entityFormRecordModification crm:P4_has_time-span ?entityFormRecordModificationTimespan .
+                                                                  ?entityFormRecordModificationTimespan crm:P82_at_some_time_within ?dateModification .
+                                                                } 
+                                                                BIND(IF(BOUND(?dateModification), ?dateModification, ?dateCreation) AS ?complexDate)
+                                                                BIND(IF(BOUND(?complexDate),?complexDate,IF(BOUND(?date1),?date1,IF(BOUND(?date2),?date2,""))) as ?date)
+
+                                                                MINUS { ?subject a Platform:resource_configuration .}
+                                                                MINUS {
+                                                                  ?subject crm:P71i_is_listed_in|skos:inScheme ?systemAuthorityDoc .
+                                                                  ?systemAuthorityDoc crm:P2_has_type Platform:System_Resource .
+                                                                }
+                                                                FILTER (?date > "2024-10-22T00:00:00.000Z"^^xsd:dateTime)
+                                                              }'
+                                                debounce=500
+                                                placeholder="Search resource"
+                ></semantic-search-query-keyword> 
+           [[!--     <button class="btn btn-default btn-textAndIcon">
+                  <rs-icon icon-type="rounded" icon-name="people_alt" symbol="true"></rs-icon>
+                </button>
+                <button class="btn btn-default btn-textAndIcon">
+                  <rs-icon icon-type="rounded" icon-name="calendar_month" symbol="true"></rs-icon>
+                </button>
+          --]]
+              </div>
+            </div>
+
+            <div class="homepage-activity-content">
+              <div data-flex-layout="row stretch-stretch" class='search-results-area'>
+                <semantic-search-result-holder>
+                  <div data-flex-self="md-full">
+                    <semantic-search-result id='activity-result'>
+                      <semantic-table id='activity-result-grid'
+                                      class-name="activity-result-grid"
+                                      query='SELECT DISTINCT ?subject ?iri WHERE {
+                                                  BIND(?subject as ?iri) .
+                                              } ORDER BY DESC(?date) ?subject
+                                              LIMIT 20'
+                                      tuple-template='{{> gridItem }}'
+                                      options='{"showFilter":false,
+                                                "resultsPerPage": 20
+                                              }'
+                      >
+                        <template id='gridItem'>
+                          <div class="activity-card-template">
+                            {{#bind iri=iri.value}} 
+                              {{> rsp:ActivityCardTemplate}}
+                            {{/bind}}
+                          </div>
+                        </template>
+                      </semantic-table>
+                    </semantic-search-result>
+                  </div>
+                </semantic-search-result-holder>
+              </div>
+            </div>
+
+            <semantic-if  query='ASK {
+                                      {
+                                        ?subject prov:generatedAtTime ?date .
+                                        ?subject crm:P2_has_type ?type .
+                                        FILTER(?type IN (<http://www.researchspace.org/resource/system/vocab/resource_type/knowledge_map>, 
+                                                        <http://www.researchspace.org/resource/system/vocab/resource_type/set>,
+                                                        <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_narrative>, 
+                                                        <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_chart>,
+                                                        <http://www.researchspace.org/resource/system/vocab/resource_type/semantic_timeline>
+                                              )
+                                        )
+                                        MINUS {?subject prov:wasAttributedTo ?__useruri__ ; rdfs:label "Uncategorized" .}
+                                      } UNION {
+                                        ?subject crm:P129i_is_subject_of ?entityFormRecord .
+                                        ?entityFormRecord a crmdig:D1_Digital_Object .
+                                        ?entityFormRecord crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record> . 
+                                        ?entityFormRecord crmdig:L11i_was_output_of ?entityFormRecordCreation .
+                                        ?entityFormRecordCreation crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/entity_form_record_creation> .
+                                        ?entityFormRecordCreation crm:P4_has_time-span ?creation .
+                                        ?creation crm:P82_at_some_time_within ?date .
+                                        MINUS { ?subject a Platform:resource_configuration .}
+                                        MINUS {
+                                          ?subject crm:P71i_is_listed_in|skos:inScheme ?systemAuthorityDoc .
+                                          ?systemAuthorityDoc crm:P2_has_type Platform:System_Resource .
+                                        }
+                                      }
+                                      FILTER (?date > "2024-10-22T00:00:00.000Z"^^xsd:dateTime)
+                                    }'
+                          then='{{> then}}'>
+
+              <template id='then'>
+                <div class="homepage-activity-all">
+                  <semantic-link iri="http://www.researchspace.org/resource/ThinkingFrames"
+                                urlqueryparam-view='system-activity'
+                                getlabel=false> 
+                    <span class="text-link">all activities</span>
+                    <rs-icon icon-type="rounded" icon-name="chevron_right" symbol="true"></rs-icon>
+                  </semantic-link>
+                </div>
+              </template>
+            </semantic-if>
+
+
+          </semantic-search>
+        </div>
+      
+    </div>
+  </template>
+</mp-event-target-template-render>
+
+[[!-- Categories counted on the homepage: one VALUES row per class; rows sharing
+      an ?order are merged (e.g. both primary-source classes). --]]
+[[#*inline "statsCategories"]]
+VALUES (?order ?category ?color ?type) {
+  (1  "Islands"           "#0c3146" <https://veniss.net/ontology#Island>)
+  (2  "Buildings"         "#2e5f7a" <https://veniss.net/ontology#Building>)
+  (3  "Events"            "#b48f49" <https://veniss.net/ontology#Event>)
+  (4  "Persons"           "#cfab67" <https://veniss.net/ontology#Person>)
+  (5  "Groups"            "#8a6d35" <https://veniss.net/ontology#Group>)
+  (6  "Primary sources"   "#4f8a8b" <https://veniss.net/ontology#Source_Primary>)
+  (6  "Primary sources"   "#4f8a8b" <https://veniss.net/ontology#Primary_Source>)
+  (7  "Secondary sources" "#9bc1bc" <http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression>)
+  (7  "Secondary sources" "#9bc1bc" <https://veniss.net/ontology#Source_Secondary>)
+  (8  "Archival units"    "#6b7c93" <http://www.cidoc-crm.org/cidoc-crm/E78_Collection>)
+  (9  "Relations"         "#c97b63" <https://veniss.net/ontology#Relation>)
+  (10 "Images"            "#a3a9b3" <http://www.researchspace.org/ontology/EX_Digital_Image>)
+}
+[[/inline]]
+
+[[#*inline "statsQuery"]]
+SELECT ?order ?category ?color ?entries ?share WHERE {
+  {
+    SELECT ?order ?category ?color (COUNT(DISTINCT ?s) AS ?entries) WHERE {
+      [[> statsCategories]]
+      OPTIONAL { ?s a ?type }
+    } GROUP BY ?order ?category ?color
+  }
+  [[> statsTotal]]
+  BIND(IF(?total > 0, ROUND(?entries * 1000 / ?total) / 10, 0) AS ?share)
+} ORDER BY ?order
+[[/inline]]
+
+[[!-- Sum of the category counts (an entry in two categories counts twice). --]]
+[[#*inline "statsTotal"]]
+{
+  SELECT (SUM(?n) AS ?total) WHERE {
+    SELECT ?category (COUNT(DISTINCT ?s) AS ?n) WHERE {
+      [[> statsCategories]]
+      OPTIONAL { ?s a ?type }
+    } GROUP BY ?category
+  }
+}
+[[/inline]]
+
+[[#*inline "statsNoResults"]]
+<div class="table-no-results veniss-stats__empty">
+  <div class="no-results-container">
+    <rs-icon icon-type="rounded" icon-name="bar_chart" symbol="true" class="no-results-icon"></rs-icon>
+    <div class="no-results-text">No statistics available yet</div>
+  </div>
+</div>
+[[/inline]]

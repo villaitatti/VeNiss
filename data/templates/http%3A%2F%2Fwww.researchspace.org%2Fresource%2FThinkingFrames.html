@@ -25,8 +25,11 @@
 </style>
 
 <div class='page_100vh thinking-frames-page'>
-  <rs-dashboard
-    home-page-iri="http://www.researchspace.org/resource/Start"
+  <app-state id="thinking-frames-state" storage-mode="backend" save-button-position="bottom-right">
+    <rs-dashboard
+      id="thinking-frames"
+      shared-state-vars="layoutModel,openFrames,activeFrameId"
+      home-page-iri="http://www.researchspace.org/resource/Start"
 
     [[#if (urlParam "view")]]
       initial-view='{"view": "[[urlParam "view"]]", 
@@ -184,14 +187,21 @@
       "dropAreaDescription": "Drag and drop here any entity of type PLACE (with associated geographic coordinates) to explore related geographic information",
       "iconName": "place",
       "checkQuery": "ASK { 
-        ?value a crm:E53_Place . 
-        ?value <http://www.cidoc-crm.org/cidoc-crm/P168_place_is_defined_by> ?coordinates .
-        ?coordinates <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <http://www.researchspace.org/resource/system/vocab/resource_type/osm_geographic_coordinates> . }",
+        {
+          ?value a ?ontologyClass .
+          ?ontologyClass rdfs:subClassOf* crm:E53_Place .
+          ?value <http://www.cidoc-crm.org/cidoc-crm/P168_place_is_defined_by> ?coordinates . 
+        } UNION {
+          ?value rdf:type Platform:Set;
+          <http://www.w3.org/ns/ldp#contains>/<http://www.researchspace.org/resource/system/setItem> ?item.
+          ?item <http://www.cidoc-crm.org/cidoc-crm/P168_place_is_defined_by> ?coordinates .
+        } 
+      }",
       "template": "{{> mapTemplate}}",
       "type": "view"
     },
 
-    {
+[[!--    {
     	"id": "authority",
       "label": "Authority document",
       "iconName": "dictionary",
@@ -200,7 +210,7 @@
       "resourceNotRequired": true,
       "type": "hidden"
     }, 
-
+--]]
     {
     	"id": "system-authority",
       "label": "System authority document",
@@ -254,6 +264,18 @@
     },
 
     {
+    	"id": "story-editor",
+      "label": "Story",
+      "description": "Write a guided tour of slides that show states of a page",
+      "iconName": "auto_stories",
+      "template": "{{> storyEditor}}",
+      "itemBodyTemplate": "{{> itemBodyTemplate}}",
+      "resourceNotRequired": true,
+      "checkQuery": "ASK { ?value crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/story> . }",
+      "type": "authoring"
+    },
+
+    {
     	"id": "semantic-narrative-resources",
       "label": "Semantic narrative resources",
       "description": "Resources in the semantic narrative",
@@ -300,7 +322,17 @@
       "template": "{{> imageAnnotation}}",
       "unique": false,
       "type": "authoring"
-    } 
+    },
+
+    {
+    	"id": "import-from-external-source",
+      "label": "Import from external source",
+      "iconName": "download",
+      "description": "Import new resources from external sources like OpenStreetMap, Wikipedia, etc.",
+      "template": "{{> importFromExternalSource}}",
+      "resourceNotRequired": true,
+      "type": "view"
+    }
 
 [[!--  {
     	"id": "object-image-observation",
@@ -409,7 +441,8 @@
     <template id='finder'>[[> rsp:Finder]]</template>
 
     <template id='homepage'>
-      [[> rsp:Start]] 
+      [[!-- VeNiss: statistics homepage instead of the platform rsp:Start --]]
+      [[> "https://veniss.net/resource/Home"]] 
     </template>
 
     <template id='resourceSearch'>
@@ -473,10 +506,10 @@
       [[> rsp:ResourceEditor iri=iri]]
     </template>
 
-    <template id='authority'>
+[[!--   <template id='authority'>
       [[> rsp:AuthorityDocumentView]]
     </template>
-
+--]]
     <template id='systemAuthority'>
       [[> rsp:AuthorityDocumentSystem]]
     </template>
@@ -505,6 +538,18 @@
       [[> rsp:SemanticNarrativeTemplate]]
     </template>
 
+    <template id='storyEditor'>
+      <div class='page__grid-container'>
+        <div style='padding: 20px;'>
+          {{#if iri}}
+            <rs-story-editor story='{{iri}}'></rs-story-editor>
+          {{else}}
+            <rs-story-editor></rs-story-editor>
+          {{/if}}
+        </div>
+      </div>
+    </template>
+
     <template id='semanticNarrativeResources'>
       <div class='page__grid-container search-page-container'>
         <div id="template-content">
@@ -530,25 +575,26 @@
       </style>
       
       <div style='flex: 1 1 0px; overflow: auto;'>
-        <semantic-map tuple-template='{{> popover}}'
+        <semantic-map id='{{dashboardId}}-map'
+                      shared-state-vars='currentExtent,currentZoom'
+                      tuple-template='{{> popover}}'
                       query='SELECT DISTINCT ?wkt ?place ?color WHERE {
                               {
-                              <{{iri}}> crm:P168_place_is_defined_by ?osm_geoCoordinates .
-                                ?osm_geoCoordinates crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/osm_geographic_coordinates> .
-                                ?osm_geoCoordinates crm:P190_has_symbolic_content ?wkt .
+                                <{{iri}}> rdf:type Platform:Set;
+                                <http://www.w3.org/ns/ldp#contains>/Platform:setItem ?place.
+                                ?place crm:P168_place_is_defined_by ?wkt .
+                                BIND(0 as ?order)
+                              } UNION {                              
+                              <{{iri}}> crm:P168_place_is_defined_by ?wkt .
                                 BIND(<{{iri}}> AS ?place) .
                                 BIND(0 as ?order)
                               } UNION {
                                 ?place crm:P89_falls_within* <{{iri}}> .
-                                ?place crm:P168_place_is_defined_by ?osm_geoCoordinates .
-                                ?osm_geoCoordinates crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/osm_geographic_coordinates> .
-                                ?osm_geoCoordinates crm:P190_has_symbolic_content ?wkt .
+                                ?place crm:P168_place_is_defined_by ?wkt .
                                 BIND(1 as ?order)
                               } UNION {
                                 <{{iri}}> crm:P161i_is_spatial_projection_of/crm:P10i_contains/crm:P53i_is_former_or_current_location_of ?place .
-                                ?place crm:P168_place_is_defined_by ?osm_geoCoordinates .
-                                ?osm_geoCoordinates crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/osm_geographic_coordinates> .
-                                ?osm_geoCoordinates crm:P190_has_symbolic_content ?wkt .
+                                ?place crm:P168_place_is_defined_by ?wkt .
                                 BIND(true AS ?isBuilding)
                                 BIND(2 as ?order)
                               }
@@ -566,14 +612,16 @@
                 }
               </style>
 
-              <div style="min-width:250px; font-size: 13.5px; overflow: hidden;">
+              <div style="min-width:200px; font-size: 14.5px; overflow: hidden;">
                 <div class="place-row">
                   <div>Place:</div>
-                  <semantic-link-container  uri='http://www.researchspace.org/resource/ThinkingFrames'
-                                            urlqueryparam-view="resource-editor"
-                                            urlqueryparam-resource='{{place.value}}'>
-                    <div><mp-label iri='{{place.value}}' style="text-decoration: underline; cursor: pointer; color:#396EFE; font-weight: 600;"></mp-label></div>
-                  </semantic-link-container>
+                  <mp-draggable iri="{{place.value}}">
+                    <semantic-link-container  uri='http://www.researchspace.org/resource/ThinkingFrames'
+                                              urlqueryparam-view="resource-editor"
+                                              urlqueryparam-resource-iri='{{place.value}}'>
+                      <div><mp-label iri='{{place.value}}' style="text-decoration: underline; cursor: pointer; color:#396EFE; font-weight: 600;"></mp-label></div>
+                    </semantic-link-container>
+                  </mp-draggable>
                 </div>
               </div>
             </template>
@@ -631,6 +679,21 @@
  [[!--   <template id='mapResourceSearch'>
       [[> rsp:MapResourceSearch]]
     </template> --]]
+
+    <template id='importFromExternalSource'>
+      <div class="page__grid-container">
+        <div class="page__content-container">
+          <inline-template  template-iri='[[resolvePrefix "rsp:ImportFromExternalSource"]]' 
+                            options='{
+                                    "osmImport": "true", 
+                                    "viewId": "{{dashboardId}}",
+                                    "defaultActiveTab": "1"
+                            }'>
+          </inline-template>
+        </div>
+      </div>
+    </template>
     
-  </rs-dashboard>
+    </rs-dashboard>
+  </app-state>
 </div>

@@ -1,0 +1,694 @@
+/* ===========================================================================
+   VeNiss forms (data/templates/http%3A%2F%2Fveniss.net%2Fforms%2F*)
+
+   The templates use ResearchSpace components (<semantic-form>,
+   <semantic-form-text-input>, …) that render to plain HTML at runtime. The
+   selectors below target that rendered markup; the source of each block is
+   noted (paths relative to researchspace/src/main/web/).
+
+   Rendered skeleton of a field:
+
+     div.semantic-form                                   SemanticForm.ts
+       div.composite-input                               inputs/CompositeInput.ts
+         div.semantic-form-input-decorator               inputs/Decorations.tsx
+           div.__header > span.__label (+ __label-required)
+           div.__container > div.__input
+             div.cardinality-support                     inputs/CardinalitySupport.ts
+               div.cardinality-support__single-instance  (or __group-instance)
+                 <the input>  + button.__remove-value
+               div.cardinality-support__add-value > button.__add-value-btn
+           div.semantic-form-validation-messages
+
+   Forms open inside ThinkingFrames frames, which are resized and split
+   independently of the browser window. Bootstrap's grid only reacts to the
+   viewport, so the form is a size container and the grid is re-flowed with
+   container queries against the form's own width.
+   =========================================================================== */
+
+/* --- Theme ------------------------------------------------------------------
+   Most platform form styles read CSS custom properties
+   (styling/_variables.scss: --input-*, --color-*). Redefining them here
+   restyles text inputs, react-select, tree pickers, checkboxes and buttons
+   without overriding each component rule. */
+
+.semantic-form {
+  --vf-ink: #1f2933;
+  --vf-muted: #6b7280;
+  --vf-line: #e2e4e8;
+  --vf-subtle: #f8f8f9;
+  --vf-accent: #0c3146;
+  --vf-accent-hover: #134a69;
+  --vf-focus: rgba(12, 49, 70, 0.14);
+  --vf-danger: #b42318;
+  --vf-danger-bg: #fef3f2;
+  --vf-danger-line: #f4c7c3;
+  --vf-warning: #93370d;
+  --vf-radius: 4px;
+
+  --input-height: 36px;
+  --input-font-size: 14px;
+  --input-color: var(--vf-ink);
+  --input-color-bg: #fff;
+  --input-border-color: var(--vf-line);
+  --input-border-radius: var(--vf-radius);
+  --input-placeholder-color: #9aa0a8;
+  --border-radius: var(--vf-radius);
+  --color-border: var(--vf-line);
+  --color-border-darker: #d5d8dd;
+  --color-lighter: var(--vf-subtle);
+  --color-lighter-hover: #f1f2f4;
+  --color-medium: #c9cdd3;
+  --color-action: var(--vf-accent);
+  --color-action-light: var(--vf-accent-hover);
+  --color-checkbox-select: var(--vf-accent);
+  --color-btn-default-border: var(--vf-line);
+
+  container: veniss-form / inline-size;
+  width: 100%;
+  min-width: 0;
+  color: var(--vf-ink);
+}
+
+/* --- Layout ---------------------------------------------------------------- */
+
+/* ResourceEditor's scroll wrapper; leaves room for the focus ring. */
+.semantic-form .form-scroll-area {
+  padding: 4px 16px 16px 4px;
+}
+
+/* Separators between groups of fields (<hr> in the templates). */
+.semantic-form hr {
+  margin: 20px 0 4px;
+  border-top: 1px solid var(--vf-line);
+}
+
+/* Day / month / year rows built with data-flex-layout="row …". */
+.semantic-form [data-flex-layout^="row"] {
+  flex-wrap: wrap;
+  gap: 0 8px;
+}
+
+.semantic-form [data-flex-layout^="row"] > * {
+  flex: 1 1 110px;
+  min-width: 0;
+}
+
+.semantic-form .padding-5 {
+  padding: 0;
+}
+
+/* Platform floors that force horizontal scrolling in narrow frames
+   (styling/_resourceEditView.scss, forms.scss .form-section-*). */
+.semantic-form .select-text-field .Select,
+.semantic-form .SemanticTreeInput--inputAndButtons,
+.semantic-form .autocomplete-text-field__select,
+.semantic-form .form-section-flexContainer,
+.semantic-form .form-section-content {
+  min-width: 0;
+}
+
+/* --- Responsive grid (bs-row / bs-col → div.row / div.col-*) ---------------- */
+
+/* Medium frame: thirds/quarters become halves, offsets are dropped. */
+@container veniss-form (max-width: 900px) {
+  .semantic-form [class*="col-"][class*="-offset-"] {
+    margin-left: 0;
+  }
+
+  .semantic-form .col-xs-3, .semantic-form .col-sm-3,
+  .semantic-form .col-md-3, .semantic-form .col-lg-3 {
+    width: 50%;
+  }
+
+  .semantic-form .col-sm-8, .semantic-form .col-md-8, .semantic-form .col-lg-8 {
+    width: 100%;
+  }
+}
+
+/* Narrow frame: one column. Short thirds (day / month / year, name parts)
+   stay side by side until the frame is really narrow. */
+@container veniss-form (max-width: 600px) {
+  .semantic-form [class^="col-"],
+  .semantic-form [class*=" col-"] {
+    float: none;
+    width: 100%;
+  }
+
+  .semantic-form .col-xs-4, .semantic-form .col-sm-4 {
+    float: left;
+    width: 33.3333%;
+  }
+
+  .semantic-form .left-column {
+    border-right: 0;
+    margin-right: 0;
+    padding-right: 0;
+  }
+
+  /* Ad-hoc inline layouts declared in Builtwork_island / Builtwork_building. */
+  .semantic-form .inline-composite .composite-input > div,
+  .semantic-form .inline-composite-2 .composite-input > div,
+  .semantic-form .inline-inputs-2 > .semantic-form-input-decorator,
+  .semantic-form .inline-inputs-3 > .semantic-form-input-decorator {
+    display: block;
+    width: 100% !important;
+    margin-right: 0;
+  }
+
+  .semantic-form .cardinality-support__group-instance {
+    padding: 12px;
+  }
+}
+
+@container veniss-form (max-width: 380px) {
+  .semantic-form .col-xs-4, .semantic-form .col-sm-4 {
+    float: none;
+    width: 100%;
+  }
+
+  .semantic-form .form-scroll-area {
+    padding-right: 8px;
+  }
+}
+
+/* --- Field label (inputs/Decorations.tsx) ----------------------------------- */
+
+.semantic-form .semantic-form-input-decorator__header {
+  margin: 16px 0 6px;
+}
+
+.semantic-form .semantic-form-input-decorator__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vf-ink);
+}
+
+.semantic-form .semantic-form-input-decorator__label-required::after {
+  color: var(--vf-danger);
+  font-size: 13px;
+}
+
+/* Section titles written by hand in the templates (customFormHeader). */
+.semantic-form .customFormHeader {
+  padding: 16px 0 6px;
+  font-size: 13px;
+}
+
+/* --- Inputs: focus ---------------------------------------------------------
+   .form-control                    single-line text (PlainTextInput, FormControl)
+   textarea.plain-text-field__text  multiline text (PlainTextInput)
+   .Select-control                  react-select (SelectInput, language, autocomplete)
+   Tree pickers (lazy-tree/SemanticTreeInput) use a .form-control too. */
+
+.semantic-form .form-control,
+.semantic-form textarea.plain-text-field__text,
+.semantic-form .Select-control {
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.semantic-form .form-control:focus,
+.semantic-form textarea.plain-text-field__text:focus,
+.semantic-form .is-focused > .Select-control,
+.semantic-form .is-open > .Select-control {
+  position: relative;
+  z-index: 1;
+  border-color: var(--vf-accent);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px var(--vf-focus);
+}
+
+.semantic-form textarea.plain-text-field__text {
+  padding: 8px 12px;
+  line-height: 1.45;
+}
+
+/* Selected values are drawn in placeholder grey by the platform
+   (styling/_react-select.scss), so they read as empty. */
+.semantic-form .Select--single > .Select-control .Select-value,
+.semantic-form .Select--single > .Select-control .Select-value-label {
+  color: var(--vf-ink);
+}
+
+/* --- Text + language (inputs/PlainTextInput.ts) ----------------------------- */
+
+/* 120px truncated "No language"; keep it attached to the text input. */
+.semantic-form .plain-text-field__language {
+  flex: 0 0 136px;
+  margin-left: -1px;
+  border-left: 0;
+  font-size: 13px;
+}
+
+.semantic-form .plain-text-field__inputs .plain-text-field__text,
+.semantic-form .plain-text-field__inputs > .form-group .form-control {
+  margin-right: 0;
+}
+
+.semantic-form .plain-text-field__inputs:has(.plain-text-field__language) .plain-text-field__text {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.semantic-form .plain-text-field__language .Select-control {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: var(--vf-subtle);
+}
+
+/* --- Select / tree picker / autocomplete side buttons ----------------------
+   "New", "Edit", vocabulary (book) buttons attached to the right of the
+   control (SelectInput.tsx, TreePickerInput.tsx, AutocompleteInput.tsx). */
+
+.semantic-form .select-text-field__create-button,
+.semantic-form .select-text-field__open-in-new-tab,
+.semantic-form .semantic-form-tree-picker-input__create-button.btn-default,
+.semantic-form .autocomplete-text-field__create-button,
+.semantic-form .autocomplete-text-field__open-in-new-tab,
+.semantic-form .SemanticTreeInput--browseButton.btn-default {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vf-muted);
+}
+
+.semantic-form .select-text-field__create-button:hover,
+.semantic-form .select-text-field__open-in-new-tab:hover,
+.semantic-form .semantic-form-tree-picker-input__create-button.btn-default:hover,
+.semantic-form .autocomplete-text-field__create-button:hover,
+.semantic-form .autocomplete-text-field__open-in-new-tab:hover,
+.semantic-form .SemanticTreeInput--browseButton.btn-default:hover {
+  color: var(--vf-accent);
+  background-color: var(--vf-subtle);
+}
+
+.semantic-form .select-text-field__create-button i,
+.semantic-form .semantic-form-tree-picker-input__create-button i,
+.semantic-form .autocomplete-text-field__create-button i {
+  font-size: 18px;
+}
+
+/* --- Multiple values (inputs/CardinalitySupport.ts) ------------------------ */
+
+/* "+ <field>" button. The platform draws a full-width grey block; here it is
+   a quiet inline action. The wrapper div is left unstyled. */
+.semantic-form .cardinality-support__add-value-btn,
+.semantic-form .cardinality-support__group-instance .cardinality-support__add-value-btn,
+.semantic-form .form-section .cardinality-support__add-value-btn {
+  width: auto;
+  min-width: 0;
+  padding: 4px 8px 4px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vf-accent);
+  background: transparent;
+  border: 0;
+  border-radius: var(--vf-radius);
+  box-shadow: none;
+}
+
+.semantic-form .cardinality-support__add-value-btn:hover,
+.semantic-form .cardinality-support__add-value-btn:focus {
+  color: var(--vf-accent-hover);
+  background: var(--vf-subtle);
+  box-shadow: none;
+}
+
+.semantic-form .cardinality-support__add-value-btn i {
+  font-size: 18px;
+  color: inherit;
+}
+
+.semantic-form .cardinality-support__add-value {
+  align-self: flex-start;
+}
+
+.semantic-form .cardinality-support__add-value--another {
+  margin-top: 4px;
+}
+
+.semantic-form .cardinality-support__single-instance + .cardinality-support__single-instance {
+  margin-top: 8px;
+}
+
+/* Remove (×) next to a single value. */
+.semantic-form .cardinality-support__single-instance > .cardinality-support__remove-value.btn-default {
+  margin-left: -1px;
+  color: var(--vf-muted);
+  background: #fff;
+  border-color: var(--vf-line);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.semantic-form .cardinality-support__single-instance > .cardinality-support__remove-value.btn-default:hover {
+  color: var(--vf-danger);
+}
+
+/* Repeated composite values (dates, relations, …): a light card. */
+.semantic-form .cardinality-support__group-instance {
+  padding: 16px;
+  background: var(--vf-subtle);
+  border: 1px solid var(--vf-line);
+  border-radius: 6px;
+}
+
+.semantic-form .cardinality-support__group-instance.cardinality-support_no-header {
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+.semantic-form .cardinality-support__group-instance > .cardinality-support__remove-value {
+  color: var(--vf-muted);
+}
+
+.semantic-form .cardinality-support__group-instance > .cardinality-support__remove-value:hover {
+  color: var(--vf-danger);
+}
+
+.semantic-form .cardinality-support__group-instance .semantic-form-input-decorator:first-child .semantic-form-input-decorator__header {
+  margin-top: 0;
+}
+
+/* --- Checkbox (inputs/CheckboxInput.tsx) ------------------------------------ */
+
+.semantic-form .semantic-form-checkbox-input__checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--vf-radius);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.semantic-form .semantic-form-checkbox-input__label:hover .semantic-form-checkbox-input__checkbox {
+  border-color: var(--vf-accent);
+}
+
+/* Platform draws a white square; use a tick instead. */
+.semantic-form .semantic-form-checkbox-input__input:checked ~ .semantic-form-checkbox-input__checkbox {
+  border-color: var(--vf-accent);
+}
+
+.semantic-form .semantic-form-checkbox-input__input:checked ~ .semantic-form-checkbox-input__checkbox::after {
+  top: 2px;
+  left: 5.5px;
+  width: 5px;
+  height: 10px;
+  background: none;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* --- Tabs (bs-tabs → ul.nav.nav-tabs) --------------------------------------- */
+
+.semantic-form .nav-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  border-bottom: 1px solid var(--vf-line);
+}
+
+.semantic-form .nav-tabs > li {
+  float: none;
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
+.semantic-form .nav-tabs > li > a {
+  margin: 0;
+  padding: 8px 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: var(--vf-muted);
+  background: none;
+  white-space: nowrap;
+}
+
+.semantic-form .nav-tabs > li > a:hover {
+  color: var(--vf-ink);
+  background: none;
+}
+
+.semantic-form .nav-tabs > li.active > a,
+.semantic-form .nav-tabs > li.active > a:hover,
+.semantic-form .nav-tabs > li.active > a:focus {
+  border: 0;
+  border-bottom: 2px solid var(--vf-accent);
+  color: var(--vf-accent);
+  background: none;
+}
+
+.semantic-form .nav-tabs > li.disabled > a {
+  color: #b8bcc3;
+  cursor: not-allowed;
+}
+
+/* --- Images panel (FormAssetSidebar.html in this repo) ---------------------
+   Uses platform classes from components/forms/forms.scss and
+   inputs/drop/DragAndDropInput.scss (CSS module → DragAndDropInput--*). */
+
+.semantic-form .form-details-assets-container .page__section-container {
+  background: #fff;
+  border: 1px solid var(--vf-line);
+  border-radius: 6px;
+}
+
+.semantic-form .form-tabs-subtabs-content--title {
+  border-bottom-color: var(--vf-line);
+}
+
+.semantic-form .dragAndDrop-input-container .DragAndDropInput--itemArea {
+  min-height: 72px;
+  border: 1px dashed var(--color-medium);
+  border-radius: 6px;
+  background: var(--vf-subtle);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.semantic-form .dragAndDrop-input-container .DragAndDropInput--itemArea:hover {
+  border-color: var(--vf-accent);
+  background: #fff;
+}
+
+.semantic-form .dragAndDrop-input-container .placeholder-item {
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.semantic-form .dragAndDrop-input-container .text-link {
+  color: var(--vf-accent);
+}
+
+/* Drop area while dragging (DropArea--*, components/dnd). */
+.semantic-form .dragAndDrop-input-container .DropArea--dropArea.mp-droppable-enabled {
+  border: 1px dashed var(--vf-accent);
+  border-radius: 6px;
+}
+
+.semantic-form .dragAndDrop-input-container .DropArea--dropArea.mp-droppable-enabled.mp-droppable-hover {
+  border-style: solid;
+  background: var(--vf-focus);
+}
+
+/* --- Errors -----------------------------------------------------------------
+   Per-field: div.semantic-form-validation-messages > div.__error--<kind>
+   (inputs/Decorations.tsx). Text inputs render their own messages inside
+   .plain-text-field; selects / pickers get them on the decorator.
+   kind: validation | input (editor can fix) · loading | configuration (not). */
+
+/* Label of a field with a fixable error. */
+.semantic-form .semantic-form-input-decorator:has(.semantic-form-validation-messages__error--validation, .semantic-form-validation-messages__error--input) > .semantic-form-input-decorator__header .semantic-form-input-decorator__label {
+  color: var(--vf-danger);
+}
+
+/* The control itself: text inputs … */
+.semantic-form .plain-text-field:has(> .semantic-form-validation-messages > .semantic-form-validation-messages__error--validation, > .semantic-form-validation-messages > .semantic-form-validation-messages__error--input) .plain-text-field__text,
+/* … and selects / tree pickers / dates (only direct values, not nested groups). */
+.semantic-form .semantic-form-input-decorator:has(> .semantic-form-validation-messages > .semantic-form-validation-messages__error--validation, > .semantic-form-validation-messages > .semantic-form-validation-messages__error--input) > .semantic-form-input-decorator__container > .semantic-form-input-decorator__input > .cardinality-support > .cardinality-support__single-instance :is(.form-control, .Select-control) {
+  border-color: var(--vf-danger);
+}
+
+/* Inline message under the field: plain text with an icon, no box. */
+.semantic-form .semantic-form-validation-messages__error {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--vf-danger);
+  background: none;
+  border: 0;
+}
+
+.semantic-form .semantic-form-validation-messages__error::before {
+  content: "!";
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  margin-top: 1px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  color: #fff;
+  background: var(--vf-danger);
+}
+
+/* Loading / configuration problems are not the editor's fault:
+   amber, with a hint on what to do. */
+.semantic-form .semantic-form-validation-messages__error--loading,
+.semantic-form .semantic-form-validation-messages__error--configuration {
+  color: var(--vf-warning);
+}
+
+.semantic-form .semantic-form-validation-messages__error--loading::before,
+.semantic-form .semantic-form-validation-messages__error--configuration::before {
+  background: var(--vf-warning);
+}
+
+.semantic-form .semantic-form-validation-messages__error--loading::after {
+  content: "Try reloading the frame.";
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+.semantic-form .semantic-form-validation-messages__error--configuration::after {
+  content: "Please report this to the VeNiss team.";
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+/* Summary (<semantic-form-errors>, static/FormErrors.tsx): kept in view at
+   the bottom of the scroll area so it is never below the fold on Save. */
+.semantic-form .semantic-form-errors__container {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  max-height: 40%;
+  overflow-y: auto;
+  margin-top: 16px;
+  padding: 12px 14px;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--vf-ink);
+  background: var(--vf-danger-bg);
+  border: 1px solid var(--vf-danger-line);
+  border-left: 3px solid var(--vf-danger);
+  border-radius: var(--vf-radius);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.semantic-form .semantic-form-errors__icon-container {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--vf-danger);
+}
+
+.semantic-form .semantic-form-errors__icon-container i {
+  font-size: 16px;
+  color: #fff;
+}
+
+/* The platform title is just "Errors"; say what to do instead. */
+.semantic-form .semantic-form-errors__error-title {
+  font-size: 0;
+  padding-bottom: 6px;
+}
+
+.semantic-form .semantic-form-errors__error-title::before {
+  content: "Please review the following before saving:";
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vf-danger);
+}
+
+.semantic-form .semantic-form-errors {
+  padding-left: 18px;
+}
+
+.semantic-form .semantic-form-errors__error {
+  padding: 2px 0;
+  color: var(--vf-ink);
+}
+
+.semantic-form .semantic-form-errors__error-source {
+  font-weight: 600;
+}
+
+.semantic-form .semantic-form-errors__error--loading,
+.semantic-form .semantic-form-errors__error--configuration {
+  color: var(--vf-warning);
+}
+
+/* --- Actions (rsp:FormDefaultActions / veniss_forms:Buttons) ---------------- */
+
+.semantic-form .btn-group:has(> .btn-form-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 0 !important;
+  padding: 12px 16px 12px 4px;
+  border-top: 1px solid var(--vf-line);
+  background: #fff;
+}
+
+.semantic-form .btn-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.semantic-form .btn-form-actions .btn {
+  margin: 0;
+  border-radius: var(--vf-radius);
+}
+
+.semantic-form .btn-form-actions .btn-default {
+  color: var(--vf-muted);
+  background: transparent;
+  border-color: var(--vf-line);
+}
+
+.semantic-form .btn-form-actions .btn-default:hover {
+  color: var(--vf-ink);
+  border-color: #c6cad1;
+}
+
+.semantic-form .btn-form-actions .btn-action,
+.semantic-form .btn-form-actions .btn-primary {
+  color: #fff;
+  background: var(--vf-accent);
+  border-color: var(--vf-accent);
+}
+
+.semantic-form .btn-form-actions .btn-action:hover,
+.semantic-form .btn-form-actions .btn-primary:hover {
+  background: var(--vf-accent-hover);
+  border-color: var(--vf-accent-hover);
+}
+
+.semantic-form .btn-form-actions .btn[disabled] {
+  opacity: 0.5;
+}
+
+@container veniss-form (max-width: 380px) {
+  .semantic-form .btn-form-actions {
+    width: 100%;
+  }
+
+  .semantic-form .btn-form-actions .btn {
+    flex: 1 1 auto;
+  }
+}

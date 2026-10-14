@@ -2,33 +2,135 @@
 <html>
   <head>
     <meta charset='utf-8'>
-    <title>{{deploymentTitle}} (not enough permissions)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{deploymentTitle}} · Sign in required</title>
     <link href="{{assetsMap.basic_styling}}" rel="stylesheet" title="Default Style">
+    <link rel="stylesheet" href="/assets/no_auth/login.css">
     <style>
+      /* This page is also injected into #application by the client when the
+         platform fails to start (anonymous visitor or account without a role),
+         so it must not rely on scripts and must stay self-contained. */
       body {
-        height: 100%!important;
-        padding-bottom: 0!important;
+        height: 100% !important;
+        padding-bottom: 0 !important;
+      }
+
+      .login-video-bg,
+      .video-overlay {
+        position: fixed;
+      }
+
+      .access-page {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        overflow: auto;
+        z-index: 1;
+      }
+
+      .access-card {
+        width: 100%;
+        max-width: 420px;
+        padding: 32px 28px 28px;
+        text-align: center;
+        color: #1f2933;
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 6px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+      }
+
+      .access-card__logo {
+        width: 160px;
+        height: auto;
+        margin-bottom: 20px;
+      }
+
+      .access-card__title {
+        margin: 0 0 10px;
+        font-size: 20px;
+        font-weight: 600;
+        color: #0c3146;
+      }
+
+      .access-card__text {
+        margin: 0 0 8px;
+        font-size: 14px;
+        line-height: 1.55;
+        color: #4b5563;
+      }
+
+      .access-card__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 22px;
+      }
+
+      .access-card__actions .btn {
+        padding: 9px 16px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .access-card__primary,
+      .access-card__primary:hover,
+      .access-card__primary:focus {
+        color: #fff;
+        background: #0c3146;
+        border-color: #0c3146;
+      }
+
+      .access-card__primary:hover {
+        background: #134a69;
+      }
+
+      .access-card__secondary {
+        color: #4b5563;
+        background: transparent;
+        border-color: #d5d8dd;
+      }
+
+      .access-card__hint {
+        margin: 18px 0 0;
+        padding-top: 14px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #6b7280;
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <div class="row" >
-        <div class="col-md-6 col-md-offset-3 text-center" style="margin-top:10vh;margin-bottom:5vh;">
-          <h1>{{deploymentTitle}}</h1>
-        </div>
-        <div class="col-md-4 col-md-offset-4">
+  <body class="login-body">
+    <video class="login-video-bg" autoplay muted loop playsinline>
+      <source src="/assets/no_auth/venezia-acqua-isole-2.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
 
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <div style='display: flex; align-items: center; flex-direction: column;'>
-                <div class='alert alert-danger'>Not enough permissions to access the system!</div>
-                <div><a href="/logout">logout</a></div>
-              </div>
-            </div>
-          </div>
+    <main class="access-page">
+      <div class="access-card" role="status">
+        <img class="access-card__logo" src="/assets/no_auth/logo.png" alt="{{deploymentTitle}}">
+
+        <h1 class="access-card__title">Please sign in to continue</h1>
+        <p class="access-card__text">
+          This part of {{deploymentTitle}} is reserved for project members.
+          Sign in with your {{deploymentTitle}} account to browse and edit
+          islands, buildings, people, events and sources.
+        </p>
+
+        <div class="access-card__actions">
+          <a class="btn access-card__primary" href="/login">Sign in</a>
+          <a class="btn access-card__secondary" href="/logout">Use a different account</a>
         </div>
+
+        <p class="access-card__hint">
+          Already signed in and still seeing this page? Your account has not
+          been given access yet — please ask a {{deploymentTitle}} administrator
+          to assign you a role.
+        </p>
       </div>
-    </div>
+    </main>
   </body>
 </html>

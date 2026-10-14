@@ -23,7 +23,9 @@ from rdflib.plugins.sparql.parser import parseQuery, parseUpdate
 ROOT = Path(__file__).resolve().parents[2]
 
 # Files that hold credentials and must never reach the repository.
-FORBIDDEN = ["config/repositories/default.ttl", ".env"]
+FORBIDDEN = ["config/repositories/default.ttl"]
+# File names that hold credentials wherever they are.
+FORBIDDEN_NAMES = [".env"]
 
 # utils/ holds generated Turtle snippets meant to be pasted into other files.
 RDF_SKIP_DIRS = ("utils",)
@@ -78,6 +80,9 @@ def check_forbidden(files):
     for path in FORBIDDEN:
         if path in names:
             error(path, "contains credentials and must not be committed (see .gitignore)")
+    for f in files:
+        if f.name in FORBIDDEN_NAMES:
+            error(f, "contains credentials and must not be committed (see .gitignore)")
 
 
 def check_rdf(path):

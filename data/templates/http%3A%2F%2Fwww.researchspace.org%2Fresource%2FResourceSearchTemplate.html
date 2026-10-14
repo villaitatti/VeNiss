@@ -722,9 +722,96 @@
               ></mp-event-proxy>
             {{/ifCond}}
 
+            [[!-- Keyword search. VeNiss entity configs (Primary/Secondary Sources, Person, Group, Event, Island, Builtwork) search at runtime:
+                 each subject's displayed fields are concatenated and every typed word must occur in them (substring,
+                 case-insensitive), so new and edited records are searchable immediately and the 15-minute
+                 search_term cron is no longer needed. All other configs keep the generic bds:search on ?label. --]]
             <div class="search-results-header-keyword">
               <semantic-search-query-keyword  domain='[[urlParam "resourceontologyclass" escape=false]]'
                                               query='SELECT ?subject WHERE { 
+                                                      {{#if (or
+                                                        (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Source_Primary")
+                                                        (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Person")
+                                                        (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Group")
+                                                        (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Event")
+                                                        (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Source_Secondary")
+                                                        (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Island")
+                                                        (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Builtwork")
+                                                      )}}
+                                                      { SELECT ?subject (GROUP_CONCAT(DISTINCT LCASE(STR(?label)); separator=" | ") AS ?hay) WHERE {
+                                                          ?subject a [[urlParam "resourceontologyclass" escape=false]] .
+                                                          [[#if (urlParam "resourcetype")]]
+                                                            ?subject crm:P2_has_type [[urlParam "resourcetype" escape=false]] .
+                                                          [[/if]]
+                                                          BIND(?subject as ?item) .
+                                                          [[#if (urlParam "resourcerestrictionpattern")]]
+                                                            [[urlParam "resourcerestrictionpattern" escape=false]]
+                                                          [[/if]]
+                                                          {{#if (or
+                                                            (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Person")
+                                                            (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Group")
+                                                          )}}
+                                                            MINUS {?subject crm:P2_has_type <http://www.researchspace.org/resource/system/vocab/resource_type/user> .}
+                                                          {{/if}}
+                                                          {{#if (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Source_Primary")}}
+                                                          { ?subject crm:P1_is_identified_by ?a . ?a crm:P2_has_type ?t ; rdfs:label ?label . VALUES ?t { veniss_types:attributed_title veniss_types:original_title } }
+                                                          UNION { ?subject rdfs:label ?label }
+                                                          UNION { ?subject veniss_ontology:has_island ?isl . ?isl crm:P1_is_identified_by ?a . ?a rdfs:label ?label }
+                                                          UNION { ?subject crm:P108i_was_produced_by ?p . ?p crm:P4_has_time-span ?ts . ?ts crm:P170i_time_is_defined_by ?tp .
+                                                                    ?tp crm:P2_has_type veniss_types:time_primitive_year ; rdfs:label ?label }
+                                                          UNION { ?subject crm:P53_has_former_or_current_location ?loc . ?loc crm:P53_has_former_or_current_location ?ref . ?ref crm:P46i_forms_part_of* ?coll .
+                                                                    { ?coll rdfs:label ?label } UNION { ?coll crm:P1_is_identified_by ?acr . ?acr crm:P2_has_type veniss_types:acronym ; rdfs:label ?label } }
+                                                          UNION { ?subject crm:P53_has_former_or_current_location ?loc . ?loc crm:P1_is_identified_by ?cn .
+                                                                    ?cn crm:P2_has_type <https://veniss.net/resource/vocab/information_carrier/name> ; rdfs:label ?label }
+                                                          UNION { ?subject crm:P53_has_former_or_current_location ?loc . ?loc crm:P2_has_type ?ct . ?ct rdfs:label ?label }
+                                                          UNION { ?subject crm:P53_has_former_or_current_location ?loc . ?loc crm:P46i_forms_part_of ?bib . ?bib rdfs:label ?label }
+                                                          UNION { ?subject crm:P108i_was_produced_by ?p . ?role crmpc:P01_has_domain ?p ; crmpc:P02_has_range ?actor .
+                                                                    ?actor crm:P1_is_identified_by ?an . ?an rdfs:label ?label }
+                                                          {{/if}}
+                                                          {{#if (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Person")}}
+                                                          { ?subject crm:P1_is_identified_by ?a . ?a rdfs:label ?label . FILTER NOT EXISTS { ?a crm:P2_has_type veniss_types:search_term } }
+                                                          UNION { ?subject rdfs:label ?label }
+                                                          UNION { ?subject crm:P98i_was_born|crm:P100i_died_in ?ev . ?ev crm:P4_has_time-span ?ts . ?ts crm:P170i_time_is_defined_by ?tp .
+                                                                    ?tp crm:P2_has_type veniss_types:time_primitive_year ; rdfs:label ?label }
+                                                          {{/if}}
+                                                          {{#if (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Group")}}
+                                                          { ?subject crm:P1_is_identified_by ?a . ?a rdfs:label ?label . FILTER NOT EXISTS { ?a crm:P2_has_type veniss_types:search_term } }
+                                                          UNION { ?subject rdfs:label ?label }
+                                                          UNION { ?subject crm:P95i_was_formed_by|crm:P99i_dissolved_by ?ev . ?ev crm:P4_has_time-span ?ts . ?ts crm:P170i_time_is_defined_by ?tp .
+                                                                    ?tp crm:P2_has_type veniss_types:time_primitive_year ; rdfs:label ?label }
+                                                          {{/if}}
+                                                          {{#if (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Event")}}
+                                                          { ?subject crm:P1_is_identified_by ?a . ?a rdfs:label ?label . FILTER NOT EXISTS { ?a crm:P2_has_type veniss_types:search_term } }
+                                                          UNION { ?subject rdfs:label ?label }
+                                                          UNION { ?subject veniss_ontology:has_island ?isl . { ?isl rdfs:label ?label } UNION { ?isl crm:P1_is_identified_by ?ia . ?ia rdfs:label ?label } }
+                                                          UNION { ?subject crm:P2_has_type ?ty . ?ty crm:P71i_is_listed_in <https://veniss.net/resource/vocab/event_types> ; rdfs:label ?label }
+                                                          UNION { ?subject crm:P4_has_time-span ?ts . ?ts crm:P170i_time_is_defined_by ?tp . ?tp crm:P2_has_type veniss_types:time_primitive_year ; rdfs:label ?label }
+                                                          {{/if}}
+                                                          {{#if (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Source_Secondary")}}
+                                                          { ?subject crm:P1_is_identified_by ?a . ?a rdfs:label ?label . FILTER NOT EXISTS { ?a crm:P2_has_type veniss_types:search_term } }
+                                                          UNION { ?subject rdfs:label ?label }
+                                                          UNION { ?subject veniss_ontology:has_broader ?br . ?br crm:P1_is_identified_by ?bt . ?bt crm:P2_has_type veniss_types:title ; rdfs:label ?label }
+                                                          UNION { ?subject crm:P129i_is_subject_of ?lo . ?lo crm:P94i_was_created_by ?cr . ?cr crm:P14_carried_out_by ?actor . ?actor rdfs:label ?label }
+                                                          UNION { ?subject frbroo:R24i_was_created_through ?pe . ?pe crm:P01i_is_domain_of ?r . ?r crmpc:P02_has_range ?actor . ?actor rdfs:label ?label }
+                                                          UNION { ?subject frbroo:R24i_was_created_through ?pe . ?pe crm:P7_took_place_at ?pl . ?pl rdfs:label ?label }
+                                                          UNION { ?subject frbroo:R24i_was_created_through ?pe . ?pe crm:P4_has_time-span ?ts . ?ts crm:P82a_begin_of_the_begin ?label }
+                                                          {{/if}}
+                                                          {{#if (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Island")}}
+                                                          { ?subject crm:P1_is_identified_by ?a . ?a rdfs:label ?label . FILTER NOT EXISTS { ?a crm:P2_has_type veniss_types:search_term } }
+                                                          UNION { ?subject rdfs:label ?label }
+                                                          {{/if}}
+                                                          {{#if (eq "[[urlParam "resourceconfig" escape=false]]" "http://www.researchspace.org/resource/system/resource_configurations_container/data/Builtwork")}}
+                                                          { ?subject crm:P1_is_identified_by ?a . ?a rdfs:label ?label . FILTER NOT EXISTS { ?a crm:P2_has_type veniss_types:search_term } }
+                                                          UNION { ?subject rdfs:label ?label }
+                                                          UNION { ?subject crm:P53_has_former_or_current_location ?isl . ?isl a veniss_ontology:Island .
+                                                                    { ?isl rdfs:label ?label } UNION { ?isl crm:P1_is_identified_by ?ia . ?ia rdfs:label ?label } }
+                                                          {{/if}}
+                                                        } GROUP BY ?subject }
+                                                      BIND(REPLACE(REPLACE(LCASE(?__token__), "[^\\p{L}\\p{N}]+", " "), "^ +| +$", "") AS ?words)
+                                                      BIND(CONCAT("^(?=.*", REPLACE(?words, " +", ")(?=.*"), ")") AS ?re)
+                                                      FILTER(REGEX(?hay, ?re, "s"))
+
+                                                      {{else}}
                                                       ?subject a [[urlParam "resourceontologyclass" escape=false]] .
                                                       
                                                       [[#if (urlParam "resourcetype")]] 
@@ -795,6 +882,7 @@
                                                         bds:minRelevance "0.0" ;
                                                         bds:matchAllTerms "true"  .
                                                       }
+                                                      {{/if}}
                                                     }'
     
                                                 default-query='SELECT ?subject WHERE { 

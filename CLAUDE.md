@@ -70,5 +70,5 @@ SQL-to-SPARQL bindings for all geospatial queries are defined as named services 
 ## Contribution Rules
 
 - `master` is protected on GitHub: direct pushes are rejected for everyone. All changes require a pull request.
-- Pushing any other branch runs `.github/workflows/ci.yml`; when the `validate` job passes it opens a PR to `master` titled `{branch}: vX.Y.Z` (version from `plugin.properties`).
+- Pushing any other branch runs `.github/workflows/ci.yml`; when the `validate` job passes it opens a PR to `master` titled `{branch}: vX.Y.Z` (version from `plugin.properties`), with the branch's commit messages as the description.
 - Run `python .github/scripts/validate.py` (needs `rdflib`) before pushing.

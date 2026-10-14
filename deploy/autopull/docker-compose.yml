@@ -1,0 +1,30 @@
+# Webhook listener for automatic deploys. See README.md.
+services:
+  veniss-autopull-listener:
+    build: .
+    container_name: veniss-autopull-listener
+    restart: unless-stopped
+    env_file: .env
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 64m
+    pids_limit: 32
+    volumes:
+      - /home/ubuntu/veniss-autopull/trigger:/trigger
+    networks:
+      - veniss-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.autopull.rule=(Host(`veniss.net`) || Host(`www.veniss.net`)) && Path(`/_hooks/deploy`)"
+      - "traefik.http.routers.autopull.entrypoints=websecure"
+      - "traefik.http.routers.autopull.tls.certresolver=cloudflareresolver"
+      - "traefik.http.routers.autopull.middlewares=autopull-ratelimit"
+      - "traefik.http.middlewares.autopull-ratelimit.ratelimit.average=10"
+      - "traefik.http.middlewares.autopull-ratelimit.ratelimit.period=1m"
+      - "traefik.http.middlewares.autopull-ratelimit.ratelimit.burst=5"
+      - "traefik.http.services.autopull.loadbalancer.server.port=9000"
+
+networks:
+  veniss-network:
+    external: true

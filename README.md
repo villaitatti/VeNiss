@@ -1,8 +1,38 @@
 # VeNiss
 
-## How to commit
+## ⚠️ How to contribute — read this first
 
-The **master** branch is read-only. PRs are needed to add new functionalities and resolve bugs. Every PR is meant to document the reason why we updated the system to the new version
+> **Never commit to `master`.** GitHub rejects direct pushes to `master`, for everyone (admins included). Every change goes through a branch → CI → pull request.
+
+1. **Branch off `master`**
+   ```bash
+   git checkout master && git pull
+   git checkout -b my-change
+   ```
+2. **Bump `plugin.version`** in `plugin.properties` (it becomes the PR title).
+3. **Validate locally** before pushing (same checks as CI):
+   ```bash
+   pip install rdflib
+   python .github/scripts/validate.py
+   ```
+4. **Push the branch**: `git push -u origin my-change`
+5. **CI runs automatically** (`.github/workflows/ci.yml`). If the `validate` check passes, CI **opens the pull request to `master` for you**, titled `{branch}: vX.Y.Z`. If it fails, fix the errors shown in the Actions log and push again.
+6. **Fill in the PR description**: explain *why* the system is being updated. Every PR documents the reason for the new version.
+7. **Merge** once `validate` is green. `master` only accepts merges whose check passed on an up-to-date branch.
+
+### What CI checks
+
+| Check | Fails on |
+|-------|----------|
+| Secrets | `config/repositories/default.ttl` or `.env` committed |
+| RDF | Turtle/TriG syntax errors in `config/` and `data/` (`.ttl`, `.trig`) |
+| SPARQL | Syntax errors in `.sparql` files |
+| Handlebars | Unbalanced `[[#…]]`/`[[/…]]` and `{{#…}}`/`{{/…}}` blocks in templates and page layouts |
+| Templates | Template file names that are not URL-encoded IRIs |
+| Python | Syntax errors in `utils/*.py` |
+| Properties | Malformed lines in `.prop`/`.properties` files |
+
+Unbalanced HTML tags in templates are reported as **warnings** (they do not fail the build). Review them anyway.
 
 ## Security
 

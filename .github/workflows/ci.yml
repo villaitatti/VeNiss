@@ -1,7 +1,8 @@
 name: CI
 
 # Every push to a branch other than master is validated. When validation
-# passes, a pull request to master is opened automatically (if none exists).
+# passes, a pull request to master is opened automatically (if none exists),
+# with the commit messages as its description.
 # master itself is protected: it only changes through reviewed pull requests
 # whose "validate" check is green.
 
@@ -51,8 +52,9 @@ jobs:
             exit 0
           fi
           version=$(sed -n 's/^plugin.version=//p' plugin.properties)
+          git log --reverse --no-merges --format='### %s%n%n%b' origin/master..HEAD > "$RUNNER_TEMP/pr-body.md"
           gh pr create \
             --base master \
             --head "$BRANCH" \
             --title "$BRANCH: v$version" \
-            --body-file .github/pull_request_template.md
+            --body-file "$RUNNER_TEMP/pr-body.md"

@@ -17,7 +17,7 @@
    ```
 4. **Push the branch**: `git push -u origin my-change`
 5. **CI runs automatically** (`.github/workflows/ci.yml`). If the `validate` check passes, CI **opens the pull request to `master` for you**, titled `{branch}: vX.Y.Z`. If it fails, fix the errors shown in the Actions log and push again.
-6. **Fill in the PR description**: explain *why* the system is being updated. Every PR documents the reason for the new version.
+6. **The PR description is built from your commit messages**, so write *why* the system is being updated in the commit body. Every PR documents the reason for the new version.
 7. **Merge** once `validate` is green. `master` only accepts merges whose check passed on an up-to-date branch.
 
 ### What CI checks

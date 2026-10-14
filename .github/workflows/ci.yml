@@ -1,0 +1,58 @@
+name: CI
+
+# Every push to a branch other than master is validated. When validation
+# passes, a pull request to master is opened automatically (if none exists).
+# master itself is protected: it only changes through reviewed pull requests
+# whose "validate" check is green.
+
+on:
+  push:
+    branches-ignore: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install rdflib==7.6.0
+      - run: python .github/scripts/validate.py
+
+  open-pr:
+    needs: validate
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BRANCH: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Open a pull request to master
+        run: |
+          if [ "$(git rev-list --count origin/master..HEAD)" = "0" ]; then
+            echo "No commits ahead of master, nothing to open."
+            exit 0
+          fi
+          if [ -n "$(gh pr list --head "$BRANCH" --base master --state open --json number --jq '.[].number')" ]; then
+            echo "A pull request for $BRANCH already exists."
+            exit 0
+          fi
+          version=$(sed -n 's/^plugin.version=//p' plugin.properties)
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "$BRANCH: v$version" \
+            --body-file .github/pull_request_template.md

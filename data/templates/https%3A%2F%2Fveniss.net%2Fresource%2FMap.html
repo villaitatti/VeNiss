@@ -2,8 +2,6 @@
     <semantic-map-advanced
             id="search-map"
             year-filtering="true"
-            cesium-asset-urls='https://veniss.net/proxy/xdtiler3d/tiles/ifc/LZV/manifest_compat.json'
-            cesium-asset-temporal='{}'
             target-controls='["search-map-control"]'
             tiles-layers-query='
                 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -394,6 +392,79 @@
                 location=""
                 year="2022">
             </tiles-layer>
+
+            <!-- 3D buildings, following the timeline.
+
+                 The manifest lists every modelled geometry of a building, keyed by `code`
+                 (LZV_BLDG_1.A, .B …: same letter = identical geometry) and grouped by `root_id`,
+                 each with the survey years it was observed in; the platform loads each geometry
+                 once and shows, per building, the one observed most recently before the year.
+
+                 Existence comes from the 2D phases in the graph, whose dates do not line up with
+                 the surveys: before a building's first survey, or for buildings never modelled in
+                 3D, its 2D footprint is extruded as a grey placeholder. Phase ids are hierarchical
+                 (LZV_BLDG_15.2 belongs to LZV_BLDG_15), but some phases were modelled as groups of
+                 their own (LZV_BLDG_15.1), so an exact id always wins over its prefix.
+
+                 height_offset (44 m) is a geoid correction: the models sit at orthometric height,
+                 while the historical maps are draped on the ellipsoid at 0 and the scene has no
+                 terrain. Applying it would float the buildings ~45 m above the maps, so it is not.
+
+                 Only Lazzaretto Vecchio for now. Island codes are not data on the Island entity,
+                 but STRBEFORE(?bw_id, "_BLDG_") recovers them from the 2D representations, so a
+                 manifest-query can list every island's manifest when the others are ready.
+
+                 Inside the geosql SERVICE the variables must keep the names the service declares
+                 (?wkt, ?bw_id): the SQL sail binds columns by name, and renaming them fails with an
+                 empty HTTP 500. They are renamed with BIND afterwards. -->
+            <tileset-3d-source
+                manifest-url="/proxy/xdtiler3d/tiles/ifc/LZV/manifest_compat.json"
+                sections="buildings"
+                id-field="code"
+                group-field="root_id"
+                year-field="phase_year"
+                base-url="/proxy/xdtiler3d/tiles/"
+                url-template="{base}{path}/tileset.json"
+                identifier-separator="."
+                before-first-observation="placeholder"
+                unmatched-identifiers="placeholder"
+                placeholder-height="8"
+                placeholder-color="rgba(120, 120, 120, 0.35)"
+                footprint-crs="EPSG:3857"
+                temporal-query="
+                    PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    PREFIX veniss_sql: <http://www.researchspace.org/resource/system/service/veniss_sql#>
+                    PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
+
+                    SELECT DISTINCT ?identifier ?start ?end ?footprint ?tileset WHERE {
+                        SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                            ?root rs_sql_sail:hasQueryId 'production';
+                                veniss_sql:minX '1358358';
+                                veniss_sql:minY '5681238';
+                                veniss_sql:maxX '1385414';
+                                veniss_sql:maxY '5705635';
+                                veniss_sql:wkt ?wkt;
+                                veniss_sql:bw_id ?bw_id.
+                        }
+                        FILTER(STRSTARTS(STR(?bw_id), 'LZV_BLDG_'))
+                        ?representation crm:P2_has_type <https://veniss.net/ontology#2d_representation> ;
+                                        rdfs:label ?bw_id .
+                        ?phase crm:P138i_has_representation ?representation ;
+                               crm:P4_has_time-span ?timespan .
+                        OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?start }
+                        OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end }
+                        # The phase's own 3D Representation field, when curators fill it in,
+                        # pins that phase to a specific model and overrides the survey years.
+                        OPTIONAL {
+                            ?phase crm:P138i_has_representation ?representation3d .
+                            ?representation3d crm:P2_has_type <https://veniss.net/ontology#3d_representation> ;
+                                              rdfs:label ?tileset .
+                        }
+                        BIND(STR(?bw_id) AS ?identifier)
+                        BIND(?wkt AS ?footprint)
+                    }">
+            </tileset-3d-source>
     </semantic-map-advanced>
 </div>
 

@@ -90,3 +90,141 @@ div.left-column {
   padding-top: 10px;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
+
+/* --- Homepage statistics (veniss:Home) --------------------------------------
+   Sits in the platform's .homepage-project-summary column
+   (styling/_homepage.scss); the tabs fill the column like #projectTabs. */
+
+.veniss-stats__header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.veniss-stats__subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.veniss-stats #statsTabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.veniss-stats #statsTabs .tab-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.veniss-stats #statsTabs .tab-pane {
+  height: 100%;
+}
+
+.veniss-stats__panel {
+  height: 100%;
+  padding: 16px 0 24px;
+  overflow-y: auto;
+}
+
+.veniss-stats__chart {
+  position: relative;
+  min-height: 320px;
+}
+
+.veniss-stats__chart .semantic-chart,
+.veniss-stats__chart > * {
+  height: 100%;
+}
+
+.veniss-stats__table table {
+  width: 100%;
+}
+
+.veniss-stats__table th:nth-child(2),
+.veniss-stats__table td:nth-child(2) {
+  width: 110px;
+  text-align: right;
+}
+
+.veniss-stats__table th:nth-child(3),
+.veniss-stats__table td:nth-child(3) {
+  width: 40%;
+}
+
+.veniss-stats__category {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.veniss-stats__swatch {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.veniss-stats__count {
+  font-variant-numeric: tabular-nums;
+}
+
+.veniss-stats__share {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.veniss-stats__bar {
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #eef0f2;
+}
+
+.veniss-stats__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+}
+
+.veniss-stats__percent {
+  flex: 0 0 48px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.veniss-stats__empty {
+  height: 100%;
+  margin: 0;
+  padding: 40px 20px;
+}
+
+/* Narrow frame: drop the share bar, keep the percentage. */
+@container homepage-container (width <= 600px) {
+  .veniss-stats__bar {
+    display: none;
+  }
+
+  .veniss-stats__table th:nth-child(3),
+  .veniss-stats__table td:nth-child(3) {
+    width: 70px;
+  }
+}
+
+.veniss-stats__total {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0c3146;
+  background: #f6f1e1;
+}

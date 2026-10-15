@@ -228,3 +228,10 @@ div.left-column {
   color: #0c3146;
   background: #f6f1e1;
 }
+
+/* Finder: resource labels on their category color (veniss:CategoryPalette);
+   colors are set inline by the rsp:Finder override. */
+.veniss-finder__label {
+  padding: 1px 8px;
+  border-radius: 10px;
+}

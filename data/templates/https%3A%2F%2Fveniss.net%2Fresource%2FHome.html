@@ -94,7 +94,7 @@
                   <span class="veniss-stats__total">{{bindings.0.total.value}} entries</span>
                 </template>
               </semantic-query>
-              <span class="veniss-stats__subtitle">across islands, buildings, events, people, sources and images</span>
+              <span class="veniss-stats__subtitle">across islands, buildings, events, people, sources and relations</span>
             </div>
 
             <bs-tabs id="statsTabs" default-active-key="table" unmount-on-exit=true>
@@ -139,12 +139,12 @@
                                   type="bar"
                                   query='[[> statsQuery]]'
                                   sets='[{"dataSetName": "Entries", "category": "category", "value": "entries"}]'
-                                  [[!-- The bar renderer ignores the "color" mapping; same palette as statsCategories, in ?order. --]]
+                                  [[!-- The bar renderer ignores the "color" mapping; same palette as veniss:CategoryPalette, in ?order. --]]
                                   styles='[{"provider": "chartjs", "style": {
                                     "options": {"legend": {"display": false}},
                                     "data": {"datasets": [{
-                                      "backgroundColor": ["#0c3146", "#2e5f7a", "#b48f49", "#cfab67", "#8a6d35", "#4f8a8b", "#9bc1bc", "#6b7c93", "#c97b63", "#a3a9b3"],
-                                      "borderColor": ["#0c3146", "#2e5f7a", "#b48f49", "#cfab67", "#8a6d35", "#4f8a8b", "#9bc1bc", "#6b7c93", "#c97b63", "#a3a9b3"]
+                                      "backgroundColor": ["#0c3146", "#2e5f7a", "#b48f49", "#cfab67", "#8a6d35", "#4f8a8b", "#9bc1bc", "#c97b63"],
+                                      "borderColor": ["#0c3146", "#2e5f7a", "#b48f49", "#cfab67", "#8a6d35", "#4f8a8b", "#9bc1bc", "#c97b63"]
                                     }]}
                                   }}]'
                                   no-result-template='{{> noResults}}'>
@@ -374,23 +374,9 @@
   </template>
 </mp-event-target-template-render>
 
-[[!-- Categories counted on the homepage: one VALUES row per class; rows sharing
-      an ?order are merged (e.g. both primary-source classes). --]]
+[[!-- Categories counted on the homepage: see veniss:CategoryPalette. --]]
 [[#*inline "statsCategories"]]
-VALUES (?order ?category ?color ?type) {
-  (1  "Islands"           "#0c3146" <https://veniss.net/ontology#Island>)
-  (2  "Buildings"         "#2e5f7a" <https://veniss.net/ontology#Building>)
-  (3  "Events"            "#b48f49" <https://veniss.net/ontology#Event>)
-  (4  "Persons"           "#cfab67" <https://veniss.net/ontology#Person>)
-  (5  "Groups"            "#8a6d35" <https://veniss.net/ontology#Group>)
-  (6  "Primary sources"   "#4f8a8b" <https://veniss.net/ontology#Source_Primary>)
-  (6  "Primary sources"   "#4f8a8b" <https://veniss.net/ontology#Primary_Source>)
-  (7  "Secondary sources" "#9bc1bc" <http://iflastandards.info/ns/fr/frbr/frbroo/F24_Publication_Expression>)
-  (7  "Secondary sources" "#9bc1bc" <https://veniss.net/ontology#Source_Secondary>)
-  (8  "Archival units"    "#6b7c93" <http://www.cidoc-crm.org/cidoc-crm/E78_Collection>)
-  (9  "Relations"         "#c97b63" <https://veniss.net/ontology#Relation>)
-  (10 "Images"            "#a3a9b3" <http://www.researchspace.org/ontology/EX_Digital_Image>)
-}
+[[> veniss:CategoryPalette]]
 [[/inline]]
 
 [[#*inline "statsQuery"]]

@@ -237,6 +237,7 @@
               <bs-row>
                 <!-- Subject -->
                 <bs-col md="6" sm="12">
+                  {{!-- #308: search only the activity branch, like the browse tree; the KP searchQuery matched every label in the store. --}}
                   <div id="person_occupation_subject">
                     <semantic-form-tree-picker-input
                       scheme-page-button-config='{
@@ -246,6 +247,13 @@
                         "tooltip": "Open list of terms"
                       }'
                       nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Actor nested=true editable=true mode="new" broader="https://veniss.net/resource/vocab/actor_types/7a60b95e-74b2-11ee-a7ed-3a5becfe4abe" }}{{{{/raw}}}}'
+                      tree-patterns='{
+                        "type": "full",
+                        "rootsQuery": "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rso: <http://www.researchspace.org/ontology/> PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> SELECT DISTINCT ?item ?label ?hasChildren WHERE { ?item skos:broader <https://veniss.net/resource/vocab/actor_types/7a60b95e-74b2-11ee-a7ed-3a5becfe4abe>; crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types>. ?item (rso:displayLabel|rdfs:label|skos:prefLabel) ?label. OPTIONAL { ?child skos:broader ?item. } BIND(BOUND(?child) AS ?hasChildren) } ORDER BY (LCASE(STR(?label)))",
+                        "childrenQuery": "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rso: <http://www.researchspace.org/ontology/> PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> SELECT DISTINCT ?item ?label ?hasChildren WHERE { ?item skos:broader ?parent; crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types>. ?item (rso:displayLabel|rdfs:label|skos:prefLabel) ?label. OPTIONAL { ?child skos:broader ?item. } BIND(BOUND(?child) AS ?hasChildren) } ORDER BY (LCASE(STR(?label)))",
+                        "parentsQuery": "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rso: <http://www.researchspace.org/ontology/> PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> SELECT DISTINCT ?item ?parent ?parentLabel WHERE { ?item skos:broader ?parent. ?parent (rso:displayLabel|rdfs:label|skos:prefLabel) ?parentLabel. }",
+                        "searchQuery": "PREFIX bds: <http://www.bigdata.com/rdf/search#> PREFIX skos: <http://www.w3.org/2004/02/skos/core#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rso: <http://www.researchspace.org/ontology/> PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/> SELECT DISTINCT ?item ?label ?score ?hasChildren WHERE { ?item (rso:displayLabel|rdfs:label|skos:prefLabel) ?label. ?label bds:search ?__token__; bds:minRelevance \"0.3\"; bds:relevance ?score; bds:matchAllTerms \"true\". ?item skos:broader+ <https://veniss.net/resource/vocab/actor_types/7a60b95e-74b2-11ee-a7ed-3a5becfe4abe>; crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types>. OPTIONAL { ?child skos:broader ?item. } BIND(BOUND(?child) AS ?hasChildren) } ORDER BY DESC(?score) (?label) LIMIT 200"
+                      }'
                       for='person_occupation_subject'
                       label="Activity" 
                       placeholder="Choose the activity ..." 

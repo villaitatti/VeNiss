@@ -1628,6 +1628,8 @@
                                   {{/if}}
                                 </template>
                             </mp-sparql-result-counts>
+                            {{!-- #304: the options open the list sorted by its date column (the one whose resource-config
+                                  title names a date). Filters re-run the query and remount the table, so the sort applies again. --}}
                             <semantic-table id='semantic-search-result-list'
                                             class-name="table-fixed-header table-scrollable-content table-expanded search-table-container
                                             {{#if (or (eq '[[urlParam 'resourceconfig' escape=false]]' 'http://www.researchspace.org/resource/system/resource_configurations_container/data/Set')
@@ -1746,11 +1748,18 @@
                                                     {{/if}}
                                                   } '
     
-                                            options='{"showFilter":false, 
+                                            options='{"showFilter":false,
                                                       "resultsPerPage":30,
                                                       "useFixedHeader":true,
+                                                      {{#if (or (eq bindings.0.columnTitle2.value "Date") (eq bindings.0.columnTitle2.value "Dates") (eq bindings.0.columnTitle2.value "Publication date") (eq bindings.0.columnTitle2.value "Construction") (eq bindings.0.columnTitle2.value "Formation"))}}
+                                                      "initialSort": "column2Value", "initialSortAscending": true,
+                                                      {{else}}{{#if (or (eq bindings.0.columnTitle3.value "Date") (eq bindings.0.columnTitle3.value "Dates") (eq bindings.0.columnTitle3.value "Publication date") (eq bindings.0.columnTitle3.value "Construction") (eq bindings.0.columnTitle3.value "Formation"))}}
+                                                      "initialSort": "column3Value", "initialSortAscending": true,
+                                                      {{else}}{{#if (or (eq bindings.0.columnTitle4.value "Date") (eq bindings.0.columnTitle4.value "Dates") (eq bindings.0.columnTitle4.value "Publication date") (eq bindings.0.columnTitle4.value "Construction") (eq bindings.0.columnTitle4.value "Formation"))}}
+                                                      "initialSort": "column4Value", "initialSortAscending": true,
+                                                      {{/if}}{{/if}}{{/if}}
                                                       "enableSort": true
-                                                     }' 
+                                                     }'
 
                                             column-configuration='[
                                                                     {"variableName": "subject", "displayName": "", "cellTemplate": "{{> selectionCheckbox}}" },

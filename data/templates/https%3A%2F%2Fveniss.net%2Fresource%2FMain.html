@@ -173,7 +173,14 @@
                     xsd:double(STR(?lat)) >= xsd:double(STR(?__minLat__)) &&
                     xsd:double(STR(?lat)) <= xsd:double(STR(?__maxLat__))
                   )'>
-                <template id='row'>[[> veniss:RelatedRow]]</template>
+                <!-- Events get their own row (#318): no event has a main image, so the thumbnail
+                     slot only ever showed the fallback icon, and titles are long (most over 80
+                     characters). The component fixes rows at 64px, which fits three lines. -->
+                <template id='row'>
+                  <span style="display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; line-height:1.25;">
+                    <mp-label iri='{{entity.value}}'></mp-label>
+                  </span>
+                </template>
                 <template id='detail'>[[> veniss:RelatedDetail]]</template>
               </related-entities-class>
 

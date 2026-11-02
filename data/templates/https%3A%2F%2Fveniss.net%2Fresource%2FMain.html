@@ -62,6 +62,9 @@
 
         <semantic-search-result-holder>
           <div id="mapNavigatorRow">
+            <!-- #315: time-filter-mode="exact" shows a historical map only in the year it was made,
+                 both for "Sync with time" and for "Filter by time". With "snapshot" a map stayed
+                 on until the next one, decades later. "Snap to map years" lands the slider on them. -->
             <semantic-map-controls
             id="search-map-control"
             target-map-id="search-map"
@@ -89,7 +92,7 @@
             sync-filter-label="Sync with time"
             snap-filter-default="true"
             snap-filter-label="Snap to map years"
-            time-filter-mode="snapshot"
+            time-filter-mode="exact"
             related-min-zoom="15"
             timeline='{
               "min":1500,

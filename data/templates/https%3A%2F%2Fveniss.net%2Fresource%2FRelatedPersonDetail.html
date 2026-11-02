@@ -1,0 +1,142 @@
+<!-- Detail card for the People tab of the map's related-entities feed (#319).
+
+     Facts follow the person KPs: dates from the birth/death time_primitive_year, title from
+     person_title, occupation from person_search_occupation. Entries are what the person authored
+     or is the range of a veniss relation with; they are split on ?islands, the islands
+     in view that the People query projects. With the spatial filter off it is empty, so every
+     entry goes under "Entries". -->
+<div class="related-card">
+  <h4 class="related-card__title"><mp-label iri='{{entity.value}}'></mp-label></h4>
+
+  <semantic-query query='
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+      PREFIX frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/>
+
+      SELECT ?born ?died ?titles ?occupations WHERE {
+        {
+          SELECT (SAMPLE(?_born) AS ?born) (SAMPLE(?_died) AS ?died)
+                 (GROUP_CONCAT(DISTINCT ?_title; separator=", ") AS ?titles)
+                 (GROUP_CONCAT(DISTINCT ?_occupation; separator=", ") AS ?occupations)
+          WHERE {
+            VALUES ?person { <{{entity.value}}> }
+            OPTIONAL {
+              ?person crm:P98i_was_born/crm:P4_has_time-span/crm:P170i_time_is_defined_by ?b .
+              ?b crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ; rdfs:label ?_born
+            }
+            OPTIONAL {
+              ?person crm:P100i_died_in/crm:P4_has_time-span/crm:P170i_time_is_defined_by ?d .
+              ?d crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ; rdfs:label ?_died
+            }
+            OPTIONAL {
+              ?person crm:P1_is_identified_by ?t . ?t crm:P2_has_type ?title_type .
+              ?title_type crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types> ;
+                          skos:broader <https://veniss.net/resource/vocab/actor_types/7a5d96c0-74b2-11ee-a7ed-3a5becfe4abe> ;
+                          rdfs:label ?_title .
+              FILTER(LANG(?_title) = "en" || LANG(?_title) = "")
+            }
+            OPTIONAL {
+              ?person crm:P14i_performed/frbroo:R59_had_typical_subject ?occupation .
+              ?occupation crm:P71i_is_listed_in <https://veniss.net/resource/vocab/actor_types> ;
+                          skos:broader <https://veniss.net/resource/vocab/actor_types/7a60b95e-74b2-11ee-a7ed-3a5becfe4abe> ;
+                          rdfs:label ?_occupation .
+              FILTER(LANG(?_occupation) = "en" || LANG(?_occupation) = "")
+            }
+          }
+        }
+      }'
+    template='{{> facts}}'>
+    <template id='facts'>
+      {{#each bindings}}
+        <dl class="related-card__facts">
+          {{#if (or born.value died.value)}}<dt>Dates</dt><dd>{{born.value}}–{{died.value}}</dd>{{/if}}
+          {{#if titles.value}}<dt>Title</dt><dd>{{titles.value}}</dd>{{/if}}
+          {{#if occupations.value}}<dt>Occupation</dt><dd>{{occupations.value}}</dd>{{/if}}
+        </dl>
+      {{/each}}
+    </template>
+  </semantic-query>
+
+  <!-- Entries on the islands in view. -->
+  <semantic-query query='
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+      PREFIX crmpc: <http://www.cidoc-crm.org/crmpc/>
+      PREFIX veniss_ontology: <https://veniss.net/ontology#>
+
+      SELECT ?entry (GROUP_CONCAT(DISTINCT ?_role; separator=", ") AS ?roles) (SAMPLE(?_place) AS ?place) WHERE {
+        VALUES ?person { <{{entity.value}}> }
+        {
+          ?person veniss_ontology:is_range_of ?relation .
+          ?relation veniss_ontology:has_domain ?entry .
+          OPTIONAL { ?relation rdfs:label ?_role }
+        } UNION {
+          ?actor_role crmpc:P02_has_range ?person ; crmpc:P01_has_domain ?production .
+          ?entry crm:P108i_was_produced_by ?production .
+          BIND("Author" AS ?_role)
+        }
+        ?entry veniss_ontology:has_island ?island .
+        OPTIONAL { ?island crm:P1_is_identified_by ?island_name . ?island_name rdfs:label ?_place }
+        BIND(IF("{{islands.value}}" = "" || CONTAINS("{{islands.value}}", STR(?island)), 1, 0) AS ?_here)
+      }
+      GROUP BY ?entry
+      HAVING (MAX(?_here) = 1)
+      ORDER BY ?place'
+    template='{{> entries}}'>
+    <template id='entries'>
+      <p class="related-card__section">Entries</p>
+      <ul class="related-card__entries">
+        {{#each bindings}}
+          <li>
+            <semantic-link iri='{{entry.value}}'><mp-label iri='{{entry.value}}'></mp-label></semantic-link>
+            {{#if roles.value}}<span class="related-card__role"> · {{roles.value}}</span>{{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    </template>
+  </semantic-query>
+
+  <!-- See also: the same person's entries on other islands. -->
+  <semantic-query query='
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+      PREFIX crmpc: <http://www.cidoc-crm.org/crmpc/>
+      PREFIX veniss_ontology: <https://veniss.net/ontology#>
+
+      SELECT ?entry (GROUP_CONCAT(DISTINCT ?_role; separator=", ") AS ?roles) (SAMPLE(?_place) AS ?place) WHERE {
+        VALUES ?person { <{{entity.value}}> }
+        {
+          ?person veniss_ontology:is_range_of ?relation .
+          ?relation veniss_ontology:has_domain ?entry .
+          OPTIONAL { ?relation rdfs:label ?_role }
+        } UNION {
+          ?actor_role crmpc:P02_has_range ?person ; crmpc:P01_has_domain ?production .
+          ?entry crm:P108i_was_produced_by ?production .
+          BIND("Author" AS ?_role)
+        }
+        ?entry veniss_ontology:has_island ?island .
+        OPTIONAL { ?island crm:P1_is_identified_by ?island_name . ?island_name rdfs:label ?_place }
+        BIND(IF("{{islands.value}}" = "" || CONTAINS("{{islands.value}}", STR(?island)), 1, 0) AS ?_here)
+      }
+      GROUP BY ?entry
+      HAVING (MAX(?_here) = 0)
+      ORDER BY ?place'
+    template='{{> entries}}'>
+    <template id='entries'>
+      <p class="related-card__section">See also</p>
+      <ul class="related-card__entries">
+        {{#each bindings}}
+          <li>
+            <semantic-link iri='{{entry.value}}'><mp-label iri='{{entry.value}}'></mp-label></semantic-link>
+            {{#if place.value}}<span class="related-card__place"> · {{place.value}}</span>{{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    </template>
+  </semantic-query>
+
+  <p class="related-card__link">
+    <semantic-link iri='{{entity.value}}'>Open full record</semantic-link>
+  </p>
+</div>

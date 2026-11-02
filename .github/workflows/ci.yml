@@ -51,10 +51,11 @@ jobs:
             echo "A pull request for $BRANCH already exists."
             exit 0
           fi
-          version=$(sed -n 's/^plugin.version=//p' plugin.properties)
+          # Title: the subject of the branch's first commit.
+          title=$(git log --reverse --no-merges --format='%s' origin/master..HEAD | head -n 1)
           git log --reverse --no-merges --format='### %s%n%n%b' origin/master..HEAD > "$RUNNER_TEMP/pr-body.md"
           gh pr create \
             --base master \
             --head "$BRANCH" \
-            --title "$BRANCH: v$version" \
+            --title "${title:-$BRANCH}" \
             --body-file "$RUNNER_TEMP/pr-body.md"

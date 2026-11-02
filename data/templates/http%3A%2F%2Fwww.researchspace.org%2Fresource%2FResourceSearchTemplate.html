@@ -1780,6 +1780,8 @@
                               <template id='column1'>
                                 <div>
                                   <div style="display: flex; align-items: center; gap: 15px;"> 
+                                    {{!-- #318: events have no images, so no thumbnail; their long titles get two lines below --}}
+                                    {{#unless (eq bindings.0.resourceConfig.value "http://www.researchspace.org/resource/system/resource_configurations_container/data/Event")}}
                                     <mp-overlay-dialog  id="{{iri.value}}-resource-preview-dialog"  
                                                         type="modal" 
                                                         class="modal-xlSize preview_modal"
@@ -1822,6 +1824,7 @@
                                         </inline-template> 
                                       </mp-overlay-dialog-content>
                                     </mp-overlay-dialog>
+                                    {{/unless}}
                                     <div>
                                       <mp-draggable iri='{{iri.value}}'>
                                         <div>
@@ -1865,7 +1868,11 @@
                                             <semantic-link  iri='http://www.researchspace.org/resource/ThinkingFrames'
                                                             urlqueryparam-view='{{#if (eq bindings.0.resourceConfig.value "http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_narrative")}}semantic-narrative{{else}}resource-editor{{/if}}'
                                                             urlqueryparam-resource='{{iri.value}}'>
-                                              <mp-label iri='{{iri.value}}' class="text-link text-truncate-line1"></mp-label>
+                                              {{#if (eq bindings.0.resourceConfig.value "http://www.researchspace.org/resource/system/resource_configurations_container/data/Event")}}
+                                                <mp-label iri='{{iri.value}}' class="text-link text-truncate-line1" style="-webkit-line-clamp: 2; word-break: normal;"></mp-label>
+                                              {{else}}
+                                                <mp-label iri='{{iri.value}}' class="text-link text-truncate-line1"></mp-label>
+                                              {{/if}}
                                             </semantic-link>
                                           {{/if}}
                                         </div>
@@ -2226,6 +2233,8 @@
                                 <div>
                                   <div style="display: flex; align-items: center; gap: 15px;">                                 
                                     
+                                    {{!-- #318: events have no images, so no thumbnail; their long titles get two lines below --}}
+                                    {{#unless (eq resourceConfig.value "http://www.researchspace.org/resource/system/resource_configurations_container/data/Event")}}
                                     <mp-overlay-dialog  id="{{iri.value}}-resource-preview-dialog"  
                                                         type="modal" 
                                                         class="modal-xlSize preview_modal"
@@ -2268,6 +2277,7 @@
                                         </inline-template> 
                                       </mp-overlay-dialog-content>
                                     </mp-overlay-dialog>
+                                    {{/unless}}
                                     <div>
                                       <mp-draggable iri='{{iri.value}}'>
                                         <div>
@@ -2311,7 +2321,11 @@
                                             <semantic-link  iri='http://www.researchspace.org/resource/ThinkingFrames'
                                                             urlqueryparam-view='{{#if (eq resourceConfig.value "http://www.researchspace.org/resource/system/resource_configurations_container/data/Semantic_narrative")}}semantic-narrative{{else}}resource-editor{{/if}}'
                                                             urlqueryparam-resource='{{iri.value}}'>
-                                              <mp-label iri='{{iri.value}}' class="text-link text-truncate-line1"></mp-label>
+                                              {{#if (eq resourceConfig.value "http://www.researchspace.org/resource/system/resource_configurations_container/data/Event")}}
+                                                <mp-label iri='{{iri.value}}' class="text-link text-truncate-line1" style="-webkit-line-clamp: 2; word-break: normal;"></mp-label>
+                                              {{else}}
+                                                <mp-label iri='{{iri.value}}' class="text-link text-truncate-line1"></mp-label>
+                                              {{/if}}
                                             </semantic-link>
                                           {{/if}}
                                         </div>

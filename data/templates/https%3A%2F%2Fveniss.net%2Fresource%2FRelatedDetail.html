@@ -6,6 +6,16 @@
      has_typology, has_island and P67i_is_referred_to_by near the top, while crm:P3_has_note,
      the obvious guess for a description, appears on almost nothing.
 
+     Field order and names follow #316: Object type, Date, Author, Location/Reference, Materials
+     and techniques, Dimensions, then the synopsis. Island is left out, the map zoom already says
+     where we are.
+     - Author (#317): one name per author, built from the given and family name appellations
+       (the appellation type for groups), with life dates from the birth and death years. Joining
+       every appellation label printed the family name twice, once more inside the search term.
+     - Location/Reference: the archival entity's path appellation, which already carries the
+       whole hierarchy, followed by the shelfmark on the source's own location node.
+     - Materials and techniques: P32 on the production, English label preferred.
+
      To give one class a card of its own, replace its <template id='detail'> in veniss:Main. -->
 <div class="related-card">
   <h4 class="related-card__title"><mp-label iri='{{entity.value}}'></mp-label></h4>
@@ -19,20 +29,22 @@
       PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
       PREFIX crmpc: <http://www.cidoc-crm.org/crmpc/>
       PREFIX veniss_ontology: <https://veniss.net/ontology#>
+      PREFIX veniss_types: <https://veniss.net/resource/type/>
 
-      SELECT ?type ?island ?year ?authors ?note ?location WHERE {
+      SELECT ?isSource ?type ?year ?authors ?location ?technique ?dimension ?note WHERE {
         {
-          SELECT (SAMPLE(?_type) AS ?type) (SAMPLE(?_island) AS ?island)
-                 (SAMPLE(?_year) AS ?year)
+          SELECT (SAMPLE(?_type) AS ?type) (SAMPLE(?_year) AS ?year)
                  (GROUP_CONCAT(DISTINCT ?_author; separator=" · ") AS ?authors)
-                 (SAMPLE(?_note) AS ?note) (SAMPLE(?_location) AS ?location)
+                 (SAMPLE(?_location) AS ?location)
+                 (GROUP_CONCAT(DISTINCT ?_technique; separator=", ") AS ?technique)
+                 (SAMPLE(?_dimension) AS ?dimension)
+                 (SAMPLE(?_note) AS ?note)
           WHERE {
             VALUES ?entity { <{{entity.value}}> }
-            OPTIONAL { ?entity veniss_ontology:has_typology ?ty . ?ty rdfs:label ?_type }
-            OPTIONAL { ?entity crm:P2_has_type ?t2 . ?t2 rdfs:label ?_type }
             OPTIONAL {
-              ?entity veniss_ontology:has_island ?isl .
-              ?isl crm:P1_is_identified_by ?ia . ?ia rdfs:label ?_island
+              { ?entity veniss_ontology:has_typology ?ty } UNION { ?entity crm:P2_has_type ?ty }
+              ?ty rdfs:label ?_type .
+              FILTER(LANG(?_type) = "en" || LANG(?_type) = "")
             }
             OPTIONAL {
               ?entity crm:P67i_is_referred_to_by ?n . ?n rdfs:label ?_note .
@@ -40,34 +52,84 @@
             }
             OPTIONAL {
               ?entity crm:P53_has_former_or_current_location ?loc .
-              ?loc crm:P1_is_identified_by ?la . ?la rdfs:label ?_location
+              OPTIONAL { ?loc crm:P1_is_identified_by ?la . ?la rdfs:label ?_shelfmark }
+              OPTIONAL {
+                ?loc crm:P53_has_former_or_current_location ?archive .
+                ?archive crm:P1_is_identified_by ?ap .
+                ?ap crm:P2_has_type veniss_types:path ; rdfs:label ?_path
+              }
+              BIND(IF(BOUND(?_path) && BOUND(?_shelfmark), CONCAT(?_path, ", ", ?_shelfmark),
+                      COALESCE(?_path, ?_shelfmark)) AS ?_location)
+            }
+            OPTIONAL {
+              ?entity crm:P43_has_dimension ?dim . ?dim crm:P90_has_value ?_dimValue .
+              OPTIONAL { ?entity crm:P43_has_dimension ?du . ?du crm:P91_has_unit ?_unit }
+              BIND(IF(BOUND(?_unit), CONCAT(STR(?_dimValue), " ", REPLACE(STR(?_unit), "^.*/", "")),
+                      STR(?_dimValue)) AS ?_dimension)
             }
             OPTIONAL {
               ?entity crm:P108i_was_produced_by ?prod .
               OPTIONAL {
                 ?prod crm:P4_has_time-span ?ts .
                 ?ts crm:P170i_time_is_defined_by ?tp .
-                ?tp crm:P2_has_type <https://veniss.net/resource/type/time_primitive_year> ;
+                ?tp crm:P2_has_type veniss_types:time_primitive_year ;
                     rdfs:label ?_year
               }
               OPTIONAL {
-                ?ar crmpc:P01_has_domain ?prod ; crmpc:P02_has_range ?au .
-                ?au crm:P1_is_identified_by ?aa . ?aa rdfs:label ?_author
+                ?prod crm:P32_used_general_technique ?tech .
+                OPTIONAL { ?tech rdfs:label ?_te . FILTER(LANG(?_te) = "en") }
+                OPTIONAL { ?tech rdfs:label ?_tn . FILTER(LANG(?_tn) = "") }
+                OPTIONAL { ?tech rdfs:label ?_ti . FILTER(LANG(?_ti) = "it") }
+                BIND(COALESCE(?_te, ?_tn, ?_ti) AS ?_technique)
               }
+            }
+            OPTIONAL {
+              {
+                SELECT ?au (SAMPLE(?_given) AS ?given) (SAMPLE(?_family) AS ?family)
+                       (SAMPLE(?_name) AS ?name) (SAMPLE(?_born) AS ?born) (SAMPLE(?_died) AS ?died)
+                WHERE {
+                  VALUES ?entity { <{{entity.value}}> }
+                  ?entity crm:P108i_was_produced_by ?p .
+                  ?ar crmpc:P01_has_domain ?p ;
+                      crmpc:P02_has_range ?au ;
+                      crmpc:P14.1_in_the_role_of <https://veniss.net/resource/vocab/actor_types/author> .
+                  OPTIONAL { ?au crm:P1_is_identified_by ?g . ?g crm:P2_has_type veniss_types:given_name ; rdfs:label ?_given }
+                  OPTIONAL { ?au crm:P1_is_identified_by ?f . ?f crm:P2_has_type veniss_types:family_name ; rdfs:label ?_family }
+                  OPTIONAL { ?au crm:P1_is_identified_by ?a . ?a crm:P2_has_type veniss_types:appellation ; rdfs:label ?_name }
+                  OPTIONAL {
+                    ?au crm:P98i_was_born/crm:P4_has_time-span/crm:P170i_time_is_defined_by ?bp .
+                    ?bp crm:P2_has_type veniss_types:time_primitive_year ; rdfs:label ?_born
+                  }
+                  OPTIONAL {
+                    ?au crm:P100i_died_in/crm:P4_has_time-span/crm:P170i_time_is_defined_by ?dp .
+                    ?dp crm:P2_has_type veniss_types:time_primitive_year ; rdfs:label ?_died
+                  }
+                }
+                GROUP BY ?au
+              }
+              BIND(IF(BOUND(?given) || BOUND(?family),
+                      CONCAT(COALESCE(?given, ""), IF(BOUND(?given) && BOUND(?family), " ", ""), COALESCE(?family, "")),
+                      ?name) AS ?_authorName)
+              BIND(IF(BOUND(?born) || BOUND(?died),
+                      CONCAT(" (", COALESCE(?born, "?"), "–", COALESCE(?died, "?"), ")"), "") AS ?_lifespan)
+              BIND(CONCAT(?_authorName, ?_lifespan) AS ?_author)
             }
           }
         }
+        # Outside the aggregate: SAMPLE drops the boolean.
+        BIND(EXISTS { <{{entity.value}}> a veniss_ontology:Source } AS ?isSource)
       }'
     template='{{> card}}'
     no-result-template='{{> card}}'>
     <template id='card'>
       {{#each bindings}}
         <dl class="related-card__facts">
-          {{#if type.value}}<dt>Type</dt><dd>{{type.value}}</dd>{{/if}}
+          {{#if type.value}}<dt>{{#if (eq isSource.value "true")}}Object type{{else}}Type{{/if}}</dt><dd>{{type.value}}</dd>{{/if}}
           {{#if year.value}}<dt>Date</dt><dd>{{year.value}}</dd>{{/if}}
           {{#if authors.value}}<dt>Author</dt><dd>{{authors.value}}</dd>{{/if}}
-          {{#if island.value}}<dt>Island</dt><dd>{{island.value}}</dd>{{/if}}
-          {{#if location.value}}<dt>Held at</dt><dd>{{location.value}}</dd>{{/if}}
+          {{#if location.value}}<dt>Location/Reference</dt><dd>{{location.value}}</dd>{{/if}}
+          {{#if technique.value}}<dt>Materials and techniques</dt><dd>{{technique.value}}</dd>{{/if}}
+          {{#if dimension.value}}<dt>Dimensions</dt><dd>{{dimension.value}}</dd>{{/if}}
         </dl>
         {{#if note.value}}<p class="related-card__note">{{note.value}}</p>{{/if}}
       {{/each}}

@@ -308,27 +308,22 @@
                                         # Archival/Current: referenced entity via P53
                                         ?loc crm:P53_has_former_or_current_location ?ref .
                                         {
-                                          select ?ref (group_concat(distinct ?lbl; separator=", ") as ?hierarchy_path) where {
-                                            {
-                                              select ?ref ?class ?lbl where {
-                                                ?ref crm:P46i_forms_part_of* ?mid .
-                                                ?mid crm:P46i_forms_part_of* ?class .
-                                                ?class rdfs:label ?class_label
-
-                                                optional {
-                                                  ?class crm:P1_is_identified_by ?acronym .
-                                                  ?acronym a crm:E41_Appellation ;
-                                                    crm:P2_has_type <https://veniss.net/resource/type/acronym> ;
-                                                    rdfs:label ?acronym_lbl .
-                                                }
-
-                                                BIND(COALESCE(?acronym_lbl, ?class_label) as ?lbl)
-                                              }
-                                              group by ?ref ?class ?lbl
-                                              order by desc(count(?mid))
-                                            }
-                                          }
-                                          group by ?ref
+                                          SELECT ?ref (REPLACE(CONCAT(
+                                            MAX(IF(?d=0,?lbl,"")), MAX(IF(?d=1,CONCAT(", ",?lbl),"")), MAX(IF(?d=2,CONCAT(", ",?lbl),"")), MAX(IF(?d=3,CONCAT(", ",?lbl),"")),
+                                            MAX(IF(?d=4,CONCAT(", ",?lbl),"")), MAX(IF(?d=5,CONCAT(", ",?lbl),"")), MAX(IF(?d=6,CONCAT(", ",?lbl),"")), MAX(IF(?d=7,CONCAT(", ",?lbl),""))
+                                          ), "^, ", "") AS ?hierarchy_path) WHERE {
+                                            { SELECT ?ref ?class (SAMPLE(?lbl0) AS ?lbl) (COUNT(DISTINCT ?anc) AS ?d) WHERE {
+                                                <{{location.value}}> crm:P53_has_former_or_current_location ?ref .
+                                                ?ref crm:P46i_forms_part_of* ?class .
+                                                OPTIONAL { ?class crm:P46i_forms_part_of+ ?anc }
+                                                OPTIONAL { ?class rdfs:label ?it_l FILTER(LANG(?it_l) = "it") }
+                                                OPTIONAL { ?class rdfs:label ?any_l }
+                                                OPTIONAL { ?class <http://www.researchspace.org/ontology/displayLabel> ?dl }
+                                                OPTIONAL { ?class crm:P1_is_identified_by ?acronym . ?acronym a crm:E41_Appellation ; crm:P2_has_type <https://veniss.net/resource/type/acronym> ; rdfs:label ?acronym_lbl }
+                                                BIND(STR(COALESCE(?acronym_lbl, ?it_l, ?any_l, ?dl, "")) AS ?lbl0)
+                                                FILTER(?lbl0 != "")
+                                              } GROUP BY ?ref ?class }
+                                          } GROUP BY ?ref
                                         }
                                         BIND(?hierarchy_path as ?base)
                                       }

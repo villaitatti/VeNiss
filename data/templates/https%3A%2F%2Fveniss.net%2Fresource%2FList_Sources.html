@@ -308,27 +308,22 @@
                                         # Archival/Current: referenced entity via P53
                                         ?loc crm:P53_has_former_or_current_location ?ref .
                                         {
-                                          select ?ref (group_concat(distinct ?lbl; separator=", ") as ?hierarchy_path) where {
-                                            {
-                                              select ?ref ?class ?lbl where {
-                                                ?ref crm:P46i_forms_part_of* ?mid .
-                                                ?mid crm:P46i_forms_part_of* ?class .
-                                                ?class rdfs:label ?class_label
-
-                                                optional {
-                                                  ?class crm:P1_is_identified_by ?acronym .
-                                                  ?acronym a crm:E41_Appellation ;
-                                                    crm:P2_has_type <https://veniss.net/resource/type/acronym> ;
-                                                    rdfs:label ?acronym_lbl .
-                                                }
-
-                                                BIND(COALESCE(?acronym_lbl, ?class_label) as ?lbl)
-                                              }
-                                              group by ?ref ?class ?lbl
-                                              order by desc(count(?mid))
-                                            }
-                                          }
-                                          group by ?ref
+                                          SELECT ?ref (REPLACE(CONCAT(
+                                            MAX(IF(?d=0,?lbl,"")), MAX(IF(?d=1,CONCAT(", ",?lbl),"")), MAX(IF(?d=2,CONCAT(", ",?lbl),"")), MAX(IF(?d=3,CONCAT(", ",?lbl),"")),
+                                            MAX(IF(?d=4,CONCAT(", ",?lbl),"")), MAX(IF(?d=5,CONCAT(", ",?lbl),"")), MAX(IF(?d=6,CONCAT(", ",?lbl),"")), MAX(IF(?d=7,CONCAT(", ",?lbl),""))
+                                          ), "^, ", "") AS ?hierarchy_path) WHERE {
+                                            { SELECT ?ref ?class (SAMPLE(?lbl0) AS ?lbl) (COUNT(DISTINCT ?anc) AS ?d) WHERE {
+                                                <{{location.value}}> crm:P53_has_former_or_current_location ?ref .
+                                                ?ref crm:P46i_forms_part_of* ?class .
+                                                OPTIONAL { ?class crm:P46i_forms_part_of+ ?anc }
+                                                OPTIONAL { ?class rdfs:label ?it_l FILTER(LANG(?it_l) = "it") }
+                                                OPTIONAL { ?class rdfs:label ?any_l }
+                                                OPTIONAL { ?class <http://www.researchspace.org/ontology/displayLabel> ?dl }
+                                                OPTIONAL { ?class crm:P1_is_identified_by ?acronym . ?acronym a crm:E41_Appellation ; crm:P2_has_type <https://veniss.net/resource/type/acronym> ; rdfs:label ?acronym_lbl }
+                                                BIND(STR(COALESCE(?acronym_lbl, ?it_l, ?any_l, ?dl, "")) AS ?lbl0)
+                                                FILTER(?lbl0 != "")
+                                              } GROUP BY ?ref ?class }
+                                          } GROUP BY ?ref
                                         }
                                         BIND(?hierarchy_path as ?base)
                                       }
@@ -380,7 +375,7 @@
                     <semantic-search-result>
                       <semantic-table 
                         id='table-result'
-                        query='SELECT DISTINCT ?subject ?typology ?authors ?title ?place_lbl ?publisher_lbl ?date_lbl ?essay_title_lbl ?volume_lbl ?pages_lbl WHERE { 
+                        query='SELECT DISTINCT ?subject ?typology ?authors ?title ?place_lbl ?publisher_lbl ?date_lbl ?essay_title_lbl ?volume_lbl ?pages_lbl ?curator_lbl ?number_lbl ?issue_lbl WHERE {
                           ?subject a veniss_ontology:Source_Secondary;
                             crm:P129i_is_subject_of ?linguistic_object;
                             crm:P1_is_identified_by ?bibitem_identifier;
@@ -447,9 +442,29 @@
                             ?broader crm:P1_is_identified_by ?pages.
                             ?pages a crm:E41_Appellation;
                               crm:P2_has_type <https://veniss.net/resource/type/pages>;
-  	                          rdfs:label ?pages_lbl
+  	                          rdfs:label ?pages_raw
+                            BIND(REPLACE(STR(?pages_raw), "^\\s*pp?\\.\\s*", "", "i") AS ?pages_lbl)
                           }
 
+                          OPTIONAL {
+                            ?broader crm:P1_is_identified_by ?number.
+                            ?number crm:P2_has_type <https://veniss.net/resource/type/number>;
+                              rdfs:label ?number_lbl
+                          }
+
+                          OPTIONAL {
+                            ?broader crm:P1_is_identified_by ?issue.
+                            ?issue crm:P2_has_type <https://veniss.net/resource/type/issue>;
+                              rdfs:label ?issue_lbl
+                          }
+
+                          OPTIONAL {
+                            ?subject frbroo:R24i_was_created_through ?publication_event_3.
+                            ?publication_event_3 crm:P01i_is_domain_of ?curated_by.
+                            ?curated_by crm:P14.1_in_the_role_of <http://veniss.net/resource/type/curator>;
+                              crm:P02_has_range ?curator.
+                            ?curator rdfs:label ?curator_lbl
+                          }
 
                         }'
                         tuple-template="{{> table-row}}"
@@ -527,10 +542,11 @@
                             <template id="essay">
                               <p>
                                 {{authors.value}}, <strong><em>{{title.value}}</em></strong>, in <strong><em>{{essay_title_lbl.value}}</em></strong>
+                                {{#if curator_lbl}}<span>, a cura di {{curator_lbl.value}}</span>{{/if}}
                                 {{#if place_lbl}}<span>, {{place_lbl.value}}</span>{{/if}}
                                 {{#if publisher_lbl}}<span>, {{publisher_lbl.value}}</span>{{/if}}
                                 {{#if date_lbl}}<span>, {{date_lbl.value}}</span>{{/if}}
-                                {{#if pages_lbl}}<span>, {{pages_lbl.value}}</span>{{/if}}
+                                {{#if pages_lbl}}<span>, pp. {{pages_lbl.value}}</span>{{/if}}
                               </p>
                             </template>
 
@@ -539,8 +555,10 @@
                               <p>
                                 {{authors.value}}, <strong><em>{{title.value}}</em></strong>, in «{{essay_title_lbl.value}}»
                                 {{#if volume_lbl}}<span>, {{volume_lbl.value}}</span>{{/if}}
+                                {{#if number_lbl}}<span>, {{number_lbl.value}}</span>{{/if}}
+                                {{#if issue_lbl}}<span>, {{issue_lbl.value}}</span>{{/if}}
                                 {{#if date_lbl}}<span> ({{date_lbl.value}})</span>{{/if}}
-                                {{#if pages_lbl}}<span>, {{pages_lbl.value}}</span>{{/if}}
+                                {{#if pages_lbl}}<span>, pp. {{pages_lbl.value}}</span>{{/if}}
                               </p>
                             </template>
                           

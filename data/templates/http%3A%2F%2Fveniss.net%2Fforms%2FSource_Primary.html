@@ -33,6 +33,7 @@
     source_dimension                        = "https://veniss.net/container/fieldDefinitionContainer/source_dimension"
     source_dimension_unit                   = "https://veniss.net/container/fieldDefinitionContainer/source_dimension_unit"
     source_comment                          = "https://veniss.net/container/fieldDefinitionContainer/source_comment"
+    source_photo_credits                    = "https://veniss.net/container/fieldDefinitionContainer/source_photo_credits"
 
     source_synopsis                         = "https://veniss.net/container/fieldDefinitionContainer/source_synopsis"
     source_transcription                    = "https://veniss.net/container/fieldDefinitionContainer/source_transcription"
@@ -94,6 +95,10 @@
 
           <div id="entity_publication_notes" style="margin-bottom: 20px;">
             <semantic-form-text-input placeholder="Enter Notes, if any ..." label="Publication Notes" for="entity_publication_notes"></semantic-form-text-input>
+          </div>
+
+          <div id="source_photo_credits" style="margin-bottom: 20px;">
+            <semantic-form-text-input placeholder="e.g. © Archivio di Stato di Venezia, photo by ..." label="Photo credits / Copyright" for="source_photo_credits"></semantic-form-text-input>
           </div>
         </bs-col>
 
@@ -299,26 +304,20 @@
                               }'
                                                            nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Archival_unit nested=true editable=true mode="new" }}{{{{/raw}}}}'
                                                            query-item-label='
-                                SELECT (group_concat(distinct ?lbl; separator=", ") as ?label) where {
-                                  {
-                                    select ?class ?lbl
-                                    where {
-                                      ?item crm:P46i_forms_part_of* ?mid.
-                                      ?mid crm:P46i_forms_part_of* ?class.
-                                      ?class rdfs:label ?class_label
-                                      
-                                      optional {
-                                        ?class crm:P1_is_identified_by ?acronym.
-                                        ?acronym a crm:E41_Appellation;
-                                          crm:P2_has_type <https://veniss.net/resource/type/acronym>;
-                                          rdfs:label ?acronym_lbl 
-                                      }
-      
-                                      BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
-                                    }
-                                    group by ?class ?lbl
-                                    order by desc(count(?mid))
-                                  }
+                                SELECT (REPLACE(CONCAT(
+                                  MAX(IF(?d=0,?lbl,"")), MAX(IF(?d=1,CONCAT(", ",?lbl),"")), MAX(IF(?d=2,CONCAT(", ",?lbl),"")), MAX(IF(?d=3,CONCAT(", ",?lbl),"")),
+                                  MAX(IF(?d=4,CONCAT(", ",?lbl),"")), MAX(IF(?d=5,CONCAT(", ",?lbl),"")), MAX(IF(?d=6,CONCAT(", ",?lbl),"")), MAX(IF(?d=7,CONCAT(", ",?lbl),""))
+                                ), "^, ", "") AS ?label) WHERE {
+                                  { SELECT ?class (SAMPLE(?lbl0) AS ?lbl) (COUNT(DISTINCT ?anc) AS ?d) WHERE {
+                                      ?item crm:P46i_forms_part_of* ?class .
+                                      OPTIONAL { ?class crm:P46i_forms_part_of+ ?anc }
+                                      OPTIONAL { ?class rdfs:label ?it_l FILTER(LANG(?it_l) = "it") }
+                                      OPTIONAL { ?class rdfs:label ?any_l }
+                                      OPTIONAL { ?class <http://www.researchspace.org/ontology/displayLabel> ?dl }
+                                      OPTIONAL { ?class crm:P1_is_identified_by ?acronym . ?acronym a crm:E41_Appellation ; crm:P2_has_type <https://veniss.net/resource/type/acronym> ; rdfs:label ?acronym_lbl }
+                                      BIND(STR(COALESCE(?acronym_lbl, ?it_l, ?any_l, ?dl, "")) AS ?lbl0)
+                                      FILTER(?lbl0 != "")
+                                    } GROUP BY ?class }
                                 }'>
                           </semantic-form-tree-picker-input>
                         </div>
@@ -381,31 +380,21 @@
                               }'
                                                            nested-form-template='{{{{raw}}}}{{> veniss_forms_vocab:Archival_unit nested=true editable=true mode="new" }}{{{{/raw}}}}'
                                                            query-item-label='
-                                SELECT (group_concat(distinct ?lbl; separator=", ") as ?label) where {
-                                  {
-                                    select ?class ?lbl
-                                    where {
-                                      ?item crm:P46i_forms_part_of* ?mid.
-                                      ?mid crm:P46i_forms_part_of* ?class.
-                                      ?class rdfs:label ?class_label
-
-                                      optional {
-                                        ?class crm:P1_is_identified_by ?acronym.
-                                        ?acronym a crm:E41_Appellation;
-                                          crm:P2_has_type <https://veniss.net/resource/type/acronym>;
-                                          rdfs:label ?acronym_lbl
-                                      }
-
-                                      BIND(COALESCE(?acronym_lbl, ?acronym_lbl, ?class_label) as ?lbl)
-                                    }
-                                    group by ?class ?lbl
-                                    order by desc(count(?mid))
-                                  }
-                                }'
-                                                           tree-patterns='{
-                                "relationPattern": "?item crm:P46i_forms_part_of ?parent",
-                                "schemePattern": "?item crm:P71i_is_listed_in <http://www.researchspace.org/resource/vocab/archives>"
-                              }'>
+                                SELECT (REPLACE(CONCAT(
+                                  MAX(IF(?d=0,?lbl,"")), MAX(IF(?d=1,CONCAT(", ",?lbl),"")), MAX(IF(?d=2,CONCAT(", ",?lbl),"")), MAX(IF(?d=3,CONCAT(", ",?lbl),"")),
+                                  MAX(IF(?d=4,CONCAT(", ",?lbl),"")), MAX(IF(?d=5,CONCAT(", ",?lbl),"")), MAX(IF(?d=6,CONCAT(", ",?lbl),"")), MAX(IF(?d=7,CONCAT(", ",?lbl),""))
+                                ), "^, ", "") AS ?label) WHERE {
+                                  { SELECT ?class (SAMPLE(?lbl0) AS ?lbl) (COUNT(DISTINCT ?anc) AS ?d) WHERE {
+                                      ?item crm:P46i_forms_part_of* ?class .
+                                      OPTIONAL { ?class crm:P46i_forms_part_of+ ?anc }
+                                      OPTIONAL { ?class rdfs:label ?it_l FILTER(LANG(?it_l) = "it") }
+                                      OPTIONAL { ?class rdfs:label ?any_l }
+                                      OPTIONAL { ?class <http://www.researchspace.org/ontology/displayLabel> ?dl }
+                                      OPTIONAL { ?class crm:P1_is_identified_by ?acronym . ?acronym a crm:E41_Appellation ; crm:P2_has_type <https://veniss.net/resource/type/acronym> ; rdfs:label ?acronym_lbl }
+                                      BIND(STR(COALESCE(?acronym_lbl, ?it_l, ?any_l, ?dl, "")) AS ?lbl0)
+                                      FILTER(?lbl0 != "")
+                                    } GROUP BY ?class }
+                                }'>
                           </semantic-form-tree-picker-input>
                         </div>
                       </bs-col>

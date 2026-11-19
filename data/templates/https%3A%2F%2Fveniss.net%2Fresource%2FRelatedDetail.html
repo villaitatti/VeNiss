@@ -12,8 +12,9 @@
      - Author (#317): one name per author, built from the given and family name appellations
        (the appellation type for groups), with life dates from the birth and death years. Joining
        every appellation label printed the family name twice, once more inside the search term.
-     - Location/Reference: the archival entity's path appellation, which already carries the
-       whole hierarchy, followed by the shelfmark on the source's own location node.
+     - Location/Reference: the archival entity's root-first hierarchy (built from P46i, not the
+       stored path appellation, which is stale or missing), followed by the shelfmark on the
+       source's own location node.
      - Materials and techniques: P32 on the production, English label preferred.
 
      To give one class a card of its own, replace its <template id='detail'> in veniss:Main. -->
@@ -55,8 +56,23 @@
               OPTIONAL { ?loc crm:P1_is_identified_by ?la . ?la rdfs:label ?_shelfmark }
               OPTIONAL {
                 ?loc crm:P53_has_former_or_current_location ?archive .
-                ?archive crm:P1_is_identified_by ?ap .
-                ?ap crm:P2_has_type veniss_types:path ; rdfs:label ?_path
+                # root-first path, same query as the Source_Primary pickers (#235); ?archive is bound inside so roots work
+                { SELECT ?archive (REPLACE(CONCAT(
+                    MAX(IF(?d=0,?lbl,"")), MAX(IF(?d=1,CONCAT(", ",?lbl),"")), MAX(IF(?d=2,CONCAT(", ",?lbl),"")), MAX(IF(?d=3,CONCAT(", ",?lbl),"")),
+                    MAX(IF(?d=4,CONCAT(", ",?lbl),"")), MAX(IF(?d=5,CONCAT(", ",?lbl),"")), MAX(IF(?d=6,CONCAT(", ",?lbl),"")), MAX(IF(?d=7,CONCAT(", ",?lbl),""))
+                  ), "^, ", "") AS ?_path) WHERE {
+                    { SELECT ?archive ?class (SAMPLE(?lbl0) AS ?lbl) (COUNT(DISTINCT ?anc) AS ?d) WHERE {
+                        <{{entity.value}}> crm:P53_has_former_or_current_location/crm:P53_has_former_or_current_location ?archive .
+                        ?archive crm:P46i_forms_part_of* ?class .
+                        OPTIONAL { ?class crm:P46i_forms_part_of+ ?anc }
+                        OPTIONAL { ?class rdfs:label ?it_l FILTER(LANG(?it_l) = "it") }
+                        OPTIONAL { ?class rdfs:label ?any_l }
+                        OPTIONAL { ?class <http://www.researchspace.org/ontology/displayLabel> ?dl }
+                        OPTIONAL { ?class crm:P1_is_identified_by ?acronym . ?acronym a crm:E41_Appellation ; crm:P2_has_type veniss_types:acronym ; rdfs:label ?acronym_lbl }
+                        BIND(STR(COALESCE(?acronym_lbl, ?it_l, ?any_l, ?dl, "")) AS ?lbl0)
+                        FILTER(?lbl0 != "")
+                      } GROUP BY ?archive ?class }
+                  } GROUP BY ?archive }
               }
               BIND(IF(BOUND(?_path) && BOUND(?_shelfmark), CONCAT(?_path, ", ", ?_shelfmark),
                       COALESCE(?_path, ?_shelfmark)) AS ?_location)

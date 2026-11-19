@@ -30,6 +30,8 @@
     person_occupation                   = "https://veniss.net/container/fieldDefinitionContainer/person_occupation"
     person_birth_date                   = "https://veniss.net/container/fieldDefinitionContainer/person_birth_date"
     person_death_date                   = "https://veniss.net/container/fieldDefinitionContainer/person_death_date"
+    person_birth_place                  = "https://veniss.net/container/fieldDefinitionContainer/person_birth_place"
+    person_death_place                  = "https://veniss.net/container/fieldDefinitionContainer/person_death_place"
 
     entity_is_domain_of_relation_actor      = "https://veniss.net/container/fieldDefinitionContainer/entity_is_domain_of_relation_actor"
     entity_is_range_of_relation_actor       = "https://veniss.net/container/fieldDefinitionContainer/entity_is_range_of_relation_actor"
@@ -175,11 +177,14 @@
 
               </semantic-form-composite-input>
             </div>
+            <div id="person_birth_place">
+              <semantic-form-text-input label="Birth Place" placeholder="Enter birth place ..." for="person_birth_place"></semantic-form-text-input>
+            </div>
           </bs-col>
 
           <bs-col lg="12" md="12" sm="12">
             <div id="source_date_composite">
-              <semantic-form-composite-input 
+              <semantic-form-composite-input
                 label="Death Date"
                 for='person_death_date' 
                 new-subject-template="/death/date/" 
@@ -207,6 +212,9 @@
                 </bs-row>
 
               </semantic-form-composite-input>
+            </div>
+            <div id="person_death_place">
+              <semantic-form-text-input label="Death Place" placeholder="Enter death place ..." for="person_death_place"></semantic-form-text-input>
             </div>
           </bs-col>
 

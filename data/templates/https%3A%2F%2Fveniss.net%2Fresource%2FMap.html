@@ -395,14 +395,13 @@
 
             <!-- 3D buildings, following the timeline.
 
-                 The manifest lists every modelled geometry of a building, keyed by `code`
-                 (LZV_BLDG_1.A, .B …: same letter = identical geometry) and grouped by `root_id`,
-                 each with the survey years it was observed in; the platform loads each geometry
-                 once and shows, per building, the one observed most recently before the year.
+                 Each manifest (one per island) lists one model per building and survey year,
+                 keyed by its `path` and grouped by the building `code` (LZV_BLDG_1); the platform
+                 shows, per building, the survey observed most recently before the year, and the
+                 earliest survey for years before it.
 
                  Existence comes from the 2D phases in the graph, whose dates do not line up with
-                 the surveys: before a building's first survey, or for buildings never modelled in
-                 3D, its 2D footprint is drawn as a "ghost": open walls fading upward, since the
+                 the surveys: for buildings never modelled in 3D, the 2D footprint is drawn as a "ghost": open walls fading upward, since the
                  real height is unknown. Phase ids are hierarchical
                  (LZV_BLDG_15.2 belongs to LZV_BLDG_15), but some phases were modelled as groups of
                  their own (LZV_BLDG_15.1), so an exact id always wins over its prefix.
@@ -414,25 +413,25 @@
                  Nothing is fetched below zoom 15 (one island in view, as for related entities),
                  and each manifest's models load only once its island is in the frame.
 
-                 Only Lazzaretto Vecchio for now. Island codes are not data on the Island entity,
-                 but STRBEFORE(?bw_id, "_BLDG_") recovers them from the 2D representations, so a
-                 manifest-query can list every island's manifest when the others are ready.
+                 Lazzaretto Vecchio (LZV) and San Secondo (SSC). Island codes are not data on the
+                 Island entity, but STRBEFORE(?bw_id, "_BLDG_") recovers them from the 2D
+                 representations, so a manifest-query can list every island's manifest later.
 
                  Inside the geosql SERVICE the variables must keep the names the service declares
                  (?wkt, ?bw_id): the SQL sail binds columns by name, and renaming them fails with an
-                 empty HTTP 500. They are renamed with BIND afterwards. The bounding box is the
-                 Lazzaretto Vecchio buildings plus ~200 m: the SQL side scans only that area, which
-                 halves the query time against the whole lagoon. Widen it when adding islands. -->
+                 empty HTTP 500. They are renamed with BIND afterwards. Each SERVICE block scans one
+                 island's buildings plus ~200 m, which halves the query time against the whole
+                 lagoon. Add a block when adding an island. -->
             <tileset-3d-source
-                manifest-url="/proxy/xdtiler3d/tiles/ifc/LZV/manifest_compat.json"
+                manifest-url="/proxy/xdtiler3d/tiles/ifc/LZV/manifest_compat.json,/proxy/xdtiler3d/tiles/ifc/SSC/manifest_compat.json"
                 sections="buildings"
-                id-field="code"
-                group-field="root_id"
+                id-field="path"
+                group-field="code"
                 year-field="phase_year"
                 base-url="/proxy/xdtiler3d/tiles/"
                 url-template="{base}{path}/tileset.json"
                 identifier-separator="."
-                before-first-observation="placeholder"
+                before-first-observation="earliest"
                 unmatched-identifiers="placeholder"
                 min-zoom="15"
                 placeholder-height="8"
@@ -448,24 +447,38 @@
                     PREFIX rs_sql_sail: <http://www.researchspace.org/resource/system/sql#>
 
                     SELECT DISTINCT ?identifier ?start ?end ?footprint ?tileset WHERE {
-                        SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
-                            ?root rs_sql_sail:hasQueryId 'production';
-                                veniss_sql:minX '1375480';
-                                veniss_sql:minY '5685380';
-                                veniss_sql:maxX '1376240';
-                                veniss_sql:maxY '5686020';
-                                veniss_sql:wkt ?wkt;
-                                veniss_sql:bw_id ?bw_id.
+                        {
+                            SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                ?root rs_sql_sail:hasQueryId 'production';
+                                    veniss_sql:minX '1375480';
+                                    veniss_sql:minY '5685380';
+                                    veniss_sql:maxX '1376240';
+                                    veniss_sql:maxY '5686020';
+                                    veniss_sql:wkt ?wkt;
+                                    veniss_sql:bw_id ?bw_id.
+                            }
+                            FILTER(STRSTARTS(STR(?bw_id), 'LZV_BLDG_'))
+                        } UNION {
+                            SERVICE <http://www.researchspace.org/resource/system/repository/federation#geosql> {
+                                ?root rs_sql_sail:hasQueryId 'production';
+                                    veniss_sql:minX '1369680';
+                                    veniss_sql:minY '5692430';
+                                    veniss_sql:maxX '1370480';
+                                    veniss_sql:maxY '5693230';
+                                    veniss_sql:wkt ?wkt;
+                                    veniss_sql:bw_id ?bw_id.
+                            }
+                            FILTER(STRSTARTS(STR(?bw_id), 'SSC_BLDG_'))
                         }
-                        FILTER(STRSTARTS(STR(?bw_id), 'LZV_BLDG_'))
                         ?representation crm:P2_has_type <https://veniss.net/ontology#2d_representation> ;
                                         rdfs:label ?bw_id .
                         ?phase crm:P138i_has_representation ?representation ;
                                crm:P4_has_time-span ?timespan .
                         OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?start }
                         OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end }
-                        # The phase's own 3D Representation field, when curators fill it in,
-                        # pins that phase to a specific model and overrides the survey years.
+                        # The phase's own 3D Representation field pins that phase to a model only
+                        # when its label is a manifest `path`; the current labels are building
+                        # codes, so the survey years decide.
                         OPTIONAL {
                             ?phase crm:P138i_has_representation ?representation3d .
                             ?representation3d crm:P2_has_type <https://veniss.net/ontology#3d_representation> ;
